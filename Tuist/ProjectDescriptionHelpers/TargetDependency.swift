@@ -7,6 +7,7 @@ extension TargetDependency{
 public extension TargetDependency.SPM {
     static let SnapKit = TargetDependency.package(product: "SnapKit")
     static let Then = TargetDependency.package(product: "Then")
+    static let Kingfisher = TargetDependency.package(product: "Kingfisher")
 }
 
 public extension Package {
@@ -16,4 +17,7 @@ public extension Package {
     static let Then = Package.remote(
         url: "https://github.com/devxoul/Then",
         requirement: .upToNextMajor(from: "3.0.0"))
+    static let Kingfisher = Package.remote(
+        url: "https://github.com/onevcat/Kingfisher",
+        requirement: .upToNextMajor(from: "7.4.1"))
 }

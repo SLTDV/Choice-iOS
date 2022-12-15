@@ -1,14 +1,16 @@
 import ProjectDescription
 import ProjectDescriptionHelpers
 
-let projectName = "GiveMeMedicine"
+let projectName = "Choice"
 let organizationName = "com.dohyeon"
 
 let project = Project(
     name: projectName,
     organizationName: organizationName, packages: [
         .SnapKit,
-        .Then
+        .Then,
+        .Kingfisher
+            
     ],
     targets: [
         Target(
@@ -22,7 +24,8 @@ let project = Project(
             resources: ["Resources/**"],
             dependencies: [
                 .SPM.SnapKit,
-                .SPM.Then
+                .SPM.Then,
+                .SPM.Kingfisher
             ]
         )
     ]
