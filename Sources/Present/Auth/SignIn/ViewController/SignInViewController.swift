@@ -20,5 +20,9 @@ class SignInViewController: BaseVC<SignInViewModel> {
         $0.textColor = .black
         $0.font = UIFont(name: "AppleSDGothicNeo-Light", size: 16)
     }
+    
+    override func addView() {
+        view.addSubviews(subView: titleLabel, subTitleLabel)
+    }
 }
 
