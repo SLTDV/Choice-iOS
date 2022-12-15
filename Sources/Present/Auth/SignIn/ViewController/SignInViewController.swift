@@ -8,7 +8,6 @@
 
 import UIKit
 
-class SignInViewController:  {
-    
+class SignInViewController: BaseVC<SignInViewModel> {
 }
 

@@ -21,7 +21,6 @@ class AppCoordinator: Coordinator {
         window?.makeKeyAndVisible()
     }
     
-    
     func start() {
         let signInController = SignInCoordinator(navigationController: navigationController)
         window?.rootViewController = navigationController
@@ -30,7 +29,7 @@ class AppCoordinator: Coordinator {
     }
     
     func start(coordinator: Coordinator) {
-        
+        coordinator.start()
     }
     
     func didFinish(coordinator: Coordinator) {
