@@ -1,11 +1,3 @@
-//
-//  SignInViewController.swift
-//  Choice
-//
-//  Created by 민도현 on 2022/12/15.
-//  Copyright © 2022 com.dohyeon. All rights reserved.
-//
-
 import UIKit
 
 class SignInViewController: BaseVC<SignInViewModel> {
@@ -28,7 +20,6 @@ class SignInViewController: BaseVC<SignInViewModel> {
     private let inputPasswordTextField = UnderLineTextField().then {
         $0.setPlaceholder(placeholder: "비밀번호")
     }
-    
     
     private let loginButtoon = UIButton().then {
         $0.setTitle("로그인", for: .normal)
@@ -69,7 +60,7 @@ class SignInViewController: BaseVC<SignInViewModel> {
         }
         
         inputPasswordTextField.snp.makeConstraints {
-            $0.top.equalTo(inputIdTextField.snp.bottom).offset(30)
+            $0.top.equalTo(inputIdTextField.snp.bottom).offset(40)
             $0.leading.trailing.equalToSuperview().inset(26)
         }
     
