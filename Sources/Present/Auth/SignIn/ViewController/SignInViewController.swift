@@ -32,9 +32,9 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     }
     
     private lazy var pushSignUpViewButton = UIButton().then {
-        $0.titleLabel?.font = .systemFont(ofSize: 12)
         $0.setTitle("회원가입", for: .normal)
         $0.setTitleColor(.gray, for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 12)
         $0.backgroundColor = .white
         $0.addTarget(self, action: #selector(pushSignUpViewButtonDidTap(_:)), for: .touchUpInside)
     }
