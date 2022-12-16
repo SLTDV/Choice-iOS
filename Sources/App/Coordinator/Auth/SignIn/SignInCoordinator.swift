@@ -7,4 +7,20 @@ class SignInCoordinator: BaseCoordinator {
         
         navigationController.setViewControllers([vc], animated: true)
     }
+    
+    override func navigate(to step: ChoiceStep) {
+        switch step {
+        case .signUpIsRequired:
+            signUpIsRequired()
+        }
+    }
+}
+
+extension SignInCoordinator {
+    private func signUpIsRequired() {
+        let vc = SignIUpCoordinator(navigationController: navigationController)
+        vc.parentCoordinator = self
+        childCoordinators.append(vc)
+        vc.start()
+    }
 }
