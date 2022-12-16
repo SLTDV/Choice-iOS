@@ -1,21 +1,18 @@
-import Foundation
 import UIKit
-import SnapKit
-import Then
 
 class SignUpViewController: BaseVC<SignUpViewModel> {
     
     lazy var restoreFrameYValue = 0.0
     
     private let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 28, weight: .medium)
         $0.text = "Choice"
+        $0.font = .systemFont(ofSize: 28, weight: .medium)
     }
      
     private let subTitleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .light)
-        $0.textColor = .gray
         $0.text = "선택의 고민을 한 번에"
+        $0.textColor = .gray
+        $0.font = .systemFont(ofSize: 16, weight: .light)
     }
     
     private let inputNicknameTextfield = UnderLineTextField().then {
@@ -27,21 +24,21 @@ class SignUpViewController: BaseVC<SignUpViewModel> {
     }
     
     private let inputPasswordTextfield = UnderLineTextField().then {
-        $0.isSecureTextEntry = true
         $0.setPlaceholder(placeholder: "비밀번호")
+        $0.isSecureTextEntry = true
     }
     
     private let inputCheckPasswordTextfield = UnderLineTextField().then {
-        $0.isSecureTextEntry = true
         $0.setPlaceholder(placeholder: "비밀번호확인")
+        $0.isSecureTextEntry = true
     }
     
     private let signUpButton = UIButton().then {
-        $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        $0.layer.cornerRadius = 8
-        $0.setTitleColor(.white, for: .normal)
-        $0.backgroundColor = .init(red: 0.89, green: 0.89, blue: 0.89, alpha: 1)
         $0.setTitle("회원가입", for: .normal)
+        $0.setTitleColor(.white, for: .normal)
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        $0.backgroundColor = .init(red: 0.89, green: 0.89, blue: 0.89, alpha: 1)
+        $0.layer.cornerRadius = 8
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -57,7 +54,8 @@ class SignUpViewController: BaseVC<SignUpViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(titleLabel, subTitleLabel, inputNicknameTextfield, inputIdTextfield, inputPasswordTextfield, inputCheckPasswordTextfield, signUpButton)
+        view.addSubviews(titleLabel, subTitleLabel, inputNicknameTextfield, inputIdTextfield,
+                         inputPasswordTextfield, inputCheckPasswordTextfield, signUpButton)
     }
     
     override func setLayout() {
