@@ -29,15 +29,27 @@ class SignInViewController: BaseVC<SignInViewModel> {
         $0.setPlaceholder(placeholder: "비밀번호")
     }
     
+    
     private let loginButtoon = UIButton().then {
         $0.setTitle("로그인", for: .normal)
         $0.backgroundColor = .init(red: 0.89, green: 0.89, blue: 0.89, alpha: 1)
         $0.layer.cornerRadius = 8
-        $0.titleLabel?.textColor = .white
+    }
+    
+    private let divedeLine = UIView().then {
+        $0.backgroundColor = .init(red: 0.37, green: 0.36, blue: 0.36, alpha: 1)
+    }
+    
+    private let pushSignUpViewButton = UIButton().then {
+        $0.titleLabel?.font = .systemFont(ofSize: 12)
+        $0.setTitle("회원가입", for: .normal)
+        $0.setTitleColor(.gray, for: .normal)
+        $0.backgroundColor = .white
     }
     
     override func addView() {
-        view.addSubviews(titleLabel, subTitleLabel, inputIdTextField, inputPasswordTextField, loginButtoon)
+        view.addSubviews(titleLabel, subTitleLabel, inputIdTextField,
+                         inputPasswordTextField, loginButtoon, divedeLine, pushSignUpViewButton)
     }
     
     override func setLayout() {
@@ -65,6 +77,18 @@ class SignInViewController: BaseVC<SignInViewModel> {
             $0.top.equalTo(inputPasswordTextField.snp.bottom).offset(52)
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(49)
+        }
+        
+        divedeLine.snp.makeConstraints {
+            $0.top.equalTo(loginButtoon.snp.bottom).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(50)
+            $0.height.equalTo(1)
+        }
+        
+        pushSignUpViewButton.snp.makeConstraints {
+            $0.height.equalTo(24)
+            $0.top.equalTo(divedeLine.snp.bottom).offset(5)
+            $0.leading.trailing.equalToSuperview().inset(140)
         }
     }
 }
