@@ -22,11 +22,14 @@ class UnderLineTextField: UITextField {
     }
     
     func setPlaceholder(placeholder: String) {
+        self.font = .systemFont(ofSize: 14)
+        self.leftView = UIView(frame: CGRect(x: 0.0, y: 0.0, width: 5.0, height: 0.0))
+        self.leftViewMode = .always
         self.attributedPlaceholder = NSAttributedString(
             string: placeholder,
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
         )
         
-        underLineView.backgroundColor = UIColor(red: 0.25, green: 0.26, blue: 0.58, alpha: 1)
+        underLineView.backgroundColor = .gray
     }
 }
