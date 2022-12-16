@@ -1,16 +1,17 @@
 import UIKit
 
 final class SignInViewController: BaseVC<SignInViewModel> {
+    
     private let titleLabel = UILabel().then {
         $0.text = "Choice"
         $0.textColor = .black
-        $0.font = UIFont(name: "AppleSDGothicNeo-Medium", size: 28)
+        $0.font = .systemFont(ofSize: 28, weight: .medium)
     }
     
     private let subTitleLabel = UILabel().then {
         $0.text = "선택의 고민을 한 번에"
         $0.textColor = .gray
-        $0.font = UIFont(name: "AppleSDGothicNeo-Light", size: 16)
+        $0.font = .systemFont(ofSize: 16, weight: .light)
     }
     
     private let inputIdTextField = UnderLineTextField().then {
@@ -21,13 +22,13 @@ final class SignInViewController: BaseVC<SignInViewModel> {
         $0.setPlaceholder(placeholder: "비밀번호")
     }
     
-    private let loginButtoon = UIButton().then {
+    private let signInButton = UIButton().then {
         $0.setTitle("로그인", for: .normal)
         $0.backgroundColor = .init(red: 0.89, green: 0.89, blue: 0.89, alpha: 1)
         $0.layer.cornerRadius = 8
     }
     
-    private let divedeLine = UIView().then {
+    private let divideLineButton = UIView().then {
         $0.backgroundColor = .init(red: 0.37, green: 0.36, blue: 0.36, alpha: 1)
     }
     
@@ -45,7 +46,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     
     override func addView() {
         view.addSubviews(titleLabel, subTitleLabel, inputIdTextField,
-                         inputPasswordTextField, loginButtoon, divedeLine, pushSignUpViewButton)
+                         inputPasswordTextField, signInButton, divideLineButton, pushSignUpViewButton)
     }
     
     override func setLayout() {
@@ -69,21 +70,21 @@ final class SignInViewController: BaseVC<SignInViewModel> {
             $0.leading.trailing.equalToSuperview().inset(26)
         }
     
-        loginButtoon.snp.makeConstraints {
+        signInButton.snp.makeConstraints {
             $0.top.equalTo(inputPasswordTextField.snp.bottom).offset(52)
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(49)
         }
         
-        divedeLine.snp.makeConstraints {
-            $0.top.equalTo(loginButtoon.snp.bottom).offset(20)
+        divideLineButton.snp.makeConstraints {
+            $0.top.equalTo(signInButton.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(50)
             $0.height.equalTo(1)
         }
         
         pushSignUpViewButton.snp.makeConstraints {
             $0.height.equalTo(24)
-            $0.top.equalTo(divedeLine.snp.bottom).offset(5)
+            $0.top.equalTo(divideLineButton.snp.bottom).offset(5)
             $0.leading.trailing.equalToSuperview().inset(140)
         }
     }
