@@ -37,7 +37,7 @@ class SignInViewController: BaseVC<SignInViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(subView: titleLabel, subTitleLabel, inputIdTextField, inputPasswordTextField, loginButtoon)
+        view.addSubviews(titleLabel, subTitleLabel, inputIdTextField, inputPasswordTextField, loginButtoon)
     }
     
     override func setLayout() {
