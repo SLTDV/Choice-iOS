@@ -27,6 +27,6 @@ class UnderLineTextField: UITextField {
             attributes: [NSAttributedString.Key.foregroundColor: UIColor.lightGray]
         )
         
-        underLineView.backgroundColor = UIColor(red: 0.25, green: 0.26, blue: 0.58, alpha: 1)
+        underLineView.backgroundColor = .gray
     }
 }
