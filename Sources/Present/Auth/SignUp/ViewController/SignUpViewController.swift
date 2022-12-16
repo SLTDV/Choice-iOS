@@ -13,6 +13,8 @@ import Then
 
 class SignUpViewController: BaseVC<SignUpViewModel> {
     
+    lazy var restoreFrameYValue = 0.0
+    
     private let titleLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 28, weight: .medium)
         $0.text = "Choice"
@@ -33,17 +35,33 @@ class SignUpViewController: BaseVC<SignUpViewModel> {
     }
     
     private let inputPasswordTextfield = UnderLineTextField().then {
+        $0.isSecureTextEntry = true
         $0.setPlaceholder(placeholder: "비밀번호")
     }
     
     private let inputCheckPasswordTextfield = UnderLineTextField().then {
+        $0.isSecureTextEntry = true
         $0.setPlaceholder(placeholder: "비밀번호확인")
     }
     
     private let signUpButton = UIButton().then {
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        $0.layer.cornerRadius = 8
         $0.setTitleColor(.white, for: .normal)
-        $0.backgroundColor = .black
+        $0.backgroundColor = .init(red: 0.89, green: 0.89, blue: 0.89, alpha: 1)
         $0.setTitle("회원가입", for: .normal)
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.addKeyboardNotifications()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        self.removeKeyboardNotifications()
+    }
+    
+    override func configureVC() {
+        restoreFrameYValue = self.view.frame.origin.y
     }
     
     override func addView() {
@@ -67,24 +85,56 @@ class SignUpViewController: BaseVC<SignUpViewModel> {
         }
         
         inputIdTextfield.snp.makeConstraints {
-            $0.top.equalTo(inputNicknameTextfield.snp.bottom).offset(30)
+            $0.top.equalTo(inputNicknameTextfield.snp.bottom).offset(40)
             $0.leading.trailing.equalToSuperview().inset(26)
         }
         
         inputPasswordTextfield.snp.makeConstraints {
-            $0.top.equalTo(inputIdTextfield.snp.bottom).offset(30)
+            $0.top.equalTo(inputIdTextfield.snp.bottom).offset(40)
             $0.leading.trailing.equalToSuperview().inset(26)
         }
         
         inputCheckPasswordTextfield.snp.makeConstraints {
-            $0.top.equalTo(inputPasswordTextfield.snp.bottom).offset(30)
+            $0.top.equalTo(inputPasswordTextfield.snp.bottom).offset(40)
             $0.leading.trailing.equalToSuperview().inset(26)
         }
         
         signUpButton.snp.makeConstraints {
-            $0.top.equalTo(inputCheckPasswordTextfield).offset(30)
+            $0.top.equalTo(inputCheckPasswordTextfield.snp.bottom).offset(48)
             $0.height.equalTo(49)
             $0.leading.trailing.equalToSuperview().inset(26)
         }
     }
+}
+
+extension SignUpViewController {
+    
+    @objc private func showKeyboard(_ notification: Notification) {
+        if self.view.frame.origin.y == restoreFrameYValue {
+            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+                let keyboardHeight = keyboardFrame.cgRectValue.height
+                self.view.frame.origin.y -= keyboardHeight - 240
+            }
+        }
+    }
+
+    @objc private func hideKeyboard(_ notification: Notification) {
+        if self.view.frame.origin.y != restoreFrameYValue {
+            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+                let keyboardHeight = keyboardFrame.cgRectValue.height
+                self.view.frame.origin.y += keyboardHeight - 240
+            }
+        }
+    }
+    
+    private func addKeyboardNotifications(){
+        NotificationCenter.default.addObserver(self, selector: #selector(self.showKeyboard(_:)), name: UIResponder.keyboardWillShowNotification , object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.hideKeyboard(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
+    private func removeKeyboardNotifications(){
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification , object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+
 }
