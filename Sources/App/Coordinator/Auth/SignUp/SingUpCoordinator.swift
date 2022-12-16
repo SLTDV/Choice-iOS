@@ -1,6 +1,6 @@
 import Foundation
 
-class SignUpCoordinator: BaseCoordinator {
+final class SignUpCoordinator: BaseCoordinator {
     override func start() {
         let vm = SignUpViewModel(coordinator: self)
         let vc = SignUpViewController(viewModel: vm)

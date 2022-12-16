@@ -1,6 +1,6 @@
 import UIKit
 
-class SignInViewController: BaseVC<SignInViewModel> {
+final class SignInViewController: BaseVC<SignInViewModel> {
     private let titleLabel = UILabel().then {
         $0.text = "Choice"
         $0.textColor = .black

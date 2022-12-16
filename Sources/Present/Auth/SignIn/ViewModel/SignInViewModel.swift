@@ -1,6 +1,6 @@
 import Foundation
 
-class SignInViewModel: BaseViewModel {
+final class SignInViewModel: BaseViewModel {
     func pushSignUpVC() {
         coordinator.navigate(to: .signUpIsRequired)
     }
