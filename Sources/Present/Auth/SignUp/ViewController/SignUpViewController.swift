@@ -1,7 +1,7 @@
 import UIKit
 
-class SignUpViewController: BaseVC<SignUpViewModel> {
-    
+final class SignUpViewController: BaseVC<SignUpViewModel> {
+
     lazy var restoreFrameYValue = 0.0
     
     private let titleLabel = UILabel().then {

@@ -1,5 +1,4 @@
 import Foundation
 
-class SignUpViewModel: BaseViewModel {
-    
+final class SignUpViewModel: BaseViewModel {
 }

@@ -1,14 +1,6 @@
-//
-//  AppCoordinator.swift
-//  Choice
-//
-//  Created by 민도현 on 2022/12/15.
-//  Copyright © 2022 com.dohyeon. All rights reserved.
-//
-
 import UIKit
 
-class AppCoordinator: Coordinator {
+final class AppCoordinator: Coordinator {
     
     var navigationController: UINavigationController
     var childCoordinator: [Coordinator] = []
@@ -22,10 +14,10 @@ class AppCoordinator: Coordinator {
     }
     
     func start() {
-        let signUpController = SignIUpCoordinator(navigationController: navigationController)
+        let signInController = SignInCoordinator(navigationController: navigationController)
         window?.rootViewController = navigationController
         
-        start(coordinator: signUpController)
+        start(coordinator: signInController)
     }
     
     func start(coordinator: Coordinator) {

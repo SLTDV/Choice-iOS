@@ -1,18 +1,26 @@
-//
-//  SignInCoordinator.swift
-//  Choice
-//
-//  Created by 민도현 on 2022/12/15.
-//  Copyright © 2022 com.dohyeon. All rights reserved.
-//
-
 import Foundation
 
-class SignInCoordinator: BaseCoordinator {
+final class SignInCoordinator: BaseCoordinator {
     override func start() {
         let vm = SignInViewModel(coordinator: self)
         let vc = SignInViewController(viewModel: vm)
         
         navigationController.setViewControllers([vc], animated: true)
+    }
+    
+    override func navigate(to step: ChoiceStep) {
+        switch step {
+        case .signUpIsRequired:
+            signUpIsRequired()
+        }
+    }
+}
+
+extension SignInCoordinator {
+    private func signUpIsRequired() {
+        let vc = SignUpCoordinator(navigationController: navigationController)
+        vc.parentCoordinator = self
+        childCoordinators.append(vc)
+        vc.start()
     }
 }
