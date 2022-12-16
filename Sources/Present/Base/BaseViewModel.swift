@@ -1,9 +1,9 @@
 import UIKit
 
 class BaseViewModel {
-    let coordinator: baseCoordinator
+    let coordinator: BaseCoordinator
     
-    init(coordinator: baseCoordinator){
+    init(coordinator: BaseCoordinator){
         self.coordinator = coordinator
     }
 }
