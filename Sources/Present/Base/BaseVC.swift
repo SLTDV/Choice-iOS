@@ -1,6 +1,4 @@
 import UIKit
-import SnapKit
-import Then
 
 class BaseVC<T: BaseViewModel>: UIViewController{
     let bound = UIScreen.main.bounds
