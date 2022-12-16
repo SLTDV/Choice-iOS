@@ -8,7 +8,7 @@
 
 import Foundation
 
-class SignInCoordinator: baseCoordinator {
+class SignInCoordinator: BaseCoordinator {
     override func start() {
         let vm = SignInViewModel(coordinator: self)
         let vc = SignInViewController(viewModel: vm)
