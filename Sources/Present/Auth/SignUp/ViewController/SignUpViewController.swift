@@ -24,9 +24,67 @@ class SignUpViewController: BaseVC<SignUpViewModel> {
         $0.text = "선택의 고민을 한 번에"
     }
     
+    private let inputNicknameTextfield = UnderLineTextField().then {
+        $0.setPlaceholder(placeholder: "닉네임")
+    }
+    
+    private let inputIdTextfield = UnderLineTextField().then {
+        $0.setPlaceholder(placeholder: "아이디")
+    }
+    
+    private let inputPasswordTextfield = UnderLineTextField().then {
+        $0.setPlaceholder(placeholder: "비밀번호")
+    }
+    
+    private let inputCheckPasswordTextfield = UnderLineTextField().then {
+        $0.setPlaceholder(placeholder: "비밀번호확인")
+    }
+    
+    private let signUpButton = UIButton().then {
+        $0.setTitleColor(.white, for: .normal)
+        $0.backgroundColor = .black
+        $0.setTitle("회원가입", for: .normal)
+    }
+    
     override func addView() {
+        view.addSubviews(titleLabel, subTitleLabel, inputNicknameTextfield, inputIdTextfield, inputPasswordTextfield, inputCheckPasswordTextfield, signUpButton)
     }
     
     override func setLayout() {
+        titleLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(101)
+            $0.leading.equalToSuperview().inset(25)
+        }
+        
+        subTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(9)
+            $0.leading.equalTo(titleLabel.snp.leading)
+        }
+        
+        inputNicknameTextfield.snp.makeConstraints {
+            $0.top.equalTo(subTitleLabel.snp.bottom).offset(77)
+            $0.leading.trailing.equalToSuperview().inset(26)
+        }
+        
+        inputIdTextfield.snp.makeConstraints {
+            $0.top.equalTo(inputNicknameTextfield.snp.bottom).offset(30)
+            $0.leading.trailing.equalToSuperview().inset(26)
+        }
+        
+        inputPasswordTextfield.snp.makeConstraints {
+            $0.top.equalTo(inputIdTextfield.snp.bottom).offset(30)
+            $0.leading.trailing.equalToSuperview().inset(26)
+        }
+        
+        inputCheckPasswordTextfield.snp.makeConstraints {
+            $0.top.equalTo(inputPasswordTextfield.snp.bottom).offset(30)
+            $0.leading.trailing.equalToSuperview().inset(26)
+        }
+        
+        signUpButton.snp.makeConstraints {
+            $0.top.equalTo(inputCheckPasswordTextfield).offset(30)
+            $0.height.equalTo(49)
+            $0.leading.trailing.equalToSuperview().inset(26)
+        }
     }
 }
