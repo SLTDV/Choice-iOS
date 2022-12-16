@@ -14,10 +14,10 @@ class AppCoordinator: Coordinator {
     }
     
     func start() {
-        let signUpController = SignIUpCoordinator(navigationController: navigationController)
+        let signInController = SignInCoordinator(navigationController: navigationController)
         window?.rootViewController = navigationController
         
-        start(coordinator: signUpController)
+        start(coordinator: signInController)
     }
     
     func start(coordinator: Coordinator) {

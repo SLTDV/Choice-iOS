@@ -31,11 +31,16 @@ class SignInViewController: BaseVC<SignInViewModel> {
         $0.backgroundColor = .init(red: 0.37, green: 0.36, blue: 0.36, alpha: 1)
     }
     
-    private let pushSignUpViewButton = UIButton().then {
+    private lazy var pushSignUpViewButton = UIButton().then {
         $0.titleLabel?.font = .systemFont(ofSize: 12)
         $0.setTitle("회원가입", for: .normal)
         $0.setTitleColor(.gray, for: .normal)
         $0.backgroundColor = .white
+        $0.addTarget(self, action: #selector(pushSignUpViewButtonDidTap(_:)), for: .touchUpInside)
+    }
+    
+    @objc private func pushSignUpViewButtonDidTap(_ sender: UIButton) {
+        viewModel.pushSignUpVC()
     }
     
     override func addView() {
