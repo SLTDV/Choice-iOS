@@ -23,4 +23,11 @@ extension SignInCoordinator {
         childCoordinators.append(vc)
         vc.start()
     }
+    
+    private func mainVCIsRequired() {
+        let vc = MainCoordinator(navigationController: navigationController)
+        vc.parentCoordinator = self
+        childCoordinators.append(vc)
+        vc.start()
+    }
 }

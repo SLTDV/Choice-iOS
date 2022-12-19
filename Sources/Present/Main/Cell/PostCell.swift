@@ -20,7 +20,7 @@ class PostCell: UITableViewCell {
         $0.font = .systemFont(ofSize: 12)
     }
     
-    private let imageView = UIImageView().then {
+    private let postImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFit
     }
 }
