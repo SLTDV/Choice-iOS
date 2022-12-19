@@ -11,14 +11,16 @@ import UIKit
 class MainViewController: BaseVC<MainViewModel> {
     
     private let addPostButton = UIBarButtonItem().then {
+        $0.tintColor = .black
         $0.image = UIImage(systemName: "plus.app")
     }
     
     private let profileButton = UIBarButtonItem().then {
+        $0.tintColor = .black
         $0.image = UIImage(systemName: "person.crop.circle.fill")
     }
     
     override func configureVC() {
-        navigationItem.setRightBarButtonItems([addPostButton, profileButton], animated: true)
+        navigationItem.rightBarButtonItems = [profileButton, addPostButton]
     }
 }

@@ -12,6 +12,8 @@ final class SignInCoordinator: BaseCoordinator {
         switch step {
         case .signUpIsRequired:
             signUpIsRequired()
+        case .mainVCIsRequried:
+            mainVCIsRequired()
         }
     }
 }
