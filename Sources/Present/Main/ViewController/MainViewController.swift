@@ -29,6 +29,12 @@ class MainViewController: BaseVC<MainViewModel> {
     }
     
     override func configureVC() {
+        let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { _ in print("최신순으로")})
+        let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { _ in print("인기순으로")})
+        
+        dropdownButton.showsMenuAsPrimaryAction = true
+        dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
+        
         navigationItem.title = "choice"
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
     }
