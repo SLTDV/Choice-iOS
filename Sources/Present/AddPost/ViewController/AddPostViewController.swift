@@ -1,15 +1,26 @@
 import UIKit
+import PhotosUI
 
 class AddPostViewController: BaseVC<AddPostViewModel> {
     
     private let addMainImageView = UIImageView().then {
+        $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
+        $0.clipsToBounds = true
+        $0.isUserInteractionEnabled = true
     }
+    
+    private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(addImage(_:)))
     
     private let plusIconImageView = UIImageView().then {
         $0.image = .init(systemName: "plus")
         $0.tintColor = .gray
         $0.contentMode = .scaleAspectFill
+    }
+    
+    let imagePicker = UIImagePickerController().then {
+        $0.sourceType = .photoLibrary
+        $0.allowsEditing = true
     }
     
     private let inputTitleTextField = UITextField().then {
@@ -26,7 +37,9 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.text = "내용입력"
         $0.font = .systemFont(ofSize: 16, weight: .medium)
         $0.textColor = .lightGray
-        $0.backgroundColor = .white
+        $0.layer.cornerRadius = 8
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = .init(red: 0.629, green: 0.629, blue: 0.629, alpha: 1)
     }
     
     private let topicTitleLabel = UILabel().then {
@@ -58,9 +71,17 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.layer.cornerRadius = 8
     }
     
+    @objc func addImage(_ sender: AnyObject) {
+        self.present(imagePicker, animated: true)
+    }
+    
     override func configureVC() {
         self.navigationItem.title = "게시물 작성"
+        
         inputDescriptionTextView.delegate = self
+        imagePicker.delegate = self
+        
+        addMainImageView.addGestureRecognizer(tapGesture)
     }
     
     override func addView() {
@@ -93,12 +114,12 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
         
         inputDescriptionTextView.snp.makeConstraints {
             $0.top.equalTo(divideLine.snp.bottom).offset(20)
-            $0.height.equalTo(50)
+            $0.height.equalTo(130)
             $0.leading.trailing.equalToSuperview().inset(32)
         }
         
         topicTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(inputDescriptionTextView.snp.bottom).offset(95)
+            $0.top.equalTo(inputDescriptionTextView.snp.bottom).offset(35)
             $0.leading.equalToSuperview().offset(32)
         }
         
@@ -151,5 +172,23 @@ extension AddPostViewController: UITextViewDelegate {
             textView.resignFirstResponder()
         }
         return true
+    }
+}
+
+extension AddPostViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        
+        var newImage: UIImage? = nil
+        
+        if let possibleImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+            newImage = possibleImage
+        } else if let possibleImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            newImage = possibleImage
+        }
+        
+        self.addMainImageView.image = newImage
+        picker.dismiss(animated: true, completion: nil)
+        
     }
 }
