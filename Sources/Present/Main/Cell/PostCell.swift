@@ -21,6 +21,9 @@ class PostCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        addView()
+        setLayout()
     }
     
     required init?(coder: NSCoder) {
@@ -38,18 +41,24 @@ class PostCell: UITableViewCell {
         }
         
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).inset(20)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(25)
         }
         
         postImageView.snp.makeConstraints {
-            $0.bottom.equalTo(voteView.snp.top).offset(50)
+            $0.bottom.equalTo(voteView.snp.top).offset(-50)
             $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(200)
         }
         
         voteView.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(21)
             $0.leading.trailing.equalToSuperview().inset(10)
         }
+    }
+    
+    func changeCellData(with model: PostModel) {
+        titleLabel.text = model.title
+        descriptionLabel.text = model.content
     }
 }

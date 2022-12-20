@@ -82,6 +82,7 @@ class VoteView: UIView {
             $0.leading.equalToSuperview()
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(10)
             $0.trailing.equalTo(secondVoteView.snp.leading).offset(-10)
+            $0.bottom.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width / 3 - 30)
             $0.height.equalTo(100)
         }
@@ -90,6 +91,7 @@ class VoteView: UIView {
             $0.trailing.equalToSuperview()
             $0.top.equalTo(secondVoteTitleLabel.snp.bottom).offset(10)
             $0.leading.equalTo(firstVoteView.snp.trailing).offset(10)
+            $0.bottom.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width / 1.5 - 30)
             $0.height.equalTo(100)
         }

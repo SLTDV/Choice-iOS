@@ -4,6 +4,8 @@ import RxCocoa
 
 class MainViewController: BaseVC<MainViewModel> {
     
+    var data = PostModel(idx: "123", thumbnail: "", title: "title", content: "contentasfsaf", firstVotingOption: "치킨", secondVotingOption: "피자", firstVotingCount: 12, secondVotingCount: 14)
+    
     private let addPostButton = UIBarButtonItem().then {
         $0.tintColor = .black
         $0.image = UIImage(systemName: "plus.app")
@@ -22,7 +24,9 @@ class MainViewController: BaseVC<MainViewModel> {
         $0.layer.cornerRadius = 5
     }
     
-    private let postTableView = UITableView()
+    private let postTableView = UITableView().then {
+        $0.register(PostCell.self, forCellReuseIdentifier: "PostCell")
+    }
     
     private let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { _ in })
     private let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { _ in })
@@ -33,10 +37,13 @@ class MainViewController: BaseVC<MainViewModel> {
         
         navigationItem.title = "choice"
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
+        
+        postTableView.dataSource = self
+        postTableView.rowHeight = 500
     }
     
     override func addView() {
-        view.addSubviews(dropdownButton)
+        view.addSubviews(dropdownButton, postTableView)
     }
     
     override func setLayout() {
@@ -46,5 +53,25 @@ class MainViewController: BaseVC<MainViewModel> {
             $0.width.equalTo(64)
             $0.height.equalTo(28)
         }
+        
+        postTableView.snp.makeConstraints {
+            $0.top.equalTo(dropdownButton.snp.bottom).offset(28)
+            $0.leading.trailing.equalToSuperview().inset(9)
+            $0.bottom.equalToSuperview()
+        }
+    }
+}
+
+extension MainViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 3
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as? PostCell else { return UITableViewCell() }
+        
+        cell.changeCellData(with: data)
+        
+        return cell
     }
 }
