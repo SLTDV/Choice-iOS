@@ -27,8 +27,6 @@ class MainViewController: BaseVC<MainViewModel> {
     private let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { _ in })
     private let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { _ in })
     
-    private let voteView = VoteView()
-    
     override func configureVC() {
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
         dropdownButton.showsMenuAsPrimaryAction = true
@@ -38,7 +36,7 @@ class MainViewController: BaseVC<MainViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(dropdownButton, voteView)
+        view.addSubviews(dropdownButton)
     }
     
     override func setLayout() {
@@ -47,10 +45,6 @@ class MainViewController: BaseVC<MainViewModel> {
             $0.trailing.equalToSuperview().inset(14)
             $0.width.equalTo(64)
             $0.height.equalTo(28)
-        }
-        
-        voteView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
         }
     }
 }

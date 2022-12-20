@@ -7,8 +7,31 @@
 //
 
 import UIKit
+import SnapKit
+import Then
 
 class VoteView: UIView {
+    
+    private let firstVoteTitleLabel = UILabel().then {
+        $0.text = "치킨"
+        $0.font = .systemFont(ofSize: 12, weight: .semibold)
+    }
+    
+    private let secondVoteTitleLabel = UILabel().then {
+        $0.text = "피자"
+        $0.font = .systemFont(ofSize: 12, weight: .semibold)
+    }
+    
+    private let firstVoteView = UIView().then {
+        $0.layer.cornerRadius = 10
+        $0.backgroundColor = .init(red: 0.99, green: 0.53, blue: 0.53, alpha: 1)
+    }
+    
+    private let secondVoteView = UIView().then {
+        $0.layer.cornerRadius = 10
+        $0.backgroundColor = .init(red: 0.53, green: 0.71, blue: 0.99, alpha: 1)
+    }
+    
     private let versusCircleLabel = UIView().then {
         $0.backgroundColor = .white
         $0.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
@@ -21,16 +44,6 @@ class VoteView: UIView {
         $0.text = "vs"
         $0.textColor = .gray
         $0.font = .systemFont(ofSize: 12, weight: .bold)
-    }
-    
-    private let firstVoteView = UIView().then {
-        $0.layer.cornerRadius = 10
-        $0.backgroundColor = .init(red: 0.99, green: 0.53, blue: 0.53, alpha: 1)
-    }
-    
-    private let secondVoteView = UIView().then {
-        $0.layer.cornerRadius = 10
-        $0.backgroundColor = .init(red: 0.53, green: 0.71, blue: 0.99, alpha: 1)
     }
     
     override init(frame: CGRect) {
@@ -50,29 +63,39 @@ class VoteView: UIView {
     }
     
     private func addView() {
-        self.addSubviews(firstVoteView, secondVoteView, versusCircleLabel)
+        self.addSubviews(firstVoteTitleLabel, secondVoteTitleLabel, firstVoteView, secondVoteView, versusCircleLabel)
         versusCircleLabel.addSubview(versusLabel)
     }
     
     private func setLayout() {
+        firstVoteTitleLabel.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.leading.equalToSuperview().inset(10)
+        }
+        
+        secondVoteTitleLabel.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.trailing.equalToSuperview().inset(10)
+        }
+        
         firstVoteView.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(30)
-            $0.centerY.equalToSuperview()
+            $0.leading.equalToSuperview()
+            $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(10)
             $0.trailing.equalTo(secondVoteView.snp.leading).offset(-10)
             $0.width.equalTo(UIScreen.main.bounds.width / 3 - 30)
             $0.height.equalTo(100)
         }
         
         secondVoteView.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(30)
-            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview()
+            $0.top.equalTo(secondVoteTitleLabel.snp.bottom).offset(10)
             $0.leading.equalTo(firstVoteView.snp.trailing).offset(10)
             $0.width.equalTo(UIScreen.main.bounds.width / 1.5 - 30)
             $0.height.equalTo(100)
         }
         
         versusCircleLabel.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
+            $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(35)
             $0.size.equalTo(50)
             $0.leading.equalTo(firstVoteView.snp.trailing).offset(-20)
             $0.trailing.equalTo(secondVoteView.snp.leading).offset(20)
