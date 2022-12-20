@@ -6,6 +6,12 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
     }
     
+    private let plusIconImageView = UIImageView().then {
+        $0.image = .init(systemName: "plus")
+        $0.tintColor = .gray
+        $0.contentMode = .scaleAspectFill
+    }
+    
     private let inputTitleTextField = UITextField().then {
         $0.placeholder = "제목입력"
         $0.textColor = .lightGray
@@ -58,7 +64,7 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(addMainImageView, inputTitleTextField, divideLine, inputDescriptionTextView,
+        view.addSubviews(addMainImageView, plusIconImageView, inputTitleTextField, divideLine, inputDescriptionTextView,
                          topicTitleLabel, firstSetTopicButton, secondSetTopicButton, pushAddPostViewButton)
     }
     
@@ -67,6 +73,11 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
             $0.top.equalToSuperview().inset(99)
             $0.height.equalTo(223)
             $0.leading.trailing.equalToSuperview()
+        }
+        
+        plusIconImageView.snp.makeConstraints {
+            $0.height.equalTo(25)
+            $0.center.equalTo(addMainImageView)
         }
         
         inputTitleTextField.snp.makeConstraints {
