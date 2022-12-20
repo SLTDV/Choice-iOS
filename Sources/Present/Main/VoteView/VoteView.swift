@@ -1,0 +1,85 @@
+//
+//  VoteView.swift
+//  Choice
+//
+//  Created by 민도현 on 2022/12/20.
+//  Copyright © 2022 com.dohyeon. All rights reserved.
+//
+
+import UIKit
+
+class VoteView: UIView {
+    private let versusCircleLabel = UIView().then {
+        $0.backgroundColor = .white
+        $0.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 25.5
+        $0.layer.cornerCurve = .continuous
+    }
+    
+    private let versusLabel = UILabel().then {
+        $0.text = "vs"
+        $0.textColor = .gray
+        $0.font = .systemFont(ofSize: 12, weight: .bold)
+    }
+    
+    private let firstVoteView = UIView().then {
+        $0.layer.cornerRadius = 10
+        $0.backgroundColor = .init(red: 0.99, green: 0.53, blue: 0.53, alpha: 1)
+    }
+    
+    private let secondVoteView = UIView().then {
+        $0.layer.cornerRadius = 10
+        $0.backgroundColor = .init(red: 0.53, green: 0.71, blue: 0.99, alpha: 1)
+    }
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        
+        addView()
+        setLayout()
+        
+        UIView.animate(withDuration: 2.0) {
+            self.firstVoteView.frame = CGRect(x: 0, y: 0, width: 40, height: 0)
+            self.secondVoteView.frame = CGRect(x: 0, y: 0, width: -40, height: 0)
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func addView() {
+        self.addSubviews(firstVoteView, secondVoteView, versusCircleLabel)
+        versusCircleLabel.addSubview(versusLabel)
+    }
+    
+    private func setLayout() {
+        firstVoteView.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(30)
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalTo(secondVoteView.snp.leading).offset(-10)
+            $0.width.equalTo(UIScreen.main.bounds.width / 3 - 30)
+            $0.height.equalTo(100)
+        }
+        
+        secondVoteView.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(30)
+            $0.centerY.equalToSuperview()
+            $0.leading.equalTo(firstVoteView.snp.trailing).offset(10)
+            $0.width.equalTo(UIScreen.main.bounds.width / 1.5 - 30)
+            $0.height.equalTo(100)
+        }
+        
+        versusCircleLabel.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.size.equalTo(50)
+            $0.leading.equalTo(firstVoteView.snp.trailing).offset(-20)
+            $0.trailing.equalTo(secondVoteView.snp.leading).offset(20)
+        }
+        
+        versusLabel.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+    }
+}
