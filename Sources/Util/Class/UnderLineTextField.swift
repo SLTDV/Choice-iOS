@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 
-class UnderLineTextField: UITextField {
+final class UnderLineTextField: UITextField {
     
     private lazy var underLineView = UIView()
     
