@@ -53,6 +53,7 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     override func configureVC() {
+        self.navigationItem.title = "게시물 작성"
         inputDescriptionTextView.delegate = self
     }
     
@@ -110,6 +111,9 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
             $0.height.equalTo(49)
         }
     }
+}
+
+extension AddPostViewController: UITextViewDelegate {
     
     private func setTextViewPlaceholder() {
         if inputDescriptionTextView.text == "" {
@@ -120,33 +124,21 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
             inputDescriptionTextView.textColor = UIColor.black
         }
     }
-}
-
-extension AddPostViewController: UITextViewDelegate {
-        
     
-    
-    //textView 편집 시작
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        setTextViewPlaceholder()
+    }
 
-        func textViewDidBeginEditing(_ textView: UITextView) {
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text == "" {
             setTextViewPlaceholder()
         }
-
-        //textView 편집 끝
-
-        func textViewDidEndEditing(_ textView: UITextView) {
-            if textView.text == "" {
-                setTextViewPlaceholder()
-            }
+    }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
         }
-
-        //textView 특정 text 가 대체될 때 호출
-        //개행문자 시 textView 의 활성화를 포기하는 요청을 보내서 키보드를 내림
-
-        func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-            if text == "\n" {
-                textView.resignFirstResponder()
-            }
-            return true
-        }
+        return true
+    }
 }
