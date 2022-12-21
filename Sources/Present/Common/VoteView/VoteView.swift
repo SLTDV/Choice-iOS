@@ -12,14 +12,14 @@ import Then
 
 class VoteView: UIView {
     
-    private let firstVoteTitleLabel = UILabel().then {
-        $0.textColor = .black
-        $0.font = .systemFont(ofSize: 12, weight: .semibold)
+    private let firstVoteTitleLabel = UIButton().then {
+        $0.setTitleColor(.black, for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
     }
     
-    private let secondVoteTitleLabel = UILabel().then {
-        $0.textColor = .black
-        $0.font = .systemFont(ofSize: 12, weight: .semibold)
+    private let secondVoteTitleLabel = UIButton().then {
+        $0.setTitleColor(.black, for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
     }
     
     private let firstVoteView = UIView().then {
@@ -30,6 +30,26 @@ class VoteView: UIView {
     private let secondVoteView = UIView().then {
         $0.layer.cornerRadius = 10
         $0.backgroundColor = .init(red: 0.53, green: 0.71, blue: 0.99, alpha: 1)
+    }
+    
+    private let firstVoteCheckLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 24, weight: .semibold)
+        $0.textColor = .white
+        $0.text = "✓"
+    }
+    
+    private let secondVoteCheckLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 24, weight: .semibold)
+        $0.textColor = .white
+        $0.text = "✓"
+    }
+    
+    private let firstVotingCount = UILabel().then {
+        $0.font = .systemFont(ofSize: 15, weight: .semibold)
+    }
+    
+    private let secondVotingCount = UILabel().then {
+        $0.font = .systemFont(ofSize: 15, weight: .semibold)
     }
     
     private let versusCircleLabel = UIView().then {
@@ -64,6 +84,8 @@ class VoteView: UIView {
     
     private func addView() {
         self.addSubviews(firstVoteTitleLabel, secondVoteTitleLabel, firstVoteView, secondVoteView, versusCircleLabel)
+        firstVoteView.addSubviews(firstVoteCheckLabel, firstVotingCount)
+        secondVoteView.addSubviews(secondVoteCheckLabel, secondVotingCount)
         versusCircleLabel.addSubview(versusLabel)
     }
     
@@ -109,7 +131,7 @@ class VoteView: UIView {
     }
 
     func changeVoteTitleData(with model: [PostModel]) {
-        firstVoteTitleLabel.text = model[0].firstVotingOption
-        secondVoteTitleLabel.text = model[0].secondVotingOption
+        firstVoteTitleLabel.setTitle(model[0].firstVotingOption, for: .normal)
+        secondVoteTitleLabel.setTitle(model[0].secondVotingOption, for: .normal)
     }
 }
