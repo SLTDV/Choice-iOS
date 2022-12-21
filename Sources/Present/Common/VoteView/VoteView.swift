@@ -93,8 +93,8 @@ class VoteView: UIView {
                 self.firstVoteButton.frame = .zero
                 self.secondVoteButton.frame = .zero
                 
-                self.firstVoteButton.backgroundColor = .init(red: 0.99, green: 0.53, blue: 0.53, alpha: 1)
-                self.secondVoteButton.backgroundColor = .init(red: 0.53, green: 0.71, blue: 0.99, alpha: 1)
+                self.firstVoteButton.backgroundColor = ChoiceAsset.Colors.firstVoteColor.color
+                self.secondVoteButton.backgroundColor = ChoiceAsset.Colors.secondVoteColor.color
                 self.firstVoteCheckLabel.isHidden = false
                 
                 self.firstVoteButton.isEnabled = false
@@ -111,8 +111,8 @@ class VoteView: UIView {
                 self.firstVoteButton.frame = .zero
                 self.secondVoteButton.frame = .zero
                 
-                self.firstVoteButton.backgroundColor = .init(red: 0.99, green: 0.53, blue: 0.53, alpha: 1)
-                self.secondVoteButton.backgroundColor = .init(red: 0.53, green: 0.71, blue: 0.99, alpha: 1)
+                self.firstVoteButton.backgroundColor = ChoiceAsset.Colors.firstVoteColor.color
+                self.secondVoteButton.backgroundColor = ChoiceAsset.Colors.secondVoteColor.color
                 self.secondVoteCheckLabel.isHidden = false
                 
                 self.firstVoteButton.isEnabled = false
