@@ -28,12 +28,12 @@ class VoteView: UIView {
     
     private let firstVoteButton = UIButton().then {
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = .init(red: 0.99, green: 0.53, blue: 0.53, alpha: 1)
+        $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
     }
     
     private let secondVoteButton = UIButton().then {
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = .init(red: 0.53, green: 0.71, blue: 0.99, alpha: 1)
+        $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
     }
     
     private let firstVoteCheckLabel = UILabel().then {
@@ -90,31 +90,37 @@ class VoteView: UIView {
     private func voteButtonDidTap() {
         firstVoteButton.rx.tap
             .bind(onNext: {
-                self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
-                self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                self.firstVoteButton.frame = .zero
+                self.secondVoteButton.frame = .zero
+                
+                self.firstVoteButton.backgroundColor = .init(red: 0.99, green: 0.53, blue: 0.53, alpha: 1)
+                self.secondVoteButton.backgroundColor = .init(red: 0.53, green: 0.71, blue: 0.99, alpha: 1)
                 self.firstVoteCheckLabel.isHidden = false
                 
                 self.firstVoteButton.isEnabled = false
                 self.secondVoteButton.isEnabled = false
                 
                 UIView.animate(withDuration: 2.0) {
-                    self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 40, height: 0)
-                    self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -40, height: 0)
+                    self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
+                    self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
                 }
             }).disposed(by: disposeBag)
         
         secondVoteButton.rx.tap
             .bind(onNext: {
-                self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
-                self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                self.firstVoteButton.frame = .zero
+                self.secondVoteButton.frame = .zero
+                
+                self.firstVoteButton.backgroundColor = .init(red: 0.99, green: 0.53, blue: 0.53, alpha: 1)
+                self.secondVoteButton.backgroundColor = .init(red: 0.53, green: 0.71, blue: 0.99, alpha: 1)
                 self.secondVoteCheckLabel.isHidden = false
                 
                 self.firstVoteButton.isEnabled = false
                 self.secondVoteButton.isEnabled = false
                 
                 UIView.animate(withDuration: 2.0) {
-                    self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 40, height: 0)
-                    self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -40, height: 0)
+                    self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
+                    self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
                 }
             }).disposed(by: disposeBag)
     }
@@ -142,7 +148,7 @@ class VoteView: UIView {
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(10)
             $0.trailing.equalTo(secondVoteButton.snp.leading).offset(-10)
             $0.bottom.equalToSuperview()
-            $0.width.equalTo(UIScreen.main.bounds.width / 3 - 30)
+            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 30)
             $0.height.equalTo(100)
         }
         
@@ -151,7 +157,7 @@ class VoteView: UIView {
             $0.top.equalTo(secondVoteTitleLabel.snp.bottom).offset(10)
             $0.leading.equalTo(firstVoteButton.snp.trailing).offset(10)
             $0.bottom.equalToSuperview()
-            $0.width.equalTo(UIScreen.main.bounds.width / 1.5 - 30)
+            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 30)
             $0.height.equalTo(100)
         }
         
