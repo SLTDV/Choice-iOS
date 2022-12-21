@@ -19,8 +19,8 @@ final class SignUpViewController: BaseVC<SignUpViewModel> {
         $0.setPlaceholder(placeholder: "닉네임")
     }
     
-    private let inputIdTextfield = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "아이디")
+    private let inputEmailTextfield = UnderLineTextField().then {
+        $0.setPlaceholder(placeholder: "이메일")
     }
     
     private let inputPasswordTextfield = UnderLineTextField().then {
@@ -33,12 +33,28 @@ final class SignUpViewController: BaseVC<SignUpViewModel> {
         $0.isSecureTextEntry = true
     }
     
-    private let signUpButton = UIButton().then {
+    private lazy var signUpButton = UIButton().then {
+        $0.addTarget(self, action: #selector(pushSignUpButton), for: .touchUpInside)
         $0.setTitle("회원가입", for: .normal)
         $0.setTitleColor(.white, for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         $0.backgroundColor = .init(red: 0.89, green: 0.89, blue: 0.89, alpha: 1)
         $0.layer.cornerRadius = 8
+    }
+    
+    private let warningLabel = UILabel().then {
+        $0.isHidden = true
+        $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
+        
+    }
+    
+    @objc private func pushSignUpButton(_ sender: UIButton) {
+        guard let nickname = inputNicknameTextfield.text else { return }
+        guard let email = inputEmailTextfield.text else { return }
+        guard let password = inputPasswordTextfield.text else { return }
+        
+        
+        viewModel.login(nickname: nickname, email: email, password: password)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -54,7 +70,7 @@ final class SignUpViewController: BaseVC<SignUpViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(titleLabel, subTitleLabel, inputNicknameTextfield, inputIdTextfield,
+        view.addSubviews(titleLabel, subTitleLabel, inputNicknameTextfield, inputEmailTextfield,
                          inputPasswordTextfield, inputCheckPasswordTextfield, signUpButton)
     }
     
@@ -74,13 +90,13 @@ final class SignUpViewController: BaseVC<SignUpViewModel> {
             $0.leading.trailing.equalToSuperview().inset(26)
         }
         
-        inputIdTextfield.snp.makeConstraints {
+        inputEmailTextfield.snp.makeConstraints {
             $0.top.equalTo(inputNicknameTextfield.snp.bottom).offset(40)
             $0.leading.trailing.equalToSuperview().inset(26)
         }
         
         inputPasswordTextfield.snp.makeConstraints {
-            $0.top.equalTo(inputIdTextfield.snp.bottom).offset(40)
+            $0.top.equalTo(inputEmailTextfield.snp.bottom).offset(40)
             $0.leading.trailing.equalToSuperview().inset(26)
         }
         
@@ -94,6 +110,10 @@ final class SignUpViewController: BaseVC<SignUpViewModel> {
             $0.height.equalTo(49)
             $0.leading.trailing.equalToSuperview().inset(26)
         }
+    }
+    
+    override func bindVM() {
+        
     }
 }
 
