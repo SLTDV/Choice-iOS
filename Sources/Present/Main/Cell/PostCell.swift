@@ -23,7 +23,6 @@ class PostCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         contentView.layer.cornerRadius = 10
-        
         contentView.backgroundColor = .white
         self.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
         

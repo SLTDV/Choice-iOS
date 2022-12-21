@@ -20,7 +20,7 @@ class MainViewController: BaseVC<MainViewModel> {
         $0.setTitle("정렬 ↓", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
-        $0.backgroundColor = UIColor(red: 0.94, green: 0.94, blue: 0.94, alpha: 1)
+        $0.backgroundColor = .white
         $0.layer.cornerRadius = 5
     }
     
@@ -34,11 +34,13 @@ class MainViewController: BaseVC<MainViewModel> {
     override func configureVC() {
         view.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
         
-        dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
-        dropdownButton.showsMenuAsPrimaryAction = true
+//        navigationController?.navigationBar.backgroundColor = .red
         
         navigationItem.title = "choice"
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
+        
+        dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
+        dropdownButton.showsMenuAsPrimaryAction = true
         
         postTableView.dataSource = self
         postTableView.rowHeight = 500
