@@ -8,8 +8,6 @@ public extension TargetDependency.SPM {
     static let SnapKit = TargetDependency.package(product: "SnapKit")
     static let Then = TargetDependency.package(product: "Then")
     static let Kingfisher = TargetDependency.package(product: "Kingfisher")
-    static let RxSwift = TargetDependency.package(product: "RxSwift")
-    static let RxCocoa = TargetDependency.package(product: "RxCocoa")
 }
 
 public extension Package {
@@ -22,10 +20,4 @@ public extension Package {
     static let Kingfisher = Package.remote(
         url: "https://github.com/onevcat/Kingfisher",
         requirement: .upToNextMajor(from: "7.4.1"))
-    static let RxSwift = Package.remote(
-        url: "https://github.com/ReactiveX/RxSwift",
-        requirement: .upToNextMajor(from: "6.5.0"))
-    static let RxCocoa = Package.remote(
-        url: "https://github.com/ReactiveX/RxSwift",
-        requirement: .upToNextMajor(from: "6.5.0"))
 }

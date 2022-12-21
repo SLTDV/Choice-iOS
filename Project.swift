@@ -9,9 +9,7 @@ let project = Project(
     organizationName: organizationName, packages: [
         .SnapKit,
         .Then,
-        .Kingfisher,
-        .RxSwift,
-        .RxCocoa
+        .Kingfisher
     ],
     targets: [
         Target(
@@ -26,9 +24,7 @@ let project = Project(
             dependencies: [
                 .SPM.SnapKit,
                 .SPM.Then,
-                .SPM.Kingfisher,
-                .SPM.RxSwift,
-                .SPM.RxCocoa
+                .SPM.Kingfisher
             ]
         )
     ]
