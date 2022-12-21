@@ -22,6 +22,9 @@ class PostCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        contentView.layer.cornerRadius = 10
+        contentView.layer.masksToBounds = true
+        
         addView()
         setLayout()
     }
@@ -46,7 +49,7 @@ class PostCell: UITableViewCell {
         }
         
         postImageView.snp.makeConstraints {
-            $0.bottom.equalTo(voteView.snp.top).offset(-50)
+            $0.bottom.equalTo(voteView.snp.top).offset(-10)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(200)
         }
@@ -57,8 +60,10 @@ class PostCell: UITableViewCell {
         }
     }
     
-    func changeCellData(with model: PostModel) {
-        titleLabel.text = model.title
-        descriptionLabel.text = model.content
+    func changeCellData(with model: [PostModel]) {
+        titleLabel.text = model[0].title
+        descriptionLabel.text = model[0].content
+        
+        voteView.changeVoteTitleData(with: model)
     }
 }

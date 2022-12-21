@@ -13,12 +13,12 @@ import Then
 class VoteView: UIView {
     
     private let firstVoteTitleLabel = UILabel().then {
-        $0.text = "치킨"
+        $0.textColor = .black
         $0.font = .systemFont(ofSize: 12, weight: .semibold)
     }
     
     private let secondVoteTitleLabel = UILabel().then {
-        $0.text = "피자"
+        $0.textColor = .black
         $0.font = .systemFont(ofSize: 12, weight: .semibold)
     }
     
@@ -106,5 +106,10 @@ class VoteView: UIView {
         versusLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
+    }
+
+    func changeVoteTitleData(with model: [PostModel]) {
+        firstVoteTitleLabel.text = model[0].firstVotingOption
+        secondVoteTitleLabel.text = model[0].secondVotingOption
     }
 }

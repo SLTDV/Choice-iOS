@@ -4,7 +4,7 @@ import RxCocoa
 
 class MainViewController: BaseVC<MainViewModel> {
     
-    var data = PostModel(idx: "123", thumbnail: "", title: "title", content: "contentasfsaf", firstVotingOption: "치킨", secondVotingOption: "피자", firstVotingCount: 12, secondVotingCount: 14)
+    var data = PostModel(idx: "123", thumbnail: "", title: "오늘 저녁 메뉴", content: "오늘 저녁 메뉴를 골라주세요!  썸녀랑 첫 데이트 나왔는데  저녁으로 뭘 먹을까요??????", firstVotingOption: "컵라면", secondVotingOption: "스테이크", firstVotingCount: 12, secondVotingCount: 14)
     
     private let addPostButton = UIBarButtonItem().then {
         $0.tintColor = .black
@@ -32,6 +32,8 @@ class MainViewController: BaseVC<MainViewModel> {
     private let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { _ in })
     
     override func configureVC() {
+//        view.backgroundColor = .init(red: 0.94, green: 0.94, blue: 0.94, alpha: 1)
+        
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
         dropdownButton.showsMenuAsPrimaryAction = true
         
@@ -70,7 +72,7 @@ extension MainViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as? PostCell else { return UITableViewCell() }
         
-        cell.changeCellData(with: data)
+        cell.changeCellData(with: [data])
         
         return cell
     }
