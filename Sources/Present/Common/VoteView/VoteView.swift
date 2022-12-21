@@ -90,39 +90,37 @@ class VoteView: UIView {
     private func voteButtonDidTap() {
         firstVoteButton.rx.tap
             .bind(onNext: {
-                self.firstVoteButton.frame = .zero
-                self.secondVoteButton.frame = .zero
-                
-                self.firstVoteButton.backgroundColor = ChoiceAsset.Colors.firstVoteColor.color
-                self.secondVoteButton.backgroundColor = ChoiceAsset.Colors.secondVoteColor.color
-                self.firstVoteCheckLabel.isHidden = false
-                
-                self.firstVoteButton.isEnabled = false
-                self.secondVoteButton.isEnabled = false
-                
-                UIView.animate(withDuration: 2.0) {
-                    self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
-                    self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
-                }
+                self.classifyVoteButton(voteType: .first)
             }).disposed(by: disposeBag)
         
         secondVoteButton.rx.tap
             .bind(onNext: {
-                self.firstVoteButton.frame = .zero
-                self.secondVoteButton.frame = .zero
-                
-                self.firstVoteButton.backgroundColor = ChoiceAsset.Colors.firstVoteColor.color
-                self.secondVoteButton.backgroundColor = ChoiceAsset.Colors.secondVoteColor.color
-                self.secondVoteCheckLabel.isHidden = false
-                
-                self.firstVoteButton.isEnabled = false
-                self.secondVoteButton.isEnabled = false
-                
-                UIView.animate(withDuration: 2.0) {
-                    self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
-                    self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
-                }
+                self.classifyVoteButton(voteType: .second)
             }).disposed(by: disposeBag)
+    }
+    
+    private func classifyVoteButton(voteType: classifyVoteButtonType) {
+        switch voteType {
+        case .first:
+            self.firstVoteCheckLabel.isHidden = false
+        case .second:
+            self.secondVoteCheckLabel.isHidden = false
+        }
+        
+        self.firstVoteButton.frame = .zero
+        self.secondVoteButton.frame = .zero
+        
+        self.firstVoteButton.backgroundColor = ChoiceAsset.Colors.firstVoteColor.color
+        self.secondVoteButton.backgroundColor = ChoiceAsset.Colors.secondVoteColor.color
+        
+        self.firstVoteButton.isEnabled = false
+        self.secondVoteButton.isEnabled = false
+        
+        UIView.animate(withDuration: 2.0) {
+            self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
+            self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
+            
+        }
     }
     
     private func addView() {
