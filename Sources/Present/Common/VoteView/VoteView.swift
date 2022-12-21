@@ -9,46 +9,54 @@
 import UIKit
 import SnapKit
 import Then
+import RxSwift
+import RxCocoa
 
 class VoteView: UIView {
     
-    private let firstVoteTitleLabel = UIButton().then {
-        $0.setTitleColor(.black, for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
+    private let disposeBag = DisposeBag()
+    
+    private let firstVoteTitleLabel = UILabel().then {
+        $0.textColor = .black
+        $0.font = .systemFont(ofSize: 12, weight: .semibold)
     }
     
-    private let secondVoteTitleLabel = UIButton().then {
-        $0.setTitleColor(.black, for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
+    private let secondVoteTitleLabel = UILabel().then {
+        $0.textColor = .black
+        $0.font = .systemFont(ofSize: 12, weight: .semibold)
     }
     
-    private let firstVoteView = UIView().then {
+    private let firstVoteButton = UIButton().then {
         $0.layer.cornerRadius = 10
         $0.backgroundColor = .init(red: 0.99, green: 0.53, blue: 0.53, alpha: 1)
     }
     
-    private let secondVoteView = UIView().then {
+    private let secondVoteButton = UIButton().then {
         $0.layer.cornerRadius = 10
         $0.backgroundColor = .init(red: 0.53, green: 0.71, blue: 0.99, alpha: 1)
     }
     
     private let firstVoteCheckLabel = UILabel().then {
+        $0.isHidden = true
         $0.font = .systemFont(ofSize: 24, weight: .semibold)
         $0.textColor = .white
         $0.text = "✓"
     }
     
     private let secondVoteCheckLabel = UILabel().then {
+        $0.isHidden = true
         $0.font = .systemFont(ofSize: 24, weight: .semibold)
         $0.textColor = .white
         $0.text = "✓"
     }
     
     private let firstVotingCount = UILabel().then {
+        $0.isHidden = true
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
     }
     
     private let secondVotingCount = UILabel().then {
+        $0.isHidden = true
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
     }
     
@@ -72,20 +80,49 @@ class VoteView: UIView {
         addView()
         setLayout()
         
-        UIView.animate(withDuration: 2.0) {
-            self.firstVoteView.frame = CGRect(x: 0, y: 0, width: 40, height: 0)
-            self.secondVoteView.frame = CGRect(x: 0, y: 0, width: -40, height: 0)
-        }
+        voteButtonDidTap()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    private func voteButtonDidTap() {
+        firstVoteButton.rx.tap
+            .bind(onNext: {
+                self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                self.firstVoteCheckLabel.isHidden = false
+                
+                self.firstVoteButton.isEnabled = false
+                self.secondVoteButton.isEnabled = false
+                
+                UIView.animate(withDuration: 2.0) {
+                    self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 40, height: 0)
+                    self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -40, height: 0)
+                }
+            }).disposed(by: disposeBag)
+        
+        secondVoteButton.rx.tap
+            .bind(onNext: {
+                self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+                self.secondVoteCheckLabel.isHidden = false
+                
+                self.firstVoteButton.isEnabled = false
+                self.secondVoteButton.isEnabled = false
+                
+                UIView.animate(withDuration: 2.0) {
+                    self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 40, height: 0)
+                    self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -40, height: 0)
+                }
+            }).disposed(by: disposeBag)
+    }
+    
     private func addView() {
-        self.addSubviews(firstVoteTitleLabel, secondVoteTitleLabel, firstVoteView, secondVoteView, versusCircleLabel)
-        firstVoteView.addSubviews(firstVoteCheckLabel, firstVotingCount)
-        secondVoteView.addSubviews(secondVoteCheckLabel, secondVotingCount)
+        self.addSubviews(firstVoteTitleLabel, secondVoteTitleLabel, firstVoteButton, secondVoteButton, versusCircleLabel)
+        firstVoteButton.addSubviews(firstVoteCheckLabel, firstVotingCount)
+        secondVoteButton.addSubviews(secondVoteCheckLabel, secondVotingCount)
         versusCircleLabel.addSubview(versusLabel)
     }
     
@@ -100,29 +137,39 @@ class VoteView: UIView {
             $0.trailing.equalToSuperview().inset(10)
         }
         
-        firstVoteView.snp.makeConstraints {
+        firstVoteButton.snp.makeConstraints {
             $0.leading.equalToSuperview()
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(10)
-            $0.trailing.equalTo(secondVoteView.snp.leading).offset(-10)
+            $0.trailing.equalTo(secondVoteButton.snp.leading).offset(-10)
             $0.bottom.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width / 3 - 30)
             $0.height.equalTo(100)
         }
         
-        secondVoteView.snp.makeConstraints {
+        secondVoteButton.snp.makeConstraints {
             $0.trailing.equalToSuperview()
             $0.top.equalTo(secondVoteTitleLabel.snp.bottom).offset(10)
-            $0.leading.equalTo(firstVoteView.snp.trailing).offset(10)
+            $0.leading.equalTo(firstVoteButton.snp.trailing).offset(10)
             $0.bottom.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width / 1.5 - 30)
             $0.height.equalTo(100)
         }
         
+        firstVoteCheckLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(6)
+            $0.leading.equalToSuperview().inset(12)
+        }
+        
+        secondVoteCheckLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(6)
+            $0.trailing.equalToSuperview().inset(12)
+        }
+        
         versusCircleLabel.snp.makeConstraints {
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(35)
             $0.size.equalTo(50)
-            $0.leading.equalTo(firstVoteView.snp.trailing).offset(-20)
-            $0.trailing.equalTo(secondVoteView.snp.leading).offset(20)
+            $0.leading.equalTo(firstVoteButton.snp.trailing).offset(-20)
+            $0.trailing.equalTo(secondVoteButton.snp.leading).offset(20)
         }
         
         versusLabel.snp.makeConstraints {
@@ -131,7 +178,7 @@ class VoteView: UIView {
     }
 
     func changeVoteTitleData(with model: [PostModel]) {
-        firstVoteTitleLabel.setTitle(model[0].firstVotingOption, for: .normal)
-        secondVoteTitleLabel.setTitle(model[0].secondVotingOption, for: .normal)
+        firstVoteTitleLabel.text = model[0].firstVotingOption
+        secondVoteTitleLabel.text = model[0].secondVotingOption
     }
 }

@@ -73,6 +73,7 @@ extension MainViewController: UITableViewDataSource {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as? PostCell else { return UITableViewCell() }
         
         cell.changeCellData(with: [data])
+        cell.selectionStyle = .none
         
         return cell
     }
