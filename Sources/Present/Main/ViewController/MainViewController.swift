@@ -32,7 +32,7 @@ class MainViewController: BaseVC<MainViewModel> {
     private let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { _ in })
     
     override func configureVC() {
-//        view.backgroundColor = .init(red: 0.94, green: 0.94, blue: 0.94, alpha: 1)
+        view.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
         
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
         dropdownButton.showsMenuAsPrimaryAction = true
@@ -42,6 +42,8 @@ class MainViewController: BaseVC<MainViewModel> {
         
         postTableView.dataSource = self
         postTableView.rowHeight = 500
+        postTableView.separatorStyle = .none
+        postTableView.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
     }
     
     override func addView() {

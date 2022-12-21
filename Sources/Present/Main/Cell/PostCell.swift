@@ -23,7 +23,9 @@ class PostCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         contentView.layer.cornerRadius = 10
-        contentView.layer.masksToBounds = true
+        
+        contentView.backgroundColor = .white
+        self.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
         
         addView()
         setLayout()
@@ -33,6 +35,12 @@ class PostCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func layoutSubviews() {
+      super.layoutSubviews()
+          // Cell 간격 조정
+      contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0))
+    }
+
     private func addView() {
         contentView.addSubviews(titleLabel, descriptionLabel, postImageView, voteView)
     }
@@ -63,7 +71,6 @@ class PostCell: UITableViewCell {
     func changeCellData(with model: [PostModel]) {
         titleLabel.text = model[0].title
         descriptionLabel.text = model[0].content
-        
         voteView.changeVoteTitleData(with: model)
     }
 }

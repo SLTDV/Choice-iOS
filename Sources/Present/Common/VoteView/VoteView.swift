@@ -119,7 +119,6 @@ class VoteView: UIView {
         UIView.animate(withDuration: 2.0) {
             self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
             self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
-            
         }
     }
     
