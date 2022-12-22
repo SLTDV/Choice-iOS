@@ -17,10 +17,9 @@ class MainViewModel: BaseViewModel {
                    encoding: URLEncoding.queryString,
                    headers: headers).validate()
         .responseData { [weak self] response in
-            
             switch response.result {
             case .success(let data):
-                let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: data)
+                let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: response.data ?? .init())
                 self?.delegate?.postItemsData.onNext(decodeResponse ?? .init())
             case .failure(let error):
                 print("error = \(error.localizedDescription)")

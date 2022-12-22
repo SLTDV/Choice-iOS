@@ -43,11 +43,13 @@ class VoteView: UIView {
     }
     
     private let firstVotingCount = UILabel().then {
+        $0.textColor = .white
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
         $0.isHidden = true
     }
     
     private let secondVotingCount = UILabel().then {
+        $0.textColor = .white
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
         $0.isHidden = true
     }
@@ -97,7 +99,10 @@ class VoteView: UIView {
             self.firstVoteCheckLabel.isHidden = false
         case .second:
             self.secondVoteCheckLabel.isHidden = false
+
         }
+        self.firstVotingCount.isHidden = false
+        self.secondVotingCount.isHidden = false
         
         self.firstVoteButton.frame = .zero
         self.secondVoteButton.frame = .zero
@@ -160,6 +165,16 @@ class VoteView: UIView {
             $0.trailing.equalToSuperview().inset(12)
         }
         
+        firstVotingCount.snp.makeConstraints {
+            $0.bottom.equalToSuperview().inset(11)
+            $0.leading.equalToSuperview().inset(12)
+        }
+        
+        secondVotingCount.snp.makeConstraints {
+            $0.bottom.equalToSuperview().inset(11)
+            $0.trailing.equalToSuperview().inset(12)
+        }
+        
         versusCircleLabel.snp.makeConstraints {
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(35)
             $0.size.equalTo(50)
@@ -175,5 +190,9 @@ class VoteView: UIView {
     func changeVoteTitleData(with model: [PostModel]) {
         firstVoteTitleLabel.text = model[0].firstVotingOption
         secondVoteTitleLabel.text = model[0].secondVotingOption
+        firstVotingCount.text = String(model[0].firstVotingCount ?? 0)
+        secondVotingCount.text = String(model[0].secondVotingCount ?? 0)
+        
+        print("first = \(firstVotingCount.text)")
     }
 }

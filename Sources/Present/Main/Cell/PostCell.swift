@@ -28,6 +28,7 @@ class PostCell: UITableViewCell {
         contentView.layer.cornerRadius = 10
         contentView.backgroundColor = .white
         self.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
+        self.selectionStyle = .none
         
         addView()
         setLayout()
