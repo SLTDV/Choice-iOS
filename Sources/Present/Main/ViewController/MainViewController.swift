@@ -31,7 +31,9 @@ class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
         $0.layer.cornerRadius = 5
     }
     
-    private let postTableView = UITableView()
+    private let postTableView = UITableView().then {
+        $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
+    }
     
     private let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { _ in })
     private let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { _ in })

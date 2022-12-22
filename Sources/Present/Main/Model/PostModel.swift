@@ -9,7 +9,7 @@
 import Foundation
 
 class PostModel: Codable {
-    var idx: String?
+    var idx: Int?
     var thumbnail: String?
     var title: String?
     var content: String?
@@ -17,16 +17,4 @@ class PostModel: Codable {
     var secondVotingOption: String?
     var firstVotingCount: Int?
     var secondVotingCount: Int?
-    
-//    init(idx: String?, thumbnail: String?, title: String?, content: String?,
-//         firstVotingOption: String?, secondVotingOption: String?, firstVotingCount: Int?, secondVotingCount: Int?) {
-//        self.idx = idx
-//        self.thumbnail = thumbnail
-//        self.title = title
-//        self.content = content
-//        self.firstVotingOption = firstVotingOption
-//        self.secondVotingOption = secondVotingOption
-//        self.firstVotingCount = firstVotingCount
-//        self.secondVotingCount = secondVotingCount
-//    }
 }
