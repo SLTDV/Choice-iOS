@@ -3,6 +3,8 @@ import SnapKit
 import Then
 
 class PostCell: UITableViewCell {
+    static let identifier = "PostCellIdentifier"
+    
     private let titleLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .semibold)
     }

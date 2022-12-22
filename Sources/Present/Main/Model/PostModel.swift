@@ -18,15 +18,15 @@ class PostModel: Codable {
     var firstVotingCount: Int?
     var secondVotingCount: Int?
     
-    init(idx: String?, thumbnail: String?, title: String?, content: String?,
-         firstVotingOption: String?, secondVotingOption: String?, firstVotingCount: Int?, secondVotingCount: Int?) {
-        self.idx = idx
-        self.thumbnail = thumbnail
-        self.title = title
-        self.content = content
-        self.firstVotingOption = firstVotingOption
-        self.secondVotingOption = secondVotingOption
-        self.firstVotingCount = firstVotingCount
-        self.secondVotingCount = secondVotingCount
-    }
+//    init(idx: String?, thumbnail: String?, title: String?, content: String?,
+//         firstVotingOption: String?, secondVotingOption: String?, firstVotingCount: Int?, secondVotingCount: Int?) {
+//        self.idx = idx
+//        self.thumbnail = thumbnail
+//        self.title = title
+//        self.content = content
+//        self.firstVotingOption = firstVotingOption
+//        self.secondVotingOption = secondVotingOption
+//        self.firstVotingCount = firstVotingCount
+//        self.secondVotingCount = secondVotingCount
+//    }
 }
