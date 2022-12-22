@@ -20,10 +20,8 @@ class MainViewModel: BaseViewModel {
             
             switch response.result {
             case .success(let data):
-                print("response = \(response.response?.statusCode)")
                 let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: data)
                 self?.delegate?.postItemsData.onNext(decodeResponse ?? .init())
-                print(decodeResponse)
             case .failure(let error):
                 print("error = \(error.localizedDescription)")
             }

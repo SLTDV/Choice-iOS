@@ -1,6 +1,7 @@
 import UIKit
 import SnapKit
 import Then
+import Kingfisher
 
 class PostCell: UITableViewCell {
     static let identifier = "PostCellIdentifier"
@@ -16,7 +17,7 @@ class PostCell: UITableViewCell {
         
     private let postImageView = UIImageView().then {
         $0.backgroundColor = .gray
-        $0.contentMode = .scaleAspectFit
+        $0.contentMode = .scaleToFill
     }
     
     private let voteView = VoteView()
@@ -72,6 +73,9 @@ class PostCell: UITableViewCell {
     func changeCellData(with model: [PostModel]) {
         titleLabel.text = model[0].title
         descriptionLabel.text = model[0].content
+        if let imageUrl = URL(string: model[0].thumbnail ?? .init()) {
+            self.postImageView.kf.setImage(with: imageUrl)
+        }
         voteView.changeVoteTitleData(with: model)
     }
 }
