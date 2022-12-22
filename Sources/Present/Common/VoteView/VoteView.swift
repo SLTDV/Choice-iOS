@@ -135,7 +135,7 @@ class VoteView: UIView {
         firstVoteButton.snp.makeConstraints {
             $0.leading.equalToSuperview()
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(10)
-            $0.trailing.equalTo(secondVoteButton.snp.leading).offset(-10)
+//            $0.trailing.equalTo(secondVoteButton.snp.leading).offset(-10)
             $0.bottom.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width / 2 - 30)
             $0.height.equalTo(100)
@@ -144,7 +144,7 @@ class VoteView: UIView {
         secondVoteButton.snp.makeConstraints {
             $0.trailing.equalToSuperview()
             $0.top.equalTo(secondVoteTitleLabel.snp.bottom).offset(10)
-            $0.leading.equalTo(firstVoteButton.snp.trailing).offset(10)
+//            $0.leading.equalTo(firstVoteButton.snp.trailing).offset(10)
             $0.bottom.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width / 2 - 30)
             $0.height.equalTo(100)
