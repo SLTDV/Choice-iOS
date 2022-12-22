@@ -22,10 +22,11 @@ final class SignInViewController: BaseVC<SignInViewModel> {
         $0.setPlaceholder(placeholder: "비밀번호")
     }
     
-    private let signInButton = UIButton().then {
+    private lazy var signInButton = UIButton().then {
         $0.setTitle("로그인", for: .normal)
         $0.backgroundColor = .init(red: 0.89, green: 0.89, blue: 0.89, alpha: 1)
         $0.layer.cornerRadius = 8
+        $0.addTarget(self, action: #selector(pushMainVCButtonDidTap(_:)), for: .touchUpInside)
     }
     
     private let divideLineButton = UIView().then {
@@ -37,10 +38,14 @@ final class SignInViewController: BaseVC<SignInViewModel> {
         $0.setTitleColor(.gray, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 12)
         $0.backgroundColor = .white
-        $0.addTarget(self, action: #selector(pushSignUpViewButtonDidTap(_:)), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(pushSignUpVCButtonDidTap(_:)), for: .touchUpInside)
     }
     
-    @objc private func pushSignUpViewButtonDidTap(_ sender: UIButton) {
+    @objc private func pushMainVCButtonDidTap(_ sender: UIButton) {
+        viewModel.pushMainVC()
+    }
+    
+    @objc private func pushSignUpVCButtonDidTap(_ sender: UIButton) {
         viewModel.pushSignUpVC()
     }
     
