@@ -1,11 +1,3 @@
-//
-//  VoteView.swift
-//  Choice
-//
-//  Created by 민도현 on 2022/12/20.
-//  Copyright © 2022 com.dohyeon. All rights reserved.
-//
-
 import UIKit
 import SnapKit
 import Then
@@ -37,27 +29,27 @@ class VoteView: UIView {
     }
     
     private let firstVoteCheckLabel = UILabel().then {
-        $0.isHidden = true
-        $0.font = .systemFont(ofSize: 24, weight: .semibold)
-        $0.textColor = .white
         $0.text = "✓"
+        $0.textColor = .white
+        $0.font = .systemFont(ofSize: 24, weight: .semibold)
+        $0.isHidden = true
     }
     
     private let secondVoteCheckLabel = UILabel().then {
-        $0.isHidden = true
-        $0.font = .systemFont(ofSize: 24, weight: .semibold)
-        $0.textColor = .white
         $0.text = "✓"
+        $0.textColor = .white
+        $0.font = .systemFont(ofSize: 24, weight: .semibold)
+        $0.isHidden = true
     }
     
     private let firstVotingCount = UILabel().then {
-        $0.isHidden = true
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
+        $0.isHidden = true
     }
     
     private let secondVotingCount = UILabel().then {
-        $0.isHidden = true
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
+        $0.isHidden = true
     }
     
     private let versusCircleLabel = UIView().then {
@@ -99,7 +91,7 @@ class VoteView: UIView {
             }).disposed(by: disposeBag)
     }
     
-    private func classifyVoteButton(voteType: classifyVoteButtonType) {
+    private func classifyVoteButton(voteType: ClassifyVoteButtonType) {
         switch voteType {
         case .first:
             self.firstVoteCheckLabel.isHidden = false

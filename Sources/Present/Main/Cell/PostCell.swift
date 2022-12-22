@@ -36,7 +36,7 @@ class PostCell: UITableViewCell {
     
     override func layoutSubviews() {
       super.layoutSubviews()
-          // Cell 간격 조정
+
       contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0))
     }
 

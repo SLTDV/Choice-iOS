@@ -34,11 +34,7 @@ class MainViewController: BaseVC<MainViewModel> {
     
     private let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { _ in })
     private let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { _ in })
-    
-    override func viewDidLayoutSubviews() {
-//        UINavigationBar.appearance().barTintColor = .red
-    }
-    
+
     override func configureVC() {
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.backgroundColor = .white
