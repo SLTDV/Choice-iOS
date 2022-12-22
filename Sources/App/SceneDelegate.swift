@@ -13,11 +13,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let navVC = UINavigationController()
         
-        let navigationBarAppearance = UINavigationBarAppearance()
-        UINavigationBar.appearance().standardAppearance = navigationBarAppearance
-        UINavigationBar.appearance().compactAppearance = navigationBarAppearance
-        UINavigationBar.appearance().scrollEdgeAppearance = navigationBarAppearance
-        
         window = UIWindow(windowScene: windowScene)
         appCoordinator = AppCoordinator(navigationCotroller: navVC, window: window)
         

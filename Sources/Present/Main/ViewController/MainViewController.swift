@@ -16,11 +16,15 @@ class MainViewController: BaseVC<MainViewModel> {
         $0.tintColor = .black
     }
     
+    private let whiteView = UIView().then {
+        $0.backgroundColor = .white
+    }
+    
     private let dropdownButton = UIButton().then {
         $0.setTitle("정렬 ↓", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
-        $0.backgroundColor = .white
+        $0.backgroundColor = .init(red: 0.94, green: 0.94, blue: 0.94, alpha: 1)
         $0.layer.cornerRadius = 5
     }
     
@@ -31,14 +35,22 @@ class MainViewController: BaseVC<MainViewModel> {
     private let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { _ in })
     private let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { _ in })
     
+    override func viewDidLayoutSubviews() {
+//        UINavigationBar.appearance().barTintColor = .red
+    }
+    
     override func configureVC() {
-        view.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.backgroundColor = .white
+        navBarAppearance.shadowColor = .clear
         
-//        navigationController?.navigationBar.backgroundColor = .red
+        navigationController?.navigationBar.standardAppearance = navBarAppearance
+        navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
+        
+        view.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
         
         navigationItem.title = "choice"
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
-        
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
         dropdownButton.showsMenuAsPrimaryAction = true
         
@@ -49,10 +61,17 @@ class MainViewController: BaseVC<MainViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(dropdownButton, postTableView)
+        view.addSubviews(whiteView, postTableView)
+        whiteView.addSubview(dropdownButton)
     }
     
     override func setLayout() {
+        whiteView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(-5)
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalTo(dropdownButton.snp.bottom).offset(12)
+        }
+        
         dropdownButton.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).inset(20)
             $0.trailing.equalToSuperview().inset(14)
