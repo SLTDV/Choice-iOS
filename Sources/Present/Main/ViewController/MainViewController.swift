@@ -33,14 +33,15 @@ final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
     
-    private let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { _ in })
-    private let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { _ in })
-    
     private func bindTableView() {
         postItemsData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                                       cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: [data])
         }.disposed(by: disposeBag)
+    }
+    
+    private func callToFindAllData() {
+        viewModel.getFindAllData()
     }
     
     override func configureVC() {
@@ -55,6 +56,11 @@ final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
         
         navigationItem.title = "choice"
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
+        
+        let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self]_ in
+            self?.callToFindAllData() })
+        let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { [weak self] _ in self?.viewModel.getAllBestPostData() })
+        
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
         dropdownButton.showsMenuAsPrimaryAction = true
         
