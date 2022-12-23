@@ -4,7 +4,7 @@ import Then
 import RxSwift
 import RxCocoa
 
-class VoteView: UIView {
+final class VoteView: UIView {
     
     private let disposeBag = DisposeBag()
     
@@ -73,7 +73,6 @@ class VoteView: UIView {
         
         addView()
         setLayout()
-        
         voteButtonDidTap()
     }
     
@@ -113,7 +112,28 @@ class VoteView: UIView {
         self.firstVoteButton.isEnabled = false
         self.secondVoteButton.isEnabled = false
         
-        starAnimation()
+        UIView.animate(withDuration: 1.0) {
+            self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
+            self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
+        }
+    }
+
+    func changeVoteTitleData(with model: [PostModel]) {
+        firstVoteTitleLabel.text = model[0].firstVotingOption
+        secondVoteTitleLabel.text = model[0].secondVotingOption
+        
+        let votePercentage = calculateToVoteCountPercentage(firstVotingCount: Double(model[0].firstVotingCount ?? 0), secondVotingCount: Double(model[0].secondVotingCount ?? 0))
+        
+        firstVotingCount.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
+        secondVotingCount.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
+    }
+    
+    func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (Int, Int, Int, Int) {
+        let sum = firstVotingCount + secondVotingCount
+        let firstP = Int(firstVotingCount / sum * 100)
+        let secondP = Int(secondVotingCount / sum * 100)
+        
+        return (firstP, secondP, Int(firstVotingCount), Int(secondVotingCount))
     }
     
     private func addView() {
@@ -137,16 +157,14 @@ class VoteView: UIView {
         firstVoteButton.snp.makeConstraints {
             $0.leading.equalToSuperview()
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(10)
-            //            $0.trailing.equalTo(secondVoteButton.snp.leading).offset(-10)
             $0.bottom.equalToSuperview()
-            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 70)
+            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 30)
             $0.height.equalTo(100)
         }
         
         secondVoteButton.snp.makeConstraints {
             $0.trailing.equalToSuperview()
             $0.top.equalTo(secondVoteTitleLabel.snp.bottom).offset(10)
-            //            $0.leading.equalTo(firstVoteButton.snp.trailing).offset(10)
             $0.bottom.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width / 2 - 30)
             $0.height.equalTo(100)
@@ -182,32 +200,5 @@ class VoteView: UIView {
         versusLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
-    }
-    
-    func starAnimation() {
-        UIView.animate(withDuration: 2.0) {
-            self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
-            self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
-        }
-    }
-
-    func changeVoteTitleData(with model: [PostModel]) {
-        firstVoteTitleLabel.text = model[0].firstVotingOption
-        secondVoteTitleLabel.text = model[0].secondVotingOption
-        
-        let votePercentage = calculateToVoteCountPercentage(firstVotingCount: Double(model[0].firstVotingCount ?? 0), secondVotingCount: Double(model[0].secondVotingCount ?? 0))
-        
-        firstVotingCount.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
-        secondVotingCount.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
-        
-        
-    }
-    
-    func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (Int, Int, Int, Int) {
-        let sum = firstVotingCount + secondVotingCount
-        let firstP = Int(firstVotingCount / sum * 100)
-        let secondP = Int(secondVotingCount / sum * 100)
-        
-        return (firstP, secondP, Int(firstVotingCount), Int(secondVotingCount))
     }
 }

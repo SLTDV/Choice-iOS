@@ -3,7 +3,7 @@ import SnapKit
 import Then
 import Kingfisher
 
-class PostCell: UITableViewCell {
+final class PostCell: UITableViewCell {
     static let identifier = "PostCellIdentifier"
     
     private let titleLabel = UILabel().then {
@@ -72,10 +72,12 @@ class PostCell: UITableViewCell {
     }
     
     func changeCellData(with model: [PostModel]) {
-        titleLabel.text = model[0].title
-        descriptionLabel.text = model[0].content
-        if let imageUrl = URL(string: model[0].thumbnail ?? .init()) {
-            self.postImageView.kf.setImage(with: imageUrl)
+        DispatchQueue.main.async {
+            self.titleLabel.text = model[0].title
+            self.descriptionLabel.text = model[0].content
+            if let imageUrl = URL(string: model[0].thumbnail ?? .init()) {
+                self.postImageView.kf.setImage(with: imageUrl)
+            }
         }
         voteView.changeVoteTitleData(with: model)
     }

@@ -6,7 +6,7 @@ protocol PostItemsPresentable: AnyObject {
     var postItemsData: PublishSubject<[PostModel]> { get set }
 }
 
-class MainViewModel: BaseViewModel {
+final class MainViewModel: BaseViewModel {
     weak var delegate: PostItemsPresentable?
     
     func getFindAllData() {

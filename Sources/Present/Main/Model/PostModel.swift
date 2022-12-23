@@ -8,7 +8,7 @@
 
 import Foundation
 
-class PostModel: Codable {
+final class PostModel: Codable {
     var idx: Int?
     var thumbnail: String?
     var title: String?

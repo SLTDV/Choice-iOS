@@ -2,7 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
+final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
     private let disposeBag = DisposeBag()
     
     var postItemsData = PublishSubject<[PostModel]>()
