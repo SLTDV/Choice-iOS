@@ -92,42 +92,46 @@ final class VoteView: UIView {
     }
     
     private func classifyVoteButton(voteType: ClassifyVoteButtonType) {
-        switch voteType {
-        case .first:
-            self.firstVoteCheckLabel.isHidden = false
-        case .second:
-            self.secondVoteCheckLabel.isHidden = false
+        DispatchQueue.main.async {
+            switch voteType {
+            case .first:
+                self.firstVoteCheckLabel.isHidden = false
+            case .second:
+                self.secondVoteCheckLabel.isHidden = false
+                
+            }
+            self.firstVotingCount.isHidden = false
+            self.secondVotingCount.isHidden = false
             
-        }
-        self.firstVotingCount.isHidden = false
-        self.secondVotingCount.isHidden = false
-        
-        self.firstVoteButton.frame = .zero
-        self.secondVoteButton.frame = .zero
-        
-        self.firstVoteButton.backgroundColor = ChoiceAsset.Colors.firstVoteColor.color
-        self.secondVoteButton.backgroundColor = ChoiceAsset.Colors.secondVoteColor.color
-        
-        self.firstVoteButton.isEnabled = false
-        self.secondVoteButton.isEnabled = false
-        
-        UIView.animate(withDuration: 1.0) {
-            self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
-            self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
+            self.firstVoteButton.isEnabled = false
+            self.secondVoteButton.isEnabled = false
+            
+            self.firstVoteButton.frame = .zero
+            self.secondVoteButton.frame = .zero
+            
+            self.firstVoteButton.backgroundColor = ChoiceAsset.Colors.firstVoteColor.color
+            self.secondVoteButton.backgroundColor = ChoiceAsset.Colors.secondVoteColor.color
+            
+            UIView.animate(withDuration: 1.0) {
+                self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
+                self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
+            }
         }
     }
 
     func changeVoteTitleData(with model: [PostModel]) {
-        firstVoteTitleLabel.text = model[0].firstVotingOption
-        secondVoteTitleLabel.text = model[0].secondVotingOption
-        
-        let votePercentage = calculateToVoteCountPercentage(firstVotingCount: Double(model[0].firstVotingCount ?? 0), secondVotingCount: Double(model[0].secondVotingCount ?? 0))
-        
-        firstVotingCount.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
-        secondVotingCount.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
+        DispatchQueue.main.async {
+            self.firstVoteTitleLabel.text = model[0].firstVotingOption
+            self.secondVoteTitleLabel.text = model[0].secondVotingOption
+            
+            let votePercentage = self.calculateToVoteCountPercentage(firstVotingCount: Double(model[0].firstVotingCount ?? 0),                                                            secondVotingCount: Double(model[0].secondVotingCount ?? 0))
+            
+            self.firstVotingCount.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
+            self.secondVotingCount.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
+        }
     }
     
-    func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (Int, Int, Int, Int) {
+    private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (Int, Int, Int, Int) {
         let sum = firstVotingCount + secondVotingCount
         let firstP = Int(firstVotingCount / sum * 100)
         let secondP = Int(secondVotingCount / sum * 100)
