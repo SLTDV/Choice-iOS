@@ -40,10 +40,6 @@ final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
         }.disposed(by: disposeBag)
     }
     
-    private func callToFindAllData() {
-        viewModel.getFindAllData()
-    }
-    
     override func configureVC() {
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.backgroundColor = .white
