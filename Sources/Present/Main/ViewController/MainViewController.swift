@@ -33,11 +33,16 @@ final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
     
+    
     private func bindTableView() {
         postItemsData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                                       cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: [data])
         }.disposed(by: disposeBag)
+    }
+    
+    private func callToFindAllData(type: MenuOptionType) {
+        viewModel.callToFindData(type: type)
     }
     
     override func configureVC() {
@@ -53,8 +58,10 @@ final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
         navigationItem.title = "choice"
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
         
-        let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { _ in })
-        let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { _ in })
+        let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"),
+                                  handler: { [weak self] _ in self?.callToFindAllData(type: .findNewestData)})
+        let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"),
+                                   handler: { [weak self] _ in self?.callToFindAllData(type: .findBestPostData)})
         
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
         dropdownButton.showsMenuAsPrimaryAction = true
@@ -68,7 +75,7 @@ final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        viewModel.getFindAllData()
+        callToFindAllData(type: .findNewestData)
     }
     
     override func addView() {
