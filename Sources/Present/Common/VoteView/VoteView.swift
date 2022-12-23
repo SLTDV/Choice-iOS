@@ -99,7 +99,7 @@ class VoteView: UIView {
             self.firstVoteCheckLabel.isHidden = false
         case .second:
             self.secondVoteCheckLabel.isHidden = false
-
+            
         }
         self.firstVotingCount.isHidden = false
         self.secondVotingCount.isHidden = false
@@ -113,10 +113,7 @@ class VoteView: UIView {
         self.firstVoteButton.isEnabled = false
         self.secondVoteButton.isEnabled = false
         
-        UIView.animate(withDuration: 2.0) {
-            self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
-            self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
-        }
+        starAnimation()
     }
     
     private func addView() {
@@ -140,7 +137,7 @@ class VoteView: UIView {
         firstVoteButton.snp.makeConstraints {
             $0.leading.equalToSuperview()
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(10)
-//            $0.trailing.equalTo(secondVoteButton.snp.leading).offset(-10)
+            //            $0.trailing.equalTo(secondVoteButton.snp.leading).offset(-10)
             $0.bottom.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width / 2 - 70)
             $0.height.equalTo(100)
@@ -149,7 +146,7 @@ class VoteView: UIView {
         secondVoteButton.snp.makeConstraints {
             $0.trailing.equalToSuperview()
             $0.top.equalTo(secondVoteTitleLabel.snp.bottom).offset(10)
-//            $0.leading.equalTo(firstVoteButton.snp.trailing).offset(10)
+            //            $0.leading.equalTo(firstVoteButton.snp.trailing).offset(10)
             $0.bottom.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width / 2 - 30)
             $0.height.equalTo(100)
@@ -186,6 +183,13 @@ class VoteView: UIView {
             $0.center.equalToSuperview()
         }
     }
+    
+    func starAnimation() {
+        UIView.animate(withDuration: 2.0) {
+            self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
+            self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
+        }
+    }
 
     func changeVoteTitleData(with model: [PostModel]) {
         firstVoteTitleLabel.text = model[0].firstVotingOption
@@ -193,15 +197,17 @@ class VoteView: UIView {
         
         let votePercentage = calculateToVoteCountPercentage(firstVotingCount: Double(model[0].firstVotingCount ?? 0), secondVotingCount: Double(model[0].secondVotingCount ?? 0))
         
-        firstVotingCount.text = votePercentage.0
-        secondVotingCount.text = votePercentage.1
+        firstVotingCount.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
+        secondVotingCount.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
+        
+        
     }
     
-    func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (String, String) {
+    func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (Int, Int, Int, Int) {
         let sum = firstVotingCount + secondVotingCount
-        let firstP = String(firstVotingCount / sum * 100)
-        let secondP = String(secondVotingCount / sum * 100)
+        let firstP = Int(firstVotingCount / sum * 100)
+        let secondP = Int(secondVotingCount / sum * 100)
         
-        return (firstP + "%" + "(\(Int(firstVotingCount))명)", secondP + "%" + "(\(Int(secondVotingCount))명)")
+        return (firstP, secondP, Int(firstVotingCount), Int(secondVotingCount))
     }
 }
