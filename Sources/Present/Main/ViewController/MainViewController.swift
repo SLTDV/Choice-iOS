@@ -57,9 +57,8 @@ final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
         navigationItem.title = "choice"
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
         
-        let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self]_ in
-            self?.callToFindAllData() })
-        let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { [weak self] _ in self?.viewModel.getAllBestPostData() })
+        let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { _ in })
+        let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { _ in })
         
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
         dropdownButton.showsMenuAsPrimaryAction = true
