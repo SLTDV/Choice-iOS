@@ -142,7 +142,7 @@ class VoteView: UIView {
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(10)
 //            $0.trailing.equalTo(secondVoteButton.snp.leading).offset(-10)
             $0.bottom.equalToSuperview()
-            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 30)
+            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 70)
             $0.height.equalTo(100)
         }
         
@@ -166,20 +166,20 @@ class VoteView: UIView {
         }
         
         firstVotingCount.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(11)
             $0.leading.equalToSuperview().inset(12)
+            $0.bottom.equalToSuperview().inset(11)
         }
         
         secondVotingCount.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(11)
             $0.trailing.equalToSuperview().inset(12)
+            $0.bottom.equalToSuperview().inset(11)
         }
         
         versusCircleLabel.snp.makeConstraints {
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(35)
-            $0.size.equalTo(50)
             $0.leading.equalTo(firstVoteButton.snp.trailing).offset(-20)
             $0.trailing.equalTo(secondVoteButton.snp.leading).offset(20)
+            $0.size.equalTo(50)
         }
         
         versusLabel.snp.makeConstraints {
@@ -190,9 +190,18 @@ class VoteView: UIView {
     func changeVoteTitleData(with model: [PostModel]) {
         firstVoteTitleLabel.text = model[0].firstVotingOption
         secondVoteTitleLabel.text = model[0].secondVotingOption
-        firstVotingCount.text = String(model[0].firstVotingCount ?? 0)
-        secondVotingCount.text = String(model[0].secondVotingCount ?? 0)
         
-        print("first = \(firstVotingCount.text)")
+        let votePercentage = calculateToVoteCountPercentage(firstVotingCount: Double(model[0].firstVotingCount ?? 0), secondVotingCount: Double(model[0].secondVotingCount ?? 0))
+        
+        firstVotingCount.text = votePercentage.0
+        secondVotingCount.text = votePercentage.1
+    }
+    
+    func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (String, String) {
+        let sum = firstVotingCount + secondVotingCount
+        let firstP = String(firstVotingCount / sum * 100)
+        let secondP = String(secondVotingCount / sum * 100)
+        
+        return (firstP + "%" + "(\(Int(firstVotingCount))명)", secondP + "%" + "(\(Int(secondVotingCount))명)")
     }
 }
