@@ -12,6 +12,8 @@ final class SignInCoordinator: BaseCoordinator {
         switch step {
         case .signUpIsRequired:
             signUpIsRequired()
+        case .mainVCIsRequried:
+            mainVCIsRequired()
         }
     }
 }
@@ -19,6 +21,13 @@ final class SignInCoordinator: BaseCoordinator {
 extension SignInCoordinator {
     private func signUpIsRequired() {
         let vc = SignUpCoordinator(navigationController: navigationController)
+        vc.parentCoordinator = self
+        childCoordinators.append(vc)
+        vc.start()
+    }
+    
+    private func mainVCIsRequired() {
+        let vc = MainCoordinator(navigationController: navigationController)
         vc.parentCoordinator = self
         childCoordinators.append(vc)
         vc.start()
