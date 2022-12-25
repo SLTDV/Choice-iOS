@@ -14,7 +14,7 @@ final class MainViewModel: BaseViewModel {
         
         switch type {
         case .findNewestData:
-            url = APIConstants.findAllPost
+            url = APIConstants.findNewestData
         case .findBestPostData:
             url = APIConstants.findAllBestPost
         }
