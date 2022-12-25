@@ -9,8 +9,16 @@ protocol PostItemsPresentable: AnyObject {
 final class MainViewModel: BaseViewModel {
     weak var delegate: PostItemsPresentable?
     
-    func getFindAllData() {
-        let url = APIConstants.findAllPost
+    func callToFindData(type: MenuOptionType) {
+        lazy var url = ""
+        
+        switch type {
+        case .findNewestPostData:
+            url = APIConstants.findNewestPost
+        case .findBestPostData:
+            url = APIConstants.findAllBestPost
+        }
+        
         let headers: HTTPHeaders = ["Content-Type": "application/json", "Accept": "application/json"]
         AF.request(url,
                    method: .get,
