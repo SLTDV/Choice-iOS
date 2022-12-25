@@ -1,7 +1,6 @@
 import Foundation
 
 final class SignInViewModel: BaseViewModel {
-    
     func pushMainVC() {
         coordinator.navigate(to: .mainVCIsRequried)
     }

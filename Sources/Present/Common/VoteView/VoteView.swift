@@ -4,8 +4,7 @@ import Then
 import RxSwift
 import RxCocoa
 
-class VoteView: UIView {
-    
+final class VoteView: UIView {
     private let disposeBag = DisposeBag()
     
     private let firstVoteTitleLabel = UILabel().then {
@@ -43,11 +42,13 @@ class VoteView: UIView {
     }
     
     private let firstVotingCount = UILabel().then {
+        $0.textColor = .white
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
         $0.isHidden = true
     }
     
     private let secondVotingCount = UILabel().then {
+        $0.textColor = .white
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
         $0.isHidden = true
     }
@@ -71,7 +72,6 @@ class VoteView: UIView {
         
         addView()
         setLayout()
-        
         voteButtonDidTap()
     }
     
@@ -92,26 +92,51 @@ class VoteView: UIView {
     }
     
     private func classifyVoteButton(voteType: ClassifyVoteButtonType) {
-        switch voteType {
-        case .first:
-            self.firstVoteCheckLabel.isHidden = false
-        case .second:
-            self.secondVoteCheckLabel.isHidden = false
+        DispatchQueue.main.async {
+            switch voteType {
+            case .first:
+                self.firstVoteCheckLabel.isHidden = false
+            case .second:
+                self.secondVoteCheckLabel.isHidden = false
+                
+            }
+            self.firstVotingCount.isHidden = false
+            self.secondVotingCount.isHidden = false
+            
+            self.firstVoteButton.isEnabled = false
+            self.secondVoteButton.isEnabled = false
+            
+            self.firstVoteButton.frame = .zero
+            self.secondVoteButton.frame = .zero
+            
+            self.firstVoteButton.backgroundColor = ChoiceAsset.Colors.firstVoteColor.color
+            self.secondVoteButton.backgroundColor = ChoiceAsset.Colors.secondVoteColor.color
+            
+            UIView.animate(withDuration: 1.0) {
+                self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
+                self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
+            }
         }
-        
-        self.firstVoteButton.frame = .zero
-        self.secondVoteButton.frame = .zero
-        
-        self.firstVoteButton.backgroundColor = ChoiceAsset.Colors.firstVoteColor.color
-        self.secondVoteButton.backgroundColor = ChoiceAsset.Colors.secondVoteColor.color
-        
-        self.firstVoteButton.isEnabled = false
-        self.secondVoteButton.isEnabled = false
-        
-        UIView.animate(withDuration: 2.0) {
-            self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
-            self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
+    }
+
+    final func changeVoteTitleData(with model: [PostModel]) {
+        DispatchQueue.main.async {
+            self.firstVoteTitleLabel.text = model[0].firstVotingOption
+            self.secondVoteTitleLabel.text = model[0].secondVotingOption
+            
+            let votePercentage = self.calculateToVoteCountPercentage(firstVotingCount: Double(model[0].firstVotingCount ?? 0),                                                            secondVotingCount: Double(model[0].secondVotingCount ?? 0))
+            
+            self.firstVotingCount.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
+            self.secondVotingCount.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
         }
+    }
+    
+    private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (Int, Int, Int, Int) {
+        let sum = firstVotingCount + secondVotingCount
+        let firstP = Int(firstVotingCount / sum * 100)
+        let secondP = Int(secondVotingCount / sum * 100)
+        
+        return (firstP, secondP, Int(firstVotingCount), Int(secondVotingCount))
     }
     
     private func addView() {
@@ -135,7 +160,6 @@ class VoteView: UIView {
         firstVoteButton.snp.makeConstraints {
             $0.leading.equalToSuperview()
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(10)
-            $0.trailing.equalTo(secondVoteButton.snp.leading).offset(-10)
             $0.bottom.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width / 2 - 30)
             $0.height.equalTo(100)
@@ -144,7 +168,6 @@ class VoteView: UIView {
         secondVoteButton.snp.makeConstraints {
             $0.trailing.equalToSuperview()
             $0.top.equalTo(secondVoteTitleLabel.snp.bottom).offset(10)
-            $0.leading.equalTo(firstVoteButton.snp.trailing).offset(10)
             $0.bottom.equalToSuperview()
             $0.width.equalTo(UIScreen.main.bounds.width / 2 - 30)
             $0.height.equalTo(100)
@@ -160,20 +183,25 @@ class VoteView: UIView {
             $0.trailing.equalToSuperview().inset(12)
         }
         
+        firstVotingCount.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(12)
+            $0.bottom.equalToSuperview().inset(11)
+        }
+        
+        secondVotingCount.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(12)
+            $0.bottom.equalToSuperview().inset(11)
+        }
+        
         versusCircleLabel.snp.makeConstraints {
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(35)
-            $0.size.equalTo(50)
             $0.leading.equalTo(firstVoteButton.snp.trailing).offset(-20)
             $0.trailing.equalTo(secondVoteButton.snp.leading).offset(20)
+            $0.size.equalTo(50)
         }
         
         versusLabel.snp.makeConstraints {
             $0.center.equalToSuperview()
         }
-    }
-
-    func changeVoteTitleData(with model: [PostModel]) {
-        firstVoteTitleLabel.text = model[0].firstVotingOption
-        secondVoteTitleLabel.text = model[0].secondVotingOption
     }
 }

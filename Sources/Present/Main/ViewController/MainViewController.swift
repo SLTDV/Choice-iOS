@@ -2,9 +2,10 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class MainViewController: BaseVC<MainViewModel> {
+final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
+    private let disposeBag = DisposeBag()
     
-    var data = PostModel(idx: "123", thumbnail: "", title: "오늘 저녁 메뉴", content: "오늘 저녁 메뉴를 골라주세요!  썸녀랑 첫 데이트 나왔는데  저녁으로 뭘 먹을까요??????", firstVotingOption: "컵라면", secondVotingOption: "스테이크", firstVotingCount: 12, secondVotingCount: 14)
+    var postItemsData = PublishSubject<[PostModel]>()
     
     private let addPostButton = UIBarButtonItem().then {
         $0.tintColor = .black
@@ -29,12 +30,16 @@ class MainViewController: BaseVC<MainViewModel> {
     }
     
     private let postTableView = UITableView().then {
-        $0.register(PostCell.self, forCellReuseIdentifier: "PostCell")
+        $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
     
-    private let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { _ in })
-    private let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { _ in })
-
+    private func bindTableView() {
+        postItemsData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
+                                                      cellType: PostCell.self)) { (row, data, cell) in
+            cell.changeCellData(with: [data])
+        }.disposed(by: disposeBag)
+    }
+    
     override func configureVC() {
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.backgroundColor = .white
@@ -47,13 +52,23 @@ class MainViewController: BaseVC<MainViewModel> {
         
         navigationItem.title = "choice"
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
+        
+        let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { _ in })
+        let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { _ in })
+        
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
         dropdownButton.showsMenuAsPrimaryAction = true
         
-        postTableView.dataSource = self
         postTableView.rowHeight = 500
         postTableView.separatorStyle = .none
         postTableView.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
+        
+        viewModel.delegate = self
+        bindTableView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        viewModel.getFindAllData()
     }
     
     override func addView() {
@@ -80,20 +95,5 @@ class MainViewController: BaseVC<MainViewModel> {
             $0.leading.trailing.equalToSuperview().inset(9)
             $0.bottom.equalToSuperview()
         }
-    }
-}
-
-extension MainViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "PostCell", for: indexPath) as? PostCell else { return UITableViewCell() }
-        
-        cell.changeCellData(with: [data])
-        cell.selectionStyle = .none
-        
-        return cell
     }
 }

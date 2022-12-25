@@ -1,8 +1,11 @@
 import UIKit
 import SnapKit
 import Then
+import Kingfisher
 
-class PostCell: UITableViewCell {
+final class PostCell: UITableViewCell {
+    static let identifier = "PostCellIdentifier"
+    
     private let titleLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .semibold)
     }
@@ -14,7 +17,7 @@ class PostCell: UITableViewCell {
         
     private let postImageView = UIImageView().then {
         $0.backgroundColor = .gray
-        $0.contentMode = .scaleAspectFit
+        $0.contentMode = .scaleToFill
     }
     
     private let voteView = VoteView()
@@ -25,6 +28,7 @@ class PostCell: UITableViewCell {
         contentView.layer.cornerRadius = 10
         contentView.backgroundColor = .white
         self.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
+        self.selectionStyle = .none
         
         addView()
         setLayout()
@@ -36,7 +40,6 @@ class PostCell: UITableViewCell {
     
     override func layoutSubviews() {
       super.layoutSubviews()
-
       contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0))
     }
 
@@ -68,8 +71,13 @@ class PostCell: UITableViewCell {
     }
     
     func changeCellData(with model: [PostModel]) {
-        titleLabel.text = model[0].title
-        descriptionLabel.text = model[0].content
+        DispatchQueue.main.async {
+            self.titleLabel.text = model[0].title
+            self.descriptionLabel.text = model[0].content
+            if let imageUrl = URL(string: model[0].thumbnail ?? .init()) {
+                self.postImageView.kf.setImage(with: imageUrl)
+            }
+        }
         voteView.changeVoteTitleData(with: model)
     }
 }
