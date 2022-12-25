@@ -33,7 +33,6 @@ final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
     
-    
     private func bindTableView() {
         postItemsData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                                       cellType: PostCell.self)) { (row, data, cell) in

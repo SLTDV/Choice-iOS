@@ -10,7 +10,7 @@ final class MainViewModel: BaseViewModel {
     weak var delegate: PostItemsPresentable?
     
     func callToFindData(type: MenuOptionType) {
-        var url = ""
+        lazy var url = ""
         
         switch type {
         case .findNewestData:
