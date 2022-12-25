@@ -13,8 +13,8 @@ final class MainViewModel: BaseViewModel {
         lazy var url = ""
         
         switch type {
-        case .findNewestData:
-            url = APIConstants.findNewestData
+        case .findNewestPostData:
+            url = APIConstants.findNewestPost
         case .findBestPostData:
             url = APIConstants.findAllBestPost
         }

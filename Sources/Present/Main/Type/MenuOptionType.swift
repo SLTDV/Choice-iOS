@@ -1,6 +1,6 @@
 import Foundation
 
 enum MenuOptionType {
-    case findNewestData
+    case findNewestPostData
     case findBestPostData
 }

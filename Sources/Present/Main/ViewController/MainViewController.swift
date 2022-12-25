@@ -58,7 +58,7 @@ final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
         
         let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"),
-                                  handler: { [weak self] _ in self?.callToFindAllData(type: .findNewestData)})
+                                  handler: { [weak self] _ in self?.callToFindAllData(type: .findNewestPostData)})
         let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"),
                                    handler: { [weak self] _ in self?.callToFindAllData(type: .findBestPostData)})
         
@@ -74,7 +74,7 @@ final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        callToFindAllData(type: .findNewestData)
+        callToFindAllData(type: .findNewestPostData)
     }
     
     override func addView() {
