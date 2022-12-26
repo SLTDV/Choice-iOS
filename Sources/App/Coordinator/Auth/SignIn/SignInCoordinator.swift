@@ -14,6 +14,8 @@ final class SignInCoordinator: BaseCoordinator {
             signUpIsRequired()
         case .mainVCIsRequried:
             mainVCIsRequired()
+        default:
+            return
         }
     }
 }
