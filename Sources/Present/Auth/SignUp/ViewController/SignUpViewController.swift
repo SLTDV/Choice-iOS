@@ -101,14 +101,6 @@ final class SignUpViewController: BaseVC<SignUpViewModel>{
         return viewModel.isValidPassword(password: password)
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        self.addKeyboardNotifications()
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        self.removeKeyboardNotifications()
-    }
-    
     override func configureVC() {
         restoreFrameYValue = self.view.frame.origin.y
         signUpButtonDidTap()
@@ -161,36 +153,4 @@ final class SignUpViewController: BaseVC<SignUpViewModel>{
             $0.leading.trailing.equalToSuperview().inset(26)
         }
     }
-}
-
-extension SignUpViewController {
-    
-    @objc private func showKeyboard(_ notification: Notification) {
-        if self.view.frame.origin.y == restoreFrameYValue {
-            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-                let keyboardHeight = keyboardFrame.cgRectValue.height
-                self.view.frame.origin.y -= keyboardHeight - 240
-            }
-        }
-    }
-    
-    @objc private func hideKeyboard(_ notification: Notification) {
-        if self.view.frame.origin.y != restoreFrameYValue {
-            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-                let keyboardHeight = keyboardFrame.cgRectValue.height
-                self.view.frame.origin.y += keyboardHeight - 240
-            }
-        }
-    }
-    
-    private func addKeyboardNotifications(){
-        NotificationCenter.default.addObserver(self, selector: #selector(self.showKeyboard(_:)), name: UIResponder.keyboardWillShowNotification , object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.hideKeyboard(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
-    private func removeKeyboardNotifications(){
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification , object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-    }
-    
 }
