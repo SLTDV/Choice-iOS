@@ -2,9 +2,8 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-final class SignUpViewController: BaseVC<SignUpViewModel>, statusPresentable{
-    //  lazy var restoreFrameYValue = 0.0
-    var statusData = PublishSubject<SignUpModel>()
+final class SignUpViewController: BaseVC<SignUpViewModel>{
+    private let disposeBag = DisposeBag()
     
     private let titleLabel = UILabel().then {
         $0.text = "Choice"
@@ -39,7 +38,6 @@ final class SignUpViewController: BaseVC<SignUpViewModel>, statusPresentable{
     }
     
     private lazy var signUpButton = UIButton().then {
-        $0.addTarget(self, action: #selector(pushSignUpButton), for: .touchUpInside)
         $0.setTitle("회원가입", for: .normal)
         $0.setTitleColor(.white, for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
@@ -48,31 +46,57 @@ final class SignUpViewController: BaseVC<SignUpViewModel>, statusPresentable{
     }
     
     private let warningLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 12)
         $0.isHidden = true
         $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
     }
-  
-    func isValidPassword(pwd: String) -> Bool {
-        let passwordRegEx = "^[a-zA-Z0-9]{8,}$"
-        let passwordTest = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
-        return passwordTest.evaluate(with: pwd)
+    
+    private func shakeAllTextField() {
+        inputNicknameTextfield.shake()
+        inputEmailTextfield.shake()
+        inputPasswordTextfield.shake()
+        inputCheckPasswordTextfield.shake()
     }
     
-    @objc private func pushSignUpButton() {
+    private func showWarningLabel(warning: String) {
+        DispatchQueue.main.async {
+            self.warningLabel.isHidden = false
+            self.warningLabel.text = warning
+        }
+    }
+    
+    private func pushSignUpButton() {
         guard let nickname = inputNicknameTextfield.text else { return }
         guard let email = inputEmailTextfield.text else { return }
         guard let password = inputPasswordTextfield.text else { return }
         guard let checkPassword = inputCheckPasswordTextfield.text else { return }
         
-        if checkEmail(email: email){
-            viewModel.login(nickname: nickname, email: email, password: password)
+        if password.elementsEqual(checkPassword){
+            if testEmail(email: email) && testPassword(password: password){
+                viewModel.login(nickname: nickname, email: email, password: password)
+            }else {
+                shakeAllTextField()
+                showWarningLabel(warning: "*이메일 또는 비밀번호 형식이 올바르지 않아용")
+            }
         }else {
-            print("email Error")
+            shakeAllTextField()
+            showWarningLabel(warning: "*비밀번호가 일치하지 않아용")
         }
     }
     
-    func checkEmail(email: String) -> Bool {
+    private func signUpButtonDidTap() {
+        signUpButton.rx.tap
+            .bind(onNext: {
+                self.pushSignUpButton()
+            }).disposed(by: disposeBag)
+    }
+    
+    func testEmail(email: String) -> Bool {
         return viewModel.isValidEmail(email: email)
+    }
+    
+    func testPassword(password: String) -> Bool {
+        return viewModel.isValidPassword(password: password)
     }
     
 //    func isValidPassword(pw: String) -> Bool {
@@ -89,7 +113,7 @@ final class SignUpViewController: BaseVC<SignUpViewModel>, statusPresentable{
     
     override func configureVC() {
         //        restoreFrameYValue = self.view.frame.origin.y
-        
+        signUpButtonDidTap()
     }
     
     override func addView() {
@@ -129,7 +153,8 @@ final class SignUpViewController: BaseVC<SignUpViewModel>, statusPresentable{
         }
         
         warningLabel.snp.makeConstraints {
-            $0.bottom.equalTo(signUpButton.snp.top).offset(5)
+            $0.leading.equalTo(signUpButton.snp.leading)
+            $0.top.equalTo(signUpButton.snp.bottom).offset(10)
         }
         
         signUpButton.snp.makeConstraints {

@@ -1,17 +1,10 @@
 import Foundation
 import Alamofire
-import RxSwift
-
-protocol statusPresentable: AnyObject {
-    var statusData: PublishSubject<SignUpModel> { get }
-}
 
 final class SignUpViewModel: BaseViewModel {
     
-    weak var delegate: statusPresentable?
-    
     func login(nickname: String, email: String, password: String){
-        let url = "http://172.30.1.95:8090/auth/signup"
+        let url = "http://10.82.17.76:8090/auth/signup"
         
         let header : HTTPHeaders = ["Content-Type" : "application/json"]
         
@@ -25,12 +18,10 @@ final class SignUpViewModel: BaseViewModel {
                    method: .post,
                    parameters: body,
                    encoding: JSONEncoding.default,
-                   headers: header).responseData(emptyResponseCodes: [200,201,204]) { response in
+                   headers: header).responseData{ response in
             
             let decodeData = try? JSONDecoder().decode(SignUpModel.self, from: response.data!)
             print(decodeData ?? "")
-            self.delegate?.statusData.onNext((decodeData!))
-            
             print(response.response?.statusCode)
             
             switch response.response!.statusCode {
@@ -46,12 +37,6 @@ final class SignUpViewModel: BaseViewModel {
                 print("error")
             }
         }
-        
-        //    func isValidPassword(pw: String) -> Bool {
-        //        let emailRegEx = "#^.(?=^.{8,15}$)(?=.\d)(?=.[a-zA-Z])(?=.[!@#$%^&+=]).*$"
-        //        let emailTest = NSPredicate(format: "SELF MATCHES %@", emailRegEx)
-        //        return emailTest.evaluate(with: pw)
-        //    }
     }
     
     func isValidEmail(email: String) -> Bool {
@@ -60,4 +45,9 @@ final class SignUpViewModel: BaseViewModel {
         return emailTest.evaluate(with: email)
     }
     
+    func isValidPassword(password: String) -> Bool {
+        let passwordRegEx = "^.*(?=^.{8,15}$)(?=.*\\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$"
+        let passwordTest = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
+        return passwordTest.evaluate(with: password)
+    }
 }
