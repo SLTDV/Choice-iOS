@@ -5,6 +5,8 @@ import RxCocoa
 final class SignUpViewController: BaseVC<SignUpViewModel>{
     private let disposeBag = DisposeBag()
     
+    private lazy var restoreFrameYValue = 0.0
+    
     private let titleLabel = UILabel().then {
         $0.text = "Choice"
         $0.textColor = .black
@@ -41,7 +43,7 @@ final class SignUpViewController: BaseVC<SignUpViewModel>{
         $0.setTitle("회원가입", for: .normal)
         $0.setTitleColor(.white, for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        $0.backgroundColor = .init(red: 0.89, green: 0.89, blue: 0.89, alpha: 1)
+        $0.backgroundColor = .black
         $0.layer.cornerRadius = 8
     }
     
@@ -99,20 +101,16 @@ final class SignUpViewController: BaseVC<SignUpViewModel>{
         return viewModel.isValidPassword(password: password)
     }
     
-//    func isValidPassword(pw: String) -> Bool {
-//        return viewModel.isValidPassword(pw: pw)
-//    }
+    override func viewWillAppear(_ animated: Bool) {
+        self.addKeyboardNotifications()
+    }
     
-    //    override func viewWillAppear(_ animated: Bool) {
-    //        self.addKeyboardNotifications()
-    //    }
-    
-    //    override func viewWillDisappear(_ animated: Bool) {
-    //        self.removeKeyboardNotifications()
-    //    }
+    override func viewWillDisappear(_ animated: Bool) {
+        self.removeKeyboardNotifications()
+    }
     
     override func configureVC() {
-        //        restoreFrameYValue = self.view.frame.origin.y
+        restoreFrameYValue = self.view.frame.origin.y
         signUpButtonDidTap()
     }
     
@@ -165,34 +163,34 @@ final class SignUpViewController: BaseVC<SignUpViewModel>{
     }
 }
 
-//extension SignUpViewController {
-
-//    @objc private func showKeyboard(_ notification: Notification) {
-//        if self.view.frame.origin.y == restoreFrameYValue {
-//            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-//                let keyboardHeight = keyboardFrame.cgRectValue.height
-//                self.view.frame.origin.y -= keyboardHeight - 240
-//            }
-//        }
-//    }
-//
-//    @objc private func hideKeyboard(_ notification: Notification) {
-//        if self.view.frame.origin.y != restoreFrameYValue {
-//            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-//                let keyboardHeight = keyboardFrame.cgRectValue.height
-//                self.view.frame.origin.y += keyboardHeight - 240
-//            }
-//        }
-//    }
-//
-//    private func addKeyboardNotifications(){
-//        NotificationCenter.default.addObserver(self, selector: #selector(self.showKeyboard(_:)), name: UIResponder.keyboardWillShowNotification , object: nil)
-//        NotificationCenter.default.addObserver(self, selector: #selector(self.hideKeyboard(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
-//    }
-//
-//    private func removeKeyboardNotifications(){
-//        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification , object: nil)
-//        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
-//    }
-
-//}
+extension SignUpViewController {
+    
+    @objc private func showKeyboard(_ notification: Notification) {
+        if self.view.frame.origin.y == restoreFrameYValue {
+            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+                let keyboardHeight = keyboardFrame.cgRectValue.height
+                self.view.frame.origin.y -= keyboardHeight - 240
+            }
+        }
+    }
+    
+    @objc private func hideKeyboard(_ notification: Notification) {
+        if self.view.frame.origin.y != restoreFrameYValue {
+            if let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+                let keyboardHeight = keyboardFrame.cgRectValue.height
+                self.view.frame.origin.y += keyboardHeight - 240
+            }
+        }
+    }
+    
+    private func addKeyboardNotifications(){
+        NotificationCenter.default.addObserver(self, selector: #selector(self.showKeyboard(_:)), name: UIResponder.keyboardWillShowNotification , object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.hideKeyboard(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+    private func removeKeyboardNotifications(){
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification , object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
+    }
+    
+}

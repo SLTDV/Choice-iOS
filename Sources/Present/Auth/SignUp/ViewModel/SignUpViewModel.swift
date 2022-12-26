@@ -20,13 +20,12 @@ final class SignUpViewModel: BaseViewModel {
                    encoding: JSONEncoding.default,
                    headers: header).responseData{ response in
             
-            let decodeData = try? JSONDecoder().decode(SignUpModel.self, from: response.data!)
-            print(decodeData ?? "")
             print(response.response?.statusCode)
             
-            switch response.response!.statusCode {
-            case (200..<300):
+            switch response.response?.statusCode {
+            case 201:
                 print("success")
+                self.coordinator.navigate(to: .popVC)
             case 400:
                 print("error1")
             case 409:

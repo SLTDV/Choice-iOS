@@ -7,4 +7,19 @@ final class SignUpCoordinator: BaseCoordinator {
         
         navigationController.pushViewController(vc, animated: true)
     }
+    
+    override func navigate(to step: ChoiceStep) {
+        switch step {
+        case .popVC:
+            popVC()
+        default:
+            return
+        }
+    }
+}
+
+extension SignUpCoordinator {
+    private func popVC() {
+        self.navigationController.popViewController(animated: true)
+    }
 }
