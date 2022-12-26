@@ -2,12 +2,12 @@ import Foundation
 import RxSwift
 import Alamofire
 
-protocol PostItemsPresentable: AnyObject {
+protocol PostItemsProtocol: AnyObject {
     var postItemsData: PublishSubject<[PostModel]> { get set }
 }
 
 final class MainViewModel: BaseViewModel {
-    weak var delegate: PostItemsPresentable?
+    weak var delegate: PostItemsProtocol?
     
     func callToFindData(type: MenuOptionType) {
         lazy var url = ""

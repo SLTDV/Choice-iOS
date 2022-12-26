@@ -7,4 +7,19 @@ final class AddPostCoordiantor: BaseCoordinator {
         
         self.navigationController.pushViewController(vc, animated: true)
     }
+    
+    override func navigate(to step: ChoiceStep) {
+        switch step {
+        case .popAddpostIsRequired:
+            popAddpostIsRequired()
+        default:
+            return
+        }
+    }
+}
+
+extension AddPostCoordiantor {
+    private func popAddpostIsRequired() {
+        navigationController.popViewController(animated: true)
+    }
 }

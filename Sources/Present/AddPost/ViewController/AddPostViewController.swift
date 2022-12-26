@@ -1,7 +1,10 @@
 import UIKit
 import PhotosUI
+import Alamofire
+import RxSwift
 
 class AddPostViewController: BaseVC<AddPostViewModel> {
+    
     private lazy var addMainImageButton = UIButton().then {
         $0.addTarget(self, action: #selector(addImageButtonDidTap(_:)), for: .touchUpInside)
         $0.contentMode = .scaleAspectFill
@@ -66,7 +69,8 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.layer.cornerRadius = 8
     }
     
-    private lazy var pushAddPostViewButton = UIButton().then {
+    private lazy var addPostViewButton = UIButton().then {
+        $0.addTarget(self, action: #selector(addPostViewButtonDidTap(_:)), for: .touchUpInside)
         $0.setTitle("계속", for: .normal)
         $0.setTitleColor( .white, for: .normal)
         $0.backgroundColor = .black
@@ -100,6 +104,16 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
         self.present(alert, animated: true)
     }
     
+    @objc private func addPostViewButtonDidTap(_ sender: UIButton) {
+        guard let title = inputTitleTextField.text else { return }
+        guard let content = inputDescriptionTextView.text else { return }
+        guard let thumbnail = addMainImageButton.imageView?.image else { return }
+        guard let firstVotingOption = firstSetTopicButton.titleLabel?.text else { return }
+        guard let secondVotingOtion = secondSetTopicButton.titleLabel?.text else { return }
+        
+        viewModel.createPost(title: title, content: content, imageData: thumbnail, firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
+    }
+    
     override func configureVC() {
         navigationItem.title = "게시물 작성"
         
@@ -109,7 +123,7 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
     
     override func addView() {
         view.addSubviews(addMainImageButton, plusIconImageView, inputTitleTextField, divideLine, inputDescriptionTextView,
-                         topicTitleLabel, firstSetTopicButton, secondSetTopicButton, pushAddPostViewButton)
+                         topicTitleLabel, firstSetTopicButton, secondSetTopicButton, addPostViewButton)
     }
     
     override func setLayout() {
@@ -160,7 +174,7 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
             $0.height.equalTo(89)
         }
         
-        pushAddPostViewButton.snp.makeConstraints {
+        addPostViewButton.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(39)
             $0.leading.trailing.equalToSuperview().inset(32)
             $0.height.equalTo(49)

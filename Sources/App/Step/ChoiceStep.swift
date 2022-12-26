@@ -1,8 +1,11 @@
 enum ChoiceStep {
-    //siginIn
+    //SiginIn
     case signUpIsRequired
     case mainVCIsRequried
     
     //Main
     case addPostIsRequired
+    
+    //AddPost
+    case popAddpostIsRequired
 }
