@@ -3,7 +3,7 @@ import PhotosUI
 
 class AddPostViewController: BaseVC<AddPostViewModel> {
     
-    private let addMainImageView = UIImageView().then {
+    private let addMainImageButton = UIButton().then {
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
         $0.clipsToBounds = true
@@ -76,21 +76,21 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     override func configureVC() {
-        self.navigationItem.title = "게시물 작성"
+        navigationItem.title = "게시물 작성"
         
         inputDescriptionTextView.delegate = self
         imagePicker.delegate = self
         
-        addMainImageView.addGestureRecognizer(tapGesture)
+        addMainImageButton.addGestureRecognizer(tapGesture)
     }
     
     override func addView() {
-        view.addSubviews(addMainImageView, plusIconImageView, inputTitleTextField, divideLine, inputDescriptionTextView,
+        view.addSubviews(addMainImageButton, plusIconImageView, inputTitleTextField, divideLine, inputDescriptionTextView,
                          topicTitleLabel, firstSetTopicButton, secondSetTopicButton, pushAddPostViewButton)
     }
     
     override func setLayout() {
-        addMainImageView.snp.makeConstraints {
+        addMainImageButton.snp.makeConstraints {
             $0.top.equalToSuperview().inset(99)
             $0.height.equalTo(223)
             $0.leading.trailing.equalToSuperview()
@@ -98,11 +98,11 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
         
         plusIconImageView.snp.makeConstraints {
             $0.height.equalTo(25)
-            $0.center.equalTo(addMainImageView)
+            $0.center.equalTo(addMainImageButton)
         }
         
         inputTitleTextField.snp.makeConstraints {
-            $0.top.equalTo(addMainImageView.snp.bottom).offset(36)
+            $0.top.equalTo(addMainImageButton.snp.bottom).offset(36)
             $0.leading.trailing.equalToSuperview().inset(32)
         }
         
@@ -180,7 +180,7 @@ extension AddPostViewController: UIImagePickerControllerDelegate, UINavigationCo
             newImage = possibleImage
         }
         
-        self.addMainImageView.image = newImage
+        self.addMainImageButton.setImage(newImage, for: .normal)
         picker.dismiss(animated: true, completion: nil)
         
     }
