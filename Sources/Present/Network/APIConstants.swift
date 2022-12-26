@@ -9,4 +9,5 @@ final class APIConstants {
     static let plusVoteNumbersURL = baseURL + "/post/"
     static let imageUploadURL = baseURL + "/image/"
     static let findAllBestPostURL = baseURL + "/post/list"
+    static let signUpURL = baseURL + "/auth/signUp"
 }
