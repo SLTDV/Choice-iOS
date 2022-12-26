@@ -35,7 +35,7 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
     
     private let inputDescriptionTextView = UITextView().then {
         $0.text = "내용입력"
-        $0.font = .systemFont(ofSize: 16, weight: .medium)
+        $0.font = .systemFont(ofSize: 14)
         $0.textColor = .lightGray
         $0.layer.cornerRadius = 8
         $0.layer.borderWidth = 1
@@ -148,7 +148,7 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
 extension AddPostViewController: UITextViewDelegate {
     
     private func setTextViewPlaceholder() {
-        if inputDescriptionTextView.text == "" {
+        if inputDescriptionTextView.text.isEmpty {
             inputDescriptionTextView.text = "내용입력"
             inputDescriptionTextView.textColor = UIColor.lightGray
         } else if inputDescriptionTextView.text == "내용입력"{
@@ -165,13 +165,6 @@ extension AddPostViewController: UITextViewDelegate {
         if textView.text == "" {
             setTextViewPlaceholder()
         }
-    }
-    
-    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        if text == "\n" {
-            textView.resignFirstResponder()
-        }
-        return true
     }
 }
 
