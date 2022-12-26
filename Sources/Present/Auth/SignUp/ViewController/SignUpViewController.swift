@@ -20,21 +20,21 @@ final class SignUpViewController: BaseVC<SignUpViewModel>{
     }
     
     private let inputNicknameTextfield = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "닉네임")
+        $0.setPlaceholder(placeholder: "닉네임을 입력해주세요")
     }
     
     private let inputEmailTextfield = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "이메일")
+        $0.setPlaceholder(placeholder: "이메일을 입력해주세요")
     }
     
     private let inputPasswordTextfield = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "비밀번호")
+        $0.setPlaceholder(placeholder: "비밀번호(8~16자리 영문, 숫자, 특수문자 조합)")
         $0.textContentType = .newPassword
         $0.isSecureTextEntry = true
     }
     
     private let inputCheckPasswordTextfield = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "비밀번호확인")
+        $0.setPlaceholder(placeholder: "비밀번호를 한번 더 입력해주세요")
         $0.textContentType = .newPassword
         $0.isSecureTextEntry = true
     }
@@ -78,11 +78,11 @@ final class SignUpViewController: BaseVC<SignUpViewModel>{
                 viewModel.login(nickname: nickname, email: email, password: password)
             }else {
                 shakeAllTextField()
-                showWarningLabel(warning: "*이메일 또는 비밀번호 형식이 올바르지 않아용")
+                showWarningLabel(warning: "*이메일 또는 비밀번호 형식이 올바르지 않아요.")
             }
         }else {
             shakeAllTextField()
-            showWarningLabel(warning: "*비밀번호가 일치하지 않아용")
+            showWarningLabel(warning: "*비밀번호가 일치하지 않아요.")
         }
     }
     
