@@ -7,9 +7,11 @@ final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
     
     var postItemsData = PublishSubject<[PostModel]>()
     
-    private let addPostButton = UIBarButtonItem().then {
+    private lazy var addPostButton = UIBarButtonItem(image: UIImage(systemName: "plus.app"),
+                                                     style: .plain,
+                                                     target: self,
+                                                     action: #selector(addPostButtonDidTap(_:))).then {
         $0.tintColor = .black
-        $0.image = UIImage(systemName: "plus.app")
     }
     
     private let profileButton = UIBarButtonItem().then {
@@ -31,6 +33,10 @@ final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
     
     private let postTableView = UITableView().then {
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
+    }
+    
+    @objc private func addPostButtonDidTap(_ sender: UIBarButtonItem) {
+        viewModel.pushAddPostVC()
     }
     
     private func bindTableView() {
@@ -68,7 +74,7 @@ final class MainViewController: BaseVC<MainViewModel>, PostItemsPresentable {
         postTableView.rowHeight = 500
         postTableView.separatorStyle = .none
         postTableView.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
-        
+            
         viewModel.delegate = self
         bindTableView()
     }

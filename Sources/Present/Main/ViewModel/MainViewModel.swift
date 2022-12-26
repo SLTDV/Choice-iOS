@@ -34,4 +34,8 @@ final class MainViewModel: BaseViewModel {
             }
         }
     }
+    
+    func pushAddPostVC() {
+        coordinator.navigate(to: .addPostIsRequired)
+    }
 }
