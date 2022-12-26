@@ -34,7 +34,7 @@ final class SignUpViewController: BaseVC<SignUpViewModel>{
     }
     
     private let inputCheckPasswordTextfield = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "비밀번호를 한번 더 입력해주세요")
+        $0.setPlaceholder(placeholder: "비밀번호를 한 번 더 입력해주세요")
         $0.textContentType = .newPassword
         $0.isSecureTextEntry = true
     }
@@ -75,7 +75,7 @@ final class SignUpViewController: BaseVC<SignUpViewModel>{
         
         if password.elementsEqual(checkPassword){
             if testEmail(email: email) && testPassword(password: password){
-                viewModel.login(nickname: nickname, email: email, password: password)
+                viewModel.callToSignUpAPI(nickname: nickname, email: email, password: password)
             }else {
                 shakeAllTextField()
                 showWarningLabel(warning: "*이메일 또는 비밀번호 형식이 올바르지 않아요.")

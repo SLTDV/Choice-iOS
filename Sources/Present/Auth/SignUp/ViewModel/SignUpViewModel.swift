@@ -2,9 +2,8 @@ import Foundation
 import Alamofire
 
 final class SignUpViewModel: BaseViewModel {
-    
-    func login(nickname: String, email: String, password: String){
-        let url = "http://10.82.17.76:8090/auth/signup"
+    func callToSignUpAPI(nickname: String, email: String, password: String){
+        let url = APIConstants.signUpURL
         
         let header : HTTPHeaders = ["Content-Type" : "application/json"]
         
@@ -19,19 +18,10 @@ final class SignUpViewModel: BaseViewModel {
                    parameters: body,
                    encoding: JSONEncoding.default,
                    headers: header).responseData{ response in
-            
-            print(response.response?.statusCode)
-            
             switch response.response?.statusCode {
             case 201:
                 print("success")
-                self.coordinator.navigate(to: .popVC)
-            case 400:
-                print("error1")
-            case 409:
-                print("이미 유저가 존재하는 이메일입니다.")
-            case 500:
-                print("500")
+                self.coordinator.navigate(to: .popVCIsRequired)
             default:
                 print("error")
             }

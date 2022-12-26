@@ -5,4 +5,5 @@ final class APIConstants {
     
     static let findNewestPost = baseURL + "/post/"
     static let findAllBestPost = baseURL + "/post/list"
+    static let signUpURL = baseURL + "/auth/signUp"
 }

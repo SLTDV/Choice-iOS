@@ -10,8 +10,8 @@ final class SignUpCoordinator: BaseCoordinator {
     
     override func navigate(to step: ChoiceStep) {
         switch step {
-        case .popVC:
-            popVC()
+        case .popVCIsRequired:
+            popVCIsRequired()
         default:
             return
         }
@@ -19,7 +19,7 @@ final class SignUpCoordinator: BaseCoordinator {
 }
 
 extension SignUpCoordinator {
-    private func popVC() {
+    private func popVCIsRequired() {
         self.navigationController.popViewController(animated: true)
     }
 }

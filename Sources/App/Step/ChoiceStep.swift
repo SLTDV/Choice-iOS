@@ -1,5 +1,5 @@
 enum ChoiceStep {
-    case popVC
+    case popVCIsRequired
     
     //siginIn
     case signUpIsRequired
