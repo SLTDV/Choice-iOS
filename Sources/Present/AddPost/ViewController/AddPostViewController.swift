@@ -2,15 +2,13 @@ import UIKit
 import PhotosUI
 
 class AddPostViewController: BaseVC<AddPostViewModel> {
-    
-    private let addMainImageButton = UIButton().then {
+    private lazy var addMainImageButton = UIButton().then {
+        $0.addTarget(self, action: #selector(addImageButtonDidTap(_:)), for: .touchUpInside)
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
         $0.clipsToBounds = true
         $0.isUserInteractionEnabled = true
     }
-    
-    private lazy var tapGesture = UITapGestureRecognizer(target: self, action: #selector(addImage(_:)))
     
     private let plusIconImageView = UIImageView().then {
         $0.image = .init(systemName: "plus")
@@ -18,7 +16,7 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.contentMode = .scaleAspectFill
     }
     
-    let imagePicker = UIImagePickerController().then {
+    private let imagePicker = UIImagePickerController().then {
         $0.sourceType = .photoLibrary
         $0.allowsEditing = true
     }
@@ -49,6 +47,8 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private lazy var firstSetTopicButton = UIButton().then {
+        $0.addTarget(self, action: #selector(SetTopicButtonDidTap(_:)), for: .touchUpInside)
+        $0.tag = 0
         $0.setTitle("주제1", for: .normal)
         $0.setTitleColor(.gray, for: .normal)
         $0.layer.borderWidth = 1
@@ -57,6 +57,8 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private lazy var secondSetTopicButton = UIButton().then {
+        $0.addTarget(self, action: #selector(SetTopicButtonDidTap(_:)), for: .touchUpInside)
+        $0.tag = 1
         $0.setTitle("주제2", for: .normal)
         $0.setTitleColor(.gray, for: .normal)
         $0.layer.borderWidth = 1
@@ -71,8 +73,31 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.layer.cornerRadius = 8
     }
     
-    @objc func addImage(_ sender: AnyObject) {
+    @objc private func addImageButtonDidTap(_ sender: UIButton) {
         self.present(imagePicker, animated: true)
+    }
+    
+    @objc private func SetTopicButtonDidTap(_ sender: UIButton) {
+        let alert = UIAlertController(title: "주제", message: "주제를 입력해주세요.", preferredStyle: .alert)
+        alert.addTextField()
+        
+        let ok = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
+            switch sender.tag {
+            case 0:
+                self?.firstSetTopicButton.setTitle(alert.textFields?[0].text, for: .normal)
+            case 1:
+                self?.secondSetTopicButton.setTitle(alert.textFields?[0].text, for: .normal)
+            default:
+                return
+            }
+        }
+        
+        let cancel = UIAlertAction(title: "cancel", style: .cancel)
+        
+        alert.addAction(ok)
+        alert.addAction(cancel)
+        
+        self.present(alert, animated: true)
     }
     
     override func configureVC() {
@@ -80,8 +105,6 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
         
         inputDescriptionTextView.delegate = self
         imagePicker.delegate = self
-        
-        addMainImageButton.addGestureRecognizer(tapGesture)
     }
     
     override func addView() {
@@ -136,7 +159,7 @@ class AddPostViewController: BaseVC<AddPostViewModel> {
             $0.trailing.equalToSuperview().inset(32)
             $0.height.equalTo(89)
         }
-    
+        
         pushAddPostViewButton.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(39)
             $0.leading.trailing.equalToSuperview().inset(32)
@@ -160,7 +183,7 @@ extension AddPostViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         setTextViewPlaceholder()
     }
-
+    
     func textViewDidEndEditing(_ textView: UITextView) {
         if textView.text == "" {
             setTextViewPlaceholder()
@@ -182,6 +205,5 @@ extension AddPostViewController: UIImagePickerControllerDelegate, UINavigationCo
         
         self.addMainImageButton.setImage(newImage, for: .normal)
         picker.dismiss(animated: true, completion: nil)
-        
     }
 }
