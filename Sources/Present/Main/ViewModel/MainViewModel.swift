@@ -14,9 +14,9 @@ final class MainViewModel: BaseViewModel {
         
         switch type {
         case .findNewestPostData:
-            url = APIConstants.findNewestPost
+            url = APIConstants.findNewestPostURL
         case .findBestPostData:
-            url = APIConstants.findAllBestPost
+            url = APIConstants.findAllBestPostURL
         }
         
         let headers: HTTPHeaders = ["Content-Type": "application/json", "Accept": "application/json"]
