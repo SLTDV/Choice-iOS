@@ -2,7 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-final class SignUpViewController: BaseVC<SignUpViewModel>{
+final class SignUpViewController: BaseVC<SignUpViewModel> {
     private let disposeBag = DisposeBag()
     
     private lazy var restoreFrameYValue = 0.0
@@ -67,7 +67,7 @@ final class SignUpViewController: BaseVC<SignUpViewModel>{
         }
     }
     
-    private func pushSignUpButton() {
+    private func checkAvailabilitySignUp() {
         guard let nickname = inputNicknameTextfield.text else { return }
         guard let email = inputEmailTextfield.text else { return }
         guard let password = inputPasswordTextfield.text else { return }
@@ -76,11 +76,11 @@ final class SignUpViewController: BaseVC<SignUpViewModel>{
         if password.elementsEqual(checkPassword){
             if testEmail(email: email) && testPassword(password: password){
                 viewModel.callToSignUpAPI(nickname: nickname, email: email, password: password)
-            }else {
+            } else {
                 shakeAllTextField()
                 showWarningLabel(warning: "*이메일 또는 비밀번호 형식이 올바르지 않아요.")
             }
-        }else {
+        } else {
             shakeAllTextField()
             showWarningLabel(warning: "*비밀번호가 일치하지 않아요.")
         }
@@ -89,7 +89,7 @@ final class SignUpViewController: BaseVC<SignUpViewModel>{
     private func signUpButtonDidTap() {
         signUpButton.rx.tap
             .bind(onNext: {
-                self.pushSignUpButton()
+                self.checkAvailabilitySignUp()
             }).disposed(by: disposeBag)
     }
     

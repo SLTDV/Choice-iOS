@@ -17,13 +17,12 @@ final class SignUpViewModel: BaseViewModel {
                    method: .post,
                    parameters: body,
                    encoding: JSONEncoding.default,
-                   headers: header).responseData{ response in
+                   headers: header).responseData { response in
             switch response.response?.statusCode {
             case 201:
-                print("success")
                 self.coordinator.navigate(to: .popVCIsRequired)
             default:
-                print("error")
+                return 
             }
         }
     }
