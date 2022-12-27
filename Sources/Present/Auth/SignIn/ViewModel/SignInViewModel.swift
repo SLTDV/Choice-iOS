@@ -24,25 +24,19 @@ final class SignInViewModel: BaseViewModel {
                    encoding: JSONEncoding.default,
                    headers: headers
         )
-        .validate(statusCode: 200..<300)
-        .responseData { [weak self] response in
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success(let data):
-                print(data)
-                print(response.response?.statusCode)
-                
                 let tk = KeyChain()
                 
-                if let accessToken = (try? JSONSerialization.jsonObject(with: response.data!, options: []) as? [String: Any])? ["accessToken"] as? String {
-                    print("accesstoken = \(accessToken)")
+                if let accessToken = (try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any])? ["accessToken"] as? String {
                     tk.create(key: "accessToken", token: accessToken)
                 }
                 
-                if let refreshToken = (try? JSONSerialization.jsonObject(with: response.data!, options: []) as? [String: Any])? ["refreshToken"] as? String {
-                    print("refreshtoken = \(refreshToken)")
+                if let refreshToken = (try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any])? ["refreshToken"] as? String {
                     tk.create(key: "refreshToken", token: refreshToken)
                 }
-                
                 self?.pushMainVC()
             case .failure(let error):
                 print("error = \(error.errorDescription)")

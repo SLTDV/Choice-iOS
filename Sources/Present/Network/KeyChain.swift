@@ -1,7 +1,7 @@
 import Foundation
 import Security
 
-class KeyChain {
+final class KeyChain {
     func create(key: String, token: String) {
         let query: NSDictionary = [
             kSecClass: kSecClassGenericPassword,

@@ -25,17 +25,16 @@ final class MainViewModel: BaseViewModel {
                    encoding: URLEncoding.queryString,
                    headers: headers,
                    interceptor: JwtRequestInterceptor())
-            .validate(statusCode: 200..<300)
-            .responseData { [weak self] response in
-                switch response.result {
-                case .success(let data):
-                    let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: data)
-                    self?.delegate?.postItemsData.onNext(decodeResponse ?? .init())
-                case .failure(let error):
-//                    print("error = \(error.localizedDescription)")
-                    print("error")
-                }
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
+            switch response.result {
+            case .success(let data):
+                let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: data)
+                self?.delegate?.postItemsData.onNext(decodeResponse ?? .init())
+            case .failure(let error):
+                print("error = \(error.localizedDescription)")
             }
+        }
     }
     
     func pushAddPostVC() {
