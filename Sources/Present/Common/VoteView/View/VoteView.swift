@@ -134,10 +134,8 @@ final class VoteView: UIView {
         var firstP = firstVotingCount / sum * 100.0
         var secondP = secondVotingCount / sum * 100.0
         
-        if firstP.isNaN && secondP.isNaN {
-            firstP = 0.0
-            secondP = 0.0
-        }
+        firstP = firstP.isNaN ? 0.0 : firstP
+        secondP = secondP.isNaN ? 0.0 : secondP
         
         return (firstP, secondP, Int(firstVotingCount), Int(secondVotingCount))
     }
