@@ -2,21 +2,21 @@ import Foundation
 import RxSwift
 import Alamofire
 
-protocol PostItemsPresentable: AnyObject {
+protocol PostItemsProtocol: AnyObject {
     var postItemsData: PublishSubject<[PostModel]> { get set }
 }
 
 final class MainViewModel: BaseViewModel {
-    weak var delegate: PostItemsPresentable?
+    weak var delegate: PostItemsProtocol?
     
     func callToFindData(type: MenuOptionType) {
         lazy var url = ""
         
         switch type {
         case .findNewestPostData:
-            url = APIConstants.findNewestPost
+            url = APIConstants.findNewestPostURL
         case .findBestPostData:
-            url = APIConstants.findAllBestPost
+            url = APIConstants.findAllBestPostURL
         }
         
         let headers: HTTPHeaders = ["Content-Type": "application/json", "Accept": "application/json"]
@@ -33,5 +33,9 @@ final class MainViewModel: BaseViewModel {
                 print("error = \(error.localizedDescription)")
             }
         }
+    }
+    
+    func pushAddPostVC() {
+        coordinator.navigate(to: .addPostIsRequired)
     }
 }
