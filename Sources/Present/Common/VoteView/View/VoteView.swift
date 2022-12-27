@@ -120,6 +120,9 @@ final class VoteView: UIView {
     }
 
     final func changeVoteTitleData(with model: [PostModel]) {
+        guard let firstVotingCount = firstVotingCount.text else { return }
+        guard let secondVotingCount = secondVotingCount.text else { return }
+        
         DispatchQueue.main.async {
             self.firstVoteTitleLabel.text = model[0].firstVotingOption
             self.secondVoteTitleLabel.text = model[0].secondVotingOption
