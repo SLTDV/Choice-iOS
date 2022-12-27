@@ -24,7 +24,8 @@ final class MainViewModel: BaseViewModel {
                    method: .get,
                    encoding: URLEncoding.queryString,
                    headers: headers,
-                   interceptor: JwtRequestInterceptor()).validate()
+                   interceptor: JwtRequestInterceptor())
+            .validate(statusCode: 200..<300)
             .responseData { [weak self] response in
                 switch response.result {
                 case .success(let data):

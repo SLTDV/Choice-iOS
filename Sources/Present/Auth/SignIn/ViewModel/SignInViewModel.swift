@@ -24,7 +24,7 @@ final class SignInViewModel: BaseViewModel {
                    encoding: JSONEncoding.default,
                    headers: headers
         )
-        .validate()
+        .validate(statusCode: 200..<300)
         .responseData { [weak self] response in
             switch response.result {
             case .success(let data):
