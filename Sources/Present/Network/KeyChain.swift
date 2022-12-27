@@ -52,6 +52,7 @@ class KeyChain {
         kSecClassKey,
         kSecClassIdentity,
       ]
+        
       for itemClass in secItemClasses {
         let spec: NSDictionary = [kSecClass: itemClass]
         SecItemDelete(spec)

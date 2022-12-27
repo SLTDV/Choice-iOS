@@ -30,7 +30,19 @@ final class SignInViewModel: BaseViewModel {
             case .success(let data):
                 print(data)
                 print(response.response?.statusCode)
-
+                
+                let tk = KeyChain()
+                
+                if let accessToken = (try? JSONSerialization.jsonObject(with: response.data!, options: []) as? [String: Any])? ["accessToken"] as? String {
+                    print("accesstoken = \(accessToken)")
+                    tk.create(key: "accessToken", token: accessToken)
+                }
+                
+                if let refreshToken = (try? JSONSerialization.jsonObject(with: response.data!, options: []) as? [String: Any])? ["refreshToken"] as? String {
+                    print("refreshtoken = \(refreshToken)")
+                    tk.create(key: "refreshToken", token: refreshToken)
+                }
+                
                 self?.pushMainVC()
             case .failure(let error):
                 print("error = \(error.errorDescription)")
