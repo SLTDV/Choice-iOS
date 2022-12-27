@@ -15,4 +15,22 @@ class MainCoordinator: BaseCoordinator {
         
         navigationController.setViewControllers([vc], animated: true)
     }
+    
+    override func navigate(to step: ChoiceStep) {
+        switch step {
+        case .addPostIsRequired:
+            addPostIsRequired()
+        default:
+            return
+        }
+    }
+}
+
+extension MainCoordinator {
+    private func addPostIsRequired() {
+        let vc = AddPostCoordiantor(navigationController: navigationController)
+        vc.parentCoordinator = self
+        childCoordinators.append(vc)
+        vc.start()
+    }
 }
