@@ -1,4 +1,5 @@
 import UIKit
+import RxSwift
 
 final class SignInViewController: BaseVC<SignInViewModel> {
     private let titleLabel = UILabel().then {
@@ -40,8 +41,27 @@ final class SignInViewController: BaseVC<SignInViewModel> {
         $0.addTarget(self, action: #selector(pushSignUpVCButtonDidTap(_:)), for: .touchUpInside)
     }
     
+//    private func buttonDidTapEvent() {
+//        signInButton.rx.tap
+//            .bind(onNext: { [weak self] _ in
+//                self?.viewModel.pushMainVC()
+//            })
+//
+//        pushSignUpViewButton.rx.tap
+//            .bind(onNext: { [weak self] _ in
+//                self?.viewModel.pushSignUpVC()
+//            })
+//    }
+//
+//    override func configureVC() {
+//
+//    }
+    
     @objc private func pushMainVCButtonDidTap(_ sender: UIButton) {
-        viewModel.pushMainVC()
+        guard let email = inputIdTextField.text else { return }
+        guard let password = inputPasswordTextField.text else { return }
+        viewModel.callToSignInAPI(email: email, password: password)
+//        viewModel.pushMainVC()
     }
     
     @objc private func pushSignUpVCButtonDidTap(_ sender: UIButton) {

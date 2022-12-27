@@ -1,4 +1,5 @@
 import Foundation
+import Alamofire
 
 final class SignInViewModel: BaseViewModel {
     func pushMainVC() {
@@ -7,5 +8,33 @@ final class SignInViewModel: BaseViewModel {
     
     func pushSignUpVC() {
         coordinator.navigate(to: .signUpIsRequired)
+    }
+    
+    func callToSignInAPI(email: String, password: String) {
+        let url = APIConstants.signInURL
+        let headers : HTTPHeaders = ["Content-Type" : "application/json"]
+        let params = [
+            "email" : email,
+            "password" : password
+        ] as Dictionary
+        
+        AF.request(url,
+                   method: .post,
+                   parameters: params,
+                   encoding: JSONEncoding.default,
+                   headers: headers
+        )
+        .validate()
+        .responseData { [weak self] response in
+            switch response.result {
+            case .success(let data):
+                print(data)
+                print(response.response?.statusCode)
+
+                self?.pushMainVC()
+            case .failure(let error):
+                print("error = \(error.errorDescription)")
+            }
+        }
     }
 }
