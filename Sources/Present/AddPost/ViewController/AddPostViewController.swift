@@ -4,7 +4,6 @@ import Alamofire
 import RxSwift
 
 class AddPostViewController: BaseVC<AddPostViewModel> {
-    
     private lazy var addMainImageButton = UIButton().then {
         $0.addTarget(self, action: #selector(addImageButtonDidTap(_:)), for: .touchUpInside)
         $0.contentMode = .scaleAspectFill
