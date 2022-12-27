@@ -4,9 +4,8 @@ import Alamofire
 class AddPostViewModel: BaseViewModel {
     func createPost(title: String, content: String, imageData: UIImage, firstVotingOption: String, secondVotingOtion: String) {
         var url = APIConstants.imageUploadURL
-        var imagUrl = ""
         
-        let headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
+        var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
         var params = [
             "title" : title,
             "content" : content,
@@ -26,37 +25,39 @@ class AddPostViewModel: BaseViewModel {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode(AddPostModel.self, from: data)
                 print(decodeResponse?.imageUrl)
-//                imagUrl = decodeResponse?.imageUrl ?? ""
+                print("status code = \(response.response?.statusCode)")
+                
+                let imagUrl = decodeResponse?.imageUrl ?? ""
+                url = APIConstants.createPostURL
+                params = [
+                    "title" : title,
+                    "content" : content,
+                    "firstVotingOption" : firstVotingOption,
+                    "secondVotingOption" : secondVotingOtion,
+                    "thumbnail" : imagUrl
+                ] as Dictionary
+                
+                print(params)
+                AF.request(url,
+                           method: .post,
+                           parameters: params,
+                           encoding: URLEncoding.queryString,
+                           headers: headers)
+                .validate()
+                .responseData { [weak self] response in
+                    switch response.result {
+                    case .success:
+                        print(response.response?.statusCode)
+                        self?.coordinator.navigate(to: .popAddpostIsRequired)
+                        
+                    case .failure(let error):
+                        print("error = \(error.errorDescription)")
+                    }
+                }
                 print("success = \(data)")
             case .failure(let error):
                 print("error \(error.localizedDescription)")
             }
         }
-        
-//        url = APIConstants.createPostURL
-//        params = [
-//            "title" : title,
-//            "content" : content,
-//            "firstVotingOption" : firstVotingOption,
-//            "secondVotingOption" : secondVotingOtion,
-//            "thumbnail" : imagUrl
-//        ] as Dictionary
-//
-//        print(params)
-//        AF.request(url,
-//                   method: .post,
-//                   parameters: params,
-//                   encoding: URLEncoding.queryString,
-//                   headers: headers)
-//        .responseData { [weak self] response in
-//            switch response.result {
-//            case .success:
-//                print(response.response?.statusCode)
-//                self?.coordinator.navigate(to: .popAddpostIsRequired)
-//
-//            case .failure(let error):
-//                print("error = \(error.errorDescription)")
-//            }
-//        }
     }
 }
