@@ -7,7 +7,7 @@ final class APIConstants {
     static let signInURL = baseURL + "/auth/signin"
     static let reissueURL = baseURL + "/auth/"
     
-    //SignUn
+    //SignUp
     static let signUpURL = baseURL + "/auth/signup"
     
     //post

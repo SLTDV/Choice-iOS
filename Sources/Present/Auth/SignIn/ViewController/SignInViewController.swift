@@ -29,7 +29,7 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
     
     private lazy var signInButton = UIButton().then {
         $0.setTitle("로그인", for: .normal)
-        $0.backgroundColor = .init(red: 0.89, green: 0.89, blue: 0.89, alpha: 1)
+        $0.backgroundColor = .black
         $0.layer.cornerRadius = 8
     }
     
@@ -37,7 +37,7 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
         $0.backgroundColor = .init(red: 0.37, green: 0.36, blue: 0.36, alpha: 1)
     }
     
-    private lazy var pushSignUpViewButton = UIButton().then {
+    private lazy var pushSignUpButton = UIButton().then {
         $0.setTitle("회원가입", for: .normal)
         $0.setTitleColor(.gray, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 12)
