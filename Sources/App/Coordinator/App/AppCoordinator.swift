@@ -14,7 +14,7 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
-        let signInController = DetailPostCoordiantor(navigationController: navigationController)
+        let signInController = SignInCoordinator(navigationController: navigationController)
         window?.rootViewController = navigationController
         
         start(coordinator: signInController)
