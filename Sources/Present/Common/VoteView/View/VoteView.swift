@@ -6,6 +6,10 @@ import RxSwift
 final class VoteView: UIView {
     private let disposeBag = DisposeBag()
     
+    private let viewModel = VoteViewModel()
+    
+    private var addVoteCount = 0
+    
     private let firstVoteTitleLabel = UILabel().then {
         $0.textColor = .black
         $0.font = .systemFont(ofSize: 12, weight: .semibold)
@@ -82,11 +86,13 @@ final class VoteView: UIView {
         firstVoteButton.rx.tap
             .bind(onNext: { [weak self] _ in
                 self?.classifyVoteButton(voteType: .first)
+                self?.addVoteCount = 0
             }).disposed(by: disposeBag)
         
         secondVoteButton.rx.tap
             .bind(onNext: { [weak self] _ in
                 self?.classifyVoteButton(voteType: .second)
+                self?.addVoteCount = 1
             }).disposed(by: disposeBag)
     }
     
@@ -127,6 +133,7 @@ final class VoteView: UIView {
             self.firstVotingCount.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
             self.secondVotingCount.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
         }
+        viewModel.votePost(idx: model[0].idx ?? 0, choice: addVoteCount)
     }
     
     private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (Double, Double, Int, Int) {

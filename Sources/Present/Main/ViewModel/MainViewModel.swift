@@ -32,7 +32,7 @@ final class MainViewModel: BaseViewModel {
                 let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: data)
                 self?.delegate?.postItemsData.onNext(decodeResponse ?? .init())
             case .failure(let error):
-                print("error = \(error.localizedDescription)")
+                print("main error = \(error.localizedDescription)")
             }
         }
     }

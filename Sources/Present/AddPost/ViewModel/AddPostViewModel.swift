@@ -25,7 +25,7 @@ final class AddPostViewModel: BaseViewModel {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode(AddPostModel.self, from: data)
                 let imagUrl = decodeResponse?.imageUrl ?? ""
-                
+
                 headers = ["Content-Type": "application/json"]
                 url = APIConstants.createPostURL
                 params = [
