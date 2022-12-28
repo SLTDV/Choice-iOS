@@ -20,6 +20,8 @@ class MainCoordinator: BaseCoordinator {
         switch step {
         case .addPostIsRequired:
             addPostIsRequired()
+        case .detailPostIsRequired(let model):
+            detailPostIsRequired(model: model)
         default:
             return
         }
@@ -29,6 +31,13 @@ class MainCoordinator: BaseCoordinator {
 extension MainCoordinator {
     private func addPostIsRequired() {
         let vc = AddPostCoordiantor(navigationController: navigationController)
+        vc.parentCoordinator = self
+        childCoordinators.append(vc)
+        vc.start()
+    }
+    
+    private func detailPostIsRequired(model: PostModel) {
+        let vc = DetailPostCoordiantor(navigationController: navigationController)
         vc.parentCoordinator = self
         childCoordinators.append(vc)
         vc.start()

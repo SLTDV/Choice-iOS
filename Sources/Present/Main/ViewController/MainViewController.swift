@@ -44,6 +44,11 @@ final class MainViewController: BaseVC<MainViewModel>, PostItemsProtocol {
                                                       cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: [data])
         }.disposed(by: disposeBag)
+        
+        postTableView.rx.modelSelected(PostModel.self)
+            .subscribe(onNext: { [weak self] post in
+                self?.viewModel.pushDetailPostVC(model: post)
+            }).disposed(by: disposeBag)
     }
     
     private func callToFindAllData(type: MenuOptionType) {
