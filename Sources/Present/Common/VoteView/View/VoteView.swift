@@ -80,13 +80,13 @@ final class VoteView: UIView {
     
     private func voteButtonDidTap() {
         firstVoteButton.rx.tap
-            .bind(onNext: {
-                self.classifyVoteButton(voteType: .first)
+            .bind(onNext: { [weak self] _ in
+                self?.classifyVoteButton(voteType: .first)
             }).disposed(by: disposeBag)
         
         secondVoteButton.rx.tap
-            .bind(onNext: {
-                self.classifyVoteButton(voteType: .second)
+            .bind(onNext: { [weak self] _ in
+                self?.classifyVoteButton(voteType: .second)
             }).disposed(by: disposeBag)
     }
     
