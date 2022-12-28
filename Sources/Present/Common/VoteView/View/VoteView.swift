@@ -8,7 +8,7 @@ final class VoteView: UIView {
     
     private let viewModel = VoteViewModel()
     
-    private var addVoteCount = 0
+    private var postIdx = 0
     
     private let firstVoteTitleLabel = UILabel().then {
         $0.textColor = .black
@@ -86,13 +86,13 @@ final class VoteView: UIView {
         firstVoteButton.rx.tap
             .bind(onNext: { [weak self] _ in
                 self?.classifyVoteButton(voteType: .first)
-                self?.addVoteCount = 0
+                self?.viewModel.votePost(idx: self?.postIdx ?? 0, choice: 0)
             }).disposed(by: disposeBag)
         
         secondVoteButton.rx.tap
             .bind(onNext: { [weak self] _ in
                 self?.classifyVoteButton(voteType: .second)
-                self?.addVoteCount = 1
+                self?.viewModel.votePost(idx: self?.postIdx ?? 0, choice: 1)
             }).disposed(by: disposeBag)
     }
     
@@ -122,18 +122,18 @@ final class VoteView: UIView {
             }
         }
     }
-
+    
     func changeVoteTitleData(with model: [PostModel]) {
+        postIdx = model[0].idx
         DispatchQueue.main.async {
             self.firstVoteTitleLabel.text = model[0].firstVotingOption
             self.secondVoteTitleLabel.text = model[0].secondVotingOption
             
-            let votePercentage = self.calculateToVoteCountPercentage(firstVotingCount: Double(model[0].firstVotingCount ?? 0),                                                     secondVotingCount: Double(model[0].secondVotingCount ?? 0))
+            let votePercentage = self.calculateToVoteCountPercentage(firstVotingCount: Double(model[0].firstVotingCount),                                                     secondVotingCount: Double(model[0].secondVotingCount))
             
             self.firstVotingCount.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
             self.secondVotingCount.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
         }
-        viewModel.votePost(idx: model[0].idx ?? 0, choice: addVoteCount)
     }
     
     private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (Double, Double, Int, Int) {

@@ -25,7 +25,7 @@ final class JwtRequestInterceptor: RequestInterceptor {
         let headers: HTTPHeaders = ["RefreshToken" : tk.read(key: "refreshToken") ?? .init()]
         
         AF.request(url, method: .patch, encoding: JSONEncoding.default, headers: headers).responseData { [weak self] response in
-            print("retry status code = \(response.response?.statusCode)")
+            print("retry status code = \(String(describing: response.response?.statusCode))")
             switch response.result {
             case .success(let tokenData):
                 self?.tk.deleteAll()
