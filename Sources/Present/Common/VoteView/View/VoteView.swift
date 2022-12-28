@@ -2,7 +2,6 @@ import UIKit
 import SnapKit
 import Then
 import RxSwift
-import RxCocoa
 
 final class VoteView: UIView {
     private let disposeBag = DisposeBag()
@@ -98,7 +97,6 @@ final class VoteView: UIView {
                 self.firstVoteCheckLabel.isHidden = false
             case .second:
                 self.secondVoteCheckLabel.isHidden = false
-                
             }
             self.firstVotingCount.isHidden = false
             self.secondVotingCount.isHidden = false
@@ -119,25 +117,25 @@ final class VoteView: UIView {
         }
     }
 
-    final func changeVoteTitleData(with model: [PostModel]) {
-        guard let firstVotingCount = firstVotingCount.text else { return }
-        guard let secondVotingCount = secondVotingCount.text else { return }
-        
+    func changeVoteTitleData(with model: [PostModel]) {
         DispatchQueue.main.async {
             self.firstVoteTitleLabel.text = model[0].firstVotingOption
             self.secondVoteTitleLabel.text = model[0].secondVotingOption
             
-            let votePercentage = self.calculateToVoteCountPercentage(firstVotingCount: Double(model[0].firstVotingCount ?? 0),                                                            secondVotingCount: Double(model[0].secondVotingCount ?? 0))
+            let votePercentage = self.calculateToVoteCountPercentage(firstVotingCount: Double(model[0].firstVotingCount ?? 0),                                                     secondVotingCount: Double(model[0].secondVotingCount ?? 0))
             
             self.firstVotingCount.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
             self.secondVotingCount.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
         }
     }
     
-    private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (Int, Int, Int, Int) {
+    private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (Double, Double, Int, Int) {
         let sum = firstVotingCount + secondVotingCount
-        let firstP = Int(firstVotingCount / sum * 100)
-        let secondP = Int(secondVotingCount / sum * 100)
+        var firstP = firstVotingCount / sum * 100.0
+        var secondP = secondVotingCount / sum * 100.0
+        
+        firstP = firstP.isNaN ? 0.0 : firstP
+        secondP = secondP.isNaN ? 0.0 : secondP
         
         return (firstP, secondP, Int(firstVotingCount), Int(secondVotingCount))
     }

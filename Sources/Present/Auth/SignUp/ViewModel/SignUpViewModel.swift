@@ -22,6 +22,7 @@ final class SignUpViewModel: BaseViewModel {
             case 201:
                 self.coordinator.navigate(to: .popVCIsRequired)
             default:
+                print(response.response?.statusCode)
                 return 
             }
         }
