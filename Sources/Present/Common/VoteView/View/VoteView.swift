@@ -4,9 +4,7 @@ import Then
 import RxSwift
 import RxCocoa
 
-final class VoteView: UIView, VotingCountProtocol {
-    var firstVotingCountData = 0
-    var secondVotingCountData = 0
+final class VoteView: UIView {
     
     private let disposeBag = DisposeBag()
     
@@ -76,36 +74,60 @@ final class VoteView: UIView, VotingCountProtocol {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
-        viewModel.delegate = self
-        
         addView()
         setLayout()
-        voteButtonDidTap()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func voteButtonDidTap() {
-        let votePercentage = self.calculateToVoteCountPercentage(firstVotingCount: Double(self.firstVotingCountData),                                                     secondVotingCount: Double(self.secondVotingCountData))
+    private func bind() {
+        // MARK: - Input
+        let voteButtonDidTapRelay = PublishRelay<(Int, Int)>()
+
+        let input = VoteViewModel.Input(
+            voteButtonDidTap: voteButtonDidTapRelay.compactMap { $0 }
+        )
+        
         firstVoteButton.rx.tap
-            .bind(onNext: { [weak self] _ in
-                print("first = \(self?.firstVotingCountData)")
-                self?.viewModel.votePost(idx: self?.postIdx ?? 0, choice: 0)
-                self?.firstVotingCountLabel.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
-                self?.secondVotingCountLabel.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
-                self?.classifyVoteButton(voteType: .first)
-            }).disposed(by: disposeBag)
+            .asObservable()
+            .withUnretained(self)
+            .map { owner, _ in (owner.postIdx, 0) }
+            .bind(with: self) { owner, voting in
+                voteButtonDidTapRelay.accept(voting)
+                owner.classifyVoteButton(voteType: .first)
+            }
+            .disposed(by: disposeBag)
         
         secondVoteButton.rx.tap
-            .bind(onNext: { [weak self] _ in
-                self?.viewModel.votePost(idx: self?.postIdx ?? 0, choice: 1)
-                self?.firstVotingCountLabel.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
-                self?.secondVotingCountLabel.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
-                self?.classifyVoteButton(voteType: .second)
-            }).disposed(by: disposeBag)
+            .asObservable()
+            .withUnretained(self)
+            .map { owner, _ in (owner.postIdx, 1) }
+            .bind(with: self) { owner, voting in
+                voteButtonDidTapRelay.accept(voting)
+                owner.classifyVoteButton(voteType: .second)
+            }
+            .disposed(by: disposeBag)
+        
+        // MARK: - Output
+        let output = viewModel.transform(input)
+        
+        Observable.combineLatest(output.firstVoteCountData, output.secondVoteCountData)
+            .withUnretained(self)
+            .map { (owner, arg1) in
+                let (first, second) = arg1
+                return owner.calculateToVoteCountPercentage(
+                    firstVotingCount: Double(first),
+                    secondVotingCount: Double(second)
+                )
+            }
+            .bind(with: self) { owner, percentage in
+                owner.firstVotingCountLabel.text = "\(percentage.0)%(\(percentage.2)명)"
+                owner.secondVotingCountLabel.text = "\(percentage.1)%(\(percentage.3)명)"
+            }
+            .disposed(by: disposeBag)
     }
     
     private func classifyVoteButton(voteType: ClassifyVoteButtonType) {
@@ -137,6 +159,7 @@ final class VoteView: UIView, VotingCountProtocol {
     
     func changeVoteTitleData(with model: [PostModel]) {
         postIdx = model[0].idx
+        print("postIdx = \(postIdx)")
         DispatchQueue.main.async {
             self.firstVoteTitleLabel.text = model[0].firstVotingOption
             self.secondVoteTitleLabel.text = model[0].secondVotingOption
@@ -176,7 +199,7 @@ final class VoteView: UIView, VotingCountProtocol {
             $0.leading.equalToSuperview()
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(10)
             $0.bottom.equalToSuperview()
-            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 30)
+            $0.width.equalTo(UIScreen.main.bounds.width / 2)
             $0.height.equalTo(100)
         }
         
@@ -184,7 +207,7 @@ final class VoteView: UIView, VotingCountProtocol {
             $0.trailing.equalToSuperview()
             $0.top.equalTo(secondVoteTitleLabel.snp.bottom).offset(10)
             $0.bottom.equalToSuperview()
-            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 30)
+            $0.width.equalTo(UIScreen.main.bounds.width / 2)
             $0.height.equalTo(100)
         }
         
