@@ -3,12 +3,21 @@ import UIKit
 final class DetailPostViewController: BaseVC<DetailPostViewModel> {
     var cellData = ["dsadas","dasd"]
     
+    private let scrollView = UIScrollView().then {
+        $0.backgroundColor = .white
+        $0.showsVerticalScrollIndicator = false
+    }
+    
+    private let contentView = UIView()
+    
     private let titleLabel = UILabel().then {
+        $0.text = "adad"
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
     }
     
     private let descriptionLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 12, weight: .regular)
+        $0.text = "dasdasdasda"
+        $0.font = .systemFont(ofSize: 14, weight: .medium)
     }
     
     private let postImageView = UIImageView().then {
@@ -23,6 +32,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
     }
     
     private let commentCountLabel = UILabel().then {
+        $0.text = "댓글"
         $0.font = .systemFont(ofSize: 14, weight: .medium)
     }
     
@@ -39,49 +49,81 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
     }
     
+    override func configureVC() {
+        commentTableView.dataSource = self
+        enterCommentTextView.delegate = self
+        scrollView.delegate = self
+        
+        commentTableView.rowHeight = 160
+    }
+    
     override func addView() {
-        view.addSubviews(titleLabel, descriptionLabel, postImageView, voteView, divideLineView)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        contentView.addSubviews(titleLabel, descriptionLabel, postImageView, voteView, divideLineView, commentCountLabel, enterCommentTextView, commentTableView)
     }
     
     override func setLayout() {
+        scrollView.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+        
+        contentView.snp.makeConstraints {
+            $0.edges.equalTo(scrollView.contentLayoutGuide)
+            $0.width.equalToSuperview()
+            $0.height.greaterThanOrEqualTo(view.snp.height)
+        }
+        
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview().inset(107)
+            $0.top.equalToSuperview()
         }
         
         descriptionLabel.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(10)
             $0.leading.equalToSuperview().offset(20)
         }
-        
+
         postImageView.snp.makeConstraints {
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(10)
+            $0.centerX.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(200)
         }
-        
+
         voteView.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(21)
-            $0.leading.trailing.equalToSuperview().inset(10)
+            $0.top.equalTo(postImageView.snp.bottom).offset(31)
+            $0.centerX.equalToSuperview()
         }
-        
+
         divideLineView.snp.makeConstraints {
-            $0.top.equalTo(voteView.snp.bottom).offset(20)
-            $0.leading.trailing.equalToSuperview().inset(50)
+            $0.top.equalTo(voteView.snp.bottom).offset(50)
+            $0.leading.trailing.equalToSuperview().inset(30)
             $0.height.equalTo(1)
         }
-        
+
         commentCountLabel.snp.makeConstraints {
             $0.top.equalTo(divideLineView.snp.bottom).offset(18)
+            $0.leading.equalToSuperview().offset(30)
         }
+        
         enterCommentTextView.snp.makeConstraints {
             $0.top.equalTo(commentCountLabel.snp.bottom).offset(18)
+            $0.height.equalTo(83)
+            $0.leading.trailing.equalToSuperview().inset(30)
+        }
+
+        commentTableView.snp.makeConstraints {
+            $0.top.equalTo(enterCommentTextView.snp.bottom).offset(30)
+            $0.leading.trailing.equalToSuperview().inset(30)
+            $0.height.equalToSuperview()
         }
     }
 }
 
-extension MainViewController: UITableViewDataSource {
+extension DetailPostViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 3
+        return 5
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -90,5 +132,27 @@ extension MainViewController: UITableViewDataSource {
         cell.selectionStyle = .none
 
         return cell
+    }
+}
+
+extension DetailPostViewController: UITextViewDelegate {
+    private func setTextViewPlaceholder() {
+        if enterCommentTextView.text.isEmpty {
+            enterCommentTextView.text = "댓글을 입력해주세요"
+            enterCommentTextView.textColor = UIColor.lightGray
+        } else if enterCommentTextView.text == "댓글을 입력해주세요"{
+            enterCommentTextView.text = ""
+            enterCommentTextView.textColor = UIColor.black
+        }
+    }
+    
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        setTextViewPlaceholder()
+    }
+    
+    func textViewDidEndEditing(_ textView: UITextView) {
+        if textView.text == "" {
+            setTextViewPlaceholder()
+        }
     }
 }
