@@ -45,11 +45,8 @@ final class SignInViewModel: BaseViewModel {
                     tk.create(key: "refreshToken", token: refreshToken)
                 }
                 self?.pushMainVC()
-            case .failure(let error):
-                print(response.response?.statusCode)
+            case .failure:
                 self?.delegate?.statusCodeData.onNext(response.response?.statusCode ?? 0)
-                print("signIn = \(self?.delegate?.statusCodeData)")
-                print("error = \(String(describing: error.errorDescription))")
             }
         }
     }

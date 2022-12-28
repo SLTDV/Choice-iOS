@@ -31,7 +31,6 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
         $0.setTitle("로그인", for: .normal)
         $0.backgroundColor = .init(red: 0.89, green: 0.89, blue: 0.89, alpha: 1)
         $0.layer.cornerRadius = 8
-        $0.addTarget(self, action: #selector(pushMainVCButtonDidTap(_:)), for: .touchUpInside)
     }
     
     private let divideLineButton = UIView().then {
@@ -43,7 +42,6 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
         $0.setTitleColor(.gray, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 12)
         $0.backgroundColor = .white
-        $0.addTarget(self, action: #selector(pushSignUpVCButtonDidTap(_:)), for: .touchUpInside)
     }
     
     private let warningLabel = UILabel().then {
@@ -61,24 +59,26 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
     
     override func configureVC() {
         viewModel.delegate = self
-    }
-    
-    @objc private func pushMainVCButtonDidTap(_ sender: UIButton) {
-        guard let email = inputIdTextField.text else { return }
-        guard let password = inputPasswordTextField.text else { return }
         
-        statusCodeData.bind(onNext: { [weak self] _ in
-            self?.showWarningLabel(warning: "아이디 또는 비밀번호가 잘못되었습니다.")
-            DispatchQueue.main.async {
-                self?.inputIdTextField.shake()
-                self?.inputPasswordTextField.shake()
-            }
-        }).disposed(by: disposeBag)
-        viewModel.callToSignInAPI(email: email, password: password)
-    }
-    
-    @objc private func pushSignUpVCButtonDidTap(_ sender: UIButton) {
-        viewModel.pushSignUpVC()
+        signInButton.rx.tap
+            .bind(onNext: { [weak self] _ in
+                guard let email = self?.inputIdTextField.text else { return }
+                guard let password = self?.inputPasswordTextField.text else { return }
+                
+                self?.statusCodeData.bind(onNext: { [weak self] _ in
+                    self?.showWarningLabel(warning: "아이디 또는 비밀번호가 잘못되었습니다.")
+                    DispatchQueue.main.async {
+                        self?.inputIdTextField.shake()
+                        self?.inputPasswordTextField.shake()
+                    }
+                }).disposed(by: self?.disposeBag ?? .init())
+                self?.viewModel.callToSignInAPI(email: email, password: password)
+            }).disposed(by: disposeBag)
+        
+        pushSignUpViewButton.rx.tap
+            .bind(onNext: { [weak self] _ in
+                self?.viewModel.pushSignUpVC()
+            }).disposed(by: disposeBag)
     }
     
     override func addView() {
@@ -106,7 +106,7 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
             $0.top.equalTo(inputIdTextField.snp.bottom).offset(40)
             $0.leading.trailing.equalToSuperview().inset(26)
         }
-    
+        
         signInButton.snp.makeConstraints {
             $0.top.equalTo(inputPasswordTextField.snp.bottom).offset(52)
             $0.leading.trailing.equalToSuperview().inset(26)
