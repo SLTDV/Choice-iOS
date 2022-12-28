@@ -1,7 +1,14 @@
 import Foundation
 import Alamofire
+import RxSwift
+
+protocol SignInErrorProtocol: AnyObject {
+    var statusCodeData: PublishSubject<Int> { get set }
+}
 
 final class SignInViewModel: BaseViewModel {
+    weak var delegate: SignInErrorProtocol?
+    
     func pushMainVC() {
         coordinator.navigate(to: .mainVCIsRequried)
     }
@@ -39,7 +46,10 @@ final class SignInViewModel: BaseViewModel {
                 }
                 self?.pushMainVC()
             case .failure(let error):
-                print("error = \(error.errorDescription)")
+                print(response.response?.statusCode)
+                self?.delegate?.statusCodeData.onNext(response.response?.statusCode ?? 0)
+                print("signIn = \(self?.delegate?.statusCodeData)")
+                print("error = \(String(describing: error.errorDescription))")
             }
         }
     }

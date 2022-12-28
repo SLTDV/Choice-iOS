@@ -1,7 +1,12 @@
 import UIKit
 import RxSwift
+import RxCocoa
 
-final class SignInViewController: BaseVC<SignInViewModel> {
+final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
+    var statusCodeData = PublishSubject<Int>()
+    
+    private let disposeBag = DisposeBag()
+    
     private let titleLabel = UILabel().then {
         $0.text = "Choice"
         $0.textColor = .black
@@ -41,9 +46,34 @@ final class SignInViewController: BaseVC<SignInViewModel> {
         $0.addTarget(self, action: #selector(pushSignUpVCButtonDidTap(_:)), for: .touchUpInside)
     }
     
+    private let warningLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 12)
+        $0.isHidden = true
+        $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
+    }
+    
+    private func showWarningLabel(warning: String) {
+        DispatchQueue.main.async {
+            self.warningLabel.isHidden = false
+            self.warningLabel.text = warning
+        }
+    }
+    
+    override func configureVC() {
+        viewModel.delegate = self
+    }
+    
     @objc private func pushMainVCButtonDidTap(_ sender: UIButton) {
         guard let email = inputIdTextField.text else { return }
         guard let password = inputPasswordTextField.text else { return }
+        
+        statusCodeData.bind(onNext: { [weak self] _ in
+            self?.showWarningLabel(warning: "아이디 또는 비밀번호가 잘못되었습니다.")
+            DispatchQueue.main.async {
+                self?.inputIdTextField.shake()
+                self?.inputPasswordTextField.shake()
+            }
+        }).disposed(by: disposeBag)
         viewModel.callToSignInAPI(email: email, password: password)
     }
     
@@ -52,8 +82,8 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(titleLabel, subTitleLabel, inputIdTextField,
-                         inputPasswordTextField, signInButton, divideLineButton, pushSignUpViewButton)
+        view.addSubviews(titleLabel, subTitleLabel, inputIdTextField, inputPasswordTextField,
+                         signInButton, divideLineButton, pushSignUpViewButton, warningLabel)
     }
     
     override func setLayout() {
@@ -93,6 +123,11 @@ final class SignInViewController: BaseVC<SignInViewModel> {
             $0.height.equalTo(24)
             $0.top.equalTo(divideLineButton.snp.bottom).offset(5)
             $0.leading.trailing.equalToSuperview().inset(140)
+        }
+        
+        warningLabel.snp.makeConstraints {
+            $0.top.equalTo(inputPasswordTextField.snp.bottom).offset(15)
+            $0.leading.equalTo(inputPasswordTextField.snp.leading).offset(5)
         }
     }
 }
