@@ -39,6 +39,29 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
     }
     
+    //뷰가 나타나기 직전
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
+    }
+    
+    //화면에 나타난 직후
+    override func viewWillDisappear(_ animated: Bool) {
+        self.commentTableView.removeObserver(self, forKeyPath: "contentSize")
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "contentSize" {
+            if object is UITableView {
+                if let newValue = change?[.newKey] as? CGSize {
+                    commentTableView.snp.updateConstraints {
+                        $0.height.equalTo(newValue.height + 50)
+                    }
+                }
+            }
+        }
+    }
+    
     override func addView() {
         view.addSubviews(titleLabel, descriptionLabel, postImageView, voteView, divideLineView)
     }
