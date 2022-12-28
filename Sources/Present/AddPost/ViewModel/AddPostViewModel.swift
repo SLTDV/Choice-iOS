@@ -19,7 +19,8 @@ final class AddPostViewModel: BaseViewModel {
             if let image = imageData.pngData() {
                 multipartFormData.append(image, withName: "file", fileName: "\(image).png", mimeType: "image/png")
             }
-        }, to: url, method: .post, headers: headers).validate().responseData { response in
+        }, to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor())
+        .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode(AddPostModel.self, from: data)
@@ -39,19 +40,19 @@ final class AddPostViewModel: BaseViewModel {
                            method: .post,
                            parameters: params,
                            encoding: JSONEncoding.default,
-                           headers: headers)
+                           headers: headers,
+                           interceptor: JwtRequestInterceptor())
                 .validate()
-                .responseData { [weak self] response in
+                .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
                     switch response.result {
                     case .success:
                         self?.coordinator.navigate(to: .popAddpostIsRequired)
-                        
                     case .failure(let error):
-                        print("error = \(String(describing: error.errorDescription))")
+                        print("post error = \(String(describing: error.localizedDescription))")
                     }
                 }
             case .failure(let error):
-                print("error \(String(describing: error.errorDescription))")
+                print("upload error \(String(describing: error.localizedDescription))")
             }
         }
     }

@@ -23,8 +23,10 @@ final class MainViewModel: BaseViewModel {
         AF.request(url,
                    method: .get,
                    encoding: URLEncoding.queryString,
-                   headers: headers).validate()
-        .responseData { [weak self] response in
+                   headers: headers,
+                   interceptor: JwtRequestInterceptor())
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: data)
