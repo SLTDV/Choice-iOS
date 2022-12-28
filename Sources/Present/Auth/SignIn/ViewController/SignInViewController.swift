@@ -75,7 +75,7 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
                 self?.viewModel.callToSignInAPI(email: email, password: password)
             }).disposed(by: disposeBag)
         
-        pushSignUpViewButton.rx.tap
+        pushSignUpButton.rx.tap
             .bind(onNext: { [weak self] _ in
                 self?.viewModel.pushSignUpVC()
             }).disposed(by: disposeBag)
@@ -83,7 +83,7 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
     
     override func addView() {
         view.addSubviews(titleLabel, subTitleLabel, inputIdTextField, inputPasswordTextField,
-                         signInButton, divideLineButton, pushSignUpViewButton, warningLabel)
+                         signInButton, divideLineButton, pushSignUpButton, warningLabel)
     }
     
     override func setLayout() {
@@ -119,7 +119,7 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
             $0.height.equalTo(1)
         }
         
-        pushSignUpViewButton.snp.makeConstraints {
+        pushSignUpButton.snp.makeConstraints {
             $0.height.equalTo(24)
             $0.top.equalTo(divideLineButton.snp.bottom).offset(5)
             $0.leading.trailing.equalToSuperview().inset(140)
