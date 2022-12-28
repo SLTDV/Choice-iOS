@@ -35,6 +35,7 @@ final class SignInViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success(let data):
+                print("success = \(response.response?.statusCode)")
                 let tk = KeyChain()
                 
                 if let accessToken = (try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any])? ["accessToken"] as? String {
@@ -46,6 +47,7 @@ final class SignInViewModel: BaseViewModel {
                 }
                 self?.pushMainVC()
             case .failure:
+                print(response.response?.statusCode)
                 self?.delegate?.statusCodeData.onNext(response.response?.statusCode ?? 0)
             }
         }

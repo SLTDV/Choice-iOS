@@ -2,8 +2,12 @@ import UIKit
 import SnapKit
 import Then
 import RxSwift
+import RxCocoa
 
-final class VoteView: UIView {
+final class VoteView: UIView, VotingCountProtocol {
+    var firstVotingCountData = 0
+    var secondVotingCountData = 0
+    
     private let disposeBag = DisposeBag()
     
     private let viewModel = VoteViewModel()
@@ -44,13 +48,13 @@ final class VoteView: UIView {
         $0.isHidden = true
     }
     
-    private let firstVotingCount = UILabel().then {
+    private var firstVotingCountLabel = UILabel().then {
         $0.textColor = .white
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
         $0.isHidden = true
     }
     
-    private let secondVotingCount = UILabel().then {
+    private let secondVotingCountLabel = UILabel().then {
         $0.textColor = .white
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
         $0.isHidden = true
@@ -73,6 +77,8 @@ final class VoteView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        viewModel.delegate = self
+        
         addView()
         setLayout()
         voteButtonDidTap()
@@ -83,16 +89,22 @@ final class VoteView: UIView {
     }
     
     private func voteButtonDidTap() {
+        let votePercentage = self.calculateToVoteCountPercentage(firstVotingCount: Double(self.firstVotingCountData),                                                     secondVotingCount: Double(self.secondVotingCountData))
         firstVoteButton.rx.tap
             .bind(onNext: { [weak self] _ in
-                self?.classifyVoteButton(voteType: .first)
+                print("first = \(self?.firstVotingCountData)")
                 self?.viewModel.votePost(idx: self?.postIdx ?? 0, choice: 0)
+                self?.firstVotingCountLabel.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
+                self?.secondVotingCountLabel.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
+                self?.classifyVoteButton(voteType: .first)
             }).disposed(by: disposeBag)
         
         secondVoteButton.rx.tap
             .bind(onNext: { [weak self] _ in
-                self?.classifyVoteButton(voteType: .second)
                 self?.viewModel.votePost(idx: self?.postIdx ?? 0, choice: 1)
+                self?.firstVotingCountLabel.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
+                self?.secondVotingCountLabel.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
+                self?.classifyVoteButton(voteType: .second)
             }).disposed(by: disposeBag)
     }
     
@@ -104,8 +116,8 @@ final class VoteView: UIView {
             case .second:
                 self.secondVoteCheckLabel.isHidden = false
             }
-            self.firstVotingCount.isHidden = false
-            self.secondVotingCount.isHidden = false
+            self.firstVotingCountLabel.isHidden = false
+            self.secondVotingCountLabel.isHidden = false
             
             self.firstVoteButton.isEnabled = false
             self.secondVoteButton.isEnabled = false
@@ -128,11 +140,6 @@ final class VoteView: UIView {
         DispatchQueue.main.async {
             self.firstVoteTitleLabel.text = model[0].firstVotingOption
             self.secondVoteTitleLabel.text = model[0].secondVotingOption
-            
-            let votePercentage = self.calculateToVoteCountPercentage(firstVotingCount: Double(model[0].firstVotingCount),                                                     secondVotingCount: Double(model[0].secondVotingCount))
-            
-            self.firstVotingCount.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
-            self.secondVotingCount.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
         }
     }
     
@@ -149,8 +156,8 @@ final class VoteView: UIView {
     
     private func addView() {
         self.addSubviews(firstVoteTitleLabel, secondVoteTitleLabel, firstVoteButton, secondVoteButton, versusCircleLabel)
-        firstVoteButton.addSubviews(firstVoteCheckLabel, firstVotingCount)
-        secondVoteButton.addSubviews(secondVoteCheckLabel, secondVotingCount)
+        firstVoteButton.addSubviews(firstVoteCheckLabel, firstVotingCountLabel)
+        secondVoteButton.addSubviews(secondVoteCheckLabel, secondVotingCountLabel)
         versusCircleLabel.addSubview(versusLabel)
     }
     
@@ -191,12 +198,12 @@ final class VoteView: UIView {
             $0.trailing.equalToSuperview().inset(12)
         }
         
-        firstVotingCount.snp.makeConstraints {
+        firstVotingCountLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(12)
             $0.bottom.equalToSuperview().inset(11)
         }
         
-        secondVotingCount.snp.makeConstraints {
+        secondVotingCountLabel.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(12)
             $0.bottom.equalToSuperview().inset(11)
         }
@@ -213,3 +220,4 @@ final class VoteView: UIView {
         }
     }
 }
+

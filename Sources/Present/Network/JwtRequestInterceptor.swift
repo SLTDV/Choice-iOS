@@ -5,7 +5,7 @@ final class JwtRequestInterceptor: RequestInterceptor {
     let tk = KeyChain()
     
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
-        guard urlRequest.url?.absoluteString.hasPrefix("http://10.82.17.76:8090") == true,
+        guard urlRequest.url?.absoluteString.hasPrefix("http://10.82.17.76:80") == true,
               let accessToken = tk.read(key: "accessToken") else {
             completion(.success(urlRequest))
             return
@@ -25,7 +25,7 @@ final class JwtRequestInterceptor: RequestInterceptor {
         let headers: HTTPHeaders = ["RefreshToken" : tk.read(key: "refreshToken") ?? .init()]
         
         AF.request(url, method: .patch, encoding: JSONEncoding.default, headers: headers).responseData { [weak self] response in
-            print("retry status code = \(String(describing: response.response?.statusCode))")
+            print("retry status code = \(response.response?.statusCode)")
             switch response.result {
             case .success(let tokenData):
                 self?.tk.deleteAll()
