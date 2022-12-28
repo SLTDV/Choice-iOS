@@ -83,18 +83,17 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
     override func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubviews(titleLabel, descriptionLabel, postImageView, voteView, divideLineView, commentCountLabel, enterCommentTextView, commentTableView)
+        contentView.addSubviews(titleLabel, descriptionLabel, postImageView, voteView,
+                                divideLineView, commentCountLabel, enterCommentTextView, commentTableView)
     }
     
     override func setLayout() {
         scrollView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
+            $0.top.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
         }
         
         contentView.snp.makeConstraints {
-            $0.edges.equalTo(scrollView.contentLayoutGuide)
-            $0.width.equalToSuperview()
-            $0.height.greaterThanOrEqualTo(view.snp.height)
+            $0.centerX.width.top.bottom.equalToSuperview()
         }
         
         titleLabel.snp.makeConstraints {
@@ -139,7 +138,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
         commentTableView.snp.makeConstraints {
             $0.top.equalTo(enterCommentTextView.snp.bottom).offset(30)
             $0.leading.trailing.equalToSuperview().inset(30)
-            $0.height.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(3)
+            $0.height.equalTo(1)
         }
     }
 }
