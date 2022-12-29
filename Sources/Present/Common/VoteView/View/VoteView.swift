@@ -201,7 +201,7 @@ final class VoteView: UIView {
             $0.leading.equalToSuperview()
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(10)
             $0.bottom.equalToSuperview()
-            $0.width.equalTo(UIScreen.main.bounds.width / 2)
+            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 25)
             $0.height.equalTo(100)
         }
         
@@ -209,7 +209,7 @@ final class VoteView: UIView {
             $0.trailing.equalToSuperview()
             $0.top.equalTo(secondVoteTitleLabel.snp.bottom).offset(10)
             $0.bottom.equalToSuperview()
-            $0.width.equalTo(UIScreen.main.bounds.width / 2)
+            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 25)
             $0.height.equalTo(100)
         }
         
@@ -224,12 +224,12 @@ final class VoteView: UIView {
         }
         
         firstVotingCountLabel.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(12)
+            $0.leading.equalToSuperview().inset(10)
             $0.bottom.equalToSuperview().inset(11)
         }
         
         secondVotingCountLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(12)
+            $0.trailing.equalToSuperview().inset(10)
             $0.bottom.equalToSuperview().inset(11)
         }
         
