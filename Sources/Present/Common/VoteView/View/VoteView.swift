@@ -2,9 +2,14 @@ import UIKit
 import SnapKit
 import Then
 import RxSwift
+import RxCocoa
 
 final class VoteView: UIView {
     private let disposeBag = DisposeBag()
+    
+    private let viewModel = VoteViewModel()
+    
+    private var postIdx = 0
     
     private let firstVoteTitleLabel = UILabel().then {
         $0.textColor = .black
@@ -40,13 +45,13 @@ final class VoteView: UIView {
         $0.isHidden = true
     }
     
-    private let firstVotingCount = UILabel().then {
+    private let firstVotingCountLabel = UILabel().then {
         $0.textColor = .white
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
         $0.isHidden = true
     }
     
-    private let secondVotingCount = UILabel().then {
+    private let secondVotingCountLabel = UILabel().then {
         $0.textColor = .white
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
         $0.isHidden = true
@@ -68,26 +73,60 @@ final class VoteView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         addView()
         setLayout()
-        voteButtonDidTap()
+        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func voteButtonDidTap() {
+    private func bind() {
+        // MARK: - Input
+        let voteButtonDidTapRelay = PublishRelay<(Int, Int)>()
+
+        let input = VoteViewModel.Input(
+            voteButtonDidTap: voteButtonDidTapRelay.compactMap { $0 }
+        )
+        
         firstVoteButton.rx.tap
-            .bind(onNext: {
-                self.classifyVoteButton(voteType: .first)
-            }).disposed(by: disposeBag)
+            .asObservable()
+            .withUnretained(self)
+            .map { owner, _ in (owner.postIdx, 0) }
+            .bind(with: self) { owner, voting in
+                voteButtonDidTapRelay.accept(voting)
+                owner.classifyVoteButton(voteType: .first)
+            }
+            .disposed(by: disposeBag)
         
         secondVoteButton.rx.tap
-            .bind(onNext: {
-                self.classifyVoteButton(voteType: .second)
-            }).disposed(by: disposeBag)
+            .asObservable()
+            .withUnretained(self)
+            .map { owner, _ in (owner.postIdx, 1) }
+            .bind(with: self) { owner, voting in
+                voteButtonDidTapRelay.accept(voting)
+                owner.classifyVoteButton(voteType: .second)
+            }
+            .disposed(by: disposeBag)
+        
+        // MARK: - Output
+        let output = viewModel.transform(input)
+        
+        Observable.combineLatest(output.firstVoteCountData, output.secondVoteCountData)
+            .withUnretained(self)
+            .map { (owner, arg1) in
+                let (first, second) = arg1
+                return owner.calculateToVoteCountPercentage(
+                    firstVotingCount: Double(first),
+                    secondVotingCount: Double(second)
+                )
+            }
+            .bind(with: self) { owner, percentage in
+                owner.firstVotingCountLabel.text = "\(percentage.0)%(\(percentage.2)명)"
+                owner.secondVotingCountLabel.text = "\(percentage.1)%(\(percentage.3)명)"
+            }
+            .disposed(by: disposeBag)
     }
     
     private func classifyVoteButton(voteType: ClassifyVoteButtonType) {
@@ -98,8 +137,8 @@ final class VoteView: UIView {
             case .second:
                 self.secondVoteCheckLabel.isHidden = false
             }
-            self.firstVotingCount.isHidden = false
-            self.secondVotingCount.isHidden = false
+            self.firstVotingCountLabel.isHidden = false
+            self.secondVotingCountLabel.isHidden = false
             
             self.firstVoteButton.isEnabled = false
             self.secondVoteButton.isEnabled = false
@@ -116,16 +155,13 @@ final class VoteView: UIView {
             }
         }
     }
-
+    
     func changeVoteTitleData(with model: [PostModel]) {
+        postIdx = model[0].idx
+        print("postIdx = \(postIdx)")
         DispatchQueue.main.async {
             self.firstVoteTitleLabel.text = model[0].firstVotingOption
             self.secondVoteTitleLabel.text = model[0].secondVotingOption
-            
-            let votePercentage = self.calculateToVoteCountPercentage(firstVotingCount: Double(model[0].firstVotingCount ?? 0),                                                     secondVotingCount: Double(model[0].secondVotingCount ?? 0))
-            
-            self.firstVotingCount.text = "\(votePercentage.0)%(\(votePercentage.2)명)"
-            self.secondVotingCount.text = "\(votePercentage.1)%(\(votePercentage.3)명)"
         }
     }
     
@@ -142,8 +178,8 @@ final class VoteView: UIView {
     
     private func addView() {
         self.addSubviews(firstVoteTitleLabel, secondVoteTitleLabel, firstVoteButton, secondVoteButton, versusCircleLabel)
-        firstVoteButton.addSubviews(firstVoteCheckLabel, firstVotingCount)
-        secondVoteButton.addSubviews(secondVoteCheckLabel, secondVotingCount)
+        firstVoteButton.addSubviews(firstVoteCheckLabel, firstVotingCountLabel)
+        secondVoteButton.addSubviews(secondVoteCheckLabel, secondVotingCountLabel)
         versusCircleLabel.addSubview(versusLabel)
     }
     
@@ -162,7 +198,7 @@ final class VoteView: UIView {
             $0.leading.equalToSuperview()
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(10)
             $0.bottom.equalToSuperview()
-            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 30)
+            $0.width.equalTo(UIScreen.main.bounds.width / 2)
             $0.height.equalTo(100)
         }
         
@@ -170,7 +206,7 @@ final class VoteView: UIView {
             $0.trailing.equalToSuperview()
             $0.top.equalTo(secondVoteTitleLabel.snp.bottom).offset(10)
             $0.bottom.equalToSuperview()
-            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 30)
+            $0.width.equalTo(UIScreen.main.bounds.width / 2)
             $0.height.equalTo(100)
         }
         
@@ -184,12 +220,12 @@ final class VoteView: UIView {
             $0.trailing.equalToSuperview().inset(12)
         }
         
-        firstVotingCount.snp.makeConstraints {
+        firstVotingCountLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(12)
             $0.bottom.equalToSuperview().inset(11)
         }
         
-        secondVotingCount.snp.makeConstraints {
+        secondVotingCountLabel.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(12)
             $0.bottom.equalToSuperview().inset(11)
         }
@@ -206,3 +242,4 @@ final class VoteView: UIView {
         }
     }
 }
+

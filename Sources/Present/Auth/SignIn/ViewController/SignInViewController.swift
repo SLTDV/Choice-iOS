@@ -25,6 +25,7 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
     
     private let inputPasswordTextField = UnderLineTextField().then {
         $0.setPlaceholder(placeholder: "비밀번호")
+        $0.isSecureTextEntry = true
     }
     
     private lazy var signInButton = UIButton().then {

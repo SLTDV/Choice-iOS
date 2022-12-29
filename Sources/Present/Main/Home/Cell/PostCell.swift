@@ -74,7 +74,7 @@ final class PostCell: UITableViewCell {
         DispatchQueue.main.async {
             self.titleLabel.text = model[0].title
             self.descriptionLabel.text = model[0].content
-            if let imageUrl = URL(string: model[0].thumbnail ?? .init()) {
+            if let imageUrl = URL(string: model[0].thumbnail) {
                 self.postImageView.kf.setImage(with: imageUrl)
             }
         }
