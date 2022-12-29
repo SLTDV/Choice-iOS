@@ -5,7 +5,7 @@ final class JwtRequestInterceptor: RequestInterceptor {
     let tk = KeyChain()
     
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
-        guard urlRequest.url?.absoluteString.hasPrefix("http://10.82.17.76:80") == true,
+        guard urlRequest.url?.absoluteString.hasPrefix("http://10.82.17.76:8080") == true,
               let accessToken = tk.read(key: "accessToken") else {
             completion(.success(urlRequest))
             return
