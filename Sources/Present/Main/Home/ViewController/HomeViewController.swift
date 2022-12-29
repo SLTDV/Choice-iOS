@@ -42,11 +42,11 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol {
     private func bindTableView() {
         postItemsData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                                       cellType: PostCell.self)) { (row, data, cell) in
-            cell.changeCellData(with: [data])
+            cell.changeCellData(with: data)
         }.disposed(by: disposeBag)
         
         postTableView.rx.modelSelected(PostModel.self)
-            .subscribe(onNext: { [weak self] post in
+            .bind(onNext: { [weak self] post in
                 self?.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)
     }

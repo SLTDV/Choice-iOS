@@ -70,11 +70,11 @@ final class PostCell: UITableViewCell {
         }
     }
     
-    func changeCellData(with model: [PostModel]) {
+    func changeCellData(with model: PostModel) {
         DispatchQueue.main.async {
-            self.titleLabel.text = model[0].title
-            self.descriptionLabel.text = model[0].content
-            if let imageUrl = URL(string: model[0].thumbnail) {
+            self.titleLabel.text = model.title
+            self.descriptionLabel.text = model.content
+            if let imageUrl = URL(string: model.thumbnail) {
                 self.postImageView.kf.setImage(with: imageUrl)
             }
         }

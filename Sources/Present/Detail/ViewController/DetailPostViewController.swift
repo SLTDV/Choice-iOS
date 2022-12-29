@@ -60,9 +60,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
-            if let imageUrl = URL(string: model.thumbnail ?? .init()) {
+            if let imageUrl = URL(string: model.thumbnail) {
                 self.postImageView.kf.setImage(with: imageUrl)
             }
+            self.voteView.changeVoteTitleData(with: model)
         }
         
 //        DispatchQueue.main.async {
