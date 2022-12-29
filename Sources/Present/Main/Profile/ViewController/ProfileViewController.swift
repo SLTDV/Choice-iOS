@@ -13,8 +13,12 @@ class ProfileViewController: BaseVC<ProfileViewModel> {
         $0.setImage(UIImage(systemName: "pencil"), for: .normal)
     }
     
+    private let underLineView = UIView().then {
+        $0.backgroundColor = .black
+    }
+    
     override func addView() {
-        view.addSubviews(profileImageView, userNameLabel, editUserNameButton)
+        view.addSubviews(profileImageView, userNameLabel, editUserNameButton, underLineView)
     }
     
     override func setLayout() {
@@ -31,6 +35,11 @@ class ProfileViewController: BaseVC<ProfileViewModel> {
         editUserNameButton.snp.makeConstraints {
             $0.top.equalTo(userNameLabel.snp.top)
             $0.trailing.equalToSuperview().inset(50)
+        }
+        
+        underLineView.snp.makeConstraints {
+            $0.top.equalTo(editUserNameButton.snp.bottom).offset(7)
+            $0.height.equalTo(1)
         }
     }
 }
