@@ -4,12 +4,12 @@ final class CommentCell: UITableViewCell {
     static let identifier = "CommentCellIdentifier"
     
     private let nicknameLabel = UILabel().then {
-        $0.text = "dsadada"
+        $0.text = "명직이 바보 멍청이 "
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
     private let contentLabel = UILabel().then {
-        $0.text = "dsadasdasdasdasd"
+        $0.text = "명직이가 이상해요 바보인가봐요."
         $0.font = .systemFont(ofSize: 14, weight: .medium)
     }
     
@@ -25,7 +25,7 @@ final class CommentCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         contentView.layer.cornerRadius = 10
-        contentView.backgroundColor = .lightGray
+        contentView.backgroundColor = .init(red: 0.929, green: 0.929, blue: 0.929, alpha: 1)
         self.selectionStyle = .none
         
         addView()

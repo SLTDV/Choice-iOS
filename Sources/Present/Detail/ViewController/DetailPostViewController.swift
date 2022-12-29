@@ -1,7 +1,7 @@
 import UIKit
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel> {
-    var cellData = ["dsadas","dasd"]
+    var model: PostModel?
     
     private let scrollView = UIScrollView().then {
         $0.backgroundColor = .white
@@ -11,12 +11,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
     private let contentView = UIView()
     
     private let titleLabel = UILabel().then {
-        $0.text = "adad"
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
     }
     
     private let descriptionLabel = UILabel().then {
-        $0.text = "dasdasdasda"
         $0.font = .systemFont(ofSize: 14, weight: .medium)
     }
     
@@ -49,6 +47,26 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
     }
     
+    init(viewModel: DetailPostViewModel, model: PostModel) {
+            super.init(viewModel: viewModel)
+            self.model = model
+    }
+    
+    required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func changePostData(model: PostModel) {
+        DispatchQueue.main.async {
+            self.titleLabel.text = model.title
+            self.descriptionLabel.text = model.content
+            if let imageUrl = URL(string: model.thumbnail ?? .init()) {
+                self.postImageView.kf.setImage(with: imageUrl)
+            }
+        }
+//        voteView.changeVoteTitleData(with: model)
+    }
+    
     //뷰가 나타나기 직전
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -78,6 +96,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
         scrollView.delegate = self
         
         commentTableView.rowHeight = 160
+        
+        changePostData(model: model!)
     }
     
     override func addView() {

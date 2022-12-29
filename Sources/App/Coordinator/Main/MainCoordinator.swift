@@ -40,6 +40,6 @@ extension MainCoordinator {
         let vc = DetailPostCoordiantor(navigationController: navigationController)
         vc.parentCoordinator = self
         childCoordinators.append(vc)
-        vc.start()
+        vc.startDetailPostVC(model: model)
     }
 }
