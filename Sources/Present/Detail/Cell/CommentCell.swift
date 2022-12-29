@@ -3,6 +3,11 @@ import UIKit
 final class CommentCell: UITableViewCell {
     static let identifier = "CommentCellIdentifier"
     
+    private let profileImageView = UIImageView().then {
+        $0.tintColor = .black
+        $0.image = UIImage(systemName: "person.crop.circle.fill")
+    }
+    
     private let nicknameLabel = UILabel().then {
         $0.text = "명직이 바보 멍청이 "
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
@@ -42,17 +47,25 @@ final class CommentCell: UITableViewCell {
     }
     
     private func addView() {
-        contentView.addSubviews(nicknameLabel, contentLabel, editButton, deleteButton)
+        contentView.addSubviews(profileImageView, nicknameLabel, contentLabel, editButton, deleteButton)
     }
     
     private func setLayout() {
-        nicknameLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(5)
+        profileImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(10)
+            $0.height.equalTo(25)
+            $0.width.equalTo(25)
             $0.leading.equalToSuperview().offset(10)
         }
         
+        nicknameLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(14)
+            $0.leading.equalTo(profileImageView.snp.trailing).offset(8)
+        }
+        
         contentLabel.snp.makeConstraints {
-            $0.top.equalTo(nicknameLabel.snp.bottom).offset(5)
+            $0.top.equalTo(nicknameLabel.snp.bottom).offset(15)
+            $0.leading.equalToSuperview().offset(10)
         }
         
     }

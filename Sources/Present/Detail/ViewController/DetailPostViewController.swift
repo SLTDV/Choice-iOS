@@ -64,7 +64,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
                 self.postImageView.kf.setImage(with: imageUrl)
             }
         }
-//        voteView.changeVoteTitleData(with: model)
+        
+//        DispatchQueue.main.async {
+//            voteView.changeVoteTitleData(with:)
+//        }
     }
     
     //뷰가 나타나기 직전
@@ -135,7 +138,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
 
         voteView.snp.makeConstraints {
             $0.top.equalTo(postImageView.snp.bottom).offset(31)
-            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(10)
         }
 
         divideLineView.snp.makeConstraints {
