@@ -5,7 +5,6 @@ import RxSwift
 import RxCocoa
 
 final class VoteView: UIView {
-    
     private let disposeBag = DisposeBag()
     
     private let viewModel = VoteViewModel()

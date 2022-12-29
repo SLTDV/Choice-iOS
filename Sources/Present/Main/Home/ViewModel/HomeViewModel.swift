@@ -6,7 +6,7 @@ protocol PostItemsProtocol: AnyObject {
     var postItemsData: PublishSubject<[PostModel]> { get set }
 }
 
-final class MainViewModel: BaseViewModel {
+final class HomeViewModel: BaseViewModel {
     weak var delegate: PostItemsProtocol?
     
     func callToFindData(type: MenuOptionType) {
