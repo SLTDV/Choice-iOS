@@ -156,12 +156,11 @@ final class VoteView: UIView {
         }
     }
     
-    func changeVoteTitleData(with model: [PostModel]) {
-        postIdx = model[0].idx
-        print("postIdx = \(postIdx)")
+    func changeVoteTitleData(with model: PostModel) {
+        postIdx = model.idx
         DispatchQueue.main.async {
-            self.firstVoteTitleLabel.text = model[0].firstVotingOption
-            self.secondVoteTitleLabel.text = model[0].secondVotingOption
+            self.firstVoteTitleLabel.text = model.firstVotingOption
+            self.secondVoteTitleLabel.text = model.secondVotingOption
         }
     }
     

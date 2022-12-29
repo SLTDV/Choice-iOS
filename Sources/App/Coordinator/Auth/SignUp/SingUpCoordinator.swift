@@ -20,6 +20,6 @@ final class SignUpCoordinator: BaseCoordinator {
 
 extension SignUpCoordinator {
     private func popVCIsRequired() {
-        self.navigationController.popViewController(animated: true)
+        navigationController.popViewController(animated: true)
     }
 }
