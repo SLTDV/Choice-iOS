@@ -165,7 +165,7 @@ final class VoteView: UIView {
         }
     }
     
-    private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (Double, Double, Int, Int) {
+    private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (String, String, Int, Int) {
         let sum = firstVotingCount + secondVotingCount
         var firstP = firstVotingCount / sum * 100.0
         var secondP = secondVotingCount / sum * 100.0
@@ -173,7 +173,10 @@ final class VoteView: UIView {
         firstP = firstP.isNaN ? 0.0 : firstP
         secondP = secondP.isNaN ? 0.0 : secondP
         
-        return (firstP, secondP, Int(firstVotingCount), Int(secondVotingCount))
+        let firstStr = String(format: "%0.2f", firstP)
+        let secondStr = String(format: "%0.2f", secondP)
+        
+        return (firstStr, secondStr, Int(firstVotingCount), Int(secondVotingCount))
     }
     
     private func addView() {
