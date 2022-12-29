@@ -1,6 +1,6 @@
 import Foundation
 
-final class PostModel: Codable {
+struct PostModel: Codable {
     var idx: Int
     var thumbnail: String
     var title: String

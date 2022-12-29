@@ -1,6 +1,6 @@
 import Foundation
 
-class VoteModel: Codable {
+struct VoteModel: Codable {
     var firstVotingCount: Int
     var secondVotingCount: Int
 }

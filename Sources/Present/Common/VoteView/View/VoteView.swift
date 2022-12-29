@@ -45,7 +45,7 @@ final class VoteView: UIView {
         $0.isHidden = true
     }
     
-    private var firstVotingCountLabel = UILabel().then {
+    private let firstVotingCountLabel = UILabel().then {
         $0.textColor = .white
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
         $0.isHidden = true
