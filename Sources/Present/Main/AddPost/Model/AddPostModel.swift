@@ -1,5 +1,5 @@
 import UIKit
 
-final class AddPostModel: Codable {
+struct AddPostModel: Codable {
     var imageUrl: String
 }

@@ -6,7 +6,7 @@ protocol PostItemsProtocol: AnyObject {
     var postItemsData: PublishSubject<[PostModel]> { get set }
 }
 
-final class MainViewModel: BaseViewModel {
+final class HomeViewModel: BaseViewModel {
     weak var delegate: PostItemsProtocol?
     
     func callToFindData(type: MenuOptionType) {
@@ -32,7 +32,7 @@ final class MainViewModel: BaseViewModel {
                 let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: data)
                 self?.delegate?.postItemsData.onNext(decodeResponse ?? .init())
             case .failure(let error):
-                print("error = \(error.localizedDescription)")
+                print("main error = \(error.localizedDescription)")
             }
         }
     }
