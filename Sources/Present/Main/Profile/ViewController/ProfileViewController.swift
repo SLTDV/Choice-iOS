@@ -3,6 +3,7 @@ import UIKit
 class ProfileViewController: BaseVC<ProfileViewModel> {
     private let profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.crop.circle.fill")
+        $0.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
     }
     
     private let userNameLabel = UILabel().then {

@@ -8,7 +8,7 @@
 
 import Foundation
 
-class MainCoordinator: BaseCoordinator {
+class HomeCoordinator: BaseCoordinator {
     override func start() {
         let vm = HomeViewModel(coordinator: self)
         let vc = HomeViewController(viewModel: vm)
@@ -26,7 +26,7 @@ class MainCoordinator: BaseCoordinator {
     }
 }
 
-extension MainCoordinator {
+extension HomeCoordinator {
     private func addPostIsRequired() {
         let vc = AddPostCoordiantor(navigationController: navigationController)
         vc.parentCoordinator = self
