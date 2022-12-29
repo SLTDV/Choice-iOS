@@ -47,7 +47,8 @@ final class CommentCell: UITableViewCell {
     }
     
     private func addView() {
-        contentView.addSubviews(profileImageView, nicknameLabel, contentLabel, editButton, deleteButton)
+        contentView.addSubviews(profileImageView, nicknameLabel,
+                                contentLabel, editButton, deleteButton)
     }
     
     private func setLayout() {
