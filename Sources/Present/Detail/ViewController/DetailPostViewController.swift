@@ -1,7 +1,13 @@
 import UIKit
+import RxSwift
+import RxCocoa
 
-final class DetailPostViewController: BaseVC<DetailPostViewModel> {
+final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
+    var authorname = PublishSubject<CommentModel>()
+    var commentData = PublishSubject<[CommentData]>()
     var model: PostModel?
+
+    private let disposeBag = DisposeBag()
     
     private let scrollView = UIScrollView().then {
         $0.backgroundColor = .white
@@ -43,6 +49,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
         $0.layer.borderColor = .init(red: 0.629, green: 0.629, blue: 0.629, alpha: 1)
     }
     
+    private let enterCommentButton = UIButton().then {
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
+        $0.isHidden = false
+        $0.layer.cornerRadius = 10
+        $0.backgroundColor = .black
+        $0.setTitle("게시", for: .normal)
+    }
+    
     private let commentTableView = UITableView().then {
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
     }
@@ -54,6 +68,27 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func bindTableView() {
+        commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
+                                                   cellType: CommentCell.self)) { (row, data, cell) in
+            cell.changeCommentData(model: [data])
+        }.disposed(by: disposeBag)
+    }
+    
+    private func enterComment() {
+        guard let idx = model?.idx else { return }
+        guard let content = enterCommentTextView.text else { return }
+        
+        self.viewModel.createComment(idx: idx, content: content)
+    }
+    
+    private func commentButtonDidTap() {
+        enterCommentButton.rx.tap
+            .bind(onNext: {
+                self.enterComment()
+            }).disposed(by: disposeBag)
     }
     
     private func changePostData(model: PostModel) {
@@ -70,6 +105,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -89,20 +125,20 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
     }
     
     override func configureVC() {
-        commentTableView.dataSource = self
         enterCommentTextView.delegate = self
         scrollView.delegate = self
         
         commentTableView.rowHeight = 160
         
         changePostData(model: model!)
+        commentButtonDidTap()
     }
     
     override func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubviews(titleLabel, descriptionLabel, postImageView, voteView,
-                                divideLineView, commentCountLabel, enterCommentTextView, commentTableView)
+                                divideLineView, commentCountLabel, enterCommentTextView, enterCommentButton, commentTableView)
     }
     
     override func setLayout() {
@@ -153,26 +189,19 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel> {
             $0.leading.trailing.equalToSuperview().inset(30)
         }
         
+        enterCommentButton.snp.makeConstraints {
+            $0.height.equalTo(30)
+            $0.top.equalTo(enterCommentTextView.snp.bottom).offset(10)
+            $0.trailing.equalTo(enterCommentTextView.snp.trailing)
+            $0.leading.equalTo(enterCommentTextView.snp.leading).inset(250)
+        }
+        
         commentTableView.snp.makeConstraints {
-            $0.top.equalTo(enterCommentTextView.snp.bottom).offset(30)
+            $0.top.equalTo(enterCommentButton.snp.bottom).offset(30)
             $0.leading.trailing.equalToSuperview().inset(30)
             $0.bottom.equalToSuperview().inset(3)
             $0.height.equalTo(1)
         }
-    }
-}
-
-extension DetailPostViewController: UITableViewDataSource {
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 10
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: CommentCell.identifier, for: indexPath) as? CommentCell else { return UITableViewCell() }
-        
-        cell.selectionStyle = .none
-        
-        return cell
     }
 }
 

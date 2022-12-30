@@ -68,6 +68,12 @@ final class CommentCell: UITableViewCell {
             $0.top.equalTo(nicknameLabel.snp.bottom).offset(15)
             $0.leading.equalToSuperview().offset(10)
         }
-        
+    }
+    
+    func changeCommentData(model: [CommentData]) {
+        DispatchQueue.main.async {
+            self.nicknameLabel.text = model[0].nickname
+            self.contentLabel.text = model[0].content
+        }
     }
 }

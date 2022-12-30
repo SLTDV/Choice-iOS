@@ -16,7 +16,11 @@ final class APIConstants {
     static let plusVoteNumbersURL = baseURL + "/post/"
     static let imageUploadURL = baseURL + "/image/"
     static let findAllBestPostURL = baseURL + "/post/list"
+    static let detailPostURL = baseURL + "/post/"
     
     //Vote
     static let addVoteNumberURL = baseURL + "/post/add/"
+    
+    //Comment
+    static let createCommentURL = baseURL + "/comment/"
 }
