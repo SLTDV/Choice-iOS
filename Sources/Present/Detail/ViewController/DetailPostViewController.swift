@@ -72,7 +72,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func bindTableView() {
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
-                                                       cellType: CommentCell.self)) { (row, data, cell) in
+                                                       cellType: CommentCell.self)) { (row, data, cell) in  
             cell.changeCommentData(model: [data])
         }.disposed(by: disposeBag)
     }

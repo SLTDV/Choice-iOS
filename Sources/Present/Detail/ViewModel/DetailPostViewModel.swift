@@ -10,6 +10,10 @@ protocol CommentDataProtocol: AnyObject {
 final class DetailPostViewModel: BaseViewModel {
     weak var delegate: CommentDataProtocol?
     
+    func deleteComment(commentIdx: Int) {
+        
+    }
+    
     func callToCommentData(idx: Int) {
         let url = APIConstants.detailPostURL + "\(idx)"
         let headers: HTTPHeaders = ["Content-Type": "application/json", "Accept": "application/json"]
@@ -24,7 +28,6 @@ final class DetailPostViewModel: BaseViewModel {
             
             switch response.result {
             case .success(let data):
-                print(String(data: data, encoding: .utf8))
                 let decodeResponse = try? JSONDecoder().decode(CommentModel.self, from: data)
                 print(decodeResponse)
 //                self?.delegate?.authorname.onNext(decodeResponse?.authorname)

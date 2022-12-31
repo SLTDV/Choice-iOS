@@ -1,7 +1,7 @@
 import Foundation
 
 final class APIConstants {
-    static let baseURL = "http://172.30.1.86:8080"
+    static let baseURL = "http://3.39.176.242:8080"
     
     //SignIn
     static let signInURL = baseURL + "/auth/signin"
@@ -23,4 +23,6 @@ final class APIConstants {
     
     //Comment
     static let createCommentURL = baseURL + "/comment/"
+    static let editCommentURL = baseURL + "/comment/"
+    static let deleteCommentURL = baseURL + "/comment/"
 }
