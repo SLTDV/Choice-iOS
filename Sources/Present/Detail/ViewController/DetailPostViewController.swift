@@ -72,7 +72,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func bindTableView() {
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
-                                                   cellType: CommentCell.self)) { (row, data, cell) in
+                                                       cellType: CommentCell.self)) { (row, data, cell) in
             cell.changeCommentData(model: [data])
         }.disposed(by: disposeBag)
     }
@@ -87,8 +87,15 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func commentButtonDidTap() {
         enterCommentButton.rx.tap
             .bind(onNext: {
+                self.callToCommentData()
                 self.enterComment()
             }).disposed(by: disposeBag)
+    }
+    
+    private func callToCommentData() {
+        guard let idx = model?.idx else { return }
+        
+        viewModel.callToCommentData(idx: idx)
     }
     
     private func changePostData(model: PostModel) {
@@ -105,7 +112,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
-        
+        callToCommentData()
+        bindTableView()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -127,11 +135,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func configureVC() {
         enterCommentTextView.delegate = self
         scrollView.delegate = self
+        viewModel.delegate = self
         
         commentTableView.rowHeight = 160
         
-        changePostData(model: model!)
         commentButtonDidTap()
+        changePostData(model: model!)
     }
     
     override func addView() {

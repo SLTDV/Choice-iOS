@@ -6,6 +6,7 @@ struct CommentModel: Codable {
 }
 
 struct CommentData: Codable {
+    var idx: Int
     var nickname: String
     var content: String
 }
