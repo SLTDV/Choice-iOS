@@ -7,4 +7,5 @@ struct PostModel: Codable {
     var content: String
     var firstVotingOption: String
     var secondVotingOption: String
+    var isVoting: Bool
 }

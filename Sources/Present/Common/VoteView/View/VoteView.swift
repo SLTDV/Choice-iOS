@@ -7,7 +7,7 @@ import RxCocoa
 final class VoteView: UIView {
     private let disposeBag = DisposeBag()
     
-    private let viewModel = VoteViewModel()
+    private let viewModel = HomeViewModel(coordinator: .init(navigationController: UINavigationController()))
     
     private var postIdx = 0
     
@@ -86,7 +86,7 @@ final class VoteView: UIView {
         // MARK: - Input
         let voteButtonDidTapRelay = PublishRelay<(Int, Int)>()
 
-        let input = VoteViewModel.Input(
+        let input = HomeViewModel.Input(
             voteButtonDidTap: voteButtonDidTapRelay.compactMap { $0 }
         )
         
