@@ -2,11 +2,15 @@ import UIKit
 import RxSwift
 import RxCocoa
 
+protocol CommentFuncData: AnyObject {
+
+}
+
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
     var authorname = PublishSubject<CommentModel>()
     var commentData = PublishSubject<[CommentData]>()
     var model: PostModel?
-
+    
     private let disposeBag = DisposeBag()
     
     private let scrollView = UIScrollView().then {
@@ -87,8 +91,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func commentButtonDidTap() {
         enterCommentButton.rx.tap
             .bind(onNext: {
-                self.callToCommentData()
                 self.enterComment()
+                self.callToCommentData()
             }).disposed(by: disposeBag)
     }
     
@@ -112,8 +116,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
-        callToCommentData()
         bindTableView()
+        callToCommentData()
     }
     
     override func viewWillDisappear(_ animated: Bool) {

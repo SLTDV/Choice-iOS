@@ -4,14 +4,28 @@ import Alamofire
 
 protocol CommentDataProtocol: AnyObject {
     var authorname: PublishSubject<CommentModel> { get set }
-    var commentData: PublishSubject<[CommentData]> { get set}
+    var commentData: PublishSubject<[CommentData]> { get set }
 }
 
 final class DetailPostViewModel: BaseViewModel {
     weak var delegate: CommentDataProtocol?
     
     func deleteComment(commentIdx: Int) {
-        
+        let url = APIConstants.deleteCommentURL + "\(commentIdx)"
+        let headers: HTTPHeaders = ["Content-Type": "application/json", "Accept": "application/json"]
+        AF.request(url,
+                   method: .delete,
+                   encoding: URLEncoding.queryString,
+                   headers: headers,
+                   interceptor: JwtRequestInterceptor())
+        .response { response in
+            switch response.result {
+            case .success:
+                print("success")
+            case .failure(let error):
+                print("error")
+            }
+        }
     }
     
     func callToCommentData(idx: Int) {
@@ -58,9 +72,12 @@ final class DetailPostViewModel: BaseViewModel {
             switch response.result {
             case .success:
                     print("comment")
+                self?.callToCommentData(idx: idx)
             case .failure(let error):
                 print("post error = \(String(describing: error.localizedDescription))")
             }
         }
     }
+    
+    
 }
