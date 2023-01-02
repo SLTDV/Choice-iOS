@@ -33,17 +33,15 @@ final class SignInViewModel: BaseViewModel {
         )
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
+            print("success = \(response.response?.statusCode)")
             switch response.result {
             case .success(let data):
-                print("success = \(response.response?.statusCode)")
                 let tk = KeyChain()
                 let decodeResult = try? JSONDecoder().decode(SignInModel.self, from: data)
                 tk.create(key: "accessToken", token: decodeResult?.accessToken ?? "")
                 tk.create(key: "refreshToken", token: decodeResult?.refreshToken ?? "")
-                
                 self?.pushMainVC()
             case .failure:
-                print(response.response?.statusCode)
                 self?.delegate?.statusCodeData.onNext(response.response?.statusCode ?? 0)
             }
         }
