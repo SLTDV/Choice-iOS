@@ -7,6 +7,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     var commentData = PublishSubject<[CommentData]>()
     var model: PostModel?
     
+    lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
+    
     private let disposeBag = DisposeBag()
     
     private let scrollView = UIScrollView().then {
@@ -64,10 +66,17 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     init(viewModel: DetailPostViewModel, model: PostModel) {
         super.init(viewModel: viewModel)
         self.model = model
+        
+        scrollView.addGestureRecognizer(tapGestureRecognizer)
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    @objc func tapMethod(_ sender: UITapGestureRecognizer) {
+        print("taptap")
+        self.view.endEditing(true)
     }
     
     private func bindTableView() {
@@ -125,7 +134,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             if object is UITableView {
                 if let newValue = change?[.newKey] as? CGSize {
                     commentTableView.snp.updateConstraints {
-                        $0.height.equalTo(newValue.height + 50)
+                        $0.height.equalTo(newValue.height + 100)
                     }
                 }
             }

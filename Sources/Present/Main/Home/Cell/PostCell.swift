@@ -14,13 +14,11 @@ final class PostCell: UITableViewCell {
         $0.numberOfLines = 0
         $0.font = .systemFont(ofSize: 12)
     }
-        
+    
     private let postImageView = UIImageView().then {
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
     }
-    
-    private let voteView = VoteView()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -39,12 +37,12 @@ final class PostCell: UITableViewCell {
     }
     
     override func layoutSubviews() {
-      super.layoutSubviews()
-      contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0))
+        super.layoutSubviews()
+        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0))
     }
-
+    
     private func addView() {
-        contentView.addSubviews(titleLabel, descriptionLabel, postImageView, voteView)
+        contentView.addSubviews(titleLabel, descriptionLabel, postImageView)
     }
     
     private func setLayout() {
@@ -59,14 +57,9 @@ final class PostCell: UITableViewCell {
         }
         
         postImageView.snp.makeConstraints {
-            $0.bottom.equalTo(voteView.snp.top).offset(-10)
+            $0.bottom.equalToSuperview().inset(40)
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(200)
-        }
-        
-        voteView.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(21)
-            $0.leading.trailing.equalToSuperview().inset(10)
+            $0.height.equalTo(350)
         }
     }
     
@@ -78,6 +71,5 @@ final class PostCell: UITableViewCell {
                 self.postImageView.kf.setImage(with: imageUrl)
             }
         }
-        voteView.changeVoteTitleData(with: model)
     }
 }

@@ -6,7 +6,7 @@ import RxSwift
 final class AddPostViewController: BaseVC<AddPostViewModel> {
     private lazy var addMainImageButton = UIButton().then {
         $0.addTarget(self, action: #selector(addImageButtonDidTap(_:)), for: .touchUpInside)
-        $0.contentMode = .scaleAspectFit
+        $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
         $0.clipsToBounds = true
         $0.isUserInteractionEnabled = true
