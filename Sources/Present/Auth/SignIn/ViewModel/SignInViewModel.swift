@@ -37,14 +37,10 @@ final class SignInViewModel: BaseViewModel {
             case .success(let data):
                 print("success = \(response.response?.statusCode)")
                 let tk = KeyChain()
+                let decodeResult = try? JSONDecoder().decode(SignInModel.self, from: data)
+                tk.create(key: "accessToken", token: decodeResult?.accessToken ?? "")
+                tk.create(key: "refreshToken", token: decodeResult?.refreshToken ?? "")
                 
-                if let accessToken = (try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any])? ["accessToken"] as? String {
-                    tk.create(key: "accessToken", token: accessToken)
-                }
-                
-                if let refreshToken = (try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any])? ["refreshToken"] as? String {
-                    tk.create(key: "refreshToken", token: refreshToken)
-                }
                 self?.pushMainVC()
             case .failure:
                 print(response.response?.statusCode)
