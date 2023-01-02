@@ -3,7 +3,6 @@ import RxSwift
 import Alamofire
 
 protocol CommentDataProtocol: AnyObject {
-    var authorname: PublishSubject<CommentModel> { get set }
     var commentData: PublishSubject<[CommentData]> { get set }
 }
 

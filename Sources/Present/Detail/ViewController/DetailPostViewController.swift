@@ -3,7 +3,6 @@ import RxSwift
 import RxCocoa
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
-    var authorname = PublishSubject<CommentModel>()
     var commentData = PublishSubject<[CommentData]>()
     var model: PostModel?
     
