@@ -24,20 +24,21 @@ final class AppCoordinator: Coordinator {
         
         window?.rootViewController = navigationController
         
-        AF.request(url, method: .patch, encoding: JSONEncoding.default, headers: headers).validate().responseData { [weak self] response in
-            print("retry status code = \(response.response?.statusCode)")
-            switch response.result {
-            case .success(let tokenData):
-                print("success")
-                if let refreshToken = (try? JSONSerialization.jsonObject(with: tokenData, options: []) as? [String: Any])? ["refreshToken"] as? String {
-                    tk.create(key: "refreshToken", token: refreshToken)
-                }
-                self?.start(coordinator: MainController)
-            case .failure:
-                print("falure")
-                self?.start(coordinator: signInController)
-            }
-        }
+//        AF.request(url, method: .patch, encoding: JSONEncoding.default, headers: headers).validate().responseData { [weak self] response in
+//            print("retry status code = \(response.response?.statusCode)")
+//            switch response.result {
+//            case .success(let tokenData):
+//                print("success")
+//                if let refreshToken = (try? JSONSerialization.jsonObject(with: tokenData, options: []) as? [String: Any])? ["refreshToken"] as? String {
+//                    tk.create(key: "refreshToken", token: refreshToken)
+//                }
+//                self?.start(coordinator: MainController)
+//            case .failure:
+//                print("falure")
+//                self?.start(coordinator: signInController)
+//            }
+//        }
+        self.start(coordinator: signInController)
     }
     
     func start(coordinator: Coordinator) {

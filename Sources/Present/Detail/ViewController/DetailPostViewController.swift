@@ -2,10 +2,6 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-protocol CommentFuncData: AnyObject {
-
-}
-
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
     var authorname = PublishSubject<CommentModel>()
     var commentData = PublishSubject<[CommentData]>()
@@ -76,7 +72,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func bindTableView() {
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
-                                                       cellType: CommentCell.self)) { (row, data, cell) in  
+                                                       cellType: CommentCell.self)) { (row, data, cell) in
             cell.changeCommentData(model: [data])
         }.disposed(by: disposeBag)
     }
@@ -116,8 +112,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
-        bindTableView()
         callToCommentData()
+        bindTableView()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
