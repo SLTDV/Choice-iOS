@@ -33,7 +33,6 @@ final class SignInViewModel: BaseViewModel {
         )
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
-            print("success = \(response.response?.statusCode)")
             switch response.result {
             case .success(let data):
                 let tk = KeyChain()
