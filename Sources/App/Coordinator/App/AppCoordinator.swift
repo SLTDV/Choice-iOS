@@ -27,7 +27,7 @@ final class AppCoordinator: Coordinator {
         AF.request(url, method: .patch, encoding: JSONEncoding.default, headers: headers).validate().responseData { [weak self] response in
             switch response.result {
             case .success(let data):
-                let decodeResult = try? JSONDecoder().decode(SignInModel.self, from: data)
+                let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: data)
                 tk.create(key: "refreshToken", token: decodeResult?.refreshToken ?? "")
                 self?.start(coordinator: MainController)
             case .failure:

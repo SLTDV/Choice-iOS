@@ -36,7 +36,7 @@ final class SignInViewModel: BaseViewModel {
             switch response.result {
             case .success(let data):
                 let tk = KeyChain()
-                let decodeResult = try? JSONDecoder().decode(SignInModel.self, from: data)
+                let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: data)
                 tk.create(key: "accessToken", token: decodeResult?.accessToken ?? "")
                 tk.create(key: "refreshToken", token: decodeResult?.refreshToken ?? "")
                 self?.pushMainVC()

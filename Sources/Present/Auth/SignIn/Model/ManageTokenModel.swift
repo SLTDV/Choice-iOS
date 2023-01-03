@@ -1,6 +1,6 @@
 import Foundation
 
-struct SignInModel: Codable {
+struct ManageTokenModel: Codable {
     var accessToken: String
     var refreshToken: String
 }

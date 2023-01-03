@@ -29,7 +29,7 @@ final class JwtRequestInterceptor: RequestInterceptor {
             switch response.result {
             case .success(let data):
                 self?.tk.deleteAll()
-                let decodeResult = try? JSONDecoder().decode(SignInModel.self, from: data)
+                let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: data)
                 self?.tk.create(key: "accessToken", token: decodeResult?.accessToken ?? "")
                 self?.tk.create(key: "accessToken", token: decodeResult?.refreshToken ?? "")
                 completion(.retry)
