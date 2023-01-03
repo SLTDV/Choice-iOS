@@ -26,8 +26,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let postImageView = UIImageView().then {
+        $0.clipsToBounds = true
         $0.backgroundColor = .gray
-        $0.contentMode = .scaleToFill
+        $0.contentMode = .scaleAspectFill
     }
     
     private let voteView = VoteView()
