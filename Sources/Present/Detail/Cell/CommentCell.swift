@@ -1,7 +1,15 @@
 import UIKit
 
+protocol CommentFuncProtocol: AnyObject {
+    func deleteComment(commentIdx: Int)
+}
+
 final class CommentCell: UITableViewCell {
     static let identifier = "CommentCellIdentifier"
+    
+    weak var delegate: CommentFuncProtocol?
+    
+    private var commentIdx: Int = 0
     
     private let profileImageView = UIImageView().then {
         $0.tintColor = .black
@@ -19,10 +27,16 @@ final class CommentCell: UITableViewCell {
     }
     
     private let editButton = UIButton().then {
+        $0.setTitleColor(.init(red: 0.629, green: 0.629, blue: 0.629, alpha: 1), for: .normal)
+        $0.setTitle("수정", for: .normal)
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         $0.isHidden = true
     }
     
     private let deleteButton = UIButton().then {
+        $0.setTitleColor(.init(red: 0.629, green: 0.629, blue: 0.629, alpha: 1), for: .normal)
+        $0.setTitle("삭제", for: .normal)
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
         $0.isHidden = true
     }
     
@@ -69,5 +83,22 @@ final class CommentCell: UITableViewCell {
             $0.leading.equalToSuperview().offset(10)
         }
         
+        editButton.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(12)
+            $0.trailing.equalTo(deleteButton.snp.leading).offset(-15)
+        }
+        
+        deleteButton.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(12)
+            $0.trailing.equalToSuperview().inset(12)
+        }
+    }
+    
+    func changeCommentData(model: [CommentData]) {
+        DispatchQueue.main.async {
+            self.commentIdx = model[0].idx
+            self.nicknameLabel.text = model[0].nickname
+            self.contentLabel.text = model[0].content
+        }
     }
 }

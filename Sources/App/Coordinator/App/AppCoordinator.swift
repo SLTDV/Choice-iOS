@@ -34,6 +34,7 @@ final class AppCoordinator: Coordinator {
                 self?.start(coordinator: signInController)
             }
         }
+        self.start(coordinator: signInController)
     }
     
     func start(coordinator: Coordinator) {
