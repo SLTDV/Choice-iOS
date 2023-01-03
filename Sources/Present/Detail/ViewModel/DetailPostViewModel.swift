@@ -17,12 +17,13 @@ final class DetailPostViewModel: BaseViewModel {
                    encoding: URLEncoding.queryString,
                    headers: headers,
                    interceptor: JwtRequestInterceptor())
-        .response { response in
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
                 print("success")
             case .failure(let error):
-                print("error")
+                print(error)
             }
         }
     }
@@ -37,13 +38,10 @@ final class DetailPostViewModel: BaseViewModel {
                    interceptor: JwtRequestInterceptor())
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
-            print("댓글 \(response.response?.statusCode)")
             
             switch response.result {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode(CommentModel.self, from: data)
-                print(decodeResponse)
-//                self?.delegate?.authorname.onNext(decodeResponse?.authorname)
                 self?.delegate?.commentData.onNext(decodeResponse?.comment ?? .init())
 
             case .failure(let error):
