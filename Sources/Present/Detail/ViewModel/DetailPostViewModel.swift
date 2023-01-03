@@ -38,7 +38,6 @@ final class DetailPostViewModel: BaseViewModel {
                    interceptor: JwtRequestInterceptor())
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
-            
             switch response.result {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode(CommentModel.self, from: data)
