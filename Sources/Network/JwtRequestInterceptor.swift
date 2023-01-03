@@ -27,16 +27,11 @@ final class JwtRequestInterceptor: RequestInterceptor {
         AF.request(url, method: .patch, encoding: JSONEncoding.default, headers: headers).responseData { [weak self] response in
             print("retry status code = \(response.response?.statusCode)")
             switch response.result {
-            case .success(let tokenData):
+            case .success(let data):
                 self?.tk.deleteAll()
-                
-                if let refreshToken = (try? JSONSerialization.jsonObject(with: tokenData, options: []) as? [String: Any])? ["refreshToken"] as? String {
-                    self?.tk.create(key: "refreshToken", token: refreshToken)
-                }
-                
-                if let accessToken = (try? JSONSerialization.jsonObject(with: tokenData, options: []) as? [String: Any])? ["accessToken"] as? String {
-                    self?.tk.create(key: "accessToken", token: accessToken)
-                }
+                let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: data)
+                self?.tk.create(key: "accessToken", token: decodeResult?.accessToken ?? "")
+                self?.tk.create(key: "accessToken", token: decodeResult?.refreshToken ?? "")
                 completion(.retry)
             case .failure(let error):
                 completion(.doNotRetryWithError(error))

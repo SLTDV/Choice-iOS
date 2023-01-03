@@ -26,14 +26,11 @@ final class AppCoordinator: Coordinator {
         
         AF.request(url, method: .patch, encoding: JSONEncoding.default, headers: headers).validate().responseData { [weak self] response in
             switch response.result {
-            case .success(let tokenData):
-                print("success")
-                if let refreshToken = (try? JSONSerialization.jsonObject(with: tokenData, options: []) as? [String: Any])? ["refreshToken"] as? String {
-                    tk.create(key: "refreshToken", token: refreshToken)
-                }
+            case .success(let data):
+                let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: data)
+                tk.create(key: "refreshToken", token: decodeResult?.refreshToken ?? "")
                 self?.start(coordinator: MainController)
             case .failure:
-                print("falure")
                 self?.start(coordinator: signInController)
             }
         }

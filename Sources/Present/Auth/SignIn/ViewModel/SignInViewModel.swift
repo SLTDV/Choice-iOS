@@ -35,19 +35,12 @@ final class SignInViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success(let data):
-                print("success = \(response.response?.statusCode)")
                 let tk = KeyChain()
-                
-                if let accessToken = (try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any])? ["accessToken"] as? String {
-                    tk.create(key: "accessToken", token: accessToken)
-                }
-                
-                if let refreshToken = (try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any])? ["refreshToken"] as? String {
-                    tk.create(key: "refreshToken", token: refreshToken)
-                }
+                let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: data)
+                tk.create(key: "accessToken", token: decodeResult?.accessToken ?? "")
+                tk.create(key: "refreshToken", token: decodeResult?.refreshToken ?? "")
                 self?.pushMainVC()
             case .failure:
-                print(response.response?.statusCode)
                 self?.delegate?.statusCodeData.onNext(response.response?.statusCode ?? 0)
             }
         }
