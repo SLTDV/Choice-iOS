@@ -22,6 +22,8 @@ class HomeCoordinator: BaseCoordinator {
             addPostIsRequired()
         case .detailPostIsRequired(let model):
             detailPostIsRequired(model: model)
+        case .profileIsRequired:
+            profileIsRequired()
         default:
             return
         }
@@ -41,5 +43,12 @@ extension HomeCoordinator {
         vc.parentCoordinator = self
         childCoordinators.append(vc)
         vc.startDetailPostVC(model: model)
+    }
+    
+    private func profileIsRequired() {
+        let vc = ProfileCoordinator(navigationController: navigationController)
+        vc.parentCoordinator = self
+        childCoordinators.append(vc)
+        vc.start()
     }
 }

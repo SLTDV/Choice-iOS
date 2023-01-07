@@ -14,8 +14,10 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol {
         $0.tintColor = .black
     }
     
-    private let profileButton = UIBarButtonItem().then {
-        $0.image = UIImage(systemName: "person.crop.circle.fill")
+    private lazy var profileButton = UIBarButtonItem(image: UIImage(systemName: "person.crop.circle.fill"),
+                                                style: .plain,
+                                                target: self,
+                                                action: #selector(profileButtonDidTap(_:))).then {
         $0.tintColor = .black
     }
     
@@ -37,6 +39,10 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol {
     
     @objc private func addPostButtonDidTap(_ sender: UIBarButtonItem) {
         viewModel.pushAddPostVC()
+    }
+    
+    @objc private func profileButtonDidTap(_ sender: UIBarButtonItem) {
+        viewModel.pushProfileVC()
     }
     
     private func bindTableView() {
