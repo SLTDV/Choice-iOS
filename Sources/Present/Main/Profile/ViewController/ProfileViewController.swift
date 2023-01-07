@@ -3,7 +3,7 @@ import UIKit
 class ProfileViewController: BaseVC<ProfileViewModel> {
     private let profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.crop.circle.fill")
-        $0.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
+        $0.tintColor = ChoiceAsset.Colors.mainBackgroundColor.color
     }
     
     private let userNameLabel = UILabel().then {
@@ -26,6 +26,7 @@ class ProfileViewController: BaseVC<ProfileViewModel> {
         profileImageView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).inset(58)
             $0.centerX.equalToSuperview()
+            $0.size.equalTo(100)
         }
         
         userNameLabel.snp.makeConstraints {
