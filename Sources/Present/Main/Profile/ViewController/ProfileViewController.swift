@@ -7,11 +7,13 @@ class ProfileViewController: BaseVC<ProfileViewModel> {
     }
     
     private let userNameLabel = UILabel().then {
+        $0.text = "닉네임"
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
     private let editUserNameButton = UIButton().then {
         $0.setImage(UIImage(systemName: "pencil"), for: .normal)
+        $0.tintColor = .black
     }
     
     private let underLineView = UIView().then {
@@ -41,6 +43,7 @@ class ProfileViewController: BaseVC<ProfileViewModel> {
         
         underLineView.snp.makeConstraints {
             $0.top.equalTo(editUserNameButton.snp.bottom).offset(7)
+            $0.leading.trailing.equalToSuperview().inset(50)
             $0.height.equalTo(1)
         }
     }
