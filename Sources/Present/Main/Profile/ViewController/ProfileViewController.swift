@@ -1,6 +1,12 @@
 import UIKit
+import RxSwift
+import RxCocoa
 
-class ProfileViewController: BaseVC<ProfileViewModel> {
+class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
+    var profileData = PublishSubject<[ProfileModel]>()
+    
+    private let disposeBag = DisposeBag()
+    
     private let whiteBackgroundView = UIView().then {
         $0.backgroundColor = .white
     }
@@ -22,6 +28,10 @@ class ProfileViewController: BaseVC<ProfileViewModel> {
     
     private let underLineView = UIView().then {
         $0.backgroundColor = .black
+    }
+    
+    private let postTableView = UITableView().then {
+        $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
     
     override func configureVC() {
