@@ -13,6 +13,6 @@ class ProfileCoordinator: BaseCoordinator {
         let vm = ProfileViewModel(coordinator: self)
         let vc = ProfileViewController(viewModel: vm)
         
-        navigationController.setViewControllers([vc], animated: true)
+        navigationController.pushViewController(vc, animated: true)
     }
 }
