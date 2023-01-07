@@ -1,6 +1,10 @@
 import UIKit
 
 class ProfileViewController: BaseVC<ProfileViewModel> {
+    private let whiteBackgroundView = UIView().then {
+        $0.backgroundColor = .white
+    }
+    
     private let profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.crop.circle.fill")
         $0.tintColor = ChoiceAsset.Colors.mainBackgroundColor.color
@@ -20,19 +24,30 @@ class ProfileViewController: BaseVC<ProfileViewModel> {
         $0.backgroundColor = .black
     }
     
+    override func configureVC() {
+        view.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
+    }
+    
     override func addView() {
-        view.addSubviews(profileImageView, userNameLabel, editUserNameButton, underLineView)
+        view.addSubview(whiteBackgroundView)
+        whiteBackgroundView.addSubviews(profileImageView, userNameLabel, editUserNameButton, underLineView)
     }
     
     override func setLayout() {
+        whiteBackgroundView.snp.makeConstraints {
+            $0.top.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(315)
+        }
+        
         profileImageView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).inset(58)
+            $0.bottom.equalTo(userNameLabel.snp.top).offset(-36)
             $0.centerX.equalToSuperview()
             $0.size.equalTo(100)
         }
         
         userNameLabel.snp.makeConstraints {
-            $0.top.equalTo(profileImageView.snp.bottom).offset(36)
+            $0.bottom.equalTo(underLineView.snp.top).offset(-12)
             $0.centerX.equalToSuperview()
         }
         
@@ -42,7 +57,7 @@ class ProfileViewController: BaseVC<ProfileViewModel> {
         }
         
         underLineView.snp.makeConstraints {
-            $0.top.equalTo(editUserNameButton.snp.bottom).offset(7)
+            $0.bottom.equalTo(whiteBackgroundView.snp.bottom).inset(43)
             $0.leading.trailing.equalToSuperview().inset(50)
             $0.height.equalTo(1)
         }
