@@ -19,4 +19,7 @@ final class APIConstants {
     
     //Vote
     static let addVoteNumberURL = baseURL + "/post/add/"
+    
+    //Profile
+    static let profileURL = baseURL + "/user/"
 }
