@@ -1,4 +1,5 @@
 import UIKit
+import Alamofire
 
 final class AppCoordinator: Coordinator {
     
@@ -14,10 +15,26 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
-        let signInController = ProfileCoordinator(navigationController: navigationController)
+        let tk = KeyChain()
+        let url = APIConstants.reissueURL
+        let headers: HTTPHeaders = ["RefreshToken" : tk.read(key: "refreshToken") ?? .init()]
+        
+        let signInController = SignInCoordinator(navigationController: navigationController)
+        let MainController = MainCoordinator(navigationController: navigationController)
+        
         window?.rootViewController = navigationController
         
-        start(coordinator: signInController)
+        AF.request(url, method: .patch, encoding: JSONEncoding.default, headers: headers).validate().responseData { [weak self] response in
+            switch response.result {
+            case .success(let data):
+                let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: data)
+                tk.create(key: "refreshToken", token: decodeResult?.refreshToken ?? "")
+                self?.start(coordinator: MainController)
+            case .failure:
+                self?.start(coordinator: signInController)
+            }
+        }
+        self.start(coordinator: signInController)
     }
     
     func start(coordinator: Coordinator) {

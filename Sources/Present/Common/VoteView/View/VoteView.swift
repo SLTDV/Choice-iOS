@@ -7,7 +7,7 @@ import RxCocoa
 final class VoteView: UIView {
     private let disposeBag = DisposeBag()
     
-    private let viewModel = VoteViewModel()
+    private let viewModel = HomeViewModel(coordinator: .init(navigationController: UINavigationController()))
     
     private var postIdx = 0
     
@@ -86,7 +86,7 @@ final class VoteView: UIView {
         // MARK: - Input
         let voteButtonDidTapRelay = PublishRelay<(Int, Int)>()
 
-        let input = VoteViewModel.Input(
+        let input = HomeViewModel.Input(
             voteButtonDidTap: voteButtonDidTapRelay.compactMap { $0 }
         )
         
@@ -156,16 +156,15 @@ final class VoteView: UIView {
         }
     }
     
-    func changeVoteTitleData(with model: [PostModel]) {
-        postIdx = model[0].idx
-        print("postIdx = \(postIdx)")
+    func changeVoteTitleData(with model: PostModel) {
+        postIdx = model.idx
         DispatchQueue.main.async {
-            self.firstVoteTitleLabel.text = model[0].firstVotingOption
-            self.secondVoteTitleLabel.text = model[0].secondVotingOption
+            self.firstVoteTitleLabel.text = model.firstVotingOption
+            self.secondVoteTitleLabel.text = model.secondVotingOption
         }
     }
     
-    private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (Double, Double, Int, Int) {
+    private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (String, String, Int, Int) {
         let sum = firstVotingCount + secondVotingCount
         var firstP = firstVotingCount / sum * 100.0
         var secondP = secondVotingCount / sum * 100.0
@@ -173,7 +172,10 @@ final class VoteView: UIView {
         firstP = firstP.isNaN ? 0.0 : firstP
         secondP = secondP.isNaN ? 0.0 : secondP
         
-        return (firstP, secondP, Int(firstVotingCount), Int(secondVotingCount))
+        let firstStr = String(format: "%0.2f", firstP)
+        let secondStr = String(format: "%0.2f", secondP)
+        
+        return (firstStr, secondStr, Int(firstVotingCount), Int(secondVotingCount))
     }
     
     private func addView() {
@@ -198,7 +200,7 @@ final class VoteView: UIView {
             $0.leading.equalToSuperview()
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(10)
             $0.bottom.equalToSuperview()
-            $0.width.equalTo(UIScreen.main.bounds.width / 2)
+            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 25)
             $0.height.equalTo(100)
         }
         
@@ -206,7 +208,7 @@ final class VoteView: UIView {
             $0.trailing.equalToSuperview()
             $0.top.equalTo(secondVoteTitleLabel.snp.bottom).offset(10)
             $0.bottom.equalToSuperview()
-            $0.width.equalTo(UIScreen.main.bounds.width / 2)
+            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 25)
             $0.height.equalTo(100)
         }
         
@@ -221,12 +223,12 @@ final class VoteView: UIView {
         }
         
         firstVotingCountLabel.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(12)
+            $0.leading.equalToSuperview().inset(10)
             $0.bottom.equalToSuperview().inset(11)
         }
         
         secondVotingCountLabel.snp.makeConstraints {
-            $0.trailing.equalToSuperview().inset(12)
+            $0.trailing.equalToSuperview().inset(10)
             $0.bottom.equalToSuperview().inset(11)
         }
         

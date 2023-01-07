@@ -5,7 +5,7 @@ final class AddPostCoordiantor: BaseCoordinator {
         let vm = AddPostViewModel(coordinator: self)
         let vc = AddPostViewController(viewModel: vm)
         
-        self.navigationController.pushViewController(vc, animated: true)
+        navigationController.pushViewController(vc, animated: true)
     }
     
     override func navigate(to step: ChoiceStep) {
