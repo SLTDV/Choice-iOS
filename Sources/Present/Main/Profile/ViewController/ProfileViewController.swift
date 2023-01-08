@@ -34,6 +34,13 @@ class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
     
+    private func bindTableView() {
+        profileData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
+                                                    cellType: PostCell.self)) { (row, data, cell) in
+            cell.changeCellData(with: data.postList[0])
+        }.disposed(by: disposeBag)
+    }
+    
     override func configureVC() {
         view.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
     }
