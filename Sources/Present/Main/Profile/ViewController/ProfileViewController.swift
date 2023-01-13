@@ -3,7 +3,8 @@ import RxSwift
 import RxCocoa
 
 class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
-    var profileData = PublishSubject<[PostModel]>()
+    var nicknameData = PublishSubject<String>()
+    var postListData = PublishSubject<[PostModel]>()
 
     private let disposeBag = DisposeBag()
     
@@ -38,19 +39,20 @@ class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
     }
     
     private func bindTableView() {
-        profileData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
+        postListData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                                     cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: data)
-            print("data = \(data)")
         }.disposed(by: disposeBag)
+        
+        nicknameData.bind(with: self, onNext: { owner, arg in
+            owner.userNameLabel.text = arg
+        }).disposed(by: disposeBag)
     }
     
     override func configureVC() {
         view.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
-        
         viewModel.delegate = self
         bindTableView()
-        
         viewModel.callToProfileData()
     }
     
@@ -89,8 +91,8 @@ class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
         }
         
         postTableView.snp.makeConstraints {
-            $0.top.equalTo(whiteBackgroundView.snp.bottom)
-            $0.leading.trailing.equalToSuperview()
+            $0.top.equalTo(whiteBackgroundView.snp.bottom).offset(28)
+            $0.leading.trailing.equalToSuperview().inset(9)
             $0.bottom.equalToSuperview()
         }
     }

@@ -3,7 +3,8 @@ import Alamofire
 import RxSwift
 
 protocol ProfileDataProtocol: AnyObject {
-    var profileData: PublishSubject<[PostModel]> { get set }
+    var nicknameData: PublishSubject<String> { get set }
+    var postListData: PublishSubject<[PostModel]> { get set }
 }
 
 class ProfileViewModel: BaseViewModel {
@@ -22,9 +23,8 @@ class ProfileViewModel: BaseViewModel {
             switch response.result {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode(ProfileModel.self, from: data)
-                print("decodeResponse = \(decodeResponse)")
-                self?.delegate?.profileData.onNext(decodeResponse?.postList ?? .init())
-                print(self?.delegate?.profileData)
+                self?.delegate?.postListData.onNext(decodeResponse?.postList ?? .init())
+                self?.delegate?.nicknameData.onNext(decodeResponse?.nickname ?? .init())
             case .failure(let error):
                 print("error = \(error.localizedDescription)")
             }
