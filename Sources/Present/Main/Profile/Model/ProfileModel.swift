@@ -1,8 +1,8 @@
 import Foundation
 
 struct ProfileModel: Codable {
-    var nickName: String
-    var postList: [PostModel]
+    var nickname: String
+    var postList: [PostModel]?
 }
 
 //struct PostList: Codable {

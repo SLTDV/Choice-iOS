@@ -91,7 +91,6 @@ final class HomeViewModel: BaseViewModel {
             switch response.result {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: data)
-                print(String(data: data, encoding: .utf8))
                 self?.delegate?.postItemsData.onNext(decodeResponse ?? .init())
             case .failure(let error):
                 print("main error = \(error.localizedDescription)")
