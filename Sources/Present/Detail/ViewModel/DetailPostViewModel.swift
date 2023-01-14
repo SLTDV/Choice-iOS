@@ -67,13 +67,10 @@ final class DetailPostViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success:
-                    print("comment")
                 self?.callToCommentData(idx: idx)
             case .failure(let error):
                 print("post error = \(String(describing: error.localizedDescription))")
             }
         }
     }
-    
-    
 }
