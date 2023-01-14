@@ -18,8 +18,8 @@ class ProfileViewModel: BaseViewModel {
                    method: .get,
                    headers: headers,
                    interceptor: JwtRequestInterceptor())
-        .responseData { [weak self] response in
-            
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode(ProfileModel.self, from: data)
@@ -28,7 +28,31 @@ class ProfileViewModel: BaseViewModel {
             case .failure(let error):
                 print("error = \(error.localizedDescription)")
             }
-            
+        }
+    }
+    
+    func callToChangeNickname(nickname: String) {
+        let url = APIConstants.changeNicknameURL
+        let headers: HTTPHeaders = ["Content-Type": "application/json"]
+        
+        let params = [
+            "nickname" : nickname
+        ] as Dictionary
+        
+        AF.request(url,
+                   method: .patch,
+                   parameters: params,
+                   encoding: JSONEncoding.default,
+                   headers: headers,
+                   interceptor: JwtRequestInterceptor())
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
+            switch response.result {
+            case .success:
+                self?.delegate?.nicknameData.onNext(nickname)
+            case .failure(let error):
+                print("error = \(error.localizedDescription)")
+            }
         }
     }
 }

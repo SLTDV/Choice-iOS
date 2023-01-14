@@ -28,4 +28,5 @@ final class APIConstants {
     
     //Profile
     static let profileURL = baseURL + "/user/"
+    static let changeNicknameURL = baseURL + "/user/"
 }

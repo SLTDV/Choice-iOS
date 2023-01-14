@@ -5,7 +5,7 @@ import RxCocoa
 class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
     var nicknameData = PublishSubject<String>()
     var postListData = PublishSubject<[PostModel]>()
-
+    
     private let disposeBag = DisposeBag()
     
     private let whiteBackgroundView = UIView().then {
@@ -22,7 +22,8 @@ class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
-    private let editUserNameButton = UIButton().then {
+    private lazy var editUserNameButton = UIButton().then {
+        $0.addTarget(self, action: #selector(editUserNameButtonDidTap(_:)), for: .touchUpInside)
         $0.setImage(UIImage(systemName: "pencil"), for: .normal)
         $0.tintColor = .black
     }
@@ -40,13 +41,30 @@ class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
     
     private func bindTableView() {
         postListData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
-                                                    cellType: PostCell.self)) { (row, data, cell) in
+                                                     cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: data)
         }.disposed(by: disposeBag)
         
         nicknameData.bind(with: self, onNext: { owner, arg in
             owner.userNameLabel.text = arg
         }).disposed(by: disposeBag)
+    }
+    
+    @objc private func editUserNameButtonDidTap(_ sender: UIButton) {
+        let alert = UIAlertController(title: "닉네임 변경",
+                                      message: "변경하실 닉네임을 입력해주세요.",
+                                      preferredStyle: .alert)
+        
+        let okayAction = UIAlertAction(title: "변경", style: .default) { [weak self] data in
+            self?.viewModel.callToChangeNickname(nickname: alert.textFields?[0].text ?? "")
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .destructive)
+        
+        alert.addAction(cancelAction)
+        alert.addAction(okayAction)
+        alert.addTextField()
+        
+        present(alert, animated: true)
     }
     
     override func configureVC() {
@@ -80,7 +98,7 @@ class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
         }
         
         editUserNameButton.snp.makeConstraints {
-            $0.top.equalTo(userNameLabel.snp.top)
+            $0.bottom.equalTo(underLineView.snp.top).offset(-12)
             $0.trailing.equalToSuperview().inset(50)
         }
         
