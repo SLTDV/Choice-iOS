@@ -7,7 +7,7 @@ protocol ProfileDataProtocol: AnyObject {
     var postListData: PublishSubject<[PostModel]> { get set }
 }
 
-class ProfileViewModel: BaseViewModel {
+final class ProfileViewModel: BaseViewModel {
     weak var delegate: ProfileDataProtocol?
     
     func callToProfileData() {

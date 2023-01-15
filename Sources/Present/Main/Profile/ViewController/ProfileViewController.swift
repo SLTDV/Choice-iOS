@@ -2,7 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
+final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
     var nicknameData = PublishSubject<String>()
     var postListData = PublishSubject<[PostModel]>()
     
