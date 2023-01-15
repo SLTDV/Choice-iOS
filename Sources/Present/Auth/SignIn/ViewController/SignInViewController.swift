@@ -58,9 +58,7 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
         }
     }
     
-    override func configureVC() {
-        viewModel.delegate = self
-        
+    private func bind() {
         signInButton.rx.tap
             .bind(onNext: { [weak self] _ in
                 guard let email = self?.inputIdTextField.text else { return }
@@ -80,6 +78,11 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
             .bind(onNext: { [weak self] _ in
                 self?.viewModel.pushSignUpVC()
             }).disposed(by: disposeBag)
+    }
+    
+    override func configureVC() {
+        viewModel.delegate = self
+        bind()
     }
     
     override func addView() {
