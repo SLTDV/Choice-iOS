@@ -1,6 +1,6 @@
 import Foundation
 
-class ProfileCoordinator: BaseCoordinator {
+final class ProfileCoordinator: BaseCoordinator {
     override func start() {
         let vm = ProfileViewModel(coordinator: self)
         let vc = ProfileViewController(viewModel: vm)
