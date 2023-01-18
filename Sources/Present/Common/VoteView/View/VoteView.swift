@@ -200,7 +200,7 @@ final class VoteView: UIView {
             $0.leading.equalToSuperview()
             $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(10)
             $0.bottom.equalToSuperview()
-            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 25)
+            $0.width.equalTo(165)
             $0.height.equalTo(100)
         }
         
@@ -208,7 +208,7 @@ final class VoteView: UIView {
             $0.trailing.equalToSuperview()
             $0.top.equalTo(secondVoteTitleLabel.snp.bottom).offset(10)
             $0.bottom.equalToSuperview()
-            $0.width.equalTo(UIScreen.main.bounds.width / 2 - 25)
+            $0.width.equalTo(165)
             $0.height.equalTo(100)
         }
         
