@@ -22,7 +22,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let descriptionLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 14, weight: .medium)
+        $0.font = .systemFont(ofSize: 10, weight: .regular)
     }
     
     private let postImageView = UIImageView().then {
@@ -161,27 +161,24 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func setLayout() {
         scrollView.snp.makeConstraints {
             $0.top.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
-            $0.height.equalTo(0)
         }
         
         contentView.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.width.top.bottom.equalToSuperview()
+            $0.centerX.width.top.bottom.equalToSuperview()
         }
         
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview()
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(19)
         }
         
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(10)
-            $0.leading.equalToSuperview().offset(20)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(38)
+            $0.leading.trailing.equalToSuperview().offset(20)
         }
         
         postImageView.snp.makeConstraints {
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(10)
-            $0.centerX.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(200)
         }
