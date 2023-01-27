@@ -52,11 +52,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let enterCommentButton = UIButton().then {
+        $0.setTitle("게시", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        $0.isHidden = false
         $0.layer.cornerRadius = 10
         $0.backgroundColor = .black
-        $0.setTitle("게시", for: .normal)
+        $0.isHidden = false
     }
     
     private let commentTableView = UITableView().then {
@@ -133,7 +133,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             if object is UITableView {
                 if let newValue = change?[.newKey] as? CGSize {
                     commentTableView.snp.updateConstraints {
-                        $0.height.equalTo(newValue.height + 50)
+                        $0.height.equalTo(newValue.height + 100)
                     }
                 }
             }
@@ -153,9 +153,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubviews(titleLabel, descriptionLabel, postImageView, voteView,
-                                divideLineView, commentCountLabel, enterCommentTextView, enterCommentButton,
-                                commentTableView)
+        contentView.addSubviews(titleLabel, descriptionLabel, postImageView,
+                                voteView, divideLineView, commentCountLabel,
+                                enterCommentTextView, enterCommentButton, commentTableView)
     }
     
     override func setLayout() {
@@ -169,27 +169,27 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalTo(view.safeAreaLayoutGuide).inset(19)
+            $0.top.equalTo(view.safeAreaInsets).inset(12)
         }
         
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(38)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(25)
             $0.leading.trailing.equalToSuperview().offset(20)
         }
         
         postImageView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(10)
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(22)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(200)
         }
         
         voteView.snp.makeConstraints {
-            $0.top.equalTo(postImageView.snp.bottom).offset(31)
-            $0.leading.trailing.equalToSuperview().inset(10)
+            $0.top.equalTo(postImageView.snp.bottom).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(17)
         }
         
         divideLineView.snp.makeConstraints {
-            $0.top.equalTo(voteView.snp.bottom).offset(50)
+            $0.top.equalTo(voteView.snp.bottom).offset(48)
             $0.leading.trailing.equalToSuperview().inset(30)
             $0.height.equalTo(1)
         }
@@ -200,7 +200,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
         
         enterCommentTextView.snp.makeConstraints {
-            $0.top.equalTo(commentCountLabel.snp.bottom).offset(18)
+            $0.top.equalTo(commentCountLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(30)
             $0.height.equalTo(83)
         }
@@ -215,8 +215,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         commentTableView.snp.makeConstraints {
             $0.top.equalTo(enterCommentButton.snp.bottom).offset(30)
             $0.leading.trailing.equalToSuperview().inset(30)
-            $0.bottom.equalToSuperview()
-            $0.height.equalTo(0)
+            $0.bottom.equalToSuperview().inset(3)
+            $0.height.equalTo(1)
         }
     }
 }
