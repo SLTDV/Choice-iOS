@@ -6,8 +6,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     var commentData = PublishSubject<[CommentData]>()
     var model: PostModel?
     
-    lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
-    
     private let disposeBag = DisposeBag()
     
     private let scrollView = UIScrollView().then {
@@ -79,6 +77,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.endEditing(true)
     }
     
+    private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
+    
     private func bindTableView() {
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
                                                        cellType: CommentCell.self)) { (row, data, cell) in
@@ -142,7 +142,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     override func configureVC() {
         enterCommentTextView.delegate = self
-        scrollView.delegate = self
         viewModel.delegate = self
         
         bindTableView()
