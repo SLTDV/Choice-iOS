@@ -2,7 +2,6 @@ import UIKit
 import Alamofire
 
 final class AppCoordinator: Coordinator {
-    
     var navigationController: UINavigationController
     var childCoordinator: [Coordinator] = []
     var parentCoordinator: Coordinator?
