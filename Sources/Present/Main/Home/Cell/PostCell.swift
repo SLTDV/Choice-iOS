@@ -26,13 +26,12 @@ final class PostCell: UITableViewCell {
     }
     
     private let firstPostVoteButton = UIButton().then {
+        $0.tintColor = .red
         $0.setTitle("✓", for: .normal)
-        $0.backgroundColor = .systemBackground
     }
     
     private let secondPostVoteButton = UIButton().then {
         $0.setTitle("✓", for: .normal)
-        $0.backgroundColor = .systemBackground
     }
     
     private let participantsCountLabel = UILabel().then {
@@ -99,6 +98,8 @@ final class PostCell: UITableViewCell {
         firstPostVoteButton.snp.makeConstraints {
             $0.top.equalTo(firstPostImageView.snp.bottom).offset(16)
             $0.leading.equalToSuperview().inset(38)
+            $0.width.equalTo(101)
+            $0.height.equalTo(38)
         }
         
         secondPostVoteButton.snp.makeConstraints {
@@ -111,8 +112,6 @@ final class PostCell: UITableViewCell {
         participantsCountLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(33)
             $0.bottom.equalToSuperview().inset(16)
-            $0.width.equalTo(101)
-            $0.height.equalTo(38)
         }
         
         commentCountLabel.snp.makeConstraints {
