@@ -25,6 +25,16 @@ final class PostCell: UITableViewCell {
         $0.contentMode = .scaleToFill
     }
     
+    private let firstPostVoteButton = UIButton().then {
+        $0.setTitle("✓", for: .normal)
+        $0.backgroundColor = .systemBackground
+    }
+    
+    private let secondPostVoteButton = UIButton().then {
+        $0.setTitle("✓", for: .normal)
+        $0.backgroundColor = .systemBackground
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -45,7 +55,8 @@ final class PostCell: UITableViewCell {
     }
     
     private func addView() {
-        contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView, secondPostImageView)
+        contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView, secondPostImageView,
+                                firstPostVoteButton, secondPostVoteButton)
     }
     
     private func setLayout() {
@@ -71,6 +82,14 @@ final class PostCell: UITableViewCell {
             $0.trailing.equalToSuperview().inset(21)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
+        }
+        
+        firstPostVoteButton.snp.makeConstraints {
+            $0.top.equalTo(firstPostImageView.snp.bottom).offset(16)
+        }
+        
+        secondPostVoteButton.snp.makeConstraints {
+            $0.top.equalTo(secondPostImageView.snp.bottom).offset(16)
         }
     }
     
