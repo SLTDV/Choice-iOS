@@ -15,7 +15,12 @@ final class PostCell: UITableViewCell {
         $0.font = .systemFont(ofSize: 12)
     }
     
-    private let postImageView = UIImageView().then {
+    private let firstPostImageView = UIImageView().then {
+        $0.backgroundColor = .gray
+        $0.contentMode = .scaleToFill
+    }
+    
+    private let secondPostImageView = UIImageView().then {
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
     }
@@ -25,8 +30,6 @@ final class PostCell: UITableViewCell {
         
         contentView.layer.cornerRadius = 10
         contentView.backgroundColor = .white
-        self.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
-        self.selectionStyle = .none
         
         addView()
         setLayout()
@@ -42,24 +45,32 @@ final class PostCell: UITableViewCell {
     }
     
     private func addView() {
-        contentView.addSubviews(titleLabel, descriptionLabel, postImageView)
+        contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView, secondPostImageView)
     }
     
     private func setLayout() {
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(22)
-            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().inset(31)
+            $0.leading.equalToSuperview().inset(23)
         }
         
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(20)
-            $0.leading.trailing.equalToSuperview().inset(25)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(16)
+            $0.leading.equalToSuperview().inset(23)
         }
         
-        postImageView.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(40)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(350)
+        firstPostImageView.snp.makeConstraints {
+            $0.top.equalTo(descriptionLabel.snp.bottom).inset(24)
+            $0.leading.equalToSuperview().inset(21)
+            $0.width.equalTo(134)
+            $0.height.equalTo(145)
+        }
+        
+        secondPostImageView.snp.makeConstraints {
+            $0.top.equalTo(descriptionLabel.snp.bottom).inset(24)
+            $0.trailing.equalToSuperview().inset(21)
+            $0.width.equalTo(134)
+            $0.height.equalTo(145)
         }
     }
     
@@ -68,7 +79,7 @@ final class PostCell: UITableViewCell {
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
             if let imageUrl = URL(string: model.thumbnail) {
-                self.postImageView.kf.setImage(with: imageUrl)
+                self.firstPostImageView.kf.setImage(with: imageUrl)
             }
         }
     }
