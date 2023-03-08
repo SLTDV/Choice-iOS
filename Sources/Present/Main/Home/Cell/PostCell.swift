@@ -49,7 +49,8 @@ final class PostCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         contentView.layer.cornerRadius = 10
-        contentView.backgroundColor = .blue
+        
+        backgroundColor = .blue
         
         addView()
         setLayout()
@@ -97,15 +98,21 @@ final class PostCell: UITableViewCell {
         
         firstPostVoteButton.snp.makeConstraints {
             $0.top.equalTo(firstPostImageView.snp.bottom).offset(16)
+            $0.leading.equalToSuperview().inset(38)
         }
         
         secondPostVoteButton.snp.makeConstraints {
             $0.top.equalTo(secondPostImageView.snp.bottom).offset(16)
+            $0.trailing.equalToSuperview().inset(38)
+            $0.width.equalTo(101)
+            $0.height.equalTo(38)
         }
         
         participantsCountLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(33)
             $0.bottom.equalToSuperview().inset(16)
+            $0.width.equalTo(101)
+            $0.height.equalTo(38)
         }
         
         commentCountLabel.snp.makeConstraints {
