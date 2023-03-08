@@ -11,7 +11,7 @@ final class DetailPostViewModel: BaseViewModel {
     
     func deleteComment(commentIdx: Int) {
         let url = APIConstants.deleteCommentURL + "\(commentIdx)"
-        let headers: HTTPHeaders = ["Content-Type": "application/json", "Accept": "application/json"]
+        let headers: HTTPHeaders = ["Content-Type": "application/json"]
         AF.request(url,
                    method: .delete,
                    encoding: URLEncoding.queryString,
@@ -30,7 +30,7 @@ final class DetailPostViewModel: BaseViewModel {
     
     func callToCommentData(idx: Int) {
         let url = APIConstants.detailPostURL + "\(idx)"
-        let headers: HTTPHeaders = ["Content-Type": "application/json", "Accept": "application/json"]
+        let headers: HTTPHeaders = ["Content-Type": "application/json"]
         AF.request(url,
                    method: .get,
                    encoding: URLEncoding.queryString,
@@ -52,7 +52,7 @@ final class DetailPostViewModel: BaseViewModel {
     
     func createComment(idx: Int, content: String) {
         let url = APIConstants.createCommentURL + "\(idx)"
-        let headers: HTTPHeaders = ["Content-Type": "application/json", "Accept": "application/json"]
+        let headers: HTTPHeaders = ["Content-Type": "application/json"]
         let params = [
             "content" : content
         ] as Dictionary
