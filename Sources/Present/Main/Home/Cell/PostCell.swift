@@ -26,14 +26,20 @@ final class PostCell: UITableViewCell {
     }
     
     private let firstPostVoteButton = UIButton().then {
-        $0.layer.borderColor = 
-        $0.layer.borderWidth = 1
         $0.setTitle("✓", for: .normal)
+        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
+        $0.layer.borderWidth = 1
+        $0.layer.cornerRadius = 10
+        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
         $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
     }
     
     private let secondPostVoteButton = UIButton().then {
         $0.setTitle("✓", for: .normal)
+        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
+        $0.layer.borderWidth = 1
+        $0.layer.cornerRadius = 10
+        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
         $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
     }
     
@@ -51,7 +57,7 @@ final class PostCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         contentView.layer.cornerRadius = 10
-        backgroundColor = .blue
+        backgroundColor = ChoiceAsset.Colors.grayBackground.color
         
         addView()
         setLayout()
