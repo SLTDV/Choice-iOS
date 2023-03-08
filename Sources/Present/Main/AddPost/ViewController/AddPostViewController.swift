@@ -4,7 +4,12 @@ import Alamofire
 import RxSwift
 
 final class AddPostViewController: BaseVC<AddPostViewModel> {
-    private lazy var addMainImageButton = UIButton().then {
+    private let addImageTitleLabel = UILabel().then {
+        $0.text = "대표 사진을 설정해주세요."
+        $0.font = .systemFont(ofSize: 12, weight: .semibold)
+    }
+    
+    private lazy var addFirstImageButton = UIButton().then {
         $0.addTarget(self, action: #selector(addImageButtonDidTap(_:)), for: .touchUpInside)
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
@@ -106,7 +111,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     @objc private func addPostViewButtonDidTap(_ sender: UIButton) {
         guard let title = inputTitleTextField.text else { return }
         guard let content = inputDescriptionTextView.text else { return }
-        guard let thumbnail = addMainImageButton.imageView?.image else { return }
+        guard let thumbnail = addFirstImageButton.imageView?.image else { return }
         guard let firstVotingOption = firstSetTopicButton.titleLabel?.text else { return }
         guard let secondVotingOtion = secondSetTopicButton.titleLabel?.text else { return }
         
@@ -121,12 +126,14 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(addMainImageButton, plusIconImageView, inputTitleTextField, divideLine, inputDescriptionTextView,
-                         topicTitleLabel, firstSetTopicButton, secondSetTopicButton, addPostViewButton)
+        view.addSubviews(addImageTitleLabel, addFirstImageButton, inputTitleTextField, divideLine,
+                         inputDescriptionTextView, topicTitleLabel, firstSetTopicButton,
+                         secondSetTopicButton, addPostViewButton)
+        addFirstImageButton.addSubview(plusIconImageView)
     }
     
     override func setLayout() {
-        addMainImageButton.snp.makeConstraints {
+        addFirstImageButton.snp.makeConstraints {
             $0.top.equalToSuperview().inset(99)
             $0.height.equalTo(223)
             $0.leading.trailing.equalToSuperview()
@@ -134,11 +141,11 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         
         plusIconImageView.snp.makeConstraints {
             $0.height.equalTo(25)
-            $0.center.equalTo(addMainImageButton)
+            $0.center.equalTo(addFirstImageButton)
         }
         
         inputTitleTextField.snp.makeConstraints {
-            $0.top.equalTo(addMainImageButton.snp.bottom).offset(36)
+            $0.top.equalTo(addFirstImageButton.snp.bottom).offset(36)
             $0.leading.trailing.equalToSuperview().inset(32)
         }
         
@@ -216,7 +223,7 @@ extension AddPostViewController: UIImagePickerControllerDelegate, UINavigationCo
             newImage = possibleImage
         }
         
-        self.addMainImageButton.setImage(newImage, for: .normal)
+        self.addFirstImageButton.setImage(newImage, for: .normal)
         picker.dismiss(animated: true, completion: nil)
     }
 }
