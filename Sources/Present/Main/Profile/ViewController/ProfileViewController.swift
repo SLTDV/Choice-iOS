@@ -14,7 +14,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     private let profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.crop.circle.fill")
-        $0.tintColor = ChoiceAsset.Colors.mainBackgroundColor.color
+        $0.tintColor = .black
     }
     
     private let userNameLabel = UILabel().then {
@@ -35,7 +35,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     private let postTableView = UITableView().then {
         $0.rowHeight = 500
         $0.separatorStyle = .none
-        $0.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
+        $0.backgroundColor = .white
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
     
@@ -68,7 +68,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     }
     
     override func configureVC() {
-        view.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
+        view.backgroundColor = .white
         viewModel.delegate = self
         bindTableView()
         viewModel.callToProfileData()

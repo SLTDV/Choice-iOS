@@ -72,7 +72,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol {
         navigationController?.navigationBar.standardAppearance = navBarAppearance
         navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
         
-        view.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
+        view.backgroundColor = .white
         
         navigationItem.title = "choice"
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
@@ -83,10 +83,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol {
                                    handler: { [weak self] _ in self?.callToFindAllData(type: .findBestPostData)})
         
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
-        
-        postTableView.rowHeight = 500
-        postTableView.separatorStyle = .none
-        postTableView.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
             
         viewModel.delegate = self
         bindTableView()

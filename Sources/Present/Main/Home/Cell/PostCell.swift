@@ -35,11 +35,21 @@ final class PostCell: UITableViewCell {
         $0.backgroundColor = .systemBackground
     }
     
+    private let participantsCountLabel = UILabel().then {
+        $0.text = "👻 참여자 "
+        $0.font = .systemFont(ofSize: 12, weight: .medium)
+    }
+    
+    private let commentCountLabel = UILabel().then {
+        $0.text = "🔥 댓글 "
+        $0.font = .systemFont(ofSize: 12, weight: .medium)
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         contentView.layer.cornerRadius = 10
-        contentView.backgroundColor = .white
+        contentView.backgroundColor = .blue
         
         addView()
         setLayout()
@@ -55,8 +65,9 @@ final class PostCell: UITableViewCell {
     }
     
     private func addView() {
-        contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView, secondPostImageView,
-                                firstPostVoteButton, secondPostVoteButton)
+        contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
+                                secondPostImageView, firstPostVoteButton, secondPostVoteButton,
+                                participantsCountLabel, commentCountLabel)
     }
     
     private func setLayout() {
@@ -90,6 +101,16 @@ final class PostCell: UITableViewCell {
         
         secondPostVoteButton.snp.makeConstraints {
             $0.top.equalTo(secondPostImageView.snp.bottom).offset(16)
+        }
+        
+        participantsCountLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(33)
+            $0.bottom.equalToSuperview().inset(16)
+        }
+        
+        commentCountLabel.snp.makeConstraints {
+            $0.leading.equalTo(participantsCountLabel.snp.trailing).offset(13)
+            $0.bottom.equalToSuperview().inset(16)
         }
     }
     
