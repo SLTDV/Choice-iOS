@@ -10,25 +10,27 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private lazy var addFirstImageButton = UIButton().then {
-        $0.titleLabel?.font = .systemFont(ofSize: 30)
         $0.setTitle("+", for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 30)
         $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
-        $0.addTarget(self, action: #selector(addFirstImageButtonDidTap(_:)), for: .touchUpInside)
+        $0.layer.cornerRadius = 10
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
         $0.clipsToBounds = true
         $0.isUserInteractionEnabled = true
+        $0.addTarget(self, action: #selector(addFirstImageButtonDidTap(_:)), for: .touchUpInside)
     }
     
     private lazy var addSecondImageButton = UIButton().then {
-        $0.titleLabel?.font = .systemFont(ofSize: 30)
         $0.setTitle("+", for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 30)
         $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
-        $0.addTarget(self, action: #selector(addSecondImageButtonDidTap(_:)), for: .touchUpInside)
+        $0.layer.cornerRadius = 10
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
         $0.clipsToBounds = true
         $0.isUserInteractionEnabled = true
+        $0.addTarget(self, action: #selector(addSecondImageButtonDidTap(_:)), for: .touchUpInside)
     }
     
     private let firstImagePicker = UIImagePickerController().then {
@@ -92,7 +94,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     private lazy var addPostViewButton = UIButton().then {
         $0.setTitle("계속", for: .normal)
         $0.setTitleColor( .white, for: .normal)
-        $0.backgroundColor = .black
+        $0.backgroundColor = 
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(addPostViewButtonDidTap(_:)), for: .touchUpInside)
     }
