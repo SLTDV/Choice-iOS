@@ -7,21 +7,21 @@ final class AddPostViewModel: BaseViewModel {
         var url = APIConstants.imageUploadURL
         var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
 //        var params = [
-//            "title" : title,
-//            "content" : content,
-//            "firstVotingOption" : firstVotingOption,
-//            "secondVotingOption" : secondVotingOtion
+//            "key" : "firstFile",
+//            "value" : firstImage,
+//            "key" : "secondFile",
+//            "value" : secondImage
 //        ] as Dictionary
-        
+//
         AF.upload(multipartFormData: { multipartFormData in
 //            for (key, value) in params {
 //                multipartFormData.append("\(value)".data(using: .utf8)!, withName: key)
 //            }
             if let image = firstImage.pngData() {
-                multipartFormData.append(image, withName: "file", fileName: "\(image).png", mimeType: "image/png")
+                multipartFormData.append(image, withName: "firstFile", fileName: "\(image).png", mimeType: "image/png")
             }
             if let image = secondImage.pngData() {
-                multipartFormData.append(image, withName: "file", fileName: "\(image).png", mimeType: "image/png")
+                multipartFormData.append(image, withName: "secondFile", fileName: "\(image).png", mimeType: "image/png")
             }
         }, to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor())
         .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
