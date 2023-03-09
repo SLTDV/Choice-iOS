@@ -31,7 +31,14 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.isUserInteractionEnabled = true
     }
     
-    private let imagePicker = UIImagePickerController().then {
+    private let firstImagePicker = UIImagePickerController().then {
+        $0.restorationIdentifier = "first"
+        $0.sourceType = .photoLibrary
+        $0.allowsEditing = true
+    }
+    
+    private let secondImagePicker = UIImagePickerController().then {
+        $0.restorationIdentifier = "second"
         $0.sourceType = .photoLibrary
         $0.allowsEditing = true
     }
@@ -90,11 +97,11 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     @objc private func addFirstImageButtonDidTap(_ sender: UIButton) {
-        self.present(imagePicker, animated: true)
+        self.present(firstImagePicker, animated: true)
     }
     
     @objc private func addSecondImageButtonDidTap(_ sender: UIButton) {
-        self.present(imagePicker, animated: true)
+        self.present(secondImagePicker, animated: true)
     }
     
     @objc private func SetTopicButtonDidTap(_ sender: UIButton) {
@@ -134,7 +141,8 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         navigationItem.title = "게시물 작성"
         
         inputDescriptionTextView.delegate = self
-        imagePicker.delegate = self
+        firstImagePicker.delegate = self
+        secondImagePicker.delegate = self
     }
     
     override func addView() {
@@ -160,11 +168,6 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
             $0.size.equalTo(130)
             $0.trailing.equalToSuperview().inset(32)
         }
-//
-//        plusIconImageView.snp.makeConstraints {
-//            $0.height.equalTo(25)
-//            $0.center.equalTo(addFirstImageButton)
-//        }
         
         inputTitleTextField.snp.makeConstraints {
             $0.top.equalTo(addFirstImageButton.snp.bottom).offset(36)
@@ -242,8 +245,16 @@ extension AddPostViewController: UIImagePickerControllerDelegate, UINavigationCo
         } else if let possibleImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             newImage = possibleImage
         }
+
+        switch picker.restorationIdentifier {
+        case "first":
+            self.addFirstImageButton.setImage(newImage, for: .normal)
+        case "second":
+            self.addSecondImageButton.setImage(newImage, for: .normal)
+        default:
+            return
+        }
         
-        self.addFirstImageButton.setImage(newImage, for: .normal)
         picker.dismiss(animated: true, completion: nil)
     }
 }
