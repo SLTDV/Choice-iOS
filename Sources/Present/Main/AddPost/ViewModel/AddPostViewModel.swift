@@ -6,17 +6,8 @@ final class AddPostViewModel: BaseViewModel {
                     firstVotingOption: String, secondVotingOtion: String) {
         var url = APIConstants.imageUploadURL
         var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
-//        var params = [
-//            "key" : "firstFile",
-//            "value" : firstImage,
-//            "key" : "secondFile",
-//            "value" : secondImage
-//        ] as Dictionary
-//
+
         AF.upload(multipartFormData: { multipartFormData in
-//            for (key, value) in params {
-//                multipartFormData.append("\(value)".data(using: .utf8)!, withName: key)
-//            }
             if let image = firstImage.pngData() {
                 multipartFormData.append(image, withName: "firstFile", fileName: "\(image).png", mimeType: "image/png")
             }
@@ -33,7 +24,7 @@ final class AddPostViewModel: BaseViewModel {
 
                 headers = ["Content-Type": "application/json"]
                 url = APIConstants.createPostURL
-                var params = [
+                let params = [
                     "title" : title,
                     "content" : content,
                     "firstVotingOption" : firstVotingOption,
