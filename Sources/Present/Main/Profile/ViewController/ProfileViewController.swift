@@ -8,9 +8,9 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     private let disposeBag = DisposeBag()
     
-    let optionItem = [
+    lazy var optionItem = [
         UIAction(title: "이용약관", handler: { _ in print("이용약관") }),
-        UIAction(title: "회원탈퇴", attributes: .destructive, handler: { _ in print("회원탈퇴") }),
+        UIAction(title: "회원탈퇴", attributes: .destructive, handler: { _ in self.membershipWithdrawalMenuDidTap()}),
         UIAction(title: "로그아웃", attributes: .destructive, handler: { _ in print("로그아웃") })
     ]
     
@@ -74,6 +74,19 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         alert.addAction(cancelAction)
         alert.addAction(okayAction)
         alert.addTextField()
+        
+        present(alert, animated: true)
+    }
+    
+    private func membershipWithdrawalMenuDidTap() {
+        let alert = UIAlertController(title: "회원탈퇴", message: "회원탈퇴 하시겠습니까?", preferredStyle: .alert)
+        
+        let okayAction = UIAlertAction(title: "탈퇴", style: .destructive)
+        let cancelAction = UIAlertAction(title: "취소", style: .default)
+        
+        
+        alert.addAction(cancelAction)
+        alert.addAction(okayAction)
         
         present(alert, animated: true)
     }
