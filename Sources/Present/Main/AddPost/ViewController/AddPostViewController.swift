@@ -94,7 +94,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     private lazy var addPostViewButton = UIButton().then {
         $0.setTitle("계속", for: .normal)
         $0.setTitleColor( .white, for: .normal)
-        $0.backgroundColor = 
+        $0.backgroundColor = ChoiceAsset.Colors.grayMedium.color
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(addPostViewButtonDidTap(_:)), for: .touchUpInside)
     }
@@ -209,7 +209,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         }
         
         addPostViewButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(39)
+            $0.top.equalTo(firstSetTopicButton.snp.bottom).offset(70)
             $0.leading.trailing.equalToSuperview().inset(32)
             $0.height.equalTo(49)
         }
