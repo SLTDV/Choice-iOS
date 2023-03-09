@@ -10,12 +10,13 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     let optionItem = [
         UIAction(title: "이용약관", handler: { _ in print("이용약관") }),
-        UIAction(title: "회원탈퇴", handler: { _ in print("회원탈퇴") }),
-        UIAction(title: "로그아웃", handler: { _ in print("로그아웃") })
+        UIAction(title: "회원탈퇴", attributes: .destructive, handler: { _ in print("회원탈퇴") }),
+        UIAction(title: "로그아웃", attributes: .destructive, handler: { _ in print("로그아웃") })
     ]
     
     private lazy var optionButton = UIBarButtonItem(image: UIImage(systemName: "gearshape")).then {
         $0.menu = UIMenu(title: "설정", children: optionItem)
+        $0.tintColor = .black
     }
     
     private let whiteBackgroundView = UIView().then {
@@ -79,7 +80,11 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     override func configureVC() {
         view.backgroundColor = .white
+        
         viewModel.delegate = self
+        
+        navigationItem.rightBarButtonItem = optionButton
+        
         bindTableView()
         viewModel.callToProfileData()
     }
