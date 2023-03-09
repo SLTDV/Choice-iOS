@@ -10,7 +10,15 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private lazy var addFirstImageButton = UIButton().then {
-        $0.addTarget(self, action: #selector(addImageButtonDidTap(_:)), for: .touchUpInside)
+        $0.addTarget(self, action: #selector(addFirstImageButtonDidTap(_:)), for: .touchUpInside)
+        $0.contentMode = .scaleAspectFill
+        $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
+        $0.clipsToBounds = true
+        $0.isUserInteractionEnabled = true
+    }
+    
+    private lazy var addSecondImageButton = UIButton().then {
+        $0.addTarget(self, action: #selector(addSecondImageButtonDidTap(_:)), for: .touchUpInside)
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
         $0.clipsToBounds = true
@@ -81,7 +89,11 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.layer.cornerRadius = 8
     }
     
-    @objc private func addImageButtonDidTap(_ sender: UIButton) {
+    @objc private func addFirstImageButtonDidTap(_ sender: UIButton) {
+        self.present(imagePicker, animated: true)
+    }
+    
+    @objc private func addSecondImageButtonDidTap(_ sender: UIButton) {
         self.present(imagePicker, animated: true)
     }
     
