@@ -56,7 +56,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     
     private let inputTitleTextField = UITextField().then {
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
-        $0.placeholder = "제목입력"
+        $0.placeholder = "제목입력 (2~16)"
         $0.textColor = .lightGray
         $0.borderStyle = .none
     }
@@ -66,7 +66,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private let inputDescriptionTextView = UITextView().then {
-        $0.text = "내용입력"
+        $0.text = "내용입력 (5~100)"
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
         $0.textColor = .lightGray
         $0.layer.cornerRadius = 8
@@ -110,14 +110,15 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private func bindUI() {
-//        Observable.combineLatest(
-//            inputTitleTextField.rx.text.filter { $0 != nil },
-//            inputDescriptionTextView.rx.text.filter { $0 != nil },
-//            firstSetTopicButton.rx.tap
-//        )
-//        .subscribe(onNext: { s in
-//            addPostViewButton.isEnabled = s
-//        }).disposed(by: disposeBag)
+        Observable.combineLatest(
+            inputTitleTextField.rx.text.filter { 100 > ($0?.count ?? 0) && ($0?.count ?? 0) > 2 },
+            inputDescriptionTextView.rx.text.filter { 16 > ($0?.count ?? 0) && ($0?.count ?? 0) > 20 },
+            resultSelector:  { s1, s2 in (s1 != nil) && (s2 != nil) }
+        )
+        .subscribe(with: self, onNext: { owner, arg in
+            owner.addPostViewButton.isEnabled = arg
+            owner.addPostViewButton.backgroundColor = .black
+        }).disposed(by: disposeBag)
     }
     
     @objc private func addFirstImageButtonDidTap(_ sender: UIButton) {
@@ -152,6 +153,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     @objc private func addPostViewButtonDidTap(_ sender: UIButton) {
+        print("asdf")
         guard let title = inputTitleTextField.text else { return }
         guard let content = inputDescriptionTextView.text else { return }
         guard let firstImage = addFirstImageButton.imageView?.image else { return }
@@ -168,6 +170,8 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         inputDescriptionTextView.delegate = self
         firstImagePicker.delegate = self
         secondImagePicker.delegate = self
+        
+        bindUI()
     }
     
     override func addView() {
@@ -252,9 +256,9 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
 extension AddPostViewController: UITextViewDelegate {
     private func setTextViewPlaceholder() {
         if inputDescriptionTextView.text.isEmpty {
-            inputDescriptionTextView.text = "내용입력"
+            inputDescriptionTextView.text = "내용입력 (5~100)"
             inputDescriptionTextView.textColor = UIColor.lightGray
-        } else if inputDescriptionTextView.text == "내용입력"{
+        } else if inputDescriptionTextView.text == "내용입력 (5~100)" {
             inputDescriptionTextView.text = ""
             inputDescriptionTextView.textColor = UIColor.black
         }
