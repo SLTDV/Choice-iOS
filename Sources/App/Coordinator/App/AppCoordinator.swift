@@ -2,7 +2,6 @@ import UIKit
 import Alamofire
 
 final class AppCoordinator: Coordinator {
-    
     var navigationController: UINavigationController
     var childCoordinator: [Coordinator] = []
     var parentCoordinator: Coordinator?
@@ -25,6 +24,8 @@ final class AppCoordinator: Coordinator {
         window?.rootViewController = navigationController
         
         AF.request(url, method: .patch, encoding: JSONEncoding.default, headers: headers).validate().responseData { [weak self] response in
+            
+            print(response.result)
             switch response.result {
             case .success(let data):
                 let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: data)

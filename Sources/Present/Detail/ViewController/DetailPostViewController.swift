@@ -6,8 +6,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     var commentData = PublishSubject<[CommentData]>()
     var model: PostModel?
     
-    lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
-    
     private let disposeBag = DisposeBag()
     
     private let scrollView = UIScrollView().then {
@@ -22,7 +20,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let descriptionLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 14, weight: .medium)
+        $0.font = .systemFont(ofSize: 10, weight: .regular)
     }
     
     private let postImageView = UIImageView().then {
@@ -52,14 +50,15 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let enterCommentButton = UIButton().then {
+        $0.setTitle("게시", for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        $0.isHidden = false
         $0.layer.cornerRadius = 10
         $0.backgroundColor = .black
-        $0.setTitle("게시", for: .normal)
+        $0.isHidden = false
     }
     
     private let commentTableView = UITableView().then {
+        $0.rowHeight = 160
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
     }
     
@@ -75,9 +74,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     @objc func tapMethod(_ sender: UITapGestureRecognizer) {
-        print("taptap")
         self.view.endEditing(true)
     }
+    
+    private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
     
     private func bindTableView() {
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
@@ -122,7 +122,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
         callToCommentData()
-        bindTableView()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -143,11 +142,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     override func configureVC() {
         enterCommentTextView.delegate = self
-        scrollView.delegate = self
         viewModel.delegate = self
         
-        commentTableView.rowHeight = 160
-        
+        bindTableView()
         commentButtonDidTap()
         changePostData(model: model!)
     }
@@ -155,8 +152,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubviews(titleLabel, descriptionLabel, postImageView, voteView,
-                                divideLineView, commentCountLabel, enterCommentTextView, enterCommentButton, commentTableView)
+        contentView.addSubviews(titleLabel, descriptionLabel, postImageView,
+                                voteView, divideLineView, commentCountLabel,
+                                enterCommentTextView, enterCommentButton, commentTableView)
     }
     
     override func setLayout() {
@@ -170,28 +168,27 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         titleLabel.snp.makeConstraints {
             $0.centerX.equalToSuperview()
-            $0.top.equalToSuperview()
+            $0.top.equalTo(view.safeAreaInsets).inset(12)
         }
         
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(10)
-            $0.leading.equalToSuperview().offset(20)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(25)
+            $0.leading.trailing.equalToSuperview().offset(20)
         }
         
         postImageView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(10)
-            $0.centerX.equalToSuperview()
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(22)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(200)
         }
         
         voteView.snp.makeConstraints {
-            $0.top.equalTo(postImageView.snp.bottom).offset(31)
-            $0.leading.trailing.equalToSuperview().inset(10)
+            $0.top.equalTo(postImageView.snp.bottom).offset(20)
+            $0.leading.trailing.equalToSuperview().inset(17)
         }
         
         divideLineView.snp.makeConstraints {
-            $0.top.equalTo(voteView.snp.bottom).offset(50)
+            $0.top.equalTo(voteView.snp.bottom).offset(48)
             $0.leading.trailing.equalToSuperview().inset(30)
             $0.height.equalTo(1)
         }
@@ -202,16 +199,16 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
         
         enterCommentTextView.snp.makeConstraints {
-            $0.top.equalTo(commentCountLabel.snp.bottom).offset(18)
-            $0.height.equalTo(83)
+            $0.top.equalTo(commentCountLabel.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(30)
+            $0.height.equalTo(83)
         }
         
         enterCommentButton.snp.makeConstraints {
-            $0.height.equalTo(30)
             $0.top.equalTo(enterCommentTextView.snp.bottom).offset(10)
             $0.trailing.equalTo(enterCommentTextView.snp.trailing)
             $0.leading.equalTo(enterCommentTextView.snp.leading).inset(250)
+            $0.height.equalTo(30)
         }
         
         commentTableView.snp.makeConstraints {

@@ -15,18 +15,49 @@ final class PostCell: UITableViewCell {
         $0.font = .systemFont(ofSize: 12)
     }
     
-    private let postImageView = UIImageView().then {
+    private let firstPostImageView = UIImageView().then {
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
+    }
+    
+    private let secondPostImageView = UIImageView().then {
+        $0.backgroundColor = .gray
+        $0.contentMode = .scaleToFill
+    }
+    
+    private let firstPostVoteButton = UIButton().then {
+        $0.setTitle("✓", for: .normal)
+        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
+        $0.layer.borderWidth = 1
+        $0.layer.cornerRadius = 10
+        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
+        $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
+    }
+    
+    private let secondPostVoteButton = UIButton().then {
+        $0.setTitle("✓", for: .normal)
+        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
+        $0.layer.borderWidth = 1
+        $0.layer.cornerRadius = 10
+        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
+        $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
+    }
+    
+    private let participantsCountLabel = UILabel().then {
+        $0.text = "👻 참여자 "
+        $0.font = .systemFont(ofSize: 12, weight: .medium)
+    }
+    
+    private let commentCountLabel = UILabel().then {
+        $0.text = "🔥 댓글 "
+        $0.font = .systemFont(ofSize: 12, weight: .medium)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         contentView.layer.cornerRadius = 10
-        contentView.backgroundColor = .white
-        self.backgroundColor = ChoiceAsset.Colors.mainBackgroundColor.color
-        self.selectionStyle = .none
+        backgroundColor = ChoiceAsset.Colors.grayBackground.color
         
         addView()
         setLayout()
@@ -42,24 +73,58 @@ final class PostCell: UITableViewCell {
     }
     
     private func addView() {
-        contentView.addSubviews(titleLabel, descriptionLabel, postImageView)
+        contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
+                                secondPostImageView, firstPostVoteButton, secondPostVoteButton,
+                                participantsCountLabel, commentCountLabel)
     }
     
     private func setLayout() {
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(22)
-            $0.centerX.equalToSuperview()
+            $0.top.equalToSuperview().inset(31)
+            $0.leading.equalToSuperview().inset(23)
         }
         
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(20)
-            $0.leading.trailing.equalToSuperview().inset(25)
+            $0.top.equalTo(titleLabel.snp.bottom).offset(16)
+            $0.leading.equalToSuperview().inset(23)
         }
         
-        postImageView.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(40)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(350)
+        firstPostImageView.snp.makeConstraints {
+            $0.top.equalTo(descriptionLabel.snp.bottom).inset(24)
+            $0.leading.equalToSuperview().inset(21)
+            $0.width.equalTo(134)
+            $0.height.equalTo(145)
+        }
+        
+        secondPostImageView.snp.makeConstraints {
+            $0.top.equalTo(descriptionLabel.snp.bottom).inset(24)
+            $0.trailing.equalToSuperview().inset(21)
+            $0.width.equalTo(134)
+            $0.height.equalTo(145)
+        }
+        
+        firstPostVoteButton.snp.makeConstraints {
+            $0.top.equalTo(firstPostImageView.snp.bottom).offset(16)
+            $0.leading.equalToSuperview().inset(38)
+            $0.width.equalTo(101)
+            $0.height.equalTo(38)
+        }
+        
+        secondPostVoteButton.snp.makeConstraints {
+            $0.top.equalTo(secondPostImageView.snp.bottom).offset(16)
+            $0.trailing.equalToSuperview().inset(38)
+            $0.width.equalTo(101)
+            $0.height.equalTo(38)
+        }
+        
+        participantsCountLabel.snp.makeConstraints {
+            $0.leading.equalToSuperview().inset(33)
+            $0.bottom.equalToSuperview().inset(16)
+        }
+        
+        commentCountLabel.snp.makeConstraints {
+            $0.leading.equalTo(participantsCountLabel.snp.trailing).offset(13)
+            $0.bottom.equalToSuperview().inset(16)
         }
     }
     
@@ -68,7 +133,7 @@ final class PostCell: UITableViewCell {
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
             if let imageUrl = URL(string: model.thumbnail) {
-                self.postImageView.kf.setImage(with: imageUrl)
+                self.firstPostImageView.kf.setImage(with: imageUrl)
             }
         }
     }

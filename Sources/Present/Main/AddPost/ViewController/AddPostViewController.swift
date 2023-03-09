@@ -201,7 +201,6 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
 }
 
 extension AddPostViewController: UITextViewDelegate {
-    
     private func setTextViewPlaceholder() {
         if inputDescriptionTextView.text.isEmpty {
             inputDescriptionTextView.text = "내용입력"
@@ -224,7 +223,6 @@ extension AddPostViewController: UITextViewDelegate {
 }
 
 extension AddPostViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         
         var newImage: UIImage? = nil

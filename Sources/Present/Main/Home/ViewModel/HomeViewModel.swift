@@ -9,6 +9,7 @@ protocol PostItemsProtocol: AnyObject {
 
 final class HomeViewModel: BaseViewModel {
     weak var delegate: PostItemsProtocol?
+    private let tk = KeyChain()
     private var disposeBag = DisposeBag()
     
     struct Input {
@@ -61,6 +62,7 @@ final class HomeViewModel: BaseViewModel {
                        headers: headers,
                        interceptor: JwtRequestInterceptor())
             .validate()
+            
             .responseDecodable(of: VoteModel.self) { response in
                 let first = response.value?.firstVotingCount ?? 0
                 let second = response.value?.secondVotingCount ?? 0
@@ -80,7 +82,7 @@ final class HomeViewModel: BaseViewModel {
             url = APIConstants.findAllBestPostURL
         }
         
-        let headers: HTTPHeaders = ["Content-Type": "application/json", "Accept": "application/json"]
+        let headers: HTTPHeaders = ["Content-Type": "application/json"]
         AF.request(url,
                    method: .get,
                    encoding: URLEncoding.queryString,

@@ -68,8 +68,7 @@ final class CommentCell: UITableViewCell {
     private func setLayout() {
         profileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
-            $0.height.equalTo(25)
-            $0.width.equalTo(25)
+            $0.size.equalTo(25)
             $0.leading.equalToSuperview().offset(10)
         }
         
