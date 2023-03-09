@@ -10,6 +10,9 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private lazy var addFirstImageButton = UIButton().then {
+        $0.titleLabel?.font = .systemFont(ofSize: 30)
+        $0.setTitle("+", for: .normal)
+        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
         $0.addTarget(self, action: #selector(addFirstImageButtonDidTap(_:)), for: .touchUpInside)
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
@@ -18,17 +21,14 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private lazy var addSecondImageButton = UIButton().then {
+        $0.titleLabel?.font = .systemFont(ofSize: 30)
+        $0.setTitle("+", for: .normal)
+        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
         $0.addTarget(self, action: #selector(addSecondImageButtonDidTap(_:)), for: .touchUpInside)
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
         $0.clipsToBounds = true
         $0.isUserInteractionEnabled = true
-    }
-    
-    private let plusIconImageView = UIImageView().then {
-        $0.image = .init(systemName: "plus")
-        $0.tintColor = .gray
-        $0.contentMode = .scaleAspectFill
     }
     
     private let imagePicker = UIImagePickerController().then {
@@ -138,23 +138,33 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(addImageTitleLabel, addFirstImageButton, inputTitleTextField, divideLine,
-                         inputDescriptionTextView, topicTitleLabel, firstSetTopicButton,
+        view.addSubviews(addImageTitleLabel, addFirstImageButton, addSecondImageButton, inputTitleTextField,
+                         divideLine, inputDescriptionTextView, topicTitleLabel, firstSetTopicButton,
                          secondSetTopicButton, addPostViewButton)
-        addFirstImageButton.addSubview(plusIconImageView)
     }
     
     override func setLayout() {
-        addFirstImageButton.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(99)
-            $0.height.equalTo(223)
-            $0.leading.trailing.equalToSuperview()
+        addImageTitleLabel.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(40)
+            $0.leading.equalToSuperview().inset(33)
         }
         
-        plusIconImageView.snp.makeConstraints {
-            $0.height.equalTo(25)
-            $0.center.equalTo(addFirstImageButton)
+        addFirstImageButton.snp.makeConstraints {
+            $0.top.equalTo(addImageTitleLabel.snp.bottom).offset(16)
+            $0.size.equalTo(130)
+            $0.leading.equalToSuperview().inset(32)
         }
+        
+        addSecondImageButton.snp.makeConstraints {
+            $0.top.equalTo(addImageTitleLabel.snp.bottom).offset(16)
+            $0.size.equalTo(130)
+            $0.trailing.equalToSuperview().inset(32)
+        }
+//
+//        plusIconImageView.snp.makeConstraints {
+//            $0.height.equalTo(25)
+//            $0.center.equalTo(addFirstImageButton)
+//        }
         
         inputTitleTextField.snp.makeConstraints {
             $0.top.equalTo(addFirstImageButton.snp.bottom).offset(36)
