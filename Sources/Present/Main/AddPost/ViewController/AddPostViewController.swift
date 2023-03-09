@@ -44,56 +44,57 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private let inputTitleTextField = UITextField().then {
+        $0.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.placeholder = "제목입력"
         $0.textColor = .lightGray
         $0.borderStyle = .none
     }
     
     private let divideLine = UIView().then {
-        $0.backgroundColor = .init(red: 0.37, green: 0.36, blue: 0.36, alpha: 1)
+        $0.backgroundColor = .black
     }
     
     private let inputDescriptionTextView = UITextView().then {
         $0.text = "내용입력"
-        $0.font = .systemFont(ofSize: 14)
+        $0.font = .systemFont(ofSize: 14, weight: .semibold)
         $0.textColor = .lightGray
         $0.layer.cornerRadius = 8
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = .init(red: 0.629, green: 0.629, blue: 0.629, alpha: 1)
+        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
     }
     
     private let topicTitleLabel = UILabel().then {
         $0.text = "주제를 입력해주세요"
-        $0.font = .systemFont(ofSize: 18, weight: .semibold)
+        $0.font = .systemFont(ofSize: 12, weight: .semibold)
         $0.textColor = .black
     }
     
     private lazy var firstSetTopicButton = UIButton().then {
-        $0.addTarget(self, action: #selector(SetTopicButtonDidTap(_:)), for: .touchUpInside)
-        $0.tag = 0
         $0.setTitle("주제1", for: .normal)
+        $0.tag = 0
         $0.setTitleColor(.gray, for: .normal)
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = .init(red: 0.629, green: 0.629, blue: 0.629, alpha: 1)
+        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
         $0.layer.cornerRadius = 8
+        $0.addTarget(self, action: #selector(SetTopicButtonDidTap(_:)), for: .touchUpInside)
     }
     
     private lazy var secondSetTopicButton = UIButton().then {
-        $0.addTarget(self, action: #selector(SetTopicButtonDidTap(_:)), for: .touchUpInside)
-        $0.tag = 1
         $0.setTitle("주제2", for: .normal)
+        $0.tag = 1
         $0.setTitleColor(.gray, for: .normal)
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = .init(red: 0.629, green: 0.629, blue: 0.629, alpha: 1)
+        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
         $0.layer.cornerRadius = 8
+        $0.addTarget(self, action: #selector(SetTopicButtonDidTap(_:)), for: .touchUpInside)
     }
     
     private lazy var addPostViewButton = UIButton().then {
-        $0.addTarget(self, action: #selector(addPostViewButtonDidTap(_:)), for: .touchUpInside)
         $0.setTitle("계속", for: .normal)
         $0.setTitleColor( .white, for: .normal)
         $0.backgroundColor = .black
         $0.layer.cornerRadius = 8
+        $0.addTarget(self, action: #selector(addPostViewButtonDidTap(_:)), for: .touchUpInside)
     }
     
     @objc private func addFirstImageButtonDidTap(_ sender: UIButton) {
