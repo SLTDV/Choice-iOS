@@ -2,8 +2,11 @@ import UIKit
 import PhotosUI
 import Alamofire
 import RxSwift
+import RxCocoa
 
 final class AddPostViewController: BaseVC<AddPostViewModel> {
+    private let disposeBag = DisposeBag()
+    
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -78,7 +81,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private lazy var firstSetTopicButton = UIButton().then {
-        $0.setTitle("주제1", for: .normal)
+        $0.setTitle("주제1 ✏️", for: .normal)
         $0.tag = 0
         $0.setTitleColor(.gray, for: .normal)
         $0.layer.borderWidth = 1
@@ -88,7 +91,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private lazy var secondSetTopicButton = UIButton().then {
-        $0.setTitle("주제2", for: .normal)
+        $0.setTitle("주제2 ✏️", for: .normal)
         $0.tag = 1
         $0.setTitleColor(.gray, for: .normal)
         $0.layer.borderWidth = 1
@@ -98,11 +101,23 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private lazy var addPostViewButton = UIButton().then {
-        $0.setTitle("계속", for: .normal)
+        $0.setTitle("완료", for: .normal)
         $0.setTitleColor( .white, for: .normal)
         $0.backgroundColor = ChoiceAsset.Colors.grayMedium.color
         $0.layer.cornerRadius = 8
+        $0.isEnabled = false
         $0.addTarget(self, action: #selector(addPostViewButtonDidTap(_:)), for: .touchUpInside)
+    }
+    
+    private func bindUI() {
+//        Observable.combineLatest(
+//            inputTitleTextField.rx.text.filter { $0 != nil },
+//            inputDescriptionTextView.rx.text.filter { $0 != nil },
+//            firstSetTopicButton.rx.tap
+//        )
+//        .subscribe(onNext: { s in
+//            addPostViewButton.isEnabled = s
+//        }).disposed(by: disposeBag)
     }
     
     @objc private func addFirstImageButtonDidTap(_ sender: UIButton) {
