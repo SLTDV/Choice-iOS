@@ -139,11 +139,12 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     @objc private func addPostViewButtonDidTap(_ sender: UIButton) {
         guard let title = inputTitleTextField.text else { return }
         guard let content = inputDescriptionTextView.text else { return }
-        guard let thumbnail = addFirstImageButton.imageView?.image else { return }
+        guard let firstImage = addFirstImageButton.imageView?.image else { return }
+        guard let secondImage = addSecondImageButton.imageView?.image else { return }
         guard let firstVotingOption = firstSetTopicButton.titleLabel?.text else { return }
         guard let secondVotingOtion = secondSetTopicButton.titleLabel?.text else { return }
         
-        viewModel.createPost(title: title, content: content, imageData: thumbnail, firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
+        viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage, firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
     }
     
     override func configureVC() {

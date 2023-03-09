@@ -2,21 +2,25 @@ import UIKit
 import Alamofire
 
 final class AddPostViewModel: BaseViewModel {
-    func createPost(title: String, content: String, imageData: UIImage, firstVotingOption: String, secondVotingOtion: String) {
+    func createPost(title: String, content: String, firstImage: UIImage, secondImage: UIImage,
+                    firstVotingOption: String, secondVotingOtion: String) {
         var url = APIConstants.imageUploadURL
         var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
-        var params = [
-            "title" : title,
-            "content" : content,
-            "firstVotingOption" : firstVotingOption,
-            "secondVotingOption" : secondVotingOtion
-        ] as Dictionary
+//        var params = [
+//            "title" : title,
+//            "content" : content,
+//            "firstVotingOption" : firstVotingOption,
+//            "secondVotingOption" : secondVotingOtion
+//        ] as Dictionary
         
         AF.upload(multipartFormData: { multipartFormData in
-            for (key, value) in params {
-                multipartFormData.append("\(value)".data(using: .utf8)!, withName: key)
+//            for (key, value) in params {
+//                multipartFormData.append("\(value)".data(using: .utf8)!, withName: key)
+//            }
+            if let image = firstImage.pngData() {
+                multipartFormData.append(image, withName: "file", fileName: "\(image).png", mimeType: "image/png")
             }
-            if let image = imageData.pngData() {
+            if let image = secondImage.pngData() {
                 multipartFormData.append(image, withName: "file", fileName: "\(image).png", mimeType: "image/png")
             }
         }, to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor())
@@ -24,16 +28,18 @@ final class AddPostViewModel: BaseViewModel {
             switch response.result {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode(AddPostModel.self, from: data)
-                let imagUrl = decodeResponse?.imageUrl ?? ""
+                let firstImageUrl = decodeResponse?.firstUploadImageUrl ?? ""
+                let secondImageUrl = decodeResponse?.secondUploadImageUrl ?? ""
 
                 headers = ["Content-Type": "application/json"]
                 url = APIConstants.createPostURL
-                params = [
+                var params = [
                     "title" : title,
                     "content" : content,
                     "firstVotingOption" : firstVotingOption,
                     "secondVotingOption" : secondVotingOtion,
-                    "thumbnail" : imagUrl
+                    "firstImageUrl" : firstImageUrl,
+                    "secondImageUrl" : secondImageUrl
                 ]
                 
                 AF.request(url,
