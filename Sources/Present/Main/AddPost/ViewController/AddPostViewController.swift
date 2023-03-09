@@ -4,6 +4,12 @@ import Alamofire
 import RxSwift
 
 final class AddPostViewController: BaseVC<AddPostViewModel> {
+    private let scrollView = UIScrollView().then {
+        $0.showsVerticalScrollIndicator = false
+    }
+    
+    private let contentView = UIView()
+    
     private let addImageTitleLabel = UILabel().then {
         $0.text = "대표 사진을 설정해주세요."
         $0.font = .systemFont(ofSize: 12, weight: .semibold)
@@ -149,14 +155,24 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(addImageTitleLabel, addFirstImageButton, addSecondImageButton, inputTitleTextField,
-                         divideLine, inputDescriptionTextView, topicTitleLabel, firstSetTopicButton,
-                         secondSetTopicButton, addPostViewButton)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        contentView.addSubviews(addImageTitleLabel, addFirstImageButton, addSecondImageButton, inputTitleTextField,
+                                divideLine, inputDescriptionTextView, topicTitleLabel, firstSetTopicButton,
+                                secondSetTopicButton, addPostViewButton)
     }
     
     override func setLayout() {
+        scrollView.snp.makeConstraints {
+            $0.top.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
+        }
+        
+        contentView.snp.makeConstraints {
+            $0.centerX.width.top.bottom.equalToSuperview()
+        }
+        
         addImageTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).inset(40)
+            $0.top.equalTo(view.safeAreaInsets).inset(30)
             $0.leading.equalToSuperview().inset(33)
         }
         
@@ -212,6 +228,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
             $0.top.equalTo(firstSetTopicButton.snp.bottom).offset(70)
             $0.leading.trailing.equalToSuperview().inset(32)
             $0.height.equalTo(49)
+            $0.bottom.equalToSuperview().inset(40)
         }
     }
 }
