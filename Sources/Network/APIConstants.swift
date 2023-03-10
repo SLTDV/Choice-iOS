@@ -6,6 +6,7 @@ final class APIConstants {
     //SignIn
     static let signInURL = baseURL + "/auth/signin"
     static let reissueURL = baseURL + "/auth/"
+    static let logOutURL = baseURL + "/auth/"
     
     //SignUp
     static let signUpURL = baseURL + "/auth/signup"
@@ -29,4 +30,5 @@ final class APIConstants {
     //Profile
     static let profileURL = baseURL + "/user/"
     static let changeNicknameURL = baseURL + "/user/"
+    static let membershipWithdrawalURL = baseURL + "/user/"
 }
