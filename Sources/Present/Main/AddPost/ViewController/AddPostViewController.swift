@@ -2,8 +2,11 @@ import UIKit
 import PhotosUI
 import Alamofire
 import RxSwift
+import RxCocoa
 
 final class AddPostViewController: BaseVC<AddPostViewModel> {
+    private let disposeBag = DisposeBag()
+    
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
@@ -11,7 +14,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     private let contentView = UIView()
     
     private let addImageTitleLabel = UILabel().then {
-        $0.text = "대표 사진을 설정해주세요."
+        $0.text = "대표 사진을 설정해주세요. (필수)"
         $0.font = .systemFont(ofSize: 12, weight: .semibold)
     }
     
@@ -53,7 +56,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     
     private let inputTitleTextField = UITextField().then {
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
-        $0.placeholder = "제목입력"
+        $0.placeholder = "제목입력 (2~16)"
         $0.textColor = .lightGray
         $0.borderStyle = .none
     }
@@ -63,7 +66,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private let inputDescriptionTextView = UITextView().then {
-        $0.text = "내용입력"
+        $0.text = "내용입력 (5~100)"
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
         $0.textColor = .lightGray
         $0.layer.cornerRadius = 8
@@ -72,13 +75,13 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private let topicTitleLabel = UILabel().then {
-        $0.text = "주제를 입력해주세요"
+        $0.text = "주제를 입력해주세요. (필수)"
         $0.font = .systemFont(ofSize: 12, weight: .semibold)
         $0.textColor = .black
     }
     
     private lazy var firstSetTopicButton = UIButton().then {
-        $0.setTitle("주제1", for: .normal)
+        $0.setTitle("주제1 ✏️", for: .normal)
         $0.tag = 0
         $0.setTitleColor(.gray, for: .normal)
         $0.layer.borderWidth = 1
@@ -88,7 +91,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private lazy var secondSetTopicButton = UIButton().then {
-        $0.setTitle("주제2", for: .normal)
+        $0.setTitle("주제2 ✏️", for: .normal)
         $0.tag = 1
         $0.setTitleColor(.gray, for: .normal)
         $0.layer.borderWidth = 1
@@ -98,11 +101,27 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private lazy var addPostViewButton = UIButton().then {
-        $0.setTitle("계속", for: .normal)
+        $0.setTitle("완료", for: .normal)
         $0.setTitleColor( .white, for: .normal)
         $0.backgroundColor = ChoiceAsset.Colors.grayMedium.color
         $0.layer.cornerRadius = 8
+        $0.isEnabled = false
         $0.addTarget(self, action: #selector(addPostViewButtonDidTap(_:)), for: .touchUpInside)
+    }
+    
+    private func bindUI() {
+        let titleTextObservable = inputTitleTextField.rx.text.filter { $0!.count < 20 }
+        let descriptionTextObservable = inputDescriptionTextView.rx.text.filter { $0!.count < 100 }
+        
+        Observable.combineLatest(
+            titleTextObservable,
+            descriptionTextObservable,
+            resultSelector: { s1, s2 in (s1!.count > 2) && (s2!.count > 20) }
+        )
+        .subscribe(with: self, onNext: { owner, arg in
+            owner.addPostViewButton.isEnabled = arg
+            owner.addPostViewButton.backgroundColor = arg ? .black : ChoiceAsset.Colors.grayMedium.color
+        }).disposed(by: disposeBag)
     }
     
     @objc private func addFirstImageButtonDidTap(_ sender: UIButton) {
@@ -137,14 +156,22 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     @objc private func addPostViewButtonDidTap(_ sender: UIButton) {
+        let alert = UIAlertController(title: "실패", message: "대표사진을 모두 등록해주세요.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .cancel))
+        
         guard let title = inputTitleTextField.text else { return }
         guard let content = inputDescriptionTextView.text else { return }
-        guard let firstImage = addFirstImageButton.imageView?.image else { return }
-        guard let secondImage = addSecondImageButton.imageView?.image else { return }
+        guard let firstImage = addFirstImageButton.imageView?.image else { return present(alert, animated: true) }
+        guard let secondImage = addSecondImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let firstVotingOption = firstSetTopicButton.titleLabel?.text else { return }
         guard let secondVotingOtion = secondSetTopicButton.titleLabel?.text else { return }
+        if firstVotingOption.elementsEqual("주제1 ✏️") || secondVotingOtion.elementsEqual("주제2 ✏️") {
+            alert.message = "주제를 입력해주세요."
+            return present(alert, animated: true)
+        }
         
-        viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage, firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
+        viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage,
+                             firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
     }
     
     override func configureVC() {
@@ -153,6 +180,8 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         inputDescriptionTextView.delegate = self
         firstImagePicker.delegate = self
         secondImagePicker.delegate = self
+        
+        bindUI()
     }
     
     override func addView() {
@@ -237,9 +266,9 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
 extension AddPostViewController: UITextViewDelegate {
     private func setTextViewPlaceholder() {
         if inputDescriptionTextView.text.isEmpty {
-            inputDescriptionTextView.text = "내용입력"
+            inputDescriptionTextView.text = "내용입력 (5~100)"
             inputDescriptionTextView.textColor = UIColor.lightGray
-        } else if inputDescriptionTextView.text == "내용입력"{
+        } else if inputDescriptionTextView.text == "내용입력 (5~100)" {
             inputDescriptionTextView.text = ""
             inputDescriptionTextView.textColor = UIColor.black
         }
@@ -266,7 +295,7 @@ extension AddPostViewController: UIImagePickerControllerDelegate, UINavigationCo
         } else if let possibleImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             newImage = possibleImage
         }
-
+        
         switch picker.restorationIdentifier {
         case "first":
             self.addFirstImageButton.setImage(newImage, for: .normal)
