@@ -55,4 +55,29 @@ final class ProfileViewModel: BaseViewModel {
             }
         }
     }
+    
+    func callToLogOut() {
+        let url = APIConstants.logOutURL
+        let headers: HTTPHeaders = ["Content-Type": "application/json"]
+        
+        AF.request(url,
+                   method: .delete,
+                   encoding: JSONEncoding.default,
+                   headers: headers,
+                   interceptor: JwtRequestInterceptor())
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+            switch response.result {
+            case .success:
+                print("삭제")
+                self.navigateToSignInVC()
+            case .failure(let error):
+                print("error = \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    func navigateToSignInVC() {
+        coordinator.navigate(to: .logOutIsRequired)
+    }
 }

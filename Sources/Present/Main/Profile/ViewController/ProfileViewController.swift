@@ -94,7 +94,9 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     private func logOutMenuDidTap() {
         let alert = UIAlertController(title: "로그아웃", message: "로그아웃 하시겠습니까?", preferredStyle: .alert)
         
-        let okayAction = UIAlertAction(title: "로그아웃", style: .destructive)
+        let okayAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] data in
+            self?.viewModel.callToLogOut()
+        }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
         
         
