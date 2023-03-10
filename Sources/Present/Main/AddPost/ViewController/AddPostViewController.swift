@@ -111,12 +111,12 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     
     private func bindUI() {
         Observable.combineLatest(
-            inputTitleTextField.rx.text.filter { 100 > ($0?.count ?? 0) && ($0?.count ?? 0) > 2 },
-            inputDescriptionTextView.rx.text.filter { 16 > ($0?.count ?? 0) && ($0?.count ?? 0) > 20 },
+            inputTitleTextField.rx.text.filter { 16 > ($0?.count ?? 0) && ($0?.count ?? 0) > 2 },
+            inputDescriptionTextView.rx.text.filter { 100 > ($0?.count ?? 0) && ($0?.count ?? 0) > 20 },
             resultSelector:  { s1, s2 in (s1 != nil) && (s2 != nil) }
         )
         .subscribe(with: self, onNext: { owner, arg in
-            owner.addPostViewButton.isEnabled = arg
+            owner.addPostViewButton.isEnabled = true
             owner.addPostViewButton.backgroundColor = .black
         }).disposed(by: disposeBag)
     }
@@ -153,14 +153,15 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     @objc private func addPostViewButtonDidTap(_ sender: UIButton) {
-        print("asdf")
+        let alert = UIAlertController(title: "실패", message: "대표사진을 모두 등록해주세요.", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         guard let title = inputTitleTextField.text else { return }
         guard let content = inputDescriptionTextView.text else { return }
-        guard let firstImage = addFirstImageButton.imageView?.image else { return }
-        guard let secondImage = addSecondImageButton.imageView?.image else { return }
+        guard let firstImage = addFirstImageButton.imageView?.image else { return present(alert, animated: true) }
+        guard let secondImage = addSecondImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let firstVotingOption = firstSetTopicButton.titleLabel?.text else { return }
         guard let secondVotingOtion = secondSetTopicButton.titleLabel?.text else { return }
-        
+
         viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage, firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
     }
     
