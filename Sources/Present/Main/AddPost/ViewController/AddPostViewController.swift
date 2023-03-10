@@ -14,7 +14,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     private let contentView = UIView()
     
     private let addImageTitleLabel = UILabel().then {
-        $0.text = "대표 사진을 설정해주세요."
+        $0.text = "대표 사진을 설정해주세요. (필수)"
         $0.font = .systemFont(ofSize: 12, weight: .semibold)
     }
     
@@ -75,7 +75,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private let topicTitleLabel = UILabel().then {
-        $0.text = "주제를 입력해주세요"
+        $0.text = "주제를 입력해주세요. (필수)"
         $0.font = .systemFont(ofSize: 12, weight: .semibold)
         $0.textColor = .black
     }
