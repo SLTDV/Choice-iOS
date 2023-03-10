@@ -110,14 +110,17 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private func bindUI() {
+        let titleTextObservable = inputTitleTextField.rx.text.filter { $0!.count < 20 }
+        let descriptionTextObservable = inputDescriptionTextView.rx.text.filter { $0!.count < 100 }
+        
         Observable.combineLatest(
-            inputTitleTextField.rx.text.filter { 16 > ($0?.count ?? 0) && ($0?.count ?? 0) > 2 },
-            inputDescriptionTextView.rx.text.filter { 100 > ($0?.count ?? 0) && ($0?.count ?? 0) > 20 },
-            resultSelector:  { s1, s2 in (s1 != nil) && (s2 != nil) }
+            titleTextObservable,
+            descriptionTextObservable,
+            resultSelector: { s1, s2 in (s1!.count > 2) && (s2!.count > 20) }
         )
         .subscribe(with: self, onNext: { owner, arg in
-            owner.addPostViewButton.isEnabled = true
-            owner.addPostViewButton.backgroundColor = .black
+            owner.addPostViewButton.isEnabled = arg
+            owner.addPostViewButton.backgroundColor = arg ? .black : ChoiceAsset.Colors.grayMedium.color
         }).disposed(by: disposeBag)
     }
     
@@ -166,7 +169,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
             alert.message = "주제를 입력해주세요."
             return present(alert, animated: true)
         }
-
+        
         viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage,
                              firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
     }
@@ -292,7 +295,7 @@ extension AddPostViewController: UIImagePickerControllerDelegate, UINavigationCo
         } else if let possibleImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             newImage = possibleImage
         }
-
+        
         switch picker.restorationIdentifier {
         case "first":
             self.addFirstImageButton.setImage(newImage, for: .normal)
