@@ -155,14 +155,20 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     @objc private func addPostViewButtonDidTap(_ sender: UIButton) {
         let alert = UIAlertController(title: "실패", message: "대표사진을 모두 등록해주세요.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
+        
         guard let title = inputTitleTextField.text else { return }
         guard let content = inputDescriptionTextView.text else { return }
         guard let firstImage = addFirstImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let secondImage = addSecondImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let firstVotingOption = firstSetTopicButton.titleLabel?.text else { return }
         guard let secondVotingOtion = secondSetTopicButton.titleLabel?.text else { return }
+        if firstVotingOption.elementsEqual("주제1 ✏️") || secondVotingOtion.elementsEqual("주제2 ✏️") {
+            alert.message = "주제를 입력해주세요."
+            return present(alert, animated: true)
+        }
 
-        viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage, firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
+        viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage,
+                             firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
     }
     
     override func configureVC() {
