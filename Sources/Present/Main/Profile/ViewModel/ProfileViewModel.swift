@@ -76,6 +76,26 @@ final class ProfileViewModel: BaseViewModel {
         }
     }
     
+    func callToMembershipWithdrawal() {
+        let url = APIConstants.membershipWithdrawalURL
+        let headers: HTTPHeaders = ["Content-Type": "application/json"]
+        
+        AF.request(url,
+                   method: .delete,
+                   encoding: JSONEncoding.default,
+                   headers: headers,
+                   interceptor: JwtRequestInterceptor())
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+            switch response.result {
+            case .success:
+                self.navigateToSignInVC()
+            case .failure(let error):
+                print("error = \(error.localizedDescription)")
+            }
+        }
+    }
+    
     func navigateToSignInVC() {
         coordinator.navigate(to: .logoutIsRequired)
     }

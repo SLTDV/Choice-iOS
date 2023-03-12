@@ -81,9 +81,10 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     private func membershipWithdrawalMenuDidTap() {
         let alert = UIAlertController(title: "회원탈퇴", message: "회원탈퇴 하시겠습니까?", preferredStyle: .alert)
         
-        let okayAction = UIAlertAction(title: "탈퇴", style: .destructive)
+        let okayAction = UIAlertAction(title: "탈퇴", style: .destructive) { [weak self] data in
+            self?.viewModel.callToMembershipWithdrawal()
+        }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
-        
         
         alert.addAction(cancelAction)
         alert.addAction(okayAction)
