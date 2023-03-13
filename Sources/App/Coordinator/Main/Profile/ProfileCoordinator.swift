@@ -10,7 +10,7 @@ final class ProfileCoordinator: BaseCoordinator {
     
     override func navigate(to step: ChoiceStep) {
         switch step {
-        case .logoutIsRequired:
+        case .logOutIsRequired:
             logOutIsRequired()
         default:
             return

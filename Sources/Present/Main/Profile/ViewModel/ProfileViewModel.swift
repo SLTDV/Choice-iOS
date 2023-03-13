@@ -97,6 +97,6 @@ final class ProfileViewModel: BaseViewModel {
     }
     
     func navigateToSignInVC() {
-        coordinator.navigate(to: .logoutIsRequired)
+        coordinator.navigate(to: .logOutIsRequired)
     }
 }
