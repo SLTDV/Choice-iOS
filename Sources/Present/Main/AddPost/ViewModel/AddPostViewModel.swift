@@ -43,6 +43,7 @@ final class AddPostViewModel: BaseViewModel {
                 .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
                     switch response.result {
                     case .success:
+                        LoadingIndicator.hideLoading()
                         self?.coordinator.navigate(to: .popAddpostIsRequired)
                     case .failure(let error):
                         print("post error = \(String(describing: error.localizedDescription))")
