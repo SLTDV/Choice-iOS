@@ -1,6 +1,7 @@
 import UIKit
 
 final class LoadingIndicator {
+    private init() {}
     static func showLoading() {
         DispatchQueue.main.async {
             guard let window = UIApplication.shared.windows.last else { return }
