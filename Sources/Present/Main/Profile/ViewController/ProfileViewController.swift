@@ -97,8 +97,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         let okayAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] data in
             self?.viewModel.callToLogout()
         }
-        let cancelAction = UIAlertAction(title: "취소", style: .default)
-        
+        let cancelAction = UIAlertAction(title: "취소", style: .default)  
         
         alert.addAction(cancelAction)
         alert.addAction(okayAction)
