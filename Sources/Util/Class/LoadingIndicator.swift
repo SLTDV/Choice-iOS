@@ -1,12 +1,9 @@
 import UIKit
-import SnapKit
 
-class LoadingIndicator {
+final class LoadingIndicator {
     static func showLoading() {
         DispatchQueue.main.async {
-            // 최상단에 있는 window 객체 획득
             guard let window = UIApplication.shared.windows.last else { return }
-
             let loadingIndicatorView: UIActivityIndicatorView
             let loadingLabel = UILabel()
             if let existedView = window.subviews.first(where: { $0 is UIActivityIndicatorView } ) as? UIActivityIndicatorView {
