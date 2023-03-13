@@ -16,11 +16,13 @@ final class PostCell: UITableViewCell {
     }
     
     private let firstPostImageView = UIImageView().then {
+        $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
     }
     
     private let secondPostImageView = UIImageView().then {
+        $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
     }
@@ -134,7 +136,7 @@ final class PostCell: UITableViewCell {
             self.descriptionLabel.text = model.content
             self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
             self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
-            if let imageUrl = URL(string: model.firstVotingOption) {
+            if let imageUrl = URL(string: model.firstImageUrl) {
                 self.firstPostImageView.kf.setImage(with: imageUrl)
             }
             if let imageUrl = URL(string: model.secondImageUrl) {
