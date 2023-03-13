@@ -18,10 +18,9 @@ class LoadingIndicator {
                 loadingIndicatorView.frame = window.frame
                 loadingLabel.frame = window.frame.offsetBy(dx: window.center.x - 23, dy: 40)
                 loadingIndicatorView.color = .brown
-                loadingLabel.text = "로딩중"
+                loadingLabel.text = "게시 중"
                 window.addSubviews(loadingIndicatorView, loadingLabel)
             }
-
             loadingIndicatorView.startAnimating()
         }
     }
@@ -30,6 +29,7 @@ class LoadingIndicator {
         DispatchQueue.main.async {
             guard let window = UIApplication.shared.windows.last else { return }
             window.subviews.filter({ $0 is UIActivityIndicatorView }).forEach { $0.removeFromSuperview() }
+            window.subviews.filter({ $0 is UILabel }).forEach { $0.removeFromSuperview() }
         }
     }
 }

@@ -176,8 +176,10 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
             return present(alert, animated: true)
         }
 
+
         viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage,
                              firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
+        LoadingIndicator.showLoading()
     }
     
     override func configureVC() {
@@ -187,11 +189,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         firstImagePicker.delegate = self
         secondImagePicker.delegate = self
         
-//        activityIndicatorView.center = view.center
-        
         bindUI()
-//        print(activityIndicatorView.isAnimating)
-        LoadingIndicator.showLoading()
     }
     
     override func addView() {
