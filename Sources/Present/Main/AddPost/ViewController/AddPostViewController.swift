@@ -11,6 +11,12 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.showsVerticalScrollIndicator = false
     }
     
+//    private let activityIndicatorView = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 70, height: 70)).then {
+//        $0.style = .large
+//        $0.color = .red
+//        $0.hidesWhenStopped = false
+//    }
+    
     private let contentView = UIView()
     
     private let addImageTitleLabel = UILabel().then {
@@ -66,7 +72,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private let inputDescriptionTextView = UITextView().then {
-        $0.text = "내용입력 (5~100)"
+        $0.text = "내용입력 (20~100)"
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
         $0.textColor = .lightGray
         $0.layer.cornerRadius = 8
@@ -169,7 +175,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
             alert.message = "주제를 입력해주세요."
             return present(alert, animated: true)
         }
-        
+
         viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage,
                              firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
     }
@@ -181,14 +187,19 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         firstImagePicker.delegate = self
         secondImagePicker.delegate = self
         
+//        activityIndicatorView.center = view.center
+        
         bindUI()
+//        print(activityIndicatorView.isAnimating)
+        LoadingIndicator.showLoading()
     }
     
     override func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubviews(addImageTitleLabel, addFirstImageButton, addSecondImageButton, inputTitleTextField,
-                                divideLine, inputDescriptionTextView, topicTitleLabel, firstSetTopicButton,
+        contentView.addSubviews(addImageTitleLabel, addFirstImageButton,
+                                addSecondImageButton, inputTitleTextField, divideLine,
+                                inputDescriptionTextView, topicTitleLabel, firstSetTopicButton,
                                 secondSetTopicButton, addPostViewButton)
     }
     
@@ -200,6 +211,10 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         contentView.snp.makeConstraints {
             $0.centerX.width.top.bottom.equalToSuperview()
         }
+
+//        activityIndicatorView.snp.makeConstraints {
+//            $0.center.equalToSuperview()
+//        }
         
         addImageTitleLabel.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaInsets).inset(30)
@@ -266,9 +281,9 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
 extension AddPostViewController: UITextViewDelegate {
     private func setTextViewPlaceholder() {
         if inputDescriptionTextView.text.isEmpty {
-            inputDescriptionTextView.text = "내용입력 (5~100)"
+            inputDescriptionTextView.text = "내용입력 (20~100)"
             inputDescriptionTextView.textColor = UIColor.lightGray
-        } else if inputDescriptionTextView.text == "내용입력 (5~100)" {
+        } else if inputDescriptionTextView.text == "내용입력 (20~100)" {
             inputDescriptionTextView.text = ""
             inputDescriptionTextView.textColor = UIColor.black
         }
