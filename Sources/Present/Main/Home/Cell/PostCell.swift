@@ -56,7 +56,7 @@ final class PostCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        contentView.layer.cornerRadius = 10
+        self.layer.cornerRadius = 10
         backgroundColor = ChoiceAsset.Colors.grayBackground.color
         
         addView()
@@ -90,14 +90,14 @@ final class PostCell: UITableViewCell {
         }
         
         firstPostImageView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).inset(24)
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(24)
             $0.leading.equalToSuperview().inset(21)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
         }
         
         secondPostImageView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).inset(24)
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(24)
             $0.trailing.equalToSuperview().inset(21)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
@@ -134,8 +134,11 @@ final class PostCell: UITableViewCell {
             self.descriptionLabel.text = model.content
             self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
             self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
-            if let imageUrl = URL(string: model.thumbnail) {
+            if let imageUrl = URL(string: model.firstVotingOption) {
                 self.firstPostImageView.kf.setImage(with: imageUrl)
+            }
+            if let imageUrl = URL(string: model.secondImageUrl) {
+                self.secondPostImageView.kf.setImage(with: imageUrl)
             }
         }
     }
