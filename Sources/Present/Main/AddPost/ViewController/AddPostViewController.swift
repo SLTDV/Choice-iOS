@@ -1,6 +1,5 @@
 import UIKit
 import PhotosUI
-import Alamofire
 import RxSwift
 import RxCocoa
 
@@ -10,13 +9,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     private let scrollView = UIScrollView().then {
         $0.showsVerticalScrollIndicator = false
     }
-    
-//    private let activityIndicatorView = UIActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 70, height: 70)).then {
-//        $0.style = .large
-//        $0.color = .red
-//        $0.hidesWhenStopped = false
-//    }
-    
+
     private let contentView = UIView()
     
     private let addImageTitleLabel = UILabel().then {
@@ -176,7 +169,6 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
             return present(alert, animated: true)
         }
 
-
         viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage,
                              firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
         LoadingIndicator.showLoading()
@@ -210,10 +202,6 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
             $0.centerX.width.top.bottom.equalToSuperview()
         }
 
-//        activityIndicatorView.snp.makeConstraints {
-//            $0.center.equalToSuperview()
-//        }
-        
         addImageTitleLabel.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaInsets).inset(30)
             $0.leading.equalToSuperview().inset(33)
@@ -300,7 +288,6 @@ extension AddPostViewController: UITextViewDelegate {
 
 extension AddPostViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        
         var newImage: UIImage? = nil
         
         if let possibleImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
