@@ -16,12 +16,14 @@ final class PostCell: UITableViewCell {
     }
     
     private let firstPostImageView = UIImageView().then {
+        $0.clipsToBounds = true
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
     }
     
     private let secondPostImageView = UIImageView().then {
+        $0.clipsToBounds = true
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
@@ -58,7 +60,7 @@ final class PostCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        self.layer.cornerRadius = 10
+        contentView.layer.cornerRadius = 10
         backgroundColor = ChoiceAsset.Colors.grayBackground.color
         
         addView()
@@ -121,12 +123,12 @@ final class PostCell: UITableViewCell {
         
         participantsCountLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(33)
-            $0.bottom.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview()
         }
         
         commentCountLabel.snp.makeConstraints {
             $0.leading.equalTo(participantsCountLabel.snp.trailing).offset(13)
-            $0.bottom.equalToSuperview().inset(16)
+            $0.bottom.equalToSuperview()
         }
     }
     

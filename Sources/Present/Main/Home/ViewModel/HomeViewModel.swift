@@ -92,7 +92,6 @@ final class HomeViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success(let data):
-                print(self!.tk.read(key: "accessToken"))
                 let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: data)
                 self?.delegate?.postItemsData.onNext(decodeResponse ?? .init())
             case .failure(let error):
