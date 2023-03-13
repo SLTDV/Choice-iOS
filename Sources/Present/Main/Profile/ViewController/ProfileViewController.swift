@@ -9,7 +9,6 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     private let disposeBag = DisposeBag()
     
     lazy var optionItem = [
-        UIAction(title: "이용약관", handler: { _ in print("이용약관") }),
         UIAction(title: "회원탈퇴", attributes: .destructive, handler: { _ in self.membershipWithdrawalMenuDidTap()}),
         UIAction(title: "로그아웃", attributes: .destructive, handler: { _ in self.logOutMenuDidTap()})
     ]
