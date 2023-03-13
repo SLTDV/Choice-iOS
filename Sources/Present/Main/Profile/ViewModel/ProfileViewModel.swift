@@ -26,7 +26,7 @@ final class ProfileViewModel: BaseViewModel {
                 self?.delegate?.postListData.onNext(decodeResponse?.postList ?? .init())
                 self?.delegate?.nicknameData.onNext(decodeResponse?.nickname ?? .init())
             case .failure(let error):
-                print("error = \(error.localizedDescription)")
+                print("33error = \(error.localizedDescription)")
             }
         }
     }
@@ -51,50 +51,38 @@ final class ProfileViewModel: BaseViewModel {
             case .success:
                 self?.delegate?.nicknameData.onNext(nickname)
             case .failure(let error):
-                print("error = \(error.localizedDescription)")
+                print("11error = \(error.localizedDescription)")
             }
         }
     }
     
-    func callToLogout() {
-        let url = APIConstants.logoutURL
-        let headers: HTTPHeaders = ["Content-Type": "application/json"]
+    func callToFindData(type: OptionItemType) {
+        lazy var url = ""
         
+        switch type {
+        case .callToLogout:
+            url = APIConstants.logoutURL
+        case .callToMembershipWithdrawal:
+            url = APIConstants.membershipWithdrawalURL
+        }
+        
+        let headers: HTTPHeaders = ["Content-Type": "application/json"]
         AF.request(url,
                    method: .delete,
-                   encoding: JSONEncoding.default,
+                   encoding: URLEncoding.queryString,
                    headers: headers,
                    interceptor: JwtRequestInterceptor())
         .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
-            case .success:
-                self.navigateToSignInVC()
+            case .success(let data):
+                self?.navigateToSignInVC()
             case .failure(let error):
-                print("error = \(error.localizedDescription)")
+                print("22error = \(error.localizedDescription)")
             }
         }
     }
-    
-    func callToMembershipWithdrawal() {
-        let url = APIConstants.membershipWithdrawalURL
-        let headers: HTTPHeaders = ["Content-Type": "application/json"]
-        
-        AF.request(url,
-                   method: .delete,
-                   encoding: JSONEncoding.default,
-                   headers: headers,
-                   interceptor: JwtRequestInterceptor())
-        .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
-            switch response.result {
-            case .success:
-                self.navigateToSignInVC()
-            case .failure(let error):
-                print("error = \(error.localizedDescription)")
-            }
-        }
-    }
+
     
     func navigateToSignInVC() {
         coordinator.navigate(to: .logOutIsRequired)

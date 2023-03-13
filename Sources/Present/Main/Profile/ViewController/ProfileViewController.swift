@@ -81,7 +81,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         let alert = UIAlertController(title: "회원탈퇴", message: "회원탈퇴 하시겠습니까?", preferredStyle: .alert)
         
         let okayAction = UIAlertAction(title: "탈퇴", style: .destructive) { [weak self] data in
-            self?.viewModel.callToMembershipWithdrawal()
+            self?.viewModel.callToFindData(type: .callToMembershipWithdrawal)
         }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
         
@@ -95,7 +95,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         let alert = UIAlertController(title: "로그아웃", message: "로그아웃 하시겠습니까?", preferredStyle: .alert)
         
         let okayAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] data in
-            self?.viewModel.callToLogout()
+            self?.viewModel.callToFindData(type: .callToLogout)
         }
         let cancelAction = UIAlertAction(title: "취소", style: .default)  
         
