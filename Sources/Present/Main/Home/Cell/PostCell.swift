@@ -60,13 +60,14 @@ final class PostCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        layer.cornerRadius = 25
-        backgroundColor = ChoiceAsset.Colors.grayBackground.color
+        contentView.layer.cornerRadius = 25
+        contentView.backgroundColor = ChoiceAsset.Colors.grayBackground.color
         
         addView()
         setLayout()
         
         selectionStyle = .none
+        isUserInteractionEnabled = false
     }
     
     required init?(coder: NSCoder) {
@@ -123,13 +124,13 @@ final class PostCell: UITableViewCell {
         }
         
         participantsCountLabel.snp.makeConstraints {
-//            $0.top.equalTo(firstPostVoteButton.snp.bottom)
+//            $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(34)
             $0.leading.equalToSuperview().inset(33)
             $0.bottom.equalToSuperview().inset(16)
         }
         
         commentCountLabel.snp.makeConstraints {
-//            $0.top.equalTo(secondPostVoteButton.snp.bottom)
+//            $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(34)
             $0.leading.equalTo(participantsCountLabel.snp.trailing).offset(13)
             $0.bottom.equalToSuperview().inset(16)
         }
