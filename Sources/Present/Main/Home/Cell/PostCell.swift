@@ -12,7 +12,7 @@ final class PostCell: UITableViewCell {
     
     private let descriptionLabel = UILabel().then {
         $0.numberOfLines = 0
-        $0.font = .systemFont(ofSize: 12)
+        $0.font = .systemFont(ofSize: 14)
     }
     
     private let firstPostImageView = UIImageView().then {
@@ -60,11 +60,13 @@ final class PostCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        contentView.layer.cornerRadius = 10
+        layer.cornerRadius = 25
         backgroundColor = ChoiceAsset.Colors.grayBackground.color
         
         addView()
         setLayout()
+        
+        selectionStyle = .none
     }
     
     required init?(coder: NSCoder) {
@@ -72,7 +74,6 @@ final class PostCell: UITableViewCell {
     }
     
     override func layoutSubviews() {
-        super.layoutSubviews()
         contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0))
     }
     
@@ -122,13 +123,15 @@ final class PostCell: UITableViewCell {
         }
         
         participantsCountLabel.snp.makeConstraints {
+//            $0.top.equalTo(firstPostVoteButton.snp.bottom)
             $0.leading.equalToSuperview().inset(33)
-            $0.bottom.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(16)
         }
         
         commentCountLabel.snp.makeConstraints {
+//            $0.top.equalTo(secondPostVoteButton.snp.bottom)
             $0.leading.equalTo(participantsCountLabel.snp.trailing).offset(13)
-            $0.bottom.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(16)
         }
     }
     
