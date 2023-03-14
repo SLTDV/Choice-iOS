@@ -23,7 +23,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.font = .systemFont(ofSize: 10, weight: .regular)
     }
     
-    private let postImageView = UIImageView().then {
+    private let firstPostImageView = UIImageView().then {
+        $0.clipsToBounds = true
+        $0.backgroundColor = .gray
+        $0.contentMode = .scaleAspectFill
+    }
+    
+    private let secondPostImageView = UIImageView().then {
         $0.clipsToBounds = true
         $0.backgroundColor = .gray
         $0.contentMode = .scaleAspectFill
@@ -111,8 +117,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
-            if let imageUrl = URL(string: model.thumbnail) {
-                self.postImageView.kf.setImage(with: imageUrl)
+            if let imageUrl = URL(string: model.firstVotingOption) {
+                self.firstPostImageView.kf.setImage(with: imageUrl)
+            }
+            if let imageUrl = URL(string: model.secondImageUrl) {
+                self.secondPostImageView.kf.setImage(with: imageUrl)
             }
             self.voteView.changeVoteTitleData(with: model)
         }
@@ -152,8 +161,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubviews(titleLabel, descriptionLabel, postImageView,
-                                voteView, divideLineView, commentCountLabel,
+        contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
+                                secondPostImageView, voteView, divideLineView, commentCountLabel,
                                 enterCommentTextView, enterCommentButton, commentTableView)
     }
     
@@ -176,14 +185,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.leading.trailing.equalToSuperview().offset(20)
         }
         
-        postImageView.snp.makeConstraints {
+        firstPostImageView.snp.makeConstraints {
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(22)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(200)
         }
         
         voteView.snp.makeConstraints {
-            $0.top.equalTo(postImageView.snp.bottom).offset(20)
+            $0.top.equalTo(firstPostImageView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(17)
         }
         
