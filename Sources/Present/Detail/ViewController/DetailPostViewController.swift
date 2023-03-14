@@ -23,7 +23,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.font = .systemFont(ofSize: 10, weight: .regular)
     }
     
-    private let firstpostImageView = UIImageView().then {
+    private let firstPostImageView = UIImageView().then {
         $0.clipsToBounds = true
         $0.backgroundColor = .gray
         $0.contentMode = .scaleAspectFill
@@ -118,7 +118,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
             if let imageUrl = URL(string: model.firstVotingOption) {
-                self.firstpostImageView.kf.setImage(with: imageUrl)
+                self.firstPostImageView.kf.setImage(with: imageUrl)
             }
             if let imageUrl = URL(string: model.secondImageUrl) {
                 self.secondPostImageView.kf.setImage(with: imageUrl)
@@ -161,7 +161,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubviews(titleLabel, descriptionLabel, firstpostImageView,
+        contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
                                 secondPostImageView, voteView, divideLineView, commentCountLabel,
                                 enterCommentTextView, enterCommentButton, commentTableView)
     }
@@ -185,14 +185,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.leading.trailing.equalToSuperview().offset(20)
         }
         
-        firstpostImageView.snp.makeConstraints {
+        firstPostImageView.snp.makeConstraints {
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(22)
             $0.leading.trailing.equalToSuperview()
             $0.height.equalTo(200)
         }
         
         voteView.snp.makeConstraints {
-            $0.top.equalTo(firstpostImageView.snp.bottom).offset(20)
+            $0.top.equalTo(firstPostImageView.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(17)
         }
         
