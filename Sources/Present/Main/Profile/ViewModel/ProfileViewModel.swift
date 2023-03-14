@@ -55,4 +55,35 @@ final class ProfileViewModel: BaseViewModel {
             }
         }
     }
+    
+    func callToFindData(type: OptionItemType) {
+        lazy var url = ""
+        
+        switch type {
+        case .callToLogout:
+            url = APIConstants.logoutURL
+        case .callToMembershipWithdrawal:
+            url = APIConstants.membershipWithdrawalURL
+        }
+        
+        let headers: HTTPHeaders = ["Content-Type": "application/json"]
+        AF.request(url,
+                   method: .delete,
+                   encoding: URLEncoding.queryString,
+                   headers: headers,
+                   interceptor: JwtRequestInterceptor())
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
+            switch response.result {
+            case .success(let data):
+                self?.navigateToSignInVC()
+            case .failure(let error):
+                print("error = \(error.localizedDescription)")
+            }
+        }
+    }
+
+    func navigateToSignInVC() {
+        coordinator.navigate(to: .logOutIsRequired)
+    }
 }

@@ -7,4 +7,22 @@ final class ProfileCoordinator: BaseCoordinator {
         
         navigationController.pushViewController(vc, animated: true)
     }
+    
+    override func navigate(to step: ChoiceStep) {
+        switch step {
+        case .logOutIsRequired:
+            logOutIsRequired()
+        default:
+            return
+        }
+    }
+}
+
+extension ProfileCoordinator {
+    private func logOutIsRequired() {
+        let vc = SignInCoordinator(navigationController: navigationController)
+        vc.parentCoordinator = self
+        childCoordinators.append(vc)
+        vc.start()
+    }
 }

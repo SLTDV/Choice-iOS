@@ -8,10 +8,9 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     private let disposeBag = DisposeBag()
     
-    let optionItem = [
-        UIAction(title: "이용약관", handler: { _ in print("이용약관") }),
-        UIAction(title: "회원탈퇴", attributes: .destructive, handler: { _ in print("회원탈퇴") }),
-        UIAction(title: "로그아웃", attributes: .destructive, handler: { _ in print("로그아웃") })
+    lazy var optionItem = [
+        UIAction(title: "회원탈퇴", attributes: .destructive, handler: { _ in self.membershipWithdrawalMenuDidTap()}),
+        UIAction(title: "로그아웃", attributes: .destructive, handler: { _ in self.logOutMenuDidTap()})
     ]
     
     private lazy var optionButton = UIBarButtonItem(image: UIImage(systemName: "gearshape")).then {
@@ -74,6 +73,34 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         alert.addAction(cancelAction)
         alert.addAction(okayAction)
         alert.addTextField()
+        
+        present(alert, animated: true)
+    }
+    
+    private func membershipWithdrawalMenuDidTap() {
+        let alert = UIAlertController(title: "회원탈퇴", message: "회원탈퇴 하시겠습니까?", preferredStyle: .alert)
+        
+        let okayAction = UIAlertAction(title: "탈퇴", style: .destructive) { [weak self] data in
+            self?.viewModel.callToFindData(type: .callToMembershipWithdrawal)
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .default)
+        
+        alert.addAction(cancelAction)
+        alert.addAction(okayAction)
+        
+        present(alert, animated: true)
+    }
+    
+    private func logOutMenuDidTap() {
+        let alert = UIAlertController(title: "로그아웃", message: "로그아웃 하시겠습니까?", preferredStyle: .alert)
+        
+        let okayAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] data in
+            self?.viewModel.callToFindData(type: .callToLogout)
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .default)  
+        
+        alert.addAction(cancelAction)
+        alert.addAction(okayAction)
         
         present(alert, animated: true)
     }
