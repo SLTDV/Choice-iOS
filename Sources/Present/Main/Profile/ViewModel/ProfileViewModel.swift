@@ -83,7 +83,6 @@ final class ProfileViewModel: BaseViewModel {
         }
     }
 
-    
     func navigateToSignInVC() {
         coordinator.navigate(to: .logOutIsRequired)
     }
