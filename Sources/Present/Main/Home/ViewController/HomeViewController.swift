@@ -35,7 +35,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol {
     }
 
     private let postTableView = UITableView().then {
-//        $0.estimatedRowHeight = 372
         $0.rowHeight = 372
         $0.backgroundColor = .white
         $0.separatorStyle = .none

@@ -21,9 +21,6 @@ final class AddPostViewModel: BaseViewModel {
                 let decodeResponse = try? JSONDecoder().decode(AddPostModel.self, from: data)
                 let firstImageUrl = decodeResponse?.firstUploadImageUrl ?? ""
                 let secondImageUrl = decodeResponse?.secondUploadImageUrl ?? ""
-                
-                print("first = \(firstImageUrl)")
-                print("second = \(secondImageUrl)")
 
                 headers = ["Content-Type": "application/json"]
                 url = APIConstants.createPostURL

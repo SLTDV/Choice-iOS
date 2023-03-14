@@ -120,7 +120,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             if let imageUrl = URL(string: model.firstVotingOption) {
                 self.firstpostImageView.kf.setImage(with: imageUrl)
             }
-            
             if let imageUrl = URL(string: model.secondImageUrl) {
                 self.secondPostImageView.kf.setImage(with: imageUrl)
             }
