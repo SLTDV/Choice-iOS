@@ -29,8 +29,7 @@ final class PostCell: UITableViewCell {
         $0.contentMode = .scaleToFill
     }
     
-    private lazy var firstPostVoteButton = UIButton().then {
-        $0.addTarget(self, action: #selector(firstPostVoteButtonDidTap(_:)), for: .touchUpInside)
+    private let firstPostVoteButton = UIButton().then {
         $0.setTitle("✓", for: .normal)
         $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
         $0.layer.borderWidth = 1
@@ -58,29 +57,20 @@ final class PostCell: UITableViewCell {
         $0.font = .systemFont(ofSize: 12, weight: .medium)
     }
     
-    @objc private func firstPostVoteButtonDidTap(_ sender: UIButton) {
-        print("asdfasdffsf")
-    }
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         contentView.layer.cornerRadius = 25
         contentView.backgroundColor = ChoiceAsset.Colors.grayBackground.color
-        
+
         addView()
         setLayout()
         
         selectionStyle = .none
-//        isUserInteractionEnabled = false
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-    
-    override func layoutSubviews() {
-        contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 16, right: 0))
     }
     
     private func addView() {
@@ -93,11 +83,14 @@ final class PostCell: UITableViewCell {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(31)
             $0.leading.equalToSuperview().inset(23)
+            $0.trailing.equalToSuperview()
+            $0.height.equalTo(21)
         }
         
         descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
             $0.leading.equalToSuperview().inset(23)
+            $0.height.equalTo(17)
         }
         
         firstPostImageView.snp.makeConstraints {
@@ -129,13 +122,13 @@ final class PostCell: UITableViewCell {
         }
         
         participantsCountLabel.snp.makeConstraints {
-//            $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(34)
+            $0.top.equalTo(firstPostVoteButton.snp.bottom)
             $0.leading.equalToSuperview().inset(33)
             $0.bottom.equalToSuperview().inset(16)
         }
         
         commentCountLabel.snp.makeConstraints {
-//            $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(34)
+            $0.top.equalTo(firstPostVoteButton.snp.bottom)
             $0.leading.equalTo(participantsCountLabel.snp.trailing).offset(13)
             $0.bottom.equalToSuperview().inset(16)
         }
