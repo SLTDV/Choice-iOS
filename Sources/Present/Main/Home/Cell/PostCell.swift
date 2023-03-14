@@ -29,7 +29,8 @@ final class PostCell: UITableViewCell {
         $0.contentMode = .scaleToFill
     }
     
-    private let firstPostVoteButton = UIButton().then {
+    private lazy var firstPostVoteButton = UIButton().then {
+        $0.addTarget(self, action: #selector(firstPostVoteButtonDidTap(_:)), for: .touchUpInside)
         $0.setTitle("✓", for: .normal)
         $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
         $0.layer.borderWidth = 1
@@ -57,6 +58,10 @@ final class PostCell: UITableViewCell {
         $0.font = .systemFont(ofSize: 12, weight: .medium)
     }
     
+    @objc private func firstPostVoteButtonDidTap(_ sender: UIButton) {
+        print("asdfasdffsf")
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -67,7 +72,7 @@ final class PostCell: UITableViewCell {
         setLayout()
         
         selectionStyle = .none
-        isUserInteractionEnabled = false
+//        isUserInteractionEnabled = false
     }
     
     required init?(coder: NSCoder) {
