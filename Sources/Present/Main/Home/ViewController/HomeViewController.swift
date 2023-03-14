@@ -54,7 +54,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol {
         postItemsData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                                       cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: data)
-            cell.postIdx = row
+            cell.model = data
         }.disposed(by: disposeBag)
         
         postTableView.rx.modelSelected(PostModel.self)

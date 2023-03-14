@@ -7,7 +7,7 @@ import RxCocoa
 
 final class PostCell: UITableViewCell {
     let vm = HomeViewModel(coordinator: .init(navigationController: UINavigationController()))
-    var postIdx = 0
+    var model: PostModel?
     private let disposeBag = DisposeBag()
     
     static let identifier = "PostCellIdentifier"
@@ -101,12 +101,10 @@ final class PostCell: UITableViewCell {
 //        Observable.combineLatest(output.firstVoteCountData, output.secondVoteCountData)
 //            .withUnretained(self)
 //            .map { }
-//
-//
 //    }
     
     @objc private func firstPostVoteButtonDidTap(_ sender: UIButton) {
-        vm.votePost111(idx: postIdx, choice: 0)
+        vm.votePost111(idx: model!.idx, choice: 0)
     }
     
     private func addView() {
@@ -114,7 +112,7 @@ final class PostCell: UITableViewCell {
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
                                 participantsCountLabel, commentCountLabel)
     }
-    
+
     private func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(31)
