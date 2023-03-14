@@ -26,7 +26,7 @@ final class ProfileViewModel: BaseViewModel {
                 self?.delegate?.postListData.onNext(decodeResponse?.postList ?? .init())
                 self?.delegate?.nicknameData.onNext(decodeResponse?.nickname ?? .init())
             case .failure(let error):
-                print("33error = \(error.localizedDescription)")
+                print("error = \(error.localizedDescription)")
             }
         }
     }
@@ -51,7 +51,7 @@ final class ProfileViewModel: BaseViewModel {
             case .success:
                 self?.delegate?.nicknameData.onNext(nickname)
             case .failure(let error):
-                print("11error = \(error.localizedDescription)")
+                print("error = \(error.localizedDescription)")
             }
         }
     }
@@ -78,7 +78,7 @@ final class ProfileViewModel: BaseViewModel {
             case .success(let data):
                 self?.navigateToSignInVC()
             case .failure(let error):
-                print("22error = \(error.localizedDescription)")
+                print("error = \(error.localizedDescription)")
             }
         }
     }
