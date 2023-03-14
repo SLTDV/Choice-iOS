@@ -2,8 +2,14 @@ import UIKit
 import SnapKit
 import Then
 import Kingfisher
+import RxSwift
+import RxCocoa
 
 final class PostCell: UITableViewCell {
+    let vm = HomeViewModel(coordinator: .init(navigationController: UINavigationController()))
+    var postIdx = 0
+    private let disposeBag = DisposeBag()
+    
     static let identifier = "PostCellIdentifier"
     
     private let titleLabel = UILabel().then {
@@ -29,7 +35,8 @@ final class PostCell: UITableViewCell {
         $0.contentMode = .scaleToFill
     }
     
-    private let firstPostVoteButton = UIButton().then {
+    private lazy var firstPostVoteButton = UIButton().then {
+        $0.addTarget(self, action: #selector(firstPostVoteButtonDidTap(_:)), for: .touchUpInside)
         $0.setTitle("✓", for: .normal)
         $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
         $0.layer.borderWidth = 1
@@ -67,10 +74,39 @@ final class PostCell: UITableViewCell {
         setLayout()
         
         selectionStyle = .none
+//        bindUI()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+//    private func bindUI() {
+//        // MARK: - Intput
+//        let voteButtonDidTap = PublishRelay<(Int, Int)>()
+//
+//        let input = HomeViewModel.Input(voteButtonDidTap: voteButtonDidTap.compactMap { $0 })
+//
+//        firstPostVoteButton.rx.tap
+//            .withUnretained(self)
+//            .map { owner, _ in (owner.postIdx, 0)}
+//            .bind(with: self) { owner, voting in
+//                voteButtonDidTap.accept(voting)
+//                print(self.postIdx)
+//            }.disposed(by: disposeBag)
+//
+//        // MARK: - Output
+//        let output = HomeViewModel(coordinator: .init(navigationController: UINavigationController())).transform(input)
+//
+//        Observable.combineLatest(output.firstVoteCountData, output.secondVoteCountData)
+//            .withUnretained(self)
+//            .map { }
+//
+//
+//    }
+    
+    @objc private func firstPostVoteButtonDidTap(_ sender: UIButton) {
+        vm.votePost111(idx: postIdx, choice: 0)
     }
     
     private func addView() {
