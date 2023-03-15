@@ -145,8 +145,6 @@ final class PostCell: UITableViewCell {
         }
     }
     
-    func 
-    
     func changeButtonIsHidden(bool: Bool) {
         self.removePostButton.isHidden = bool
     }
