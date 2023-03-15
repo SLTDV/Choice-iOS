@@ -10,7 +10,7 @@ struct PostModel: Codable {
     var secondVotingOption: String
     var firstVotingCount: Int
     var secondVotingCount: Int
-    var voting: Bool
+    var voting: Int
     var participants: Int
     var commentCount: Int
 }
