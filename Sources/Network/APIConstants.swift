@@ -1,6 +1,6 @@
 import Foundation
 
-final class APIConstants {
+struct APIConstants {
     static let baseURL = "http://10.82.17.76:80"
     
     //SignIn
@@ -31,4 +31,6 @@ final class APIConstants {
     static let profileURL = baseURL + "/user"
     static let changeNicknameURL = baseURL + "/user"
     static let membershipWithdrawalURL = baseURL + "/user"
+    
+    private init() {}
 }
