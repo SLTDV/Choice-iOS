@@ -23,6 +23,8 @@ final class PostCell: UITableViewCell {
     
     private let firstPostImageView = UIImageView().then {
         $0.clipsToBounds = true
+        $0.layer.borderColor = UIColor.clear.cgColor
+        $0.layer.borderWidth = 4
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
@@ -30,6 +32,8 @@ final class PostCell: UITableViewCell {
     
     private let secondPostImageView = UIImageView().then {
         $0.clipsToBounds = true
+        $0.layer.borderWidth = 4
+        $0.layer.borderColor = UIColor.clear.cgColor
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
@@ -72,7 +76,7 @@ final class PostCell: UITableViewCell {
         
         contentView.layer.cornerRadius = 25
         contentView.backgroundColor = ChoiceAsset.Colors.grayBackground.color
-
+        
         addView()
         setLayout()
         
@@ -87,13 +91,42 @@ final class PostCell: UITableViewCell {
         switch sender.tag {
         case 0:
             vm.callToAddVoteNumberURL(idx: model!.idx, choice: 0)
+            
+            firstPostImageView.layer.borderColor = UIColor.black.cgColor
+            secondPostImageView.layer.borderColor = UIColor.clear.cgColor
+            
+            firstPostVoteButton.then {
+                $0.isEnabled = false
+                $0.backgroundColor = .black
+                $0.setTitleColor(.white, for: .normal)
+            }
+            
+            secondPostVoteButton.then {
+                $0.isEnabled = true
+                $0.backgroundColor = .clear
+                $0.setTitleColor(.gray, for: .normal)
+            }
         case 1:
             vm.callToAddVoteNumberURL(idx: model!.idx, choice: 1)
+            
+            firstPostImageView.layer.borderColor = UIColor.clear.cgColor
+            secondPostImageView.layer.borderColor = UIColor.black.cgColor
+
+            firstPostVoteButton.then {
+                $0.isEnabled = true
+                $0.backgroundColor = .clear
+                $0.setTitleColor(.gray, for: .normal)
+            }
+
+            secondPostVoteButton.then {
+                $0.isEnabled = false
+                $0.backgroundColor = .black
+                $0.setTitleColor(.white, for: .normal)
+            }
         default:
             return
         }
     }
-    
     private func addView() {
         contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,

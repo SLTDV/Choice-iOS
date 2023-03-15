@@ -61,8 +61,6 @@ final class HomeViewModel: BaseViewModel {
                        encoding: JSONEncoding.default,
                        headers: headers,
                        interceptor: JwtRequestInterceptor())
-            .validate()
-            
             .responseDecodable(of: VoteModel.self) { response in
                 let first = response.value?.firstVotingCount ?? 0
                 let second = response.value?.secondVotingCount ?? 0
