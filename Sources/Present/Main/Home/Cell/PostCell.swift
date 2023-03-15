@@ -15,6 +15,12 @@ final class PostCell: UITableViewCell {
         $0.font = .systemFont(ofSize: 14)
     }
     
+    private let removePostButton = UIButton().then {
+        $0.isHidden = true
+        $0.tintColor = .black
+        $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+    }
+    
     private let firstPostImageView = UIImageView().then {
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 25
@@ -74,7 +80,7 @@ final class PostCell: UITableViewCell {
     }
     
     private func addView() {
-        contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
+        contentView.addSubviews(titleLabel, descriptionLabel, removePostButton, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
                                 participantsCountLabel, commentCountLabel)
     }
@@ -91,6 +97,11 @@ final class PostCell: UITableViewCell {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
             $0.leading.equalToSuperview().inset(23)
             $0.height.equalTo(17)
+        }
+        
+        removePostButton.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(31)
+            $0.trailing.equalToSuperview().inset(30)
         }
         
         firstPostImageView.snp.makeConstraints {
@@ -132,6 +143,12 @@ final class PostCell: UITableViewCell {
             $0.leading.equalTo(participantsCountLabel.snp.trailing).offset(13)
             $0.bottom.equalToSuperview().inset(16)
         }
+    }
+    
+    func 
+    
+    func changeButtonIsHidden(bool: Bool) {
+        self.removePostButton.isHidden = bool
     }
     
     func changeCellData(with model: PostModel) {

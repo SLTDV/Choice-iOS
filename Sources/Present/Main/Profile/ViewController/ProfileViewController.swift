@@ -52,6 +52,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     private func bindTableView() {
         postListData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                                      cellType: PostCell.self)) { (row, data, cell) in
+            cell.changeButtonIsHidden(bool: false)
             cell.changeCellData(with: data)
         }.disposed(by: disposeBag)
         
