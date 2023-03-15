@@ -192,6 +192,9 @@ final class PostCell: UITableViewCell {
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
+            switch model.voting {
+                
+            }
             self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
             self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
             if let imageUrl = URL(string: model.firstImageUrl) {
