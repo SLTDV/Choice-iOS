@@ -36,22 +36,25 @@ final class PostCell: UITableViewCell {
     }
     
     private lazy var firstPostVoteButton = UIButton().then {
-        $0.addTarget(self, action: #selector(firstPostVoteButtonDidTap(_:)), for: .touchUpInside)
+        $0.tag = 0
         $0.setTitle("✓", for: .normal)
         $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 10
         $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
         $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
+        $0.addTarget(self, action: #selector(PostVoteButtonDidTap(_:)), for: .touchUpInside)
     }
     
-    private let secondPostVoteButton = UIButton().then {
+    private lazy var secondPostVoteButton = UIButton().then {
+        $0.tag = 1
         $0.setTitle("✓", for: .normal)
         $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 10
         $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
         $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
+        $0.addTarget(self, action: #selector(PostVoteButtonDidTap(_:)), for: .touchUpInside)
     }
     
     private let participantsCountLabel = UILabel().then {
@@ -74,37 +77,21 @@ final class PostCell: UITableViewCell {
         setLayout()
         
         selectionStyle = .none
-//        bindUI()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-//    private func bindUI() {
-//        // MARK: - Intput
-//        let voteButtonDidTap = PublishRelay<(Int, Int)>()
-//
-//        let input = HomeViewModel.Input(voteButtonDidTap: voteButtonDidTap.compactMap { $0 })
-//
-//        firstPostVoteButton.rx.tap
-//            .withUnretained(self)
-//            .map { owner, _ in (owner.postIdx, 0)}
-//            .bind(with: self) { owner, voting in
-//                voteButtonDidTap.accept(voting)
-//                print(self.postIdx)
-//            }.disposed(by: disposeBag)
-//
-//        // MARK: - Output
-//        let output = HomeViewModel(coordinator: .init(navigationController: UINavigationController())).transform(input)
-//
-//        Observable.combineLatest(output.firstVoteCountData, output.secondVoteCountData)
-//            .withUnretained(self)
-//            .map { }
-//    }
-    
-    @objc private func firstPostVoteButtonDidTap(_ sender: UIButton) {
-        vm.votePost111(idx: model!.idx, choice: 0)
+    @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
+        switch sender.tag {
+        case 0:
+            vm.callToAddVoteNumberURL(idx: model!.idx, choice: 0)
+        case 1:
+            vm.callToAddVoteNumberURL(idx: model!.idx, choice: 1)
+        default:
+            return
+        }
     }
     
     private func addView() {

@@ -64,7 +64,6 @@ final class HomeViewModel: BaseViewModel {
             .validate()
             
             .responseDecodable(of: VoteModel.self) { response in
-                print(response.response?.statusCode)
                 let first = response.value?.firstVotingCount ?? 0
                 let second = response.value?.secondVotingCount ?? 0
                 observer.onNext((first, second))
@@ -73,7 +72,7 @@ final class HomeViewModel: BaseViewModel {
         }
     }
     
-    func votePost111(idx: Int, choice: Int) {
+    func callToAddVoteNumberURL(idx: Int, choice: Int) {
         let url = APIConstants.addVoteNumberURL + "\(idx)"
         
         let headers: HTTPHeaders = ["Content-Type": "application/json"]
@@ -94,7 +93,7 @@ final class HomeViewModel: BaseViewModel {
             case .success(let data):
                 print("data = \(data)")
             case .failure(let error):
-                print("erro = \(error.localizedDescription)")
+                print("error = \(error.localizedDescription)")
             }
         }
     }
