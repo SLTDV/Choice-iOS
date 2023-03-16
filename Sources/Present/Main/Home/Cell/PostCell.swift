@@ -30,6 +30,16 @@ final class PostCell: UITableViewCell {
         $0.contentMode = .scaleToFill
     }
     
+    private let voteOptionBackgroundView = UIView().then {
+        $0.layer.maskedCorners = CACornerMask(arrayLiteral: .layerMinXMaxYCorner, .layerMaxXMaxYCorner)
+        $0.backgroundColor = .white
+        $0.alpha = 0.85
+    }
+    
+    private let voteOptionLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 12, weight: .medium)
+    }
+    
     private let secondPostImageView = UIImageView().then {
         $0.clipsToBounds = true
         $0.layer.borderWidth = 4
@@ -154,7 +164,9 @@ final class PostCell: UITableViewCell {
     private func addView() {
         contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
-                                participantsCountLabel, commentCountLabel)
+                                participantsCountLabel, commentCountLabel, voteOptionBackgroundView)
+        firstPostImageView.addSubview(voteOptionBackgroundView)
+        voteOptionBackgroundView.addSubview(voteOptionLabel)
     }
 
     private func setLayout() {
@@ -167,7 +179,7 @@ final class PostCell: UITableViewCell {
         
         descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().inset(23)
+            $0.leading.trailing.equalToSuperview().inset(23)
             $0.height.equalTo(17)
         }
         
@@ -183,6 +195,11 @@ final class PostCell: UITableViewCell {
             $0.trailing.equalToSuperview().inset(21)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
+        }
+        
+        voteOptionBackgroundView.snp.makeConstraints {
+            $0.height.equalTo(52)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
         
         firstPostVoteButton.snp.makeConstraints {
@@ -226,6 +243,7 @@ final class PostCell: UITableViewCell {
             default:
                 return
             }
+            self.voteOptionLabel.text = model.firstVotingOption
             self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
             self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
             if let imageUrl = URL(string: model.firstImageUrl) {
