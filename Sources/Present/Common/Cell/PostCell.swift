@@ -5,9 +5,15 @@ import Kingfisher
 import RxSwift
 import RxCocoa
 
-final class PostCell: UITableViewCell {
+protocol PostTableViewCellButtonDelegate: AnyObject {
+    func removePostButtonDidTap()
+}
+
+final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
     let vm = HomeViewModel(coordinator: .init(navigationController: UINavigationController()))
     var model: PostModel?
+    var delegate: PostTableViewCellButtonDelegate?
+    
     private let disposeBag = DisposeBag()
     
     static let identifier = "PostCellIdentifier"
@@ -23,7 +29,7 @@ final class PostCell: UITableViewCell {
     
     private lazy var removePostButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.menu = UIMenu(title: "", children: [UIAction(title: "게시물 삭제", attributes: .destructive, handler: {_ in print("ads")} )])
+        $0.menu = UIMenu(title: "", children: [UIAction(title: "게시물 삭제", attributes: .destructive, handler: {_ in self.removePostButtonDidTap() } )])
         $0.isHidden = true
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
@@ -106,6 +112,10 @@ final class PostCell: UITableViewCell {
         default:
             return
         }
+    }
+    
+    func removePostButtonDidTap() {
+        delegate?.removePostButtonDidTap()
     }
     
     private func notVotePostLayout() {
