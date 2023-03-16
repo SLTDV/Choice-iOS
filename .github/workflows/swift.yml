@@ -1,0 +1,26 @@
+name: Swift
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+      with:
+        xcode-version: latest
+    - name: install tuist
+      run: curl -Ls https://install.tuist.io | bash
+    - name: project Generate
+      run: |
+        rm -rf .package.resolved
+        tuist generate
+    - name: Build
+      run: |
+        xcodebuild -project HealthManager.xcodeproj -scheme HealthManager -destination 'platform=iOS Simulator,name=iPhone 11 Pro,OS=latest'

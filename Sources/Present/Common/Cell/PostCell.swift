@@ -44,6 +44,10 @@ final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
         $0.contentMode = .scaleToFill
     }
     
+    private let firstVoteOptionBackgroundView = VoteOptionView()
+    
+    private let secondVoteOptionBackgroundView = VoteOptionView()
+    
     private let secondPostImageView = UIImageView().then {
         $0.clipsToBounds = true
         $0.layer.borderWidth = 4
@@ -155,13 +159,13 @@ final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
     private func secondVotePostLayout() {
         firstPostImageView.layer.borderColor = UIColor.clear.cgColor
         secondPostImageView.layer.borderColor = UIColor.black.cgColor
-
+        
         firstPostVoteButton.then {
             $0.isEnabled = true
             $0.backgroundColor = .clear
             $0.setTitleColor(.gray, for: .normal)
         }
-
+        
         secondPostVoteButton.then {
             $0.isEnabled = false
             $0.backgroundColor = .black
@@ -173,8 +177,10 @@ final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
         contentView.addSubviews(titleLabel, descriptionLabel, removePostButton, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
                                 participantsCountLabel, commentCountLabel)
+        firstPostImageView.addSubview(firstVoteOptionBackgroundView)
+        secondPostImageView.addSubview(secondVoteOptionBackgroundView)
     }
-
+    
     private func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(31)
@@ -185,7 +191,7 @@ final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
         
         descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().inset(23)
+            $0.leading.trailing.equalToSuperview().inset(23)
             $0.height.equalTo(17)
         }
         
@@ -206,6 +212,16 @@ final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
             $0.trailing.equalToSuperview().inset(21)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
+        }
+        
+        firstVoteOptionBackgroundView.snp.makeConstraints {
+            $0.height.equalTo(52)
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+        
+        secondVoteOptionBackgroundView.snp.makeConstraints {
+            $0.height.equalTo(52)
+            $0.leading.trailing.bottom.equalToSuperview()
         }
         
         firstPostVoteButton.snp.makeConstraints {
@@ -240,9 +256,15 @@ final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
     }
     
     func changeCellData(with model: PostModel) {
+        guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
+        guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
+            self.firstVoteOptionBackgroundView.setVoteOptionLabel(model.firstVotingOption)
+            self.secondVoteOptionBackgroundView.setVoteOptionLabel(model.secondVotingOption)
+            self.firstPostImageView.kf.setImage(with: firstImageUrl)
+            self.secondPostImageView.kf.setImage(with: secondImageUrl)
             switch model.voting {
             case 0:
                 self.notVotePostLayout()
@@ -255,12 +277,6 @@ final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
             }
             self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
             self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
-            if let imageUrl = URL(string: model.firstImageUrl) {
-                self.firstPostImageView.kf.setImage(with: imageUrl)
-            }
-            if let imageUrl = URL(string: model.secondImageUrl) {
-                self.secondPostImageView.kf.setImage(with: imageUrl)
-            }
         }
     }
 }
