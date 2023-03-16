@@ -157,7 +157,8 @@ final class PostCell: UITableViewCell {
     
     private func addView() {
         contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
-                                secondPostImageView, firstPostVoteButton, secondPostVoteButton, participantsCountLabel, commentCountLabel)
+                                secondPostImageView, firstPostVoteButton,secondPostVoteButton,
+                                participantsCountLabel, commentCountLabel)
         firstPostImageView.addSubview(firstVoteOptionBackgroundView)
         secondPostImageView.addSubview(secondVoteOptionBackgroundView)
     }
@@ -228,13 +229,15 @@ final class PostCell: UITableViewCell {
     }
     
     func changeCellData(with model: PostModel) {
+        guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
+        guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
             self.firstVoteOptionBackgroundView.setVoteOptionLabel(model.firstVotingOption)
             self.secondVoteOptionBackgroundView.setVoteOptionLabel(model.secondVotingOption)
-            self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
-            self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
+            self.firstPostImageView.kf.setImage(with: firstImageUrl)
+            self.secondPostImageView.kf.setImage(with: secondImageUrl)
             switch model.voting {
             case 0:
                 self.notVotePostLayout()
@@ -245,12 +248,8 @@ final class PostCell: UITableViewCell {
             default:
                 return
             }
-            if let imageUrl = URL(string: model.firstImageUrl) {
-                self.firstPostImageView.kf.setImage(with: imageUrl)
-            }
-            if let imageUrl = URL(string: model.secondImageUrl) {
-                self.secondPostImageView.kf.setImage(with: imageUrl)
-            }
+            self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
+            self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
         }
     }
 }
