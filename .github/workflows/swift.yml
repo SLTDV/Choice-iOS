@@ -12,13 +12,9 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: tuist/tuist-action@0.13.0
+    - uses: actions/checkout@v2
       with:
-          command: 'build'
-          arguments: ''
-          xcode-version: latest
-        
+        xcode-version: latest
     - name: install tuist
       run: curl -Ls https://install.tuist.io | bash
     - name: project Generate
