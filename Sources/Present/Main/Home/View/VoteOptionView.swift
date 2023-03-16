@@ -3,7 +3,7 @@ import SnapKit
 import Then
 
 final class VoteOptionView: UIView {
-    let voteOptionLabel = UILabel().then {
+    private let voteOptionLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 12, weight: .medium)
     }
     
