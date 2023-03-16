@@ -21,8 +21,9 @@ final class PostCell: UITableViewCell {
         $0.font = .systemFont(ofSize: 14)
     }
     
-    private let removePostButton = UIButton().then {
-        $0.menu = UIMenu(title: "설정", children: [UIAction(title: "게시물 삭제", attributes: .destructive, handler: {_ in print("ads")} )])
+    private lazy var removePostButton = UIButton().then {
+        $0.showsMenuAsPrimaryAction = true
+        $0.menu = UIMenu(title: "", children: [UIAction(title: "게시물 삭제", attributes: .destructive, handler: {_ in print("ads")} )])
         $0.isHidden = true
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
