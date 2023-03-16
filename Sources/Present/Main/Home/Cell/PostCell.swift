@@ -202,6 +202,10 @@ final class PostCell: UITableViewCell {
             $0.leading.trailing.bottom.equalToSuperview()
         }
         
+        voteOptionLabel.snp.makeConstraints {
+            $0.center.equalToSuperview()
+        }
+        
         firstPostVoteButton.snp.makeConstraints {
             $0.top.equalTo(firstPostImageView.snp.bottom).offset(16)
             $0.leading.equalToSuperview().inset(38)
