@@ -23,6 +23,7 @@ final class ProfileViewModel: BaseViewModel {
             switch response.result {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode(ProfileModel.self, from: data)
+                print(decodeResponse?.postList)
                 self?.delegate?.postListData.onNext(decodeResponse?.postList ?? .init())
                 self?.delegate?.nicknameData.onNext(decodeResponse?.nickname ?? .init())
             case .failure(let error):

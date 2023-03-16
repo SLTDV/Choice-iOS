@@ -27,6 +27,12 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         $0.tintColor = .black
     }
     
+    private let editProfileImageButton = UIButton().then {
+        $0.contentMode = .scaleAspectFit
+        $0.tintColor = .blue
+        $0.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
+    }
+    
     private let userNameLabel = UILabel().then {
         $0.text = "닉네임"
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
@@ -107,10 +113,9 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     override func configureVC() {
         view.backgroundColor = .white
+        navigationItem.rightBarButtonItem = optionButton
         
         viewModel.delegate = self
-        
-        navigationItem.rightBarButtonItem = optionButton
         
         bindTableView()
         viewModel.callToProfileData()
@@ -119,6 +124,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     override func addView() {
         view.addSubviews(whiteBackgroundView, postTableView)
         whiteBackgroundView.addSubviews(profileImageView, userNameLabel, editUserNameButton, underLineView)
+        profileImageView.addSubview(editProfileImageButton)
     }
     
     override func setLayout() {
@@ -132,6 +138,11 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
             $0.bottom.equalTo(userNameLabel.snp.top).offset(-36)
             $0.centerX.equalToSuperview()
             $0.size.equalTo(100)
+        }
+        
+        editProfileImageButton.snp.makeConstraints {
+            $0.trailing.bottom.equalToSuperview()
+            $0.size.equalTo(50)
         }
         
         userNameLabel.snp.makeConstraints {
