@@ -2,8 +2,14 @@ import UIKit
 import SnapKit
 import Then
 import Kingfisher
+import RxSwift
+import RxCocoa
 
 final class PostCell: UITableViewCell {
+    let vm = HomeViewModel(coordinator: .init(navigationController: UINavigationController()))
+    var model: PostModel?
+    private let disposeBag = DisposeBag()
+    
     static let identifier = "PostCellIdentifier"
     
     private let titleLabel = UILabel().then {
@@ -24,6 +30,8 @@ final class PostCell: UITableViewCell {
     
     private let firstPostImageView = UIImageView().then {
         $0.clipsToBounds = true
+        $0.layer.borderColor = UIColor.clear.cgColor
+        $0.layer.borderWidth = 4
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
@@ -31,27 +39,33 @@ final class PostCell: UITableViewCell {
     
     private let secondPostImageView = UIImageView().then {
         $0.clipsToBounds = true
+        $0.layer.borderWidth = 4
+        $0.layer.borderColor = UIColor.clear.cgColor
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
     }
     
-    private let firstPostVoteButton = UIButton().then {
+    private lazy var firstPostVoteButton = UIButton().then {
+        $0.tag = 0
         $0.setTitle("✓", for: .normal)
         $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 10
         $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
         $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
+        $0.addTarget(self, action: #selector(PostVoteButtonDidTap(_:)), for: .touchUpInside)
     }
     
-    private let secondPostVoteButton = UIButton().then {
+    private lazy var secondPostVoteButton = UIButton().then {
+        $0.tag = 1
         $0.setTitle("✓", for: .normal)
         $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 10
         $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
         $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
+        $0.addTarget(self, action: #selector(PostVoteButtonDidTap(_:)), for: .touchUpInside)
     }
     
     private let participantsCountLabel = UILabel().then {
@@ -69,7 +83,7 @@ final class PostCell: UITableViewCell {
         
         contentView.layer.cornerRadius = 25
         contentView.backgroundColor = ChoiceAsset.Colors.grayBackground.color
-
+        
         addView()
         setLayout()
         
@@ -80,12 +94,76 @@ final class PostCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
+        switch sender.tag {
+        case 0:
+            vm.callToAddVoteNumberURL(idx: model!.idx, choice: 1)
+            firstVotePostLayout()
+        case 1:
+            vm.callToAddVoteNumberURL(idx: model!.idx, choice: 2)
+            secondVotePostLayout()
+        default:
+            return
+        }
+    }
+    
+    private func notVotePostLayout() {
+        firstPostImageView.layer.borderColor = UIColor.clear.cgColor
+        secondPostImageView.layer.borderColor = UIColor.clear.cgColor
+        
+        firstPostVoteButton.then {
+            $0.isEnabled = true
+            $0.backgroundColor = .clear
+            $0.setTitleColor(.gray, for: .normal)
+        }
+        
+        secondPostVoteButton.then {
+            $0.isEnabled = true
+            $0.backgroundColor = .clear
+            $0.setTitleColor(.gray, for: .normal)
+        }
+    }
+    
+    private func firstVotePostLayout() {
+        firstPostImageView.layer.borderColor = UIColor.black.cgColor
+        secondPostImageView.layer.borderColor = UIColor.clear.cgColor
+        
+        firstPostVoteButton.then {
+            $0.isEnabled = false
+            $0.backgroundColor = .black
+            $0.setTitleColor(.white, for: .normal)
+        }
+        
+        secondPostVoteButton.then {
+            $0.isEnabled = true
+            $0.backgroundColor = .clear
+            $0.setTitleColor(.gray, for: .normal)
+        }
+    }
+    
+    private func secondVotePostLayout() {
+        firstPostImageView.layer.borderColor = UIColor.clear.cgColor
+        secondPostImageView.layer.borderColor = UIColor.black.cgColor
+
+        firstPostVoteButton.then {
+            $0.isEnabled = true
+            $0.backgroundColor = .clear
+            $0.setTitleColor(.gray, for: .normal)
+        }
+
+        secondPostVoteButton.then {
+            $0.isEnabled = false
+            $0.backgroundColor = .black
+            $0.setTitleColor(.white, for: .normal)
+        }
+    }
+    
     private func addView() {
         contentView.addSubviews(titleLabel, descriptionLabel, removePostButton, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
                                 participantsCountLabel, commentCountLabel)
     }
-    
+
     private func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(31)
@@ -154,6 +232,16 @@ final class PostCell: UITableViewCell {
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
+            switch model.voting {
+            case 0:
+                self.notVotePostLayout()
+            case 1:
+                self.firstVotePostLayout()
+            case 2:
+                self.secondVotePostLayout()
+            default:
+                return
+            }
             self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
             self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
             if let imageUrl = URL(string: model.firstImageUrl) {

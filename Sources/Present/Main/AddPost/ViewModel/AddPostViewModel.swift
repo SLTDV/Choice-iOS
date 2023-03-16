@@ -9,10 +9,10 @@ final class AddPostViewModel: BaseViewModel {
 
         AF.upload(multipartFormData: { multipartFormData in
             if let image = firstImage.pngData() {
-                multipartFormData.append(image, withName: "firstFile", fileName: "\(image).png", mimeType: "image/png")
+                multipartFormData.append(image, withName: "firstImage", fileName: "\(image).png", mimeType: "image/png")
             }
             if let image = secondImage.pngData() {
-                multipartFormData.append(image, withName: "secondFile", fileName: "\(image).png", mimeType: "image/png")
+                multipartFormData.append(image, withName: "secondImage", fileName: "\(image).png", mimeType: "image/png")
             }
         }, to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor())
         .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
