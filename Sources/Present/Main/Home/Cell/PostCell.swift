@@ -30,25 +30,9 @@ final class PostCell: UITableViewCell {
         $0.contentMode = .scaleToFill
     }
     
-    private let firstVoteOptionBackgroundView = UIView().then {
-        $0.layer.maskedCorners = CACornerMask(arrayLiteral: .layerMinXMaxYCorner, .layerMaxXMaxYCorner)
-        $0.backgroundColor = .white
-        $0.alpha = 0.85
-    }
+    private let firstVoteOptionBackgroundView = VoteOptionView()
     
-    private let firstVoteOptionLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 12, weight: .medium)
-    }
-    
-    private let secondVoteOptionBackgroundView = UIView().then {
-        $0.layer.maskedCorners = CACornerMask(arrayLiteral: .layerMinXMaxYCorner, .layerMaxXMaxYCorner)
-        $0.backgroundColor = .white
-        $0.alpha = 0.85
-    }
-    
-    private let secondVoteOptionLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 12, weight: .medium)
-    }
+    private let secondVoteOptionBackgroundView = VoteOptionView()
     
     private let secondPostImageView = UIImageView().then {
         $0.clipsToBounds = true
@@ -157,13 +141,13 @@ final class PostCell: UITableViewCell {
     private func secondVotePostLayout() {
         firstPostImageView.layer.borderColor = UIColor.clear.cgColor
         secondPostImageView.layer.borderColor = UIColor.black.cgColor
-
+        
         firstPostVoteButton.then {
             $0.isEnabled = true
             $0.backgroundColor = .clear
             $0.setTitleColor(.gray, for: .normal)
         }
-
+        
         secondPostVoteButton.then {
             $0.isEnabled = false
             $0.backgroundColor = .black
@@ -173,14 +157,11 @@ final class PostCell: UITableViewCell {
     
     private func addView() {
         contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
-                                secondPostImageView, firstPostVoteButton, secondPostVoteButton,
-                                participantsCountLabel, commentCountLabel, firstVoteOptionBackgroundView)
+                                secondPostImageView, firstPostVoteButton, secondPostVoteButton, participantsCountLabel, commentCountLabel)
         firstPostImageView.addSubview(firstVoteOptionBackgroundView)
-        firstVoteOptionBackgroundView.addSubview(firstVoteOptionLabel)
         secondPostImageView.addSubview(secondVoteOptionBackgroundView)
-        secondVoteOptionBackgroundView.addSubview(secondVoteOptionLabel)
     }
-
+    
     private func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(31)
@@ -214,17 +195,9 @@ final class PostCell: UITableViewCell {
             $0.leading.trailing.bottom.equalToSuperview()
         }
         
-        firstVoteOptionLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
-        }
-        
         secondVoteOptionBackgroundView.snp.makeConstraints {
             $0.height.equalTo(52)
             $0.leading.trailing.bottom.equalToSuperview()
-        }
-        
-        secondVoteOptionLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
         }
         
         firstPostVoteButton.snp.makeConstraints {
@@ -258,6 +231,10 @@ final class PostCell: UITableViewCell {
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
+            self.firstVoteOptionBackgroundView.setVoteOptionLabel(model.firstVotingOption)
+            self.secondVoteOptionBackgroundView.setVoteOptionLabel(model.secondVotingOption)
+            self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
+            self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
             switch model.voting {
             case 0:
                 self.notVotePostLayout()
@@ -268,9 +245,6 @@ final class PostCell: UITableViewCell {
             default:
                 return
             }
-            self.firstVoteOptionLabel.text = model.firstVotingOption
-            self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
-            self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
             if let imageUrl = URL(string: model.firstImageUrl) {
                 self.firstPostImageView.kf.setImage(with: imageUrl)
             }
