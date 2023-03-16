@@ -10,7 +10,7 @@ protocol PostTableViewCellButtonDelegate: AnyObject {
 }
 
 final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
-    let vm = HomeViewModel(coordinator: .init(navigationController: UINavigationController()))
+    let vm = PostCellViewModel(coordinator: .init(navigationController: UINavigationController()))
     var model: PostModel?
     var delegate: PostTableViewCellButtonDelegate?
     
