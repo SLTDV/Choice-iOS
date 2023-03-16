@@ -5,9 +5,15 @@ import Kingfisher
 import RxSwift
 import RxCocoa
 
-final class PostCell: UITableViewCell {
+protocol PostTableViewCellButtonDelegate: AnyObject {
+    func removePostButtonDidTap()
+}
+
+final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
     let vm = HomeViewModel(coordinator: .init(navigationController: UINavigationController()))
     var model: PostModel?
+    var delegate: PostTableViewCellButtonDelegate?
+    
     private let disposeBag = DisposeBag()
     
     static let identifier = "PostCellIdentifier"
@@ -19,6 +25,14 @@ final class PostCell: UITableViewCell {
     private let descriptionLabel = UILabel().then {
         $0.numberOfLines = 0
         $0.font = .systemFont(ofSize: 14)
+    }
+    
+    private lazy var removePostButton = UIButton().then {
+        $0.showsMenuAsPrimaryAction = true
+        $0.menu = UIMenu(title: "", children: [UIAction(title: "게시물 삭제", attributes: .destructive, handler: {_ in self.removePostButtonDidTap() } )])
+        $0.isHidden = true
+        $0.tintColor = .black
+        $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
     }
     
     private let firstPostImageView = UIImageView().then {
@@ -104,6 +118,10 @@ final class PostCell: UITableViewCell {
         }
     }
     
+    func removePostButtonDidTap() {
+        delegate?.removePostButtonDidTap()
+    }
+    
     private func notVotePostLayout() {
         firstPostImageView.layer.borderColor = UIColor.clear.cgColor
         secondPostImageView.layer.borderColor = UIColor.clear.cgColor
@@ -156,8 +174,8 @@ final class PostCell: UITableViewCell {
     }
     
     private func addView() {
-        contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
-                                secondPostImageView, firstPostVoteButton,secondPostVoteButton,
+        contentView.addSubviews(titleLabel, descriptionLabel, removePostButton, firstPostImageView,
+                                secondPostImageView, firstPostVoteButton, secondPostVoteButton,
                                 participantsCountLabel, commentCountLabel)
         firstPostImageView.addSubview(firstVoteOptionBackgroundView)
         secondPostImageView.addSubview(secondVoteOptionBackgroundView)
@@ -175,6 +193,11 @@ final class PostCell: UITableViewCell {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(23)
             $0.height.equalTo(17)
+        }
+        
+        removePostButton.snp.makeConstraints {
+            $0.top.equalToSuperview().offset(31)
+            $0.trailing.equalToSuperview().inset(30)
         }
         
         firstPostImageView.snp.makeConstraints {
@@ -226,6 +249,10 @@ final class PostCell: UITableViewCell {
             $0.leading.equalTo(participantsCountLabel.snp.trailing).offset(13)
             $0.bottom.equalToSuperview().inset(16)
         }
+    }
+    
+    func changeButtonIsHidden(bool: Bool) {
+        self.removePostButton.isHidden = bool
     }
     
     func changeCellData(with model: PostModel) {
