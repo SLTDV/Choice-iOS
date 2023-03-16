@@ -100,6 +100,23 @@ final class PostCell: UITableViewCell {
         }
     }
     
+    private func notVotePostLayout() {
+        firstPostImageView.layer.borderColor = UIColor.clear.cgColor
+        secondPostImageView.layer.borderColor = UIColor.clear.cgColor
+        
+        firstPostVoteButton.then {
+            $0.isEnabled = true
+            $0.backgroundColor = .clear
+            $0.setTitleColor(.gray, for: .normal)
+        }
+        
+        secondPostVoteButton.then {
+            $0.isEnabled = true
+            $0.backgroundColor = .clear
+            $0.setTitleColor(.gray, for: .normal)
+        }
+    }
+    
     private func firstVotePostLayout() {
         firstPostImageView.layer.borderColor = UIColor.black.cgColor
         secondPostImageView.layer.borderColor = UIColor.clear.cgColor
@@ -200,6 +217,8 @@ final class PostCell: UITableViewCell {
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
             switch model.voting {
+            case 0:
+                self.notVotePostLayout()
             case 1:
                 self.firstVotePostLayout()
             case 2:
