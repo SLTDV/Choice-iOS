@@ -90,10 +90,10 @@ final class PostCell: UITableViewCell {
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
         switch sender.tag {
         case 0:
-            vm.callToAddVoteNumberURL(idx: model!.idx, choice: 0)
+            vm.callToAddVoteNumberURL(idx: model!.idx, choice: 1)
             firstVotePostLayout()
         case 1:
-            vm.callToAddVoteNumberURL(idx: model!.idx, choice: 1)
+            vm.callToAddVoteNumberURL(idx: model!.idx, choice: 2)
             secondVotePostLayout()
         default:
             return
@@ -133,6 +133,7 @@ final class PostCell: UITableViewCell {
             $0.setTitleColor(.white, for: .normal)
         }
     }
+    
     private func addView() {
         contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
@@ -199,9 +200,9 @@ final class PostCell: UITableViewCell {
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
             switch model.voting {
-            case 0:
-                self.firstVotePostLayout()
             case 1:
+                self.firstVotePostLayout()
+            case 2:
                 self.secondVotePostLayout()
             default:
                 return
