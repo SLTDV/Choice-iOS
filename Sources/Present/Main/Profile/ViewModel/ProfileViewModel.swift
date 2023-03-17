@@ -1,7 +1,6 @@
 import UIKit
 import Alamofire
 import RxSwift
-import RxCocoa
 
 protocol ProfileDataProtocol: AnyObject {
     var nicknameData: PublishSubject<String> { get set }
@@ -87,9 +86,9 @@ final class ProfileViewModel: BaseViewModel {
     }
     
     func callToProfileImageUpload(profileImage: UIImage) -> Observable<ProfileImageModel> {
-        let url = APIConstants.profileImageUploadURL
+        var url = APIConstants.profileImageUploadURL
         
-        let headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
+        var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
         
         return Observable.create { (observer) -> Disposable in
             AF.upload(multipartFormData: { multipartFormData in
@@ -101,8 +100,28 @@ final class ProfileViewModel: BaseViewModel {
                 switch response.result {
                 case .success(let data):
                     let decodeResponse = try? JSONDecoder().decode(ProfileImageModel.self, from: data)
-                    observer.onNext(decodeResponse ?? .init(profileImageUrl: ""))
-                    observer.onCompleted()
+                    url = APIConstants.changeProfileImageURL
+                    headers = ["Content-Type": "application/json"]
+                    
+                    let param = [
+                        "image" : decodeResponse?.profileImageUrl
+                    ] as Dictionary
+                    
+                    AF.request(url,
+                               method: .patch,
+                               parameters: param,
+                               headers: headers,
+                        interceptor: JwtRequestInterceptor())
+                    .validate()
+                    .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+                        switch response.result {
+                        case .success:
+                            observer.onNext(decodeResponse ?? .init(profileImageUrl: ""))
+                            observer.onCompleted()
+                        case .failure(let error):
+                            observer.onError(error)
+                        }
+                    }
                 case .failure(let error):
                     observer.onError(error)
                     print("profileImageUpload Error = \(error.localizedDescription)")

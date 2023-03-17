@@ -1,6 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Kingfisher
 
 final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
     var nicknameData = PublishSubject<String>()
@@ -184,13 +185,18 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
 
 extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        var newImage: UIImage?
+        var newImage = UIImage()
         if let possibleImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
             newImage = possibleImage
         } else if let possibleImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             newImage = possibleImage
         }
-        self.profileImageView.image = newImage
-        picker.dismiss(animated: true)
+        viewModel.callToProfileImageUpload(profileImage: newImage)
+            .subscribe(with: self, onNext: { owner, response in
+                DispatchQueue.main.async {
+                    owner.profileImageView.kf.setImage(with: URL(string: response.profileImageUrl))
+                    picker.dismiss(animated: true)
+                }
+            }).disposed(by: disposeBag)
     }
 }
