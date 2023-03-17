@@ -93,7 +93,7 @@ final class ProfileViewModel: BaseViewModel {
         return Observable.create { (observer) -> Disposable in
             AF.upload(multipartFormData: { multipartFormData in
                 if let image = profileImage.pngData() {
-                    multipartFormData.append(image, withName: "profileImage", fileName: "\(image).png")
+                    multipartFormData.append(image, withName: "profileImage", fileName: "\(image).png", mimeType: "image/png")
                 }
             },to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor())
             .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
@@ -103,17 +103,19 @@ final class ProfileViewModel: BaseViewModel {
                     url = APIConstants.changeProfileImageURL
                     headers = ["Content-Type": "application/json"]
                     
-                    let param = [
-                        "image" : decodeResponse?.profileImageUrl
+                    let params = [
+                        "image" : decodeResponse?.profileImageUrl ?? .init()
                     ] as Dictionary
                     
                     AF.request(url,
                                method: .patch,
-                               parameters: param,
+                               parameters: params,
+                               encoding: JSONEncoding.default,
                                headers: headers,
                         interceptor: JwtRequestInterceptor())
                     .validate()
                     .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+                        print(response.response?.statusCode)
                         switch response.result {
                         case .success:
                             observer.onNext(decodeResponse ?? .init(profileImageUrl: ""))
