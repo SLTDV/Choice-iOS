@@ -66,7 +66,9 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     private func bindTableView() {
         postListData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                                      cellType: PostCell.self)) { (row, data, cell) in
+            cell.changeButtonIsHidden(bool: false)
             cell.changeCellData(with: data)
+            cell.delegate = self
         }.disposed(by: disposeBag)
         
         nicknameData.bind(with: self, onNext: { owner, arg in
@@ -183,6 +185,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     }
 }
 
+<<<<<<< HEAD
 extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         var newImage = UIImage()
@@ -198,5 +201,20 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
                     picker.dismiss(animated: true)
                 }
             }).disposed(by: disposeBag)
+=======
+extension ProfileViewController: PostTableViewCellButtonDelegate {
+    func removePostButtonDidTap() {
+        let alert = UIAlertController(title: "게시물 삭제", message: "삭제 하시겠습니까?", preferredStyle: .alert)
+        
+        let okayAction = UIAlertAction(title: "삭제", style: .destructive) { [weak self] data in
+            print("게시물 삭제")
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .default)
+        
+        alert.addAction(cancelAction)
+        alert.addAction(okayAction)
+        
+        self.present(alert, animated: true)
+>>>>>>> 78f54c0384b567088ed29ecba5a1edc0ae1fa030
     }
 }

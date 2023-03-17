@@ -12,7 +12,7 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
       with:
         xcode-version: latest
     - name: install tuist
@@ -23,4 +23,4 @@ jobs:
         tuist generate
     - name: Build
       run: |
-        xcodebuild -project HealthManager.xcodeproj -scheme HealthManager -destination 'platform=iOS Simulator,name=iPhone 11 Pro,OS=latest'
+        xcodebuild -project Choice.xcodeproj -scheme Choice -destination 'platform=iOS Simulator,name=iPhone 11 Pro,OS=latest'
