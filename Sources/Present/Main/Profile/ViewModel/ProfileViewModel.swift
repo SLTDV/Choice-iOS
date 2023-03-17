@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 import Alamofire
 import RxSwift
 
@@ -23,7 +23,6 @@ final class ProfileViewModel: BaseViewModel {
             switch response.result {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode(ProfileModel.self, from: data)
-                print(decodeResponse?.postList)
                 self?.delegate?.postListData.onNext(decodeResponse?.postList ?? .init())
                 self?.delegate?.nicknameData.onNext(decodeResponse?.nickname ?? .init())
             case .failure(let error):
@@ -76,14 +75,35 @@ final class ProfileViewModel: BaseViewModel {
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
-            case .success(let data):
+            case .success:
                 self?.navigateToSignInVC()
             case .failure(let error):
                 print("error = \(error.localizedDescription)")
             }
         }
     }
-
+    
+    func callToProfileImageUpload(profileImage: UIImage) {
+        var url = APIConstants.profileImageUploadURL
+        
+        var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
+        
+        AF.upload(multipartFormData: { multipartFormData in
+            if let image = profileImage.pngData() {
+                multipartFormData.append(image, withName: "profileImage", fileName: "\(image).png")
+            }
+        },to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor())
+        .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
+            switch response.result {
+            case .success(let data):
+                let decodeResponse = try? JSONDecoder().decode(ProfileImageModel.self, from: data)
+                
+            case .failure(let error):
+                print("profileImageUpload Error = \(error.localizedDescription)")
+            }
+        }
+    }
+    
     func navigateToSignInVC() {
         coordinator.navigate(to: .logOutIsRequired)
     }

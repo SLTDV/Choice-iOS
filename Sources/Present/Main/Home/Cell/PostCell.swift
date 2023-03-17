@@ -94,10 +94,10 @@ final class PostCell: UITableViewCell {
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
         switch sender.tag {
         case 0:
-            vm.callToAddVoteNumberURL(idx: model!.idx, choice: 1)
+            vm.callToAddVoteNumber(idx: model!.idx, choice: 1)
             firstVotePostLayout()
         case 1:
-            vm.callToAddVoteNumberURL(idx: model!.idx, choice: 2)
+            vm.callToAddVoteNumber(idx: model!.idx, choice: 2)
             secondVotePostLayout()
         default:
             return
