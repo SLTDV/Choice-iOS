@@ -27,4 +27,24 @@ final class PostCellViewModel: BaseViewModel {
             }
         }
     }
+    
+    func callToDeletePost(postIdx: Int) {
+        let url = APIConstants.deletePostURL + "\(postIdx)"
+        
+        let headers: HTTPHeaders = ["Content-Type": "application/json"]
+        AF.request(url,
+                   method: .delete,
+                   encoding: URLEncoding.queryString,
+                   headers: headers,
+                   interceptor: JwtRequestInterceptor())
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
+            switch response.result {
+            case .success(let data):
+                print("삭제")
+            case .failure(let error):
+                print("error = \(error.localizedDescription)")
+            }
+        }
+    }
 }

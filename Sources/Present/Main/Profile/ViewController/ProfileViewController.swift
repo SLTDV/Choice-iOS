@@ -161,11 +161,14 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
 }
 
 extension ProfileViewController: PostTableViewCellButtonDelegate {
-    func removePostButtonDidTap() {
+    func removePostButtonDidTap(postIdx: Int) {
+        let vm = PostCellViewModel(coordinator: .init(navigationController: UINavigationController()))
+        
         let alert = UIAlertController(title: "게시물 삭제", message: "삭제 하시겠습니까?", preferredStyle: .alert)
         
         let okayAction = UIAlertAction(title: "삭제", style: .destructive) { [weak self] data in
             print("게시물 삭제")
+            vm.callToDeletePost(postIdx: postIdx)
         }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
         
