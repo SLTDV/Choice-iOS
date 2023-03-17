@@ -56,7 +56,7 @@ final class ProfileViewModel: BaseViewModel {
         }
     }
     
-    func callToFindData(type: OptionItemType) {
+    func callToDeleteData(type: OptionItemType) {
         lazy var url = ""
         
         switch type {

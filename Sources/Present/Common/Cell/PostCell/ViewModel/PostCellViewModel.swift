@@ -2,7 +2,6 @@ import UIKit
 import Alamofire
 
 final class PostCellViewModel: BaseViewModel {
-    
     func callToAddVoteNumberURL(idx: Int, choice: Int) {
         let url = APIConstants.addVoteNumberURL + "\(idx)"
         
