@@ -1,6 +1,7 @@
 import UIKit
 import Alamofire
 import RxSwift
+import RxCocoa
 
 protocol ProfileDataProtocol: AnyObject {
     var nicknameData: PublishSubject<String> { get set }
@@ -8,6 +9,8 @@ protocol ProfileDataProtocol: AnyObject {
 }
 
 final class ProfileViewModel: BaseViewModel {
+    private let disposeBag = DisposeBag()
+    
     weak var delegate: ProfileDataProtocol?
     
     func callToProfileData() {
@@ -83,24 +86,29 @@ final class ProfileViewModel: BaseViewModel {
         }
     }
     
-    func callToProfileImageUpload(profileImage: UIImage) {
-        var url = APIConstants.profileImageUploadURL
+    func callToProfileImageUpload(profileImage: UIImage) -> Observable<ProfileImageModel> {
+        let url = APIConstants.profileImageUploadURL
         
-        var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
+        let headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
         
-        AF.upload(multipartFormData: { multipartFormData in
-            if let image = profileImage.pngData() {
-                multipartFormData.append(image, withName: "profileImage", fileName: "\(image).png")
+        return Observable.create { (observer) -> Disposable in
+            AF.upload(multipartFormData: { multipartFormData in
+                if let image = profileImage.pngData() {
+                    multipartFormData.append(image, withName: "profileImage", fileName: "\(image).png")
+                }
+            },to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor())
+            .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
+                switch response.result {
+                case .success(let data):
+                    let decodeResponse = try? JSONDecoder().decode(ProfileImageModel.self, from: data)
+                    observer.onNext(decodeResponse ?? .init(profileImageUrl: ""))
+                    observer.onCompleted()
+                case .failure(let error):
+                    observer.onError(error)
+                    print("profileImageUpload Error = \(error.localizedDescription)")
+                }
             }
-        },to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor())
-        .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
-            switch response.result {
-            case .success(let data):
-                let decodeResponse = try? JSONDecoder().decode(ProfileImageModel.self, from: data)
-                
-            case .failure(let error):
-                print("profileImageUpload Error = \(error.localizedDescription)")
-            }
+            return Disposables.create()
         }
     }
     
