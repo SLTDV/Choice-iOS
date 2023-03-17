@@ -115,7 +115,6 @@ final class ProfileViewModel: BaseViewModel {
                         interceptor: JwtRequestInterceptor())
                     .validate()
                     .responseData(emptyResponseCodes: [200, 201, 204]) { response in
-                        print(response.response?.statusCode)
                         switch response.result {
                         case .success:
                             observer.onNext(decodeResponse ?? .init(profileImageUrl: ""))
