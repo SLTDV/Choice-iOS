@@ -28,9 +28,13 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     }
     
     private let editProfileImageButton = UIButton().then {
+        $0.backgroundColor = .white
+        $0.layer.cornerRadius = 40
+        $0.setTitleColor(UIColor.white, for: .normal)
         $0.contentMode = .scaleAspectFit
-        $0.tintColor = .blue
-        $0.setImage(UIImage(systemName: "plus.circle.fill"), for: .normal)
+        $0.tintColor = .systemBlue
+        $0.setImage(UIImage(systemName: "plus.circle.fill",
+                            withConfiguration: UIImage.SymbolConfiguration(pointSize: 25)), for: .normal)
     }
     
     private let userNameLabel = UILabel().then {
@@ -103,7 +107,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         let okayAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] data in
             self?.viewModel.callToFindData(type: .callToLogout)
         }
-        let cancelAction = UIAlertAction(title: "취소", style: .default)  
+        let cancelAction = UIAlertAction(title: "취소", style: .default)
         
         alert.addAction(cancelAction)
         alert.addAction(okayAction)
@@ -142,7 +146,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         
         editProfileImageButton.snp.makeConstraints {
             $0.trailing.bottom.equalToSuperview()
-            $0.size.equalTo(50)
+            $0.size.equalTo(40)
         }
         
         userNameLabel.snp.makeConstraints {
