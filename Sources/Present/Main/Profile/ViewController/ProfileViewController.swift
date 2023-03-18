@@ -1,6 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Kingfisher
 
 final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
     var nicknameData = PublishSubject<String>()
@@ -23,9 +24,22 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     }
     
     private let profileImageView = UIImageView().then {
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 50
         $0.image = UIImage(systemName: "person.crop.circle.fill")
         $0.tintColor = .black
     }
+    
+    private lazy var editProfileImageButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "plus.circle.fill",
+                            withConfiguration: UIImage.SymbolConfiguration(pointSize: 30)), for: .normal)
+        $0.tintColor = .systemBlue
+        $0.backgroundColor = .white
+        $0.layer.cornerRadius = 15
+        $0.addTarget(self, action: #selector(editProfileImageButtonDidTap(_:)), for: .touchUpInside)
+    }
+    
+    private let imagePickerController = UIImagePickerController()
     
     private let userNameLabel = UILabel().then {
         $0.text = "닉네임"
@@ -33,9 +47,9 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     }
     
     private lazy var editUserNameButton = UIButton().then {
-        $0.addTarget(self, action: #selector(editUserNameButtonDidTap(_:)), for: .touchUpInside)
         $0.setImage(UIImage(systemName: "pencil"), for: .normal)
         $0.tintColor = .black
+        $0.addTarget(self, action: #selector(editUserNameButtonDidTap(_:)), for: .touchUpInside)
     }
     
     private let underLineView = UIView().then {
@@ -60,6 +74,12 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         nicknameData.bind(with: self, onNext: { owner, arg in
             owner.userNameLabel.text = arg
         }).disposed(by: disposeBag)
+    }
+    
+    @objc private func editProfileImageButtonDidTap(_ sender: UIButton) {
+        imagePickerController.allowsEditing = true
+        imagePickerController.sourceType = .photoLibrary
+        present(imagePickerController, animated: true)
     }
     
     @objc private func editUserNameButtonDidTap(_ sender: UIButton) {
@@ -99,7 +119,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         let okayAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] data in
             self?.viewModel.callToFindData(type: .callToLogout)
         }
-        let cancelAction = UIAlertAction(title: "취소", style: .default)  
+        let cancelAction = UIAlertAction(title: "취소", style: .default)
         
         alert.addAction(cancelAction)
         alert.addAction(okayAction)
@@ -109,10 +129,10 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     override func configureVC() {
         view.backgroundColor = .white
+        navigationItem.rightBarButtonItem = optionButton
         
         viewModel.delegate = self
-        
-        navigationItem.rightBarButtonItem = optionButton
+        imagePickerController.delegate = self
         
         bindTableView()
         viewModel.callToProfileData()
@@ -120,7 +140,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     override func addView() {
         view.addSubviews(whiteBackgroundView, postTableView)
-        whiteBackgroundView.addSubviews(profileImageView, userNameLabel, editUserNameButton, underLineView)
+        whiteBackgroundView.addSubviews(profileImageView, userNameLabel, editUserNameButton,                                        underLineView, editProfileImageButton, editProfileImageButton)
     }
     
     override func setLayout() {
@@ -134,6 +154,11 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
             $0.bottom.equalTo(userNameLabel.snp.top).offset(-36)
             $0.centerX.equalToSuperview()
             $0.size.equalTo(100)
+        }
+        
+        editProfileImageButton.snp.makeConstraints {
+            $0.trailing.equalTo(profileImageView.snp.trailing)
+            $0.bottom.equalTo(profileImageView.snp.bottom)
         }
         
         userNameLabel.snp.makeConstraints {
@@ -159,12 +184,29 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         }
     }
 }
+extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        var newImage = UIImage()
+        if let possibleImage = info[UIImagePickerController.InfoKey.editedImage] as? UIImage {
+            newImage = possibleImage
+        } else if let possibleImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
+            newImage = possibleImage
+        }
+        viewModel.callToProfileImageUpload(profileImage: newImage)
+            .subscribe(with: self, onNext: { owner, response in
+                DispatchQueue.main.async {
+                    owner.profileImageView.kf.setImage(with: URL(string: response.profileImageUrl))
+                    picker.dismiss(animated: true)
+                }
+            }).disposed(by: disposeBag)
+    }
+}
 
 extension ProfileViewController: PostTableViewCellButtonDelegate {
     func removePostButtonDidTap() {
         let alert = UIAlertController(title: "게시물 삭제", message: "삭제 하시겠습니까?", preferredStyle: .alert)
         
-        let okayAction = UIAlertAction(title: "삭제", style: .destructive) { [weak self] data in
+        let okayAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
             print("게시물 삭제")
         }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
