@@ -5,6 +5,7 @@ import Kingfisher
 
 final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
     var nicknameData = PublishSubject<String>()
+    var imageData = PublishSubject<String>()
     var postListData = PublishSubject<[PostModel]>()
     
     private let disposeBag = DisposeBag()
@@ -74,6 +75,11 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         nicknameData.bind(with: self, onNext: { owner, arg in
             owner.userNameLabel.text = arg
         }).disposed(by: disposeBag)
+        
+        imageData.bind(with: self, onNext: { owner, arg in
+            print(arg)
+            owner.profileImageView.kf.setImage(with: URL(string: arg))
+        }).disposed(by: disposeBag)
     }
     
     @objc private func editProfileImageButtonDidTap(_ sender: UIButton) {
@@ -140,7 +146,8 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     override func addView() {
         view.addSubviews(whiteBackgroundView, postTableView)
-        whiteBackgroundView.addSubviews(profileImageView, userNameLabel, editUserNameButton,                                        underLineView, editProfileImageButton, editProfileImageButton)
+        whiteBackgroundView.addSubviews(profileImageView, userNameLabel, editUserNameButton,
+                                        underLineView, editProfileImageButton, editProfileImageButton)
     }
     
     override func setLayout() {
