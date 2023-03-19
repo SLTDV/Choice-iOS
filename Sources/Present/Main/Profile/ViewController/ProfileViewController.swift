@@ -169,6 +169,7 @@ extension ProfileViewController: PostTableViewCellButtonDelegate {
         let okayAction = UIAlertAction(title: "삭제", style: .destructive) { [weak self] data in
             print("게시물 삭제")
             vm.callToDeletePost(postIdx: postIdx)
+            print(postIdx)
         }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
         
