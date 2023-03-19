@@ -23,7 +23,7 @@ final class HomeViewModel: BaseViewModel {
     
     func transform(_ input: Input) -> Output {
         let firstVoteRelay = BehaviorRelay(value: 0)
-
+        
         let secondVoteRealy = BehaviorRelay(value: 0)
         
         let vote = input.voteButtonDidTap
@@ -34,11 +34,11 @@ final class HomeViewModel: BaseViewModel {
         vote.map(\.0)
             .bind(onNext: firstVoteRelay.accept(_:))
             .disposed(by: disposeBag)
-
+        
         vote.map(\.1)
             .bind(onNext: secondVoteRealy.accept(_:))
             .disposed(by: disposeBag)
-
+        
         return Output(
             firstVoteCountData: firstVoteRelay.asObservable(),
             secondVoteCountData: secondVoteRealy.asObservable()

@@ -4,7 +4,7 @@ import Alamofire
 final class AddPostViewModel: BaseViewModel {
     func createPost(title: String, content: String, firstImage: UIImage, secondImage: UIImage,
                     firstVotingOption: String, secondVotingOtion: String) {
-        var url = APIConstants.imageUploadURL
+        var url = APIConstants.postImageUploadURL
         var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
 
         AF.upload(multipartFormData: { multipartFormData in
