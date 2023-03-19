@@ -77,7 +77,6 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         }).disposed(by: disposeBag)
         
         imageData.bind(with: self, onNext: { owner, arg in
-            print(arg)
             owner.profileImageView.kf.setImage(with: URL(string: arg))
         }).disposed(by: disposeBag)
     }
