@@ -169,8 +169,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
             return present(alert, animated: true)
         }
 
-        viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage,
-                             firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
+        viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage, firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
         LoadingIndicator.showLoading()
     }
     

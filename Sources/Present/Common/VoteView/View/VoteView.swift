@@ -31,20 +31,6 @@ final class VoteView: UIView {
         $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
     }
     
-    private let firstVoteCheckLabel = UILabel().then {
-        $0.text = "✓"
-        $0.textColor = .white
-        $0.font = .systemFont(ofSize: 24, weight: .semibold)
-        $0.isHidden = true
-    }
-    
-    private let secondVoteCheckLabel = UILabel().then {
-        $0.text = "✓"
-        $0.textColor = .white
-        $0.font = .systemFont(ofSize: 24, weight: .semibold)
-        $0.isHidden = true
-    }
-    
     private let firstVotingCountLabel = UILabel().then {
         $0.textColor = .white
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
@@ -55,20 +41,6 @@ final class VoteView: UIView {
         $0.textColor = .white
         $0.font = .systemFont(ofSize: 15, weight: .semibold)
         $0.isHidden = true
-    }
-    
-    private let versusCircleLabel = UIView().then {
-        $0.backgroundColor = .white
-        $0.frame = CGRect(x: 0, y: 0, width: 60, height: 60)
-        $0.clipsToBounds = true
-        $0.layer.cornerRadius = 25.5
-        $0.layer.cornerCurve = .continuous
-    }
-    
-    private let versusLabel = UILabel().then {
-        $0.text = "vs"
-        $0.textColor = .gray
-        $0.font = .systemFont(ofSize: 12, weight: .bold)
     }
     
     override init(frame: CGRect) {
@@ -131,12 +103,6 @@ final class VoteView: UIView {
     
     private func classifyVoteButton(voteType: ClassifyVoteButtonType) {
         DispatchQueue.main.async {
-            switch voteType {
-            case .first:
-                self.firstVoteCheckLabel.isHidden = false
-            case .second:
-                self.secondVoteCheckLabel.isHidden = false
-            }
             self.firstVotingCountLabel.isHidden = false
             self.secondVotingCountLabel.isHidden = false
             
@@ -179,10 +145,9 @@ final class VoteView: UIView {
     }
     
     private func addView() {
-        self.addSubviews(firstVoteTitleLabel, secondVoteTitleLabel, firstVoteButton, secondVoteButton, versusCircleLabel)
-        firstVoteButton.addSubviews(firstVoteCheckLabel, firstVotingCountLabel)
-        secondVoteButton.addSubviews(secondVoteCheckLabel, secondVotingCountLabel)
-        versusCircleLabel.addSubview(versusLabel)
+        self.addSubviews(firstVoteTitleLabel, secondVoteTitleLabel, firstVoteButton, secondVoteButton)
+        firstVoteButton.addSubviews(firstVotingCountLabel)
+        secondVoteButton.addSubviews(secondVotingCountLabel)
     }
     
     private func setLayout() {
@@ -212,16 +177,6 @@ final class VoteView: UIView {
             $0.height.equalTo(100)
         }
         
-        firstVoteCheckLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(6)
-            $0.leading.equalToSuperview().inset(12)
-        }
-        
-        secondVoteCheckLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(6)
-            $0.trailing.equalToSuperview().inset(12)
-        }
-        
         firstVotingCountLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(10)
             $0.bottom.equalToSuperview().inset(11)
@@ -230,17 +185,6 @@ final class VoteView: UIView {
         secondVotingCountLabel.snp.makeConstraints {
             $0.trailing.equalToSuperview().inset(10)
             $0.bottom.equalToSuperview().inset(11)
-        }
-        
-        versusCircleLabel.snp.makeConstraints {
-            $0.top.equalTo(firstVoteTitleLabel.snp.bottom).offset(35)
-            $0.leading.equalTo(firstVoteButton.snp.trailing).offset(-20)
-            $0.trailing.equalTo(secondVoteButton.snp.leading).offset(20)
-            $0.size.equalTo(50)
-        }
-        
-        versusLabel.snp.makeConstraints {
-            $0.center.equalToSuperview()
         }
     }
 }

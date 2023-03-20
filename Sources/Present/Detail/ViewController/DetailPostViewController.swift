@@ -25,15 +25,25 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let firstPostImageView = UIImageView().then {
         $0.clipsToBounds = true
+        $0.layer.borderColor = UIColor.clear.cgColor
+        $0.layer.borderWidth = 4
+        $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
-        $0.contentMode = .scaleAspectFill
+        $0.contentMode = .scaleToFill
     }
     
     private let secondPostImageView = UIImageView().then {
         $0.clipsToBounds = true
+        $0.layer.borderColor = UIColor.clear.cgColor
+        $0.layer.borderWidth = 4
+        $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
-        $0.contentMode = .scaleAspectFill
+        $0.contentMode = .scaleToFill
     }
+    
+    private let firstVoteOptionBackgroundView = VoteOptionView()
+    
+    private let secondVoteOptionBackgroundView = VoteOptionView()
     
     private let voteView = VoteView()
     
@@ -117,7 +127,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
-            if let imageUrl = URL(string: model.firstVotingOption) {
+            self.firstVoteOptionBackgroundView.setVoteOptionLabel(model.firstVotingOption)
+            self.secondVoteOptionBackgroundView.setVoteOptionLabel(model.secondVotingOption)
+            if let imageUrl = URL(string: model.firstImageUrl) {
                 self.firstPostImageView.kf.setImage(with: imageUrl)
             }
             if let imageUrl = URL(string: model.secondImageUrl) {
@@ -164,6 +176,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
                                 secondPostImageView, voteView, divideLineView, commentCountLabel,
                                 enterCommentTextView, enterCommentButton, commentTableView)
+        firstPostImageView.addSubview(firstVoteOptionBackgroundView)
+        secondPostImageView.addSubview(secondVoteOptionBackgroundView)
     }
     
     override func setLayout() {
@@ -187,8 +201,26 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         firstPostImageView.snp.makeConstraints {
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(22)
-            $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(200)
+            $0.leading.equalToSuperview().inset(21)
+            $0.width.equalTo(134)
+            $0.height.equalTo(145)
+        }
+        
+        secondPostImageView.snp.makeConstraints {
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(22)
+            $0.trailing.equalToSuperview().inset(21)
+            $0.width.equalTo(134)
+            $0.height.equalTo(145)
+        }
+        
+        firstVoteOptionBackgroundView.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(52)
+        }
+        
+        secondVoteOptionBackgroundView.snp.makeConstraints {
+            $0.leading.trailing.bottom.equalToSuperview()
+            $0.height.equalTo(52)
         }
         
         voteView.snp.makeConstraints {
