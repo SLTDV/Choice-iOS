@@ -6,13 +6,15 @@ import RxSwift
 import RxCocoa
 
 protocol PostTableViewCellButtonDelegate: AnyObject {
-    func removePostButtonDidTap()
+    func removePostButtonDidTap(postIdx: Int)
 }
 
-final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
+final class PostCell: UITableViewCell{
     let vm = HomeViewModel(coordinator: .init(navigationController: UINavigationController()))
     var model: PostModel?
     var delegate: PostTableViewCellButtonDelegate?
+    
+    var postIdx: Int = 0
     
     private let disposeBag = DisposeBag()
     
@@ -29,7 +31,7 @@ final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
     
     private lazy var removePostButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.menu = UIMenu(title: "", children: [UIAction(title: "게시물 삭제", attributes: .destructive, handler: {_ in self.removePostButtonDidTap() } )])
+        $0.menu = UIMenu(title: "", children: [UIAction(title: "게시물 삭제", attributes: .destructive, handler: {_ in self.removePostButtonDidTap(postIdx: self.postIdx)})])
         $0.isHidden = true
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
@@ -118,8 +120,8 @@ final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
         }
     }
     
-    func removePostButtonDidTap() {
-        delegate?.removePostButtonDidTap()
+    func removePostButtonDidTap(postIdx: Int) {
+        delegate?.removePostButtonDidTap(postIdx: postIdx)
     }
     
     private func notVotePostLayout() {
@@ -256,6 +258,7 @@ final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
     }
     
     func changeCellData(with model: PostModel) {
+        self.postIdx = model.idx
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async {
