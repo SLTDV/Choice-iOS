@@ -110,10 +110,10 @@ final class PostCell: UITableViewCell{
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
         switch sender.tag {
         case 0:
-            vm.callToAddVoteNumber(idx: model!.idx, choice: 1)
+            vm.callToAddVoteNumberURL(idx: model!.idx, choice: 1)
             firstVotePostLayout()
         case 1:
-            vm.callToAddVoteNumber(idx: model!.idx, choice: 2)
+            vm.callToAddVoteNumberURL(idx: model!.idx, choice: 2)
             secondVotePostLayout()
         default:
             return
@@ -258,7 +258,6 @@ final class PostCell: UITableViewCell{
     }
     
     func changeCellData(with model: PostModel) {
-        self.postIdx = model.idx
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async {

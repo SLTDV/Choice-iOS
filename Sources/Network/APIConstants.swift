@@ -18,7 +18,7 @@ struct APIConstants {
     static let findAllBestPostURL = baseURL + "/post/list"
     static let detailPostURL = baseURL + "/post"
     static let deletePostURL = baseURL + "/post/"
-    static let imageUploadURL = baseURL + "/image"
+    static let postImageUploadURL = baseURL + "/image"
     
     //Vote
     static let addVoteNumberURL = baseURL + "/post/vote/"
