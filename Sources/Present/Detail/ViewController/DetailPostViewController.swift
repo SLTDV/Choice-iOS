@@ -45,7 +45,19 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let secondVoteOptionBackgroundView = VoteOptionView()
     
-    private let voteView = VoteView()
+    private lazy var firstVoteButton = UIButton().then {
+        $0.setTitleColor(.white, for: .normal)
+        $0.isEnabled = false
+        $0.layer.cornerRadius = 10
+        $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
+    }
+    
+    private lazy var secondVoteButton = UIButton().then {
+        $0.setTitleColor(.white, for: .normal)
+        $0.isEnabled = false
+        $0.layer.cornerRadius = 10
+        $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
+    }
     
     private let divideLineView = UIView().then {
         $0.backgroundColor = .init(red: 0.37, green: 0.36, blue: 0.36, alpha: 1)
@@ -135,8 +147,69 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             if let imageUrl = URL(string: model.secondImageUrl) {
                 self.secondPostImageView.kf.setImage(with: imageUrl)
             }
-            self.voteView.setVoteButtonLayout(with: model)
+            self.setVoteButtonLayout(with: model)
         }
+    }
+    
+    func setVoteButtonLayout(with model: PostModel) {
+        self.model = model
+        
+        switch model.voting {
+        case 1:
+            VotePostLayout(type: .first)
+        case 2:
+            VotePostLayout(type: .second)
+        default:
+            return
+        }
+        
+        let data = calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
+                                       secondVotingCount: Double(model.secondVotingCount))
+        firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
+        secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
+    }
+    
+    private func VotePostLayout(type: ClassifyVoteButtonType) {
+        switch type {
+        case .first:
+            firstVoteButton = firstVoteButton.then {
+                $0.layer.borderColor = UIColor.black.cgColor
+                $0.isEnabled = false
+                $0.backgroundColor = .black
+            }
+            
+            secondVoteButton = secondVoteButton.then {
+                $0.layer.borderColor = UIColor.clear.cgColor
+                $0.isEnabled = true
+                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            }
+        case .second:
+            firstVoteButton = firstVoteButton.then {
+                $0.layer.borderColor = UIColor.clear.cgColor
+                $0.isEnabled = true
+                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            }
+            
+            secondVoteButton = secondVoteButton.then {
+                $0.layer.borderColor = UIColor.black.cgColor
+                $0.isEnabled = false
+                $0.backgroundColor = .black
+            }
+        }
+    }
+
+    private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (String, String, Int, Int) {
+        let sum = firstVotingCount + secondVotingCount
+        var firstP = firstVotingCount / sum * 100.0
+        var secondP = secondVotingCount / sum * 100.0
+        
+        firstP = firstP.isNaN ? 0.0 : firstP
+        secondP = secondP.isNaN ? 0.0 : secondP
+        
+        let firstStr = String(format: "%0.2f", firstP)
+        let secondStr = String(format: "%0.2f", secondP)
+        
+        return (firstStr, secondStr, Int(firstVotingCount), Int(secondVotingCount))
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -174,7 +247,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
         contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
-                                secondPostImageView, voteView, divideLineView, commentCountLabel,
+                                secondPostImageView, firstVoteButton, secondVoteButton,
+                                divideLineView, commentCountLabel,
                                 enterCommentTextView, enterCommentButton, commentTableView)
         firstPostImageView.addSubview(firstVoteOptionBackgroundView)
         secondPostImageView.addSubview(secondVoteOptionBackgroundView)
@@ -222,14 +296,23 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.leading.trailing.bottom.equalToSuperview()
             $0.height.equalTo(52)
         }
+
+        firstVoteButton.snp.makeConstraints {
+            $0.top.equalTo(firstPostImageView.snp.bottom).offset(38)
+            $0.leading.equalToSuperview().inset(20)
+            $0.width.equalTo(144)
+            $0.height.equalTo(52)
+        }
         
-        voteView.snp.makeConstraints {
-            $0.top.equalTo(firstPostImageView.snp.bottom).offset(20)
-            $0.leading.trailing.equalToSuperview().inset(17)
+        secondVoteButton.snp.makeConstraints {
+            $0.top.equalTo(secondPostImageView.snp.bottom).offset(38)
+            $0.trailing.equalToSuperview().inset(20)
+            $0.width.equalTo(144)
+            $0.height.equalTo(52)
         }
         
         divideLineView.snp.makeConstraints {
-            $0.top.equalTo(voteView.snp.bottom).offset(48)
+            $0.top.equalTo(firstVoteButton.snp.bottom).offset(48)
             $0.leading.trailing.equalToSuperview().inset(30)
             $0.height.equalTo(1)
         }
