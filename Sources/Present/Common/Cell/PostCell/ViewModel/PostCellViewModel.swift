@@ -2,7 +2,7 @@ import UIKit
 import Alamofire
 
 final class PostCellViewModel: BaseViewModel {
-    func callToAddVoteNumberURL(idx: Int, choice: Int) {
+    func callToAddVoteNumber(idx: Int, choice: Int) {
         let url = APIConstants.addVoteNumberURL + "\(idx)"
         
         let headers: HTTPHeaders = ["Content-Type": "application/json"]
