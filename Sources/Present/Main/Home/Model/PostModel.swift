@@ -2,12 +2,15 @@ import Foundation
 
 struct PostModel: Codable {
     var idx: Int
-    var thumbnail: String
+    var firstImageUrl: String
+    var secondImageUrl: String
     var title: String
     var content: String
     var firstVotingOption: String
     var secondVotingOption: String
     var firstVotingCount: Int
     var secondVotingCount: Int
-    var isVoting: Bool
+    var voting: Int
+    var participants: Int
+    var commentCount: Int
 }

@@ -12,4 +12,7 @@ enum ChoiceStep {
     
     //AddPost
     case popAddpostIsRequired
+    
+    //Profile
+    case logOutIsRequired
 }

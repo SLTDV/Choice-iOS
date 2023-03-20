@@ -23,10 +23,10 @@ final class HomeViewModel: BaseViewModel {
     
     func transform(_ input: Input) -> Output {
         let firstVoteRelay = BehaviorRelay(value: 0)
-
+        
         let secondVoteRealy = BehaviorRelay(value: 0)
         
-        let vote =  input.voteButtonDidTap
+        let vote = input.voteButtonDidTap
             .withUnretained(self)
             .flatMap { owner, args in owner.votePost(idx: args.0, choice: args.1) }
             .share(replay: 2)
@@ -34,11 +34,11 @@ final class HomeViewModel: BaseViewModel {
         vote.map(\.0)
             .bind(onNext: firstVoteRelay.accept(_:))
             .disposed(by: disposeBag)
-
+        
         vote.map(\.1)
             .bind(onNext: secondVoteRealy.accept(_:))
             .disposed(by: disposeBag)
-
+        
         return Output(
             firstVoteCountData: firstVoteRelay.asObservable(),
             secondVoteCountData: secondVoteRealy.asObservable()
@@ -61,14 +61,38 @@ final class HomeViewModel: BaseViewModel {
                        encoding: JSONEncoding.default,
                        headers: headers,
                        interceptor: JwtRequestInterceptor())
-            .validate()
-            
             .responseDecodable(of: VoteModel.self) { response in
                 let first = response.value?.firstVotingCount ?? 0
                 let second = response.value?.secondVotingCount ?? 0
                 observer.onNext((first, second))
             }
             return Disposables.create()
+        }
+    }
+    
+    func callToAddVoteNumber(idx: Int, choice: Int) {
+        let url = APIConstants.addVoteNumberURL + "\(idx)"
+        
+        let headers: HTTPHeaders = ["Content-Type": "application/json"]
+        
+        let params = [
+            "choice" : choice
+        ] as Dictionary
+        
+        AF.request(url,
+                   method: .post,
+                   parameters: params,
+                   encoding: JSONEncoding.default,
+                   headers: headers,
+                   interceptor: JwtRequestInterceptor())
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+            switch response.result {
+            case .failure(let error):
+                print("error = \(error.localizedDescription)")
+            default:
+                return
+            }
         }
     }
     

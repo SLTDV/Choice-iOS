@@ -35,8 +35,10 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol {
     }
 
     private let postTableView = UITableView().then {
-        $0.rowHeight = 370
+        $0.rowHeight = 372
+        $0.backgroundColor = .white
         $0.separatorStyle = .none
+        $0.showsVerticalScrollIndicator = false
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
 
@@ -52,6 +54,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol {
         postItemsData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                                       cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: data)
+            cell.model = data
         }.disposed(by: disposeBag)
         
         postTableView.rx.modelSelected(PostModel.self)
@@ -99,7 +102,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol {
 
     override func setLayout() {
         whiteView.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).inset(-5)
+            $0.top.equalTo(view.safeAreaInsets).inset(5)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalTo(dropdownButton.snp.bottom).offset(12)
         }
@@ -113,7 +116,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol {
 
         postTableView.snp.makeConstraints {
             $0.top.equalTo(dropdownButton.snp.bottom).offset(28)
-            $0.leading.trailing.equalToSuperview().inset(9)
+            $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
     }
