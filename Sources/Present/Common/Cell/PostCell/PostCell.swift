@@ -10,11 +10,9 @@ protocol PostTableViewCellButtonDelegate: AnyObject {
 }
 
 final class PostCell: UITableViewCell{
-    let vm = HomeViewModel(coordinator: .init(navigationController: UINavigationController()))
+    let vm = VoteViewModel()
     var model: PostModel?
     var delegate: PostTableViewCellButtonDelegate?
-    
-    var postIdx: Int = 0
     
     private let disposeBag = DisposeBag()
     
@@ -31,7 +29,8 @@ final class PostCell: UITableViewCell{
     
     private lazy var removePostButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.menu = UIMenu(title: "", children: [UIAction(title: "게시물 삭제", attributes: .destructive, handler: {_ in self.removePostButtonDidTap(postIdx: self.postIdx)})])
+        $0.menu = UIMenu(title: "", children: [UIAction(title: "게시물 삭제", attributes: .destructive, handler: { _ in self.removePostButtonDidTap(postIdx: self.model!.idx)
+        })])
         $0.isHidden = true
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
@@ -82,12 +81,12 @@ final class PostCell: UITableViewCell{
     }
     
     private let participantsCountLabel = UILabel().then {
-        $0.text = "👻 참여자 "
+        $0.text = "👻 참여자 없음"
         $0.font = .systemFont(ofSize: 12, weight: .medium)
     }
     
     private let commentCountLabel = UILabel().then {
-        $0.text = "🔥 댓글 "
+        $0.text = "🔥 댓글 없음 "
         $0.font = .systemFont(ofSize: 12, weight: .medium)
     }
     
@@ -258,7 +257,7 @@ final class PostCell: UITableViewCell{
     }
     
     func changeCellData(with model: PostModel) {
-        self.postIdx = model.idx
+        self.model = model
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async {
@@ -269,14 +268,12 @@ final class PostCell: UITableViewCell{
             self.firstPostImageView.kf.setImage(with: firstImageUrl)
             self.secondPostImageView.kf.setImage(with: secondImageUrl)
             switch model.voting {
-            case 0:
-                self.notVotePostLayout()
             case 1:
                 self.firstVotePostLayout()
             case 2:
                 self.secondVotePostLayout()
             default:
-                return
+                self.notVotePostLayout()
             }
             self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
             self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"

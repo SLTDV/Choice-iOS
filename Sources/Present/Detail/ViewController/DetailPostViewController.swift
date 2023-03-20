@@ -136,24 +136,20 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func changePostData(model: PostModel) {
+        guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
+        guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
             self.firstVoteOptionBackgroundView.setVoteOptionLabel(model.firstVotingOption)
             self.secondVoteOptionBackgroundView.setVoteOptionLabel(model.secondVotingOption)
-            if let imageUrl = URL(string: model.firstImageUrl) {
-                self.firstPostImageView.kf.setImage(with: imageUrl)
-            }
-            if let imageUrl = URL(string: model.secondImageUrl) {
-                self.secondPostImageView.kf.setImage(with: imageUrl)
-            }
+            self.firstPostImageView.kf.setImage(with: firstImageUrl)
+            self.secondPostImageView.kf.setImage(with: secondImageUrl)
             self.setVoteButtonLayout(with: model)
         }
     }
     
     func setVoteButtonLayout(with model: PostModel) {
-        self.model = model
-        
         switch model.voting {
         case 1:
             VotePostLayout(type: .first)
@@ -164,7 +160,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
         
         let data = calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
-                                       secondVotingCount: Double(model.secondVotingCount))
+                                                  secondVotingCount: Double(model.secondVotingCount))
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
@@ -200,7 +196,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             secondVoteButton.setTitle("0%(0명)", for: .normal)
         }
     }
-
+    
     private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (String, String, Int, Int) {
         let sum = firstVotingCount + secondVotingCount
         var firstP = firstVotingCount / sum * 100.0
@@ -299,7 +295,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.leading.trailing.bottom.equalToSuperview()
             $0.height.equalTo(52)
         }
-
+        
         firstVoteButton.snp.makeConstraints {
             $0.top.equalTo(firstPostImageView.snp.bottom).offset(38)
             $0.leading.equalToSuperview().inset(20)
