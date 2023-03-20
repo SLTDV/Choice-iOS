@@ -258,6 +258,7 @@ final class PostCell: UITableViewCell{
     }
     
     func changeCellData(with model: PostModel) {
+        self.postIdx = model.idx
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async {
