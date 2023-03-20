@@ -126,13 +126,13 @@ final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
         firstPostImageView.layer.borderColor = UIColor.clear.cgColor
         secondPostImageView.layer.borderColor = UIColor.clear.cgColor
         
-        firstPostVoteButton.then {
+        firstPostVoteButton = firstPostVoteButton.then {
             $0.isEnabled = true
             $0.backgroundColor = .clear
             $0.setTitleColor(.gray, for: .normal)
         }
         
-        secondPostVoteButton.then {
+        secondPostVoteButton = secondPostVoteButton.then {
             $0.isEnabled = true
             $0.backgroundColor = .clear
             $0.setTitleColor(.gray, for: .normal)
@@ -143,13 +143,13 @@ final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
         firstPostImageView.layer.borderColor = UIColor.black.cgColor
         secondPostImageView.layer.borderColor = UIColor.clear.cgColor
         
-        firstPostVoteButton.then {
+        firstPostVoteButton = firstPostVoteButton.then {
             $0.isEnabled = false
             $0.backgroundColor = .black
             $0.setTitleColor(.white, for: .normal)
         }
         
-        secondPostVoteButton.then {
+        secondPostVoteButton = secondPostVoteButton.then {
             $0.isEnabled = true
             $0.backgroundColor = .clear
             $0.setTitleColor(.gray, for: .normal)
@@ -160,13 +160,13 @@ final class PostCell: UITableViewCell, PostTableViewCellButtonDelegate{
         firstPostImageView.layer.borderColor = UIColor.clear.cgColor
         secondPostImageView.layer.borderColor = UIColor.black.cgColor
         
-        firstPostVoteButton.then {
+        firstPostVoteButton = firstPostVoteButton.then {
             $0.isEnabled = true
             $0.backgroundColor = .clear
             $0.setTitleColor(.gray, for: .normal)
         }
         
-        secondPostVoteButton.then {
+        secondPostVoteButton = secondPostVoteButton.then {
             $0.isEnabled = false
             $0.backgroundColor = .black
             $0.setTitleColor(.white, for: .normal)
