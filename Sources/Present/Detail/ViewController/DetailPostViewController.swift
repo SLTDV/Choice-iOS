@@ -135,7 +135,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             if let imageUrl = URL(string: model.secondImageUrl) {
                 self.secondPostImageView.kf.setImage(with: imageUrl)
             }
-            self.voteView.changeVoteTitleData(with: model)
+            self.voteView.getVotePostIdx(with: model)
         }
     }
     
