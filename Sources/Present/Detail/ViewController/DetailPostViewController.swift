@@ -163,7 +163,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             return
         }
         
-        let data = calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
+        let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
                                        secondVotingCount: Double(model.secondVotingCount))
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
@@ -196,20 +196,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 $0.backgroundColor = .black
             }
         }
-    }
-
-    private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (String, String, Int, Int) {
-        let sum = firstVotingCount + secondVotingCount
-        var firstP = firstVotingCount / sum * 100.0
-        var secondP = secondVotingCount / sum * 100.0
-        
-        firstP = firstP.isNaN ? 0.0 : firstP
-        secondP = secondP.isNaN ? 0.0 : secondP
-        
-        let firstStr = String(format: "%0.2f", firstP)
-        let secondStr = String(format: "%0.2f", secondP)
-        
-        return (firstStr, secondStr, Int(firstVotingCount), Int(secondVotingCount))
     }
     
     override func viewWillAppear(_ animated: Bool) {
