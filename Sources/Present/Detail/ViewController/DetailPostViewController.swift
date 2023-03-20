@@ -49,12 +49,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.setTitleColor(.white, for: .normal)
         $0.isEnabled = false
         $0.layer.cornerRadius = 10
+        $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
     }
     
     private lazy var secondVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.isEnabled = false
         $0.layer.cornerRadius = 10
+        $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
     }
     
     private let divideLineView = UIView().then {
@@ -158,7 +160,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         case 2:
             VotePostLayout(type: .second)
         default:
-            return
+            VotePostLayout(type: .none)
         }
         
         let data = calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
@@ -193,6 +195,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 $0.isEnabled = false
                 $0.backgroundColor = .black
             }
+        case .none:
+            firstVoteButton.setTitle("0%(0명)", for: .normal)
+            secondVoteButton.setTitle("0%(0명)", for: .normal)
         }
     }
 
