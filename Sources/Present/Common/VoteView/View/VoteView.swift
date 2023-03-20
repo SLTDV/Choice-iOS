@@ -7,16 +7,18 @@ import RxCocoa
 final class VoteView: UIView {
     private let disposeBag = DisposeBag()
     
-    private let viewModel = HomeViewModel(coordinator: .init(navigationController: UINavigationController()))
+    private var model: PostModel?
     
-    private var postIdx = 0
-    
-    private let firstVoteButton = UIButton().then {
+    private lazy var firstVoteButton = UIButton().then {
+        $0.setTitleColor(.white, for: .normal)
+        $0.isEnabled = false
         $0.layer.cornerRadius = 10
         $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
     }
     
-    private let secondVoteButton = UIButton().then {
+    private lazy var secondVoteButton = UIButton().then {
+        $0.setTitleColor(.white, for: .normal)
+        $0.isEnabled = false
         $0.layer.cornerRadius = 10
         $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
     }
@@ -25,71 +27,68 @@ final class VoteView: UIView {
         super.init(frame: frame)
         addView()
         setLayout()
-        bind()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private func bind() {
-        // MARK: - Input
-        let voteButtonDidTapRelay = PublishRelay<(Int, Int)>()
+//
+//        DispatchQueue.main.async {
+//            UIView.animate(withDuration: 1.0) {
+//                self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
+//                self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
+//            }
+//        }
+
+    func setVoteButtonLayout(with model: PostModel) {
+        self.model = model
         
-        let input = HomeViewModel.Input(
-            voteButtonDidTap: voteButtonDidTapRelay.compactMap { $0 }
-        )
+        switch model.voting {
+        case 1:
+            VotePostLayout(type: .first)
+        case 2:
+            VotePostLayout(type: .second)
+        default:
+            return
+        }
         
-        firstVoteButton
+        let data = calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
+                                       secondVotingCount: Double(model.secondVotingCount))
+        firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
+        secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
         
-        firstVoteButton.rx.tap
-            .asObservable()
-            .withUnretained(self)
-            .map { owner, _ in (owner.postIdx, 0) }
-            .bind(with: self) { owner, voting in
-                voteButtonDidTapRelay.accept(voting)
+    }
+    
+    private func VotePostLayout(type: ClassifyVoteButtonType) {
+        switch type {
+        case .first:
+            firstVoteButton = firstVoteButton.then {
+                $0.layer.borderColor = UIColor.black.cgColor
+                $0.isEnabled = false
+                $0.backgroundColor = .black
             }
-            .disposed(by: disposeBag)
-        
-        secondVoteButton.rx.tap
-            .asObservable()
-            .withUnretained(self)
-            .map { owner, _ in (owner.postIdx, 1) }
-            .bind(with: self) { owner, voting in
-                voteButtonDidTapRelay.accept(voting)
+            
+            secondVoteButton = secondVoteButton.then {
+                $0.layer.borderColor = UIColor.clear.cgColor
+                $0.isEnabled = true
+                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
             }
-            .disposed(by: disposeBag)
-        
-        // MARK: - Output
-        let output = viewModel.transform(input)
-        
-        Observable.combineLatest(output.firstVoteCountData, output.secondVoteCountData)
-            .withUnretained(self)
-            .map { (owner, arg1) in
-                let (first, second) = arg1
-                return owner.calculateToVoteCountPercentage(
-                    firstVotingCount: Double(first),
-                    secondVotingCount: Double(second)
-                )
+        case .second:
+            firstVoteButton = firstVoteButton.then {
+                $0.layer.borderColor = UIColor.clear.cgColor
+                $0.isEnabled = true
+                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
             }
-            .bind(with: self) { owner, percentage in
-                owner.firstVoteButton.setTitle("\(percentage.0)%(\(percentage.2)명)", for: .normal)
-                owner.secondVoteButton.setTitle("\(percentage.1)%(\(percentage.3)명)", for: .normal)
-            }
-            .disposed(by: disposeBag)
-        
-        DispatchQueue.main.async {
-            UIView.animate(withDuration: 1.0) {
-                self.firstVoteButton.frame = CGRect(x: 0, y: 0, width: 80, height: 0)
-                self.secondVoteButton.frame = CGRect(x: 0, y: 0, width: -80, height: 0)
+            
+            secondVoteButton = secondVoteButton.then {
+                $0.layer.borderColor = UIColor.black.cgColor
+                $0.isEnabled = false
+                $0.backgroundColor = .black
             }
         }
     }
-    
-    func getVotePostIdx(with model: PostModel) {
-        postIdx = model.idx
-    }
-    
+
     private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (String, String, Int, Int) {
         let sum = firstVotingCount + secondVotingCount
         var firstP = firstVotingCount / sum * 100.0
