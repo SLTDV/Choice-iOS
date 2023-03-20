@@ -146,8 +146,8 @@ final class ProfileViewModel: BaseViewModel {
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
-            case .success(let data): break
-                
+            case .success(let data):
+                self?.callToProfileData()
             case .failure(let error):
                 print("error = \(error.localizedDescription)")
             }

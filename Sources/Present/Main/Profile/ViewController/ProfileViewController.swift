@@ -210,12 +210,10 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
 
 extension ProfileViewController: PostTableViewCellButtonDelegate {
     func removePostButtonDidTap(postIdx: Int) {
-        let vm = PostCellViewModel(coordinator: .init(navigationController: UINavigationController()))
-        
         let alert = UIAlertController(title: "게시물 삭제", message: "삭제 하시겠습니까?", preferredStyle: .alert)
         
         let okayAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
-            vm.callToDeletePost(postIdx: postIdx)
+            self.viewModel.callToDeletePost(postIdx: postIdx)
         }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
         
