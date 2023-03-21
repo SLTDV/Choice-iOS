@@ -59,7 +59,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         
         postTableView.rx.modelSelected(PostModel.self)
             .bind(onNext: { [weak self] post in
-                print("post voting = \(post.voting)")
                 self?.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)
     }
