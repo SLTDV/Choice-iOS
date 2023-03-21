@@ -81,6 +81,24 @@ final class PostCell: UITableViewCell{
         $0.addTarget(self, action: #selector(PostVoteButtonDidTap(_:)), for: .touchUpInside)
     }
     
+    private var firstPercentageLabel = UILabel().then {
+        $0.textAlignment = .center
+        $0.clipsToBounds = true
+        $0.isHidden = true
+        $0.textColor = .white
+        $0.layer.cornerRadius = 10
+        $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
+    }
+    
+    private var secondPercentageLabel = UILabel().then {
+        $0.textAlignment = .center
+        $0.clipsToBounds = true
+        $0.isHidden = true
+        $0.textColor = .white
+        $0.layer.cornerRadius = 10
+        $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
+    }
+    
     private let participantsCountLabel = UILabel().then {
         $0.text = "👻 참여자 "
         $0.font = .systemFont(ofSize: 12, weight: .medium)
@@ -178,7 +196,7 @@ final class PostCell: UITableViewCell{
     private func addView() {
         contentView.addSubviews(titleLabel, descriptionLabel, removePostButton, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
-                                participantsCountLabel, commentCountLabel)
+                                firstPercentageLabel, secondPercentageLabel, participantsCountLabel, commentCountLabel)
         firstPostImageView.addSubview(firstVoteOptionBackgroundView)
         secondPostImageView.addSubview(secondVoteOptionBackgroundView)
     }
@@ -240,6 +258,20 @@ final class PostCell: UITableViewCell{
             $0.height.equalTo(38)
         }
         
+        firstPercentageLabel.snp.makeConstraints {
+            $0.top.equalTo(firstPostImageView.snp.bottom).offset(38)
+            $0.leading.equalToSuperview().inset(20)
+            $0.width.equalTo(144)
+            $0.height.equalTo(52)
+        }
+        
+        secondPercentageLabel.snp.makeConstraints {
+            $0.top.equalTo(secondPostImageView.snp.bottom).offset(38)
+            $0.trailing.equalToSuperview().inset(20)
+            $0.width.equalTo(144)
+            $0.height.equalTo(52)
+        }
+        
         participantsCountLabel.snp.makeConstraints {
             $0.top.equalTo(firstPostVoteButton.snp.bottom)
             $0.leading.equalToSuperview().inset(33)
@@ -253,8 +285,54 @@ final class PostCell: UITableViewCell{
         }
     }
     
-    func changeButtonIsHidden(bool: Bool) {
-        self.removePostButton.isHidden = bool
+    func setVoteButtonLayout(with model: PostModel) {
+        self.model = model
+        
+        switch model.voting {
+        case 1:
+            VotePostLayout(type: .first)
+        case 2:
+            VotePostLayout(type: .second)
+        default:
+            return
+        }
+        
+        let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
+                                       secondVotingCount: Double(model.secondVotingCount))
+        firstPercentageLabel.text = "\(data.0)%(\(data.2)명)"
+        secondPercentageLabel.text = "\(data.1)%(\(data.3)명)"
+    }
+    
+    private func VotePostLayout(type: ClassifyVoteButtonType) {
+        switch type {
+        case .first:
+            firstPercentageLabel = firstPercentageLabel.then {
+                $0.backgroundColor = .black
+            }
+            
+            secondPercentageLabel = secondPercentageLabel.then {
+                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            }
+        case .second:
+            firstPercentageLabel = firstPercentageLabel.then {
+                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            }
+            
+            secondPercentageLabel = secondPercentageLabel.then {
+                $0.backgroundColor = .black
+            }
+        
+        }
+    }
+    
+    func changeIsHidden(bool: Bool) {
+        self.removePostButton.isHidden = false
+        
+        self.firstPercentageLabel.isHidden = false
+        self.secondPercentageLabel.isHidden = false
+        
+        self.firstPostVoteButton.isHidden = true
+        self.secondPostVoteButton.isHidden = true
     }
     
     func changeCellData(with model: PostModel) {

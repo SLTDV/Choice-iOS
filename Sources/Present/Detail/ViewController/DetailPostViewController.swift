@@ -156,9 +156,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         switch model.voting {
         case 1:
-            VotePostLayout(type: .first)
+            votePostLayout(type: .first)
         case 2:
-            VotePostLayout(type: .second)
+            votePostLayout(type: .second)
         default:
             return
         }
@@ -169,7 +169,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
     
-    private func VotePostLayout(type: ClassifyVoteButtonType) {
+    private func votePostLayout(type: ClassifyVoteButtonType) {
         switch type {
         case .first:
             firstVoteButton = firstVoteButton.then {
