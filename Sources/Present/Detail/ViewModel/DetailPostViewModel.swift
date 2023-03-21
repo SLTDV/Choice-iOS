@@ -42,7 +42,6 @@ final class DetailPostViewModel: BaseViewModel {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode(CommentModel.self, from: data)
                 self?.delegate?.commentData.onNext(decodeResponse?.comment ?? .init())
-
             case .failure(let error):
                 print("comment = \(error.localizedDescription)")
             }
