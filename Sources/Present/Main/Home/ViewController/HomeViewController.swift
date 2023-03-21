@@ -2,7 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol {
+final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVoteButtonDidTapDelegate {
     private let disposeBag = DisposeBag()
     
     var postItemsData = PublishSubject<[PostModel]>()
@@ -54,6 +54,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol {
         postItemsData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                                       cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: data)
+            cell.postVoteButtonDelegate = self
         }.disposed(by: disposeBag)
         
         postTableView.rx.modelSelected(PostModel.self)
@@ -65,6 +66,10 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol {
     
     private func callToFindAllData(type: MenuOptionType) {
         viewModel.callToFindData(type: type)
+    }
+    
+    func postVoteButtonDidTap(idx: Int, choice: Int) {
+        viewModel.callToAddVoteNumber(idx: idx, choice: choice)
     }
     
     override func configureVC() {

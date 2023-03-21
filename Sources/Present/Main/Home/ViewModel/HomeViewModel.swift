@@ -117,7 +117,9 @@ final class HomeViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success(let data):
+                print("safsf = \(choice)")
                 let decodeResponse = try? JSONDecoder().decode(VoteModel.self, from: data)
+                self.callToFindData(type: .findNewestPostData)
             case .failure(let error):
                 print("error = \(error.localizedDescription)")
             }

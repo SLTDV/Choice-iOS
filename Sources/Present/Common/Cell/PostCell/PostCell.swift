@@ -9,10 +9,15 @@ protocol PostTableViewCellButtonDelegate: AnyObject {
     func removePostButtonDidTap(postIdx: Int)
 }
 
+protocol PostVoteButtonDidTapDelegate: AnyObject {
+    func postVoteButtonDidTap(idx: Int, choice: Int)
+}
+
 final class PostCell: UITableViewCell{
-    let vm = VoteViewModel()
+    let vm = HomeViewModel(coordinator: .init(navigationController: UINavigationController()))
     var model: PostModel?
     var delegate: PostTableViewCellButtonDelegate?
+    var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
     
     private let disposeBag = DisposeBag()
     
@@ -29,8 +34,7 @@ final class PostCell: UITableViewCell{
     
     private lazy var removePostButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.menu = UIMenu(title: "", children: [UIAction(title: "게시물 삭제", attributes: .destructive, handler: { _ in self.removePostButtonDidTap(postIdx: self.model!.idx)
-        })])
+        $0.menu = UIMenu(title: "", children: [UIAction(title: "게시물 삭제", attributes: .destructive, handler: { _ in self.removePostButtonDidTap(postIdx: self.model!.idx) })])
         $0.isHidden = true
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
@@ -109,10 +113,10 @@ final class PostCell: UITableViewCell{
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
         switch sender.tag {
         case 0:
-            vm.callToAddVoteNumber(idx: model!.idx, choice: 1)
+            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 1)
             firstVotePostLayout()
         case 1:
-            vm.callToAddVoteNumber(idx: model!.idx, choice: 2)
+            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 2)
             secondVotePostLayout()
         default:
             return
