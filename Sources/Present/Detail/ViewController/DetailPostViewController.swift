@@ -156,7 +156,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         case 2:
             votePostLayout(type: .second)
         default:
-            VotePostLayout(type: .none)
+            votePostLayout(type: .none)
         }
         
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),

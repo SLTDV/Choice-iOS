@@ -293,11 +293,11 @@ final class PostCell: UITableViewCell{
         
         switch model.voting {
         case 1:
-            VotePostLayout(type: .first)
+            votePostLayout(type: .first)
         case 2:
-            VotePostLayout(type: .second)
+            votePostLayout(type: .second)
         default:
-            return
+            votePostLayout(type: .none)
         }
         
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
@@ -306,7 +306,7 @@ final class PostCell: UITableViewCell{
         secondPercentageLabel.text = "\(data.1)%(\(data.3)명)"
     }
     
-    private func VotePostLayout(type: ClassifyVoteButtonType) {
+    private func votePostLayout(type: ClassifyVoteButtonType) {
         switch type {
         case .first:
             firstPercentageLabel = firstPercentageLabel.then {
@@ -324,11 +324,18 @@ final class PostCell: UITableViewCell{
             secondPercentageLabel = secondPercentageLabel.then {
                 $0.backgroundColor = .black
             }
-        
+        case .none:
+            firstPercentageLabel = firstPercentageLabel.then {
+                $0.text = "0%(0명)"
+            }
+            
+            secondPercentageLabel = secondPercentageLabel.then {
+                $0.text = "0%(0명)"
+            }
         }
     }
     
-    func changeIsHidden(bool: Bool) {
+    func changeIsHidden() {
         self.removePostButton.isHidden = false
         
         self.firstPercentageLabel.isHidden = false
