@@ -152,20 +152,20 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     func setVoteButtonLayout(with model: PostModel) {
         switch model.voting {
         case 1:
-            VotePostLayout(type: .first)
+            votePostLayout(type: .first)
         case 2:
-            VotePostLayout(type: .second)
+            votePostLayout(type: .second)
         default:
-            VotePostLayout(type: .none)
+            votePostLayout(type: .none)
         }
         
-        let data = calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
-                                                  secondVotingCount: Double(model.secondVotingCount))
+        let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
+                                       secondVotingCount: Double(model.secondVotingCount))
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
     
-    private func VotePostLayout(type: ClassifyVoteButtonType) {
+    private func votePostLayout(type: ClassifyVoteButtonType) {
         switch type {
         case .first:
             firstPostImageView.layer.borderColor = UIColor.black.cgColor
@@ -199,20 +199,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             firstVoteButton.setTitle("0%(0명)", for: .normal)
             secondVoteButton.setTitle("0%(0명)", for: .normal)
         }
-    }
-    
-    private func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (String, String, Int, Int) {
-        let sum = firstVotingCount + secondVotingCount
-        var firstP = firstVotingCount / sum * 100.0
-        var secondP = secondVotingCount / sum * 100.0
-        
-        firstP = firstP.isNaN ? 0.0 : firstP
-        secondP = secondP.isNaN ? 0.0 : secondP
-        
-        let firstStr = String(format: "%0.2f", firstP)
-        let secondStr = String(format: "%0.2f", secondP)
-        
-        return (firstStr, secondStr, Int(firstVotingCount), Int(secondVotingCount))
     }
     
     override func viewWillAppear(_ animated: Bool) {
