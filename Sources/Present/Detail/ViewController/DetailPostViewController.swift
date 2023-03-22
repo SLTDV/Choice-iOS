@@ -168,6 +168,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func VotePostLayout(type: ClassifyVoteButtonType) {
         switch type {
         case .first:
+            firstPostImageView.layer.borderColor = UIColor.black.cgColor
+            
             firstVoteButton = firstVoteButton.then {
                 $0.layer.borderColor = UIColor.black.cgColor
                 $0.isEnabled = false
@@ -180,6 +182,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
             }
         case .second:
+            secondPostImageView.layer.borderColor = UIColor.black.cgColor
+            
             firstVoteButton = firstVoteButton.then {
                 $0.layer.borderColor = UIColor.clear.cgColor
                 $0.isEnabled = true
