@@ -57,7 +57,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     private func bindTableView() {
         postItemsData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                                       cellType: PostCell.self)) { (row, data, cell) in
-            cell.changeCellData(with: data)
+            cell.changeCellData(with: data, type: .home)
             cell.postVoteButtonDelegate = self
         }.disposed(by: disposeBag)
         

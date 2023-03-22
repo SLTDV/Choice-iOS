@@ -65,7 +65,7 @@ final class PostCell: UITableViewCell{
     private lazy var firstPostVoteButton = UIButton().then {
         $0.tag = 0
         $0.setTitle("✓", for: .normal)
-        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
+        $0.setTitleColor(.white, for: .normal)
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 10
         $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
@@ -76,7 +76,7 @@ final class PostCell: UITableViewCell{
     private lazy var secondPostVoteButton = UIButton().then {
         $0.tag = 1
         $0.setTitle("✓", for: .normal)
-        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
+        $0.setTitleColor(.white, for: .normal)
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 10
         $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
@@ -132,13 +132,11 @@ final class PostCell: UITableViewCell{
         secondPostImageView.layer.borderColor = UIColor.clear.cgColor
         
         firstPostVoteButton = firstPostVoteButton.then {
-            $0.isEnabled = true
             $0.backgroundColor = .clear
             $0.setTitleColor(.gray, for: .normal)
         }
         
         secondPostVoteButton = secondPostVoteButton.then {
-            $0.isEnabled = true
             $0.backgroundColor = .clear
             $0.setTitleColor(.gray, for: .normal)
         }
@@ -178,8 +176,13 @@ final class PostCell: UITableViewCell{
         }
     }
     
-    
-    
+    private func setProfileVotePostLayout(type: ClassifyVoteButtonType) {
+        switch type {
+        default:
+            return
+        }
+    }
+
     private func addView() {
         contentView.addSubviews(titleLabel, descriptionLabel, removePostButton, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
@@ -244,21 +247,7 @@ final class PostCell: UITableViewCell{
             $0.width.equalTo(101)
             $0.height.equalTo(38)
         }
-        
-//        firstPercentageLabel.snp.makeConstraints {
-//            $0.top.equalTo(firstPostImageView.snp.bottom).offset(38)
-//            $0.leading.equalToSuperview().inset(20)
-//            $0.width.equalTo(144)
-//            $0.height.equalTo(52)
-//        }
-        
-//        secondPercentageLabel.snp.makeConstraints {
-//            $0.top.equalTo(secondPostImageView.snp.bottom).offset(38)
-//            $0.trailing.equalToSuperview().inset(20)
-//            $0.width.equalTo(144)
-//            $0.height.equalTo(52)
-//        }
-        
+
         participantsCountLabel.snp.makeConstraints {
             $0.top.equalTo(firstPostVoteButton.snp.bottom)
             $0.leading.equalToSuperview().inset(33)
@@ -273,6 +262,8 @@ final class PostCell: UITableViewCell{
     }
     
     func setVoteButtonLayout(with model: PostModel) {
+        firstPostVoteButton.isEnabled = false
+        secondPostVoteButton.isEnabled = false
         switch model.voting {
         case 1:
             votePostLayout(type: .first)
@@ -331,9 +322,10 @@ final class PostCell: UITableViewCell{
             firstPostVoteButton.setTitle("0%(0명)", for: .normal)
             secondPostVoteButton.setTitle("0%(0명)", for: .normal)
         }
+        print(firstPostVoteButton.isEnabled)
     }
     
-    func changeCellData(with model: PostModel) {
+    func changeCellData(with model: PostModel, type: ViewControllerType) {
         self.model = model
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
@@ -344,13 +336,19 @@ final class PostCell: UITableViewCell{
             self.secondVoteOptionBackgroundView.setVoteOptionLabel(model.secondVotingOption)
             self.firstPostImageView.kf.setImage(with: firstImageUrl)
             self.secondPostImageView.kf.setImage(with: secondImageUrl)
-            switch model.voting {
-            case 1:
-                self.firstVotePostLayout()
-            case 2:
-                self.secondVotePostLayout()
-            default:
-                self.notVotePostLayout()
+            
+            switch type {
+            case .home:
+                switch model.voting {
+                case 1:
+                    self.firstVotePostLayout()
+                case 2:
+                    self.secondVotePostLayout()
+                default:
+                    self.notVotePostLayout()
+                }
+            case .profile:
+                self.setVoteButtonLayout(with: model)
             }
             self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
             self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
