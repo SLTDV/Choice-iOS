@@ -152,11 +152,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     func setVoteButtonLayout(with model: PostModel) {
         switch model.voting {
         case 1:
-            votePostLayout(type: .first)
+            votePostLayout(voting: 1)
         case 2:
-            votePostLayout(type: .second)
+            votePostLayout(voting: 2)
         default:
-            votePostLayout(type: .none)
+            votePostLayout(voting: 0)
         }
         
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
@@ -165,9 +165,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
     
-    private func votePostLayout(type: ClassifyVoteButtonType) {
-        switch type {
-        case .first:
+    private func votePostLayout(voting: Int) {
+        switch voting {
+        case 1:
             firstPostImageView.layer.borderColor = UIColor.black.cgColor
             
             firstVoteButton = firstVoteButton.then {
@@ -181,7 +181,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 $0.isEnabled = true
                 $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
             }
-        case .second:
+        case 2:
             secondPostImageView.layer.borderColor = UIColor.black.cgColor
             
             firstVoteButton = firstVoteButton.then {
@@ -195,7 +195,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 $0.isEnabled = false
                 $0.backgroundColor = .black
             }
-        case .none:
+        default:
             firstVoteButton.setTitle("0%(0명)", for: .normal)
             secondVoteButton.setTitle("0%(0명)", for: .normal)
         }

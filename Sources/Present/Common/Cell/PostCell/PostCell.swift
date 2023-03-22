@@ -258,11 +258,11 @@ final class PostCell: UITableViewCell{
         secondPostVoteButton.isEnabled = false
         switch model.voting {
         case 1:
-            votePostButtonLayout(type: .first)
+            votePostButtonLayout(voting: 1)
         case 2:
-            votePostButtonLayout(type: .second)
+            votePostButtonLayout(voting: 2)
         default:
-            votePostButtonLayout(type: .none)
+            votePostButtonLayout(voting: 0)
         }
         
         let data = CalculateToVoteCountPercentage
@@ -272,7 +272,7 @@ final class PostCell: UITableViewCell{
         secondPostVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
     
-    private func votePostButtonLayout(type: ClassifyVoteButtonType) {
+    private func votePostButtonLayout(voting: Int) {
         firstPostVoteButton.snp.updateConstraints {
             $0.leading.equalToSuperview().inset(20)
             $0.width.equalTo(144)
@@ -285,8 +285,8 @@ final class PostCell: UITableViewCell{
             $0.height.equalTo(52)
         }
         
-        switch type {
-        case .first:
+        switch voting {
+        case 1:
             firstPostImageView.layer.borderColor = UIColor.black.cgColor
             
             firstPostVoteButton = firstPostVoteButton.then {
@@ -298,7 +298,7 @@ final class PostCell: UITableViewCell{
                 $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
                 $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
             }
-        case .second:
+        case 2:
             secondPostImageView.layer.borderColor = UIColor.black.cgColor
             
             firstPostVoteButton = firstPostVoteButton.then {
@@ -310,7 +310,7 @@ final class PostCell: UITableViewCell{
                 $0.layer.borderColor = UIColor.black.cgColor
                 $0.backgroundColor = .black
             }
-        case .none:
+        default:
             firstPostVoteButton.setTitle("0%(0명)", for: .normal)
             secondPostVoteButton.setTitle("0%(0명)", for: .normal)
         }
