@@ -289,23 +289,19 @@ final class PostCell: UITableViewCell{
         secondPostVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
     
-//    func updateButtonLayout() {
-//        firstPostVoteButton.snp.makeConstraints {
-//            $0.top.equalTo(firstPostImageView.snp.bottom).offset(38)
-//            $0.leading.equalToSuperview().inset(20)
-//            $0.width.equalTo(144)
-//            $0.height.equalTo(502)
-//        }
-//
-//        secondPostVoteButton.snp.makeConstraints {
-//            $0.top.equalTo(secondPostImageView.snp.bottom).offset(38)
-//            $0.trailing.equalToSuperview().inset(20)
-//            $0.width.equalTo(144)
-//            $0.height.equalTo(52)
-//        }
-//    }
-    
     private func votePostLayout(type: ClassifyVoteButtonType) {
+        firstPostVoteButton.snp.updateConstraints {
+            $0.leading.equalToSuperview().inset(20)
+            $0.width.equalTo(144)
+            $0.height.equalTo(52)
+        }
+        
+        secondPostVoteButton.snp.updateConstraints {
+            $0.trailing.equalToSuperview().inset(20)
+            $0.width.equalTo(144)
+            $0.height.equalTo(52)
+        }
+        
         switch type {
         case .first:
             firstPostImageView.layer.borderColor = UIColor.black.cgColor
@@ -336,7 +332,6 @@ final class PostCell: UITableViewCell{
             secondPostVoteButton.setTitle("0%(0명)", for: .normal)
         }
     }
-    
     
     func changeCellData(with model: PostModel) {
         self.model = model
