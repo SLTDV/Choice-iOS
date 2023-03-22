@@ -176,8 +176,51 @@ final class PostCell: UITableViewCell{
         }
     }
     
-    private func setProfileVotePostLayout(type: ClassifyVoteButtonType) {
+    private func setHomeVotePostLayout(type: ClassifyVoteButtonType) {
         switch type {
+        case .first:
+            firstPostImageView.layer.borderColor = UIColor.black.cgColor
+            secondPostImageView.layer.borderColor = UIColor.clear.cgColor
+            
+            firstPostVoteButton = firstPostVoteButton.then {
+                $0.isEnabled = false
+                $0.backgroundColor = .black
+                $0.setTitleColor(.white, for: .normal)
+            }
+            
+            secondPostVoteButton = secondPostVoteButton.then {
+                $0.isEnabled = true
+                $0.backgroundColor = .clear
+                $0.setTitleColor(.gray, for: .normal)
+            }
+        case .second:
+            firstPostImageView.layer.borderColor = UIColor.clear.cgColor
+            secondPostImageView.layer.borderColor = UIColor.black.cgColor
+            
+            firstPostVoteButton = firstPostVoteButton.then {
+                $0.isEnabled = true
+                $0.backgroundColor = .clear
+                $0.setTitleColor(.gray, for: .normal)
+            }
+            
+            secondPostVoteButton = secondPostVoteButton.then {
+                $0.isEnabled = false
+                $0.backgroundColor = .black
+                $0.setTitleColor(.white, for: .normal)
+            }
+        case .none:
+            firstPostImageView.layer.borderColor = UIColor.clear.cgColor
+            secondPostImageView.layer.borderColor = UIColor.clear.cgColor
+            
+            firstPostVoteButton = firstPostVoteButton.then {
+                $0.backgroundColor = .clear
+                $0.setTitleColor(.gray, for: .normal)
+            }
+            
+            secondPostVoteButton = secondPostVoteButton.then {
+                $0.backgroundColor = .clear
+                $0.setTitleColor(.gray, for: .normal)
+            }
         default:
             return
         }
@@ -261,16 +304,16 @@ final class PostCell: UITableViewCell{
         }
     }
     
-    func setVoteButtonLayout(with model: PostModel) {
+    func setProfileVoteButtonLayout(with model: PostModel) {
         firstPostVoteButton.isEnabled = false
         secondPostVoteButton.isEnabled = false
         switch model.voting {
         case 1:
-            votePostLayout(type: .first)
+            votePostButtonLayout(type: .first)
         case 2:
-            votePostLayout(type: .second)
+            votePostButtonLayout(type: .second)
         default:
-            votePostLayout(type: .none)
+            votePostButtonLayout(type: .none)
         }
         
         let data = CalculateToVoteCountPercentage
@@ -280,7 +323,7 @@ final class PostCell: UITableViewCell{
         secondPostVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
     
-    private func votePostLayout(type: ClassifyVoteButtonType) {
+    private func votePostButtonLayout(type: ClassifyVoteButtonType) {
         firstPostVoteButton.snp.updateConstraints {
             $0.leading.equalToSuperview().inset(20)
             $0.width.equalTo(144)
@@ -322,7 +365,6 @@ final class PostCell: UITableViewCell{
             firstPostVoteButton.setTitle("0%(0명)", for: .normal)
             secondPostVoteButton.setTitle("0%(0명)", for: .normal)
         }
-        print(firstPostVoteButton.isEnabled)
     }
     
     func changeCellData(with model: PostModel, type: ViewControllerType) {
@@ -348,7 +390,7 @@ final class PostCell: UITableViewCell{
                     self.notVotePostLayout()
                 }
             case .profile:
-                self.setVoteButtonLayout(with: model)
+                self.setProfileVoteButtonLayout(with: model)
             }
             self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
             self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
