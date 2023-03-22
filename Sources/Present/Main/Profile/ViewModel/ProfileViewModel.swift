@@ -60,7 +60,7 @@ final class ProfileViewModel: BaseViewModel {
         }
     }
     
-    func callToFindData(type: OptionItemType) {
+    func callToDeleteData(type: OptionItemType) {
         lazy var url = ""
         
         switch type {
@@ -131,6 +131,26 @@ final class ProfileViewModel: BaseViewModel {
                 }
             }
             return Disposables.create()
+        }
+    }
+    
+    func callToDeletePost(postIdx: Int) {
+        let url = APIConstants.deletePostURL + "\(postIdx)"
+        
+        let headers: HTTPHeaders = ["Content-Type": "application/json"]
+        AF.request(url,
+                   method: .delete,
+                   encoding: URLEncoding.queryString,
+                   headers: headers,
+                   interceptor: JwtRequestInterceptor())
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
+            switch response.result {
+            case .success(let data):
+                self?.callToProfileData()
+            case .failure(let error):
+                print("error = \(error.localizedDescription)")
+            }
         }
     }
     
