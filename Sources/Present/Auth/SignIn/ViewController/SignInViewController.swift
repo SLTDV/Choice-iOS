@@ -7,10 +7,8 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
     
     private let disposeBag = DisposeBag()
     
-    private let titleLabel = UILabel().then {
-        $0.text = "Choice"
-        $0.textColor = .black
-        $0.font = .systemFont(ofSize: 28, weight: .medium)
+    private let titleImageView = UIImageView().then {
+        $0.image = ChoiceAsset.Images.homeLogo.image
     }
     
     private let subTitleLabel = UILabel().then {
@@ -86,19 +84,19 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
     }
     
     override func addView() {
-        view.addSubviews(titleLabel, subTitleLabel, inputIdTextField, inputPasswordTextField,
+        view.addSubviews(titleImageView, subTitleLabel, inputIdTextField, inputPasswordTextField,
                          signInButton, divideLineButton, pushSignUpButton, warningLabel)
     }
     
     override func setLayout() {
-        titleLabel.snp.makeConstraints {
+        titleImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(101)
             $0.leading.equalToSuperview().inset(25)
         }
         
         subTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(9)
-            $0.leading.equalTo(titleLabel.snp.leading)
+            $0.top.equalTo(titleImageView.snp.bottom).offset(9)
+            $0.leading.equalTo(titleImageView.snp.leading)
         }
         
         inputIdTextField.snp.makeConstraints {
