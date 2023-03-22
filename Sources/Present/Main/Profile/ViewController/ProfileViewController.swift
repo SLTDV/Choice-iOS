@@ -68,7 +68,6 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         postListData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                                      cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: data, type: .profile)
-//            cell.setVoteButtonLayout(with: data)
             cell.delegate = self
         }.disposed(by: disposeBag)
         
