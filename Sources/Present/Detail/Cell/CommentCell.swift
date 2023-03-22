@@ -17,12 +17,10 @@ final class CommentCell: UITableViewCell {
     }
     
     private let nicknameLabel = UILabel().then {
-        $0.text = "명직이 바보 멍청이 "
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
     private let contentLabel = UILabel().then {
-        $0.text = "명직이가 이상해요 바보인가봐요."
         $0.font = .systemFont(ofSize: 14, weight: .medium)
     }
     
