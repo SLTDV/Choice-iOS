@@ -65,7 +65,7 @@ final class PostCell: UITableViewCell{
     private lazy var firstPostVoteButton = UIButton().then {
         $0.tag = 0
         $0.setTitle("✓", for: .normal)
-        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
+        $0.setTitleColor(.white, for: .normal)
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 10
         $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
@@ -76,7 +76,7 @@ final class PostCell: UITableViewCell{
     private lazy var secondPostVoteButton = UIButton().then {
         $0.tag = 1
         $0.setTitle("✓", for: .normal)
-        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
+        $0.setTitleColor(.white, for: .normal)
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 10
         $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
@@ -114,10 +114,10 @@ final class PostCell: UITableViewCell{
         switch sender.tag {
         case 0:
             postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 1)
-            firstVotePostLayout()
+            setHomeVotePostLayout(voting: model!.voting)
         case 1:
             postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 2)
-            secondVotePostLayout()
+            setHomeVotePostLayout(voting: model!.voting)
         default:
             return
         }
@@ -126,62 +126,11 @@ final class PostCell: UITableViewCell{
     func removePostButtonDidTap(postIdx: Int) {
         delegate?.removePostButtonDidTap(postIdx: postIdx)
     }
-    
-    private func notVotePostLayout() {
-        firstPostImageView.layer.borderColor = UIColor.clear.cgColor
-        secondPostImageView.layer.borderColor = UIColor.clear.cgColor
-        
-        firstPostVoteButton = firstPostVoteButton.then {
-            $0.isEnabled = true
-            $0.backgroundColor = .clear
-            $0.setTitleColor(.gray, for: .normal)
-        }
-        
-        secondPostVoteButton = secondPostVoteButton.then {
-            $0.isEnabled = true
-            $0.backgroundColor = .clear
-            $0.setTitleColor(.gray, for: .normal)
-        }
-    }
-    
-    private func firstVotePostLayout() {
-        firstPostImageView.layer.borderColor = UIColor.black.cgColor
-        secondPostImageView.layer.borderColor = UIColor.clear.cgColor
-        
-        firstPostVoteButton = firstPostVoteButton.then {
-            $0.isEnabled = false
-            $0.backgroundColor = .black
-            $0.setTitleColor(.white, for: .normal)
-        }
-        
-        secondPostVoteButton = secondPostVoteButton.then {
-            $0.isEnabled = true
-            $0.backgroundColor = .clear
-            $0.setTitleColor(.gray, for: .normal)
-        }
-    }
-    
-    private func secondVotePostLayout() {
-        firstPostImageView.layer.borderColor = UIColor.clear.cgColor
-        secondPostImageView.layer.borderColor = UIColor.black.cgColor
-        
-        firstPostVoteButton = firstPostVoteButton.then {
-            $0.isEnabled = true
-            $0.backgroundColor = .clear
-            $0.setTitleColor(.gray, for: .normal)
-        }
-        
-        secondPostVoteButton = secondPostVoteButton.then {
-            $0.isEnabled = false
-            $0.backgroundColor = .black
-            $0.setTitleColor(.white, for: .normal)
-        }
-    }
-    
+
     private func addView() {
         contentView.addSubviews(titleLabel, descriptionLabel, removePostButton, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
-                                participantsCountLabel, commentCountLabel)
+                                 participantsCountLabel, commentCountLabel)
         firstPostImageView.addSubview(firstVoteOptionBackgroundView)
         secondPostImageView.addSubview(secondVoteOptionBackgroundView)
     }
@@ -242,7 +191,7 @@ final class PostCell: UITableViewCell{
             $0.width.equalTo(101)
             $0.height.equalTo(38)
         }
-        
+
         participantsCountLabel.snp.makeConstraints {
             $0.top.equalTo(firstPostVoteButton.snp.bottom)
             $0.leading.equalToSuperview().inset(33)
@@ -256,11 +205,118 @@ final class PostCell: UITableViewCell{
         }
     }
     
-    func changeButtonIsHidden(bool: Bool) {
-        self.removePostButton.isHidden = bool
+    private func setHomeVotePostLayout(voting: Int?) {
+        switch voting {
+        case 1:
+            firstPostImageView.layer.borderColor = UIColor.black.cgColor
+            secondPostImageView.layer.borderColor = UIColor.clear.cgColor
+            
+            firstPostVoteButton = firstPostVoteButton.then {
+                $0.isEnabled = false
+                $0.backgroundColor = .black
+                $0.setTitleColor(.white, for: .normal)
+            }
+            
+            secondPostVoteButton = secondPostVoteButton.then {
+                $0.isEnabled = true
+                $0.backgroundColor = .clear
+                $0.setTitleColor(.gray, for: .normal)
+            }
+        case 2:
+            firstPostImageView.layer.borderColor = UIColor.clear.cgColor
+            secondPostImageView.layer.borderColor = UIColor.black.cgColor
+            
+            firstPostVoteButton = firstPostVoteButton.then {
+                $0.isEnabled = true
+                $0.backgroundColor = .clear
+                $0.setTitleColor(.gray, for: .normal)
+            }
+            
+            secondPostVoteButton = secondPostVoteButton.then {
+                $0.isEnabled = false
+                $0.backgroundColor = .black
+                $0.setTitleColor(.white, for: .normal)
+            }
+        default:
+            firstPostImageView.layer.borderColor = UIColor.clear.cgColor
+            secondPostImageView.layer.borderColor = UIColor.clear.cgColor
+            
+            firstPostVoteButton = firstPostVoteButton.then {
+                $0.backgroundColor = .clear
+                $0.setTitleColor(.gray, for: .normal)
+            }
+            
+            secondPostVoteButton = secondPostVoteButton.then {
+                $0.backgroundColor = .clear
+                $0.setTitleColor(.gray, for: .normal)
+            }
+        }
     }
     
-    func changeCellData(with model: PostModel) {
+    func setProfileVoteButtonLayout(with model: PostModel) {
+        firstPostVoteButton.isEnabled = false
+        secondPostVoteButton.isEnabled = false
+        switch model.voting {
+        case 1:
+            votePostButtonLayout(voting: 1)
+        case 2:
+            votePostButtonLayout(voting: 2)
+        default:
+            votePostButtonLayout(voting: 0)
+        }
+        
+        let data = CalculateToVoteCountPercentage
+            .calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
+                                            secondVotingCount: Double(model.secondVotingCount))
+        firstPostVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
+        secondPostVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
+    }
+    
+    private func votePostButtonLayout(voting: Int) {
+        firstPostVoteButton.snp.updateConstraints {
+            $0.leading.equalToSuperview().inset(20)
+            $0.width.equalTo(144)
+            $0.height.equalTo(52)
+        }
+        
+        secondPostVoteButton.snp.updateConstraints {
+            $0.trailing.equalToSuperview().inset(20)
+            $0.width.equalTo(144)
+            $0.height.equalTo(52)
+        }
+        
+        switch voting {
+        case 1:
+            firstPostImageView.layer.borderColor = UIColor.black.cgColor
+            
+            firstPostVoteButton = firstPostVoteButton.then {
+                $0.layer.borderColor = UIColor.black.cgColor
+                $0.backgroundColor = .black
+            }
+            
+            secondPostVoteButton = secondPostVoteButton.then {
+                $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
+                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            }
+        case 2:
+            secondPostImageView.layer.borderColor = UIColor.black.cgColor
+            
+            firstPostVoteButton = firstPostVoteButton.then {
+                $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
+                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            }
+            
+            secondPostVoteButton = secondPostVoteButton.then {
+                $0.layer.borderColor = UIColor.black.cgColor
+                $0.backgroundColor = .black
+            }
+        default:
+            firstPostVoteButton.setTitle("0%(0명)", for: .normal)
+            secondPostVoteButton.setTitle("0%(0명)", for: .normal)
+        }
+    }
+    
+    func changeCellData(with model: PostModel, type: ViewControllerType) {
         self.model = model
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
@@ -271,13 +327,11 @@ final class PostCell: UITableViewCell{
             self.secondVoteOptionBackgroundView.setVoteOptionLabel(model.secondVotingOption)
             self.firstPostImageView.kf.setImage(with: firstImageUrl)
             self.secondPostImageView.kf.setImage(with: secondImageUrl)
-            switch model.voting {
-            case 1:
-                self.firstVotePostLayout()
-            case 2:
-                self.secondVotePostLayout()
-            default:
-                self.notVotePostLayout()
+            switch type {
+            case .home:
+                self.setHomeVotePostLayout(voting: model.voting)
+            case .profile:
+                self.setProfileVoteButtonLayout(with: model)
             }
             self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
             self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"

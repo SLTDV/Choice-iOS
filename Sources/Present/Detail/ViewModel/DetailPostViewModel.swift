@@ -48,7 +48,6 @@ final class DetailPostViewModel: BaseViewModel {
         }
     }
     
-    
     func createComment(idx: Int, content: String) {
         let url = APIConstants.createCommentURL + "\(idx)"
         let headers: HTTPHeaders = ["Content-Type": "application/json"]
