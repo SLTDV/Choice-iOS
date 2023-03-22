@@ -178,6 +178,8 @@ final class PostCell: UITableViewCell{
         }
     }
     
+    
+    
     private func addView() {
         contentView.addSubviews(titleLabel, descriptionLabel, removePostButton, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
@@ -271,8 +273,6 @@ final class PostCell: UITableViewCell{
     }
     
     func setVoteButtonLayout(with model: PostModel) {
-        self.model = model
-        
         switch model.voting {
         case 1:
             votePostLayout(type: .first)
@@ -282,8 +282,9 @@ final class PostCell: UITableViewCell{
             votePostLayout(type: .none)
         }
         
-        let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
-                                       secondVotingCount: Double(model.secondVotingCount))
+        let data = CalculateToVoteCountPercentage
+            .calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
+                                            secondVotingCount: Double(model.secondVotingCount))
         firstPostVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondPostVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
@@ -305,44 +306,34 @@ final class PostCell: UITableViewCell{
 //    }
     
     private func votePostLayout(type: ClassifyVoteButtonType) {
-        print("민도현")
         switch type {
         case .first:
-            print("곽희상")
+            firstPostImageView.layer.borderColor = UIColor.black.cgColor
+            
             firstPostVoteButton = firstPostVoteButton.then {
-                $0.backgroundColor = .red
                 $0.layer.borderColor = UIColor.black.cgColor
-                $0.isEnabled = false
+                $0.backgroundColor = .black
             }
-
+            
             secondPostVoteButton = secondPostVoteButton.then {
-                $0.layer.borderColor = UIColor.red.cgColor
-                $0.isEnabled = false
+                $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
                 $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
             }
-
         case .second:
+            secondPostImageView.layer.borderColor = UIColor.black.cgColor
+            
             firstPostVoteButton = firstPostVoteButton.then {
-                $0.layer.borderColor = UIColor.blue.cgColor
-                $0.isEnabled = false
+                $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
                 $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
             }
-
+            
             secondPostVoteButton = secondPostVoteButton.then {
                 $0.layer.borderColor = UIColor.black.cgColor
-                $0.isEnabled = false
                 $0.backgroundColor = .black
             }
         case .none:
-            firstPostVoteButton = firstPostVoteButton.then {
-                $0.setTitle("0%(0명)", for: .normal)
-                $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
-            }
-
-            secondPostVoteButton = secondPostVoteButton.then {
-                $0.setTitle("0%(0명)", for: .normal)
-                $0.backgroundColor = .red
-            }
+            firstPostVoteButton.setTitle("0%(0명)", for: .normal)
+            secondPostVoteButton.setTitle("0%(0명)", for: .normal)
         }
     }
     
