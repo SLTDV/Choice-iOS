@@ -256,14 +256,7 @@ final class PostCell: UITableViewCell{
     func setProfileVoteButtonLayout(with model: PostModel) {
         firstPostVoteButton.isEnabled = false
         secondPostVoteButton.isEnabled = false
-        switch model.voting {
-        case 1:
-            votePostButtonLayout(voting: 1)
-        case 2:
-            votePostButtonLayout(voting: 2)
-        default:
-            votePostButtonLayout(voting: 0)
-        }
+        votePostButtonLayout(voting: model.voting)
         
         let data = CalculateToVoteCountPercentage
             .calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
