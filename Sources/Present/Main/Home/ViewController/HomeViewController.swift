@@ -7,6 +7,10 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     
     var postItemsData = PublishSubject<[PostModel]>()
     
+    private let leftLogoImageView = UIImageView().then {
+        $0.image = ChoiceAsset.Images.homeLogo.image
+    }
+    
     private lazy var addPostButton = UIBarButtonItem(image: UIImage(systemName: "plus.app"),
                                                      style: .plain,
                                                      target: self,
@@ -81,7 +85,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         
         view.backgroundColor = .white
         
-        navigationItem.title = "choice"
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftLogoImageView)
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
         
         let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"),
