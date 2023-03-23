@@ -15,6 +15,15 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let contentView = UIView()
     
+    private let userImageView = UIImageView().then {
+        $0.backgroundColor = .gray
+        $0.layer.cornerRadius = 67
+    }
+    
+    private let userNameLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 12, weight: .semibold)
+    }
+    
     private let titleLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
     }
@@ -228,8 +237,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
-                                secondPostImageView, firstVoteButton, secondVoteButton,
+        contentView.addSubviews(userImageView, userNameLabel,titleLabel,
+                                descriptionLabel, firstPostImageView, secondPostImageView,
+                                firstVoteButton, secondVoteButton,
                                 divideLineView, commentCountLabel,
                                 enterCommentTextView, enterCommentButton, commentTableView)
         firstPostImageView.addSubview(firstVoteOptionBackgroundView)
@@ -245,9 +255,20 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.centerX.width.top.bottom.equalToSuperview()
         }
         
+        userImageView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaInsets).inset(24)
+            $0.leading.equalToSuperview().inset(40)
+            $0.size.equalTo(24)
+        }
+        
+        userNameLabel.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaInsets).inset(24)
+            $0.leading.equalTo(userImageView.snp.trailing).offset(9)
+        }
+        
         titleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(view.safeAreaInsets).inset(12)
+            $0.leading.equalToSuperview().inset(43)
+            $0.top.equalTo(userImageView.snp.bottom).offset(30)
         }
         
         descriptionLabel.snp.makeConstraints {
