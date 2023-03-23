@@ -1,8 +1,11 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Kingfisher
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
+    var writerNameData = PublishSubject<String>()
+    var writerImageStringData = PublishSubject<String>()
     var commentData = PublishSubject<[CommentData]>()
     var model: PostModel?
     
@@ -123,6 +126,16 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }.disposed(by: disposeBag)
     }
     
+    private func bindUI() {
+        writerNameData.bind(with: self, onNext: { owner, arg in
+            owner.userNameLabel.text = arg
+        }).disposed(by: disposeBag)
+        
+        writerImageStringData.bind(with: self, onNext: { owner, arg in
+            owner.userImageView.kf.setImage(with: URL(string: arg))
+        }).disposed(by: disposeBag)
+    }
+    
     private func enterComment() {
         guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text else { return }
@@ -230,6 +243,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         viewModel.delegate = self
         
         bindTableView()
+        bindUI()
         commentButtonDidTap()
         changePostData(model: model!)
     }
