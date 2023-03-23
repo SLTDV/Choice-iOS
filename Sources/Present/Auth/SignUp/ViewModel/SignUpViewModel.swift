@@ -4,9 +4,6 @@ import Alamofire
 final class SignUpViewModel: BaseViewModel {
     func callToSignUpAPI(nickname: String, email: String, password: String){
         let url = APIConstants.signUpURL
-        
-        let header : HTTPHeaders = ["Content-Type" : "application/json"]
-        
         let body : Parameters = [
             "email" : email,
             "password" : password,
@@ -16,8 +13,7 @@ final class SignUpViewModel: BaseViewModel {
         AF.request(url,
                    method: .post,
                    parameters: body,
-                   encoding: JSONEncoding.default,
-                   headers: header).responseData { response in
+                   encoding: JSONEncoding.default).responseData { response in
             switch response.response?.statusCode {
             case 201:
                 self.coordinator.navigate(to: .popVCIsRequired)
