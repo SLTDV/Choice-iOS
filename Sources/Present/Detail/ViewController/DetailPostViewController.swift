@@ -19,8 +19,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private let contentView = UIView()
     
     private let userImageView = UIImageView().then {
+        $0.clipsToBounds = true
         $0.backgroundColor = .gray
-        $0.layer.cornerRadius = 67
+        $0.layer.cornerRadius = 12
     }
     
     private let userNameLabel = UILabel().then {
