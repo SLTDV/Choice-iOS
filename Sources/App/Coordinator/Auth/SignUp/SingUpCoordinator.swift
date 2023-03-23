@@ -22,4 +22,11 @@ extension SignUpCoordinator {
     private func popVCIsRequired() {
         navigationController.popViewController(animated: true)
     }
+    
+    private func userInformationIsRequired() {
+        let vc = UserInformationCoordinator(navigationController: navigationController)
+        self.parentCoordinator = self
+        childCoordinators.append(vc)
+        vc.start()
+    }
 }

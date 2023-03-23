@@ -5,6 +5,9 @@ enum ChoiceStep {
     case signUpIsRequired
     case mainVCIsRequried
     
+    //siginUp
+    case UserInformationIsRequired
+    
     //Main
     case addPostIsRequired
     case detailPostIsRequired(model: PostModel)
