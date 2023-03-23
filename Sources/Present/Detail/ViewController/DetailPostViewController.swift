@@ -1,8 +1,11 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Kingfisher
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
+    var writerNameData = PublishSubject<String>()
+    var writerImageStringData = PublishSubject<String>()
     var commentData = PublishSubject<[CommentData]>()
     var model: PostModel?
     
@@ -15,8 +18,22 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let contentView = UIView()
     
+    private let userImageView = UIImageView().then {
+        $0.clipsToBounds = true
+        $0.backgroundColor = .gray
+        $0.layer.cornerRadius = 12
+    }
+    
+    private let userNameLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 12, weight: .semibold)
+    }
+    
     private let titleLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
+    }
+    
+    private let divideVotePostImageLineView = UIView().then {
+        $0.backgroundColor = .black
     }
     
     private let descriptionLabel = UILabel().then {
@@ -59,8 +76,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
     }
     
-    private let divideLineView = UIView().then {
-        $0.backgroundColor = .init(red: 0.37, green: 0.36, blue: 0.36, alpha: 1)
+    private let divideCommentLineView = UIView().then {
+        $0.backgroundColor = .black
     }
     
     private let commentCountLabel = UILabel().then {
@@ -114,6 +131,16 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }.disposed(by: disposeBag)
     }
     
+    private func bindUI() {
+        writerNameData.bind(with: self, onNext: { owner, arg in
+            owner.userNameLabel.text = arg
+        }).disposed(by: disposeBag)
+        
+        writerImageStringData.bind(with: self, onNext: { owner, arg in
+            owner.userImageView.kf.setImage(with: URL(string: arg))
+        }).disposed(by: disposeBag)
+    }
+    
     private func enterComment() {
         guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text else { return }
@@ -150,14 +177,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     func setVoteButtonLayout(with model: PostModel) {
-        switch model.voting {
-        case 1:
-            votePostLayout(voting: 1)
-        case 2:
-            votePostLayout(voting: 2)
-        default:
-            votePostLayout(voting: 0)
-        }
+        votePostLayout(voting: model.voting)
         
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
                                        secondVotingCount: Double(model.secondVotingCount))
@@ -228,6 +248,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         viewModel.delegate = self
         
         bindTableView()
+        bindUI()
         commentButtonDidTap()
         changePostData(model: model!)
     }
@@ -235,9 +256,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func addView() {
         view.addSubview(scrollView)
         scrollView.addSubview(contentView)
-        contentView.addSubviews(titleLabel, descriptionLabel, firstPostImageView,
-                                secondPostImageView, firstVoteButton, secondVoteButton,
-                                divideLineView, commentCountLabel,
+        contentView.addSubviews(userImageView, userNameLabel,titleLabel,
+                                divideVotePostImageLineView, descriptionLabel,
+                                firstPostImageView, secondPostImageView,
+                                firstVoteButton, secondVoteButton,
+                                divideCommentLineView, commentCountLabel,
                                 enterCommentTextView, enterCommentButton, commentTableView)
         firstPostImageView.addSubview(firstVoteOptionBackgroundView)
         secondPostImageView.addSubview(secondVoteOptionBackgroundView)
@@ -252,26 +275,43 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.centerX.width.top.bottom.equalToSuperview()
         }
         
+        userImageView.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaInsets).inset(24)
+            $0.leading.equalToSuperview().inset(40)
+            $0.size.equalTo(24)
+        }
+        
+        userNameLabel.snp.makeConstraints {
+            $0.top.equalTo(view.safeAreaInsets).inset(28)
+            $0.leading.equalTo(userImageView.snp.trailing).offset(9)
+        }
+        
         titleLabel.snp.makeConstraints {
-            $0.centerX.equalToSuperview()
-            $0.top.equalTo(view.safeAreaInsets).inset(12)
+            $0.leading.equalToSuperview().inset(43)
+            $0.top.equalTo(userImageView.snp.bottom).offset(30)
+        }
+        
+        divideVotePostImageLineView.snp.makeConstraints {
+            $0.top.equalTo(titleLabel.snp.bottom).offset(9)
+            $0.leading.trailing.equalToSuperview().inset(38)
+            $0.height.equalTo(1)
         }
         
         descriptionLabel.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(25)
-            $0.leading.trailing.equalToSuperview().offset(20)
+            $0.top.equalTo(divideVotePostImageLineView.snp.bottom).offset(22)
+            $0.leading.trailing.equalToSuperview().offset(43)
         }
         
         firstPostImageView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(22)
-            $0.leading.equalToSuperview().inset(21)
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(64)
+            $0.leading.equalToSuperview().inset(37)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
         }
         
         secondPostImageView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(22)
-            $0.trailing.equalToSuperview().inset(21)
+            $0.top.equalTo(descriptionLabel.snp.bottom).offset(64)
+            $0.trailing.equalToSuperview().inset(37)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
         }
@@ -288,26 +328,26 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         firstVoteButton.snp.makeConstraints {
             $0.top.equalTo(firstPostImageView.snp.bottom).offset(38)
-            $0.leading.equalToSuperview().inset(20)
+            $0.leading.equalToSuperview().inset(30)
             $0.width.equalTo(144)
             $0.height.equalTo(52)
         }
         
         secondVoteButton.snp.makeConstraints {
             $0.top.equalTo(secondPostImageView.snp.bottom).offset(38)
-            $0.trailing.equalToSuperview().inset(20)
+            $0.trailing.equalToSuperview().inset(30)
             $0.width.equalTo(144)
             $0.height.equalTo(52)
         }
         
-        divideLineView.snp.makeConstraints {
+        divideCommentLineView.snp.makeConstraints {
             $0.top.equalTo(firstVoteButton.snp.bottom).offset(48)
-            $0.leading.trailing.equalToSuperview().inset(30)
+            $0.leading.trailing.equalToSuperview().inset(38)
             $0.height.equalTo(1)
         }
         
         commentCountLabel.snp.makeConstraints {
-            $0.top.equalTo(divideLineView.snp.bottom).offset(18)
+            $0.top.equalTo(divideCommentLineView.snp.bottom).offset(18)
             $0.leading.equalToSuperview().offset(30)
         }
         

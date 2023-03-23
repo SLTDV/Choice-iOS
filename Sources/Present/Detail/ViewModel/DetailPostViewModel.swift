@@ -3,6 +3,8 @@ import RxSwift
 import Alamofire
 
 protocol CommentDataProtocol: AnyObject {
+    var writerNameData: PublishSubject<String> { get set  }
+    var writerImageStringData: PublishSubject<String> { get set }
     var commentData: PublishSubject<[CommentData]> { get set }
 }
 
@@ -40,8 +42,10 @@ final class DetailPostViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success(let data):
-                let decodeResponse = try? JSONDecoder().decode(CommentModel.self, from: data)
-                self?.delegate?.commentData.onNext(decodeResponse?.comment ?? .init())
+                let decodeResponse = try! JSONDecoder().decode(CommentModel.self, from: data)
+                self?.delegate?.writerImageStringData.onNext(decodeResponse.image)
+                self?.delegate?.writerNameData.onNext(decodeResponse.writer)
+                self?.delegate?.commentData.onNext(decodeResponse.comment)
             case .failure(let error):
                 print("comment = \(error.localizedDescription)")
             }
