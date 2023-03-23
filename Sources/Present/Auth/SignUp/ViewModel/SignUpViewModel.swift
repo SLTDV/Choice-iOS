@@ -39,4 +39,9 @@ final class SignUpViewModel: BaseViewModel {
         let passwordTest = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
         return passwordTest.evaluate(with: password)
     }
+    
+    func buttonDidTap() {
+        coordinator.navigate(to: .UserInformationIsRequired)
+        print("12")
+    }
 }

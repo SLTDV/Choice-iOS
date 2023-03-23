@@ -89,7 +89,8 @@ final class SignUpViewController: BaseVC<SignUpViewModel> {
     private func signUpButtonDidTap() {
         signUpButton.rx.tap
             .bind(onNext: {
-                self.checkAvailabilitySignUp()
+//                self.checkAvailabilitySignUp()
+                self.viewModel.buttonDidTap()
             }).disposed(by: disposeBag)
     }
     

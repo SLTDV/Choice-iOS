@@ -12,6 +12,8 @@ final class SignUpCoordinator: BaseCoordinator {
         switch step {
         case .popVCIsRequired:
             popVCIsRequired()
+        case .UserInformationIsRequired:
+            userInformationIsRequired()
         default:
             return
         }
