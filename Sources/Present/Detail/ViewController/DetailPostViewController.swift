@@ -282,7 +282,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
         
         userNameLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaInsets).inset(24)
+            $0.top.equalTo(view.safeAreaInsets).inset(28)
             $0.leading.equalTo(userImageView.snp.trailing).offset(9)
         }
         
