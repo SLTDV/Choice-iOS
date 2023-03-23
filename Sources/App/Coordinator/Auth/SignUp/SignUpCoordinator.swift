@@ -12,7 +12,7 @@ final class SignUpCoordinator: BaseCoordinator {
         switch step {
         case .popVCIsRequired:
             popVCIsRequired()
-        case .UserInformationIsRequired:
+        case .userInformationIsRequired:
             userInformationIsRequired()
         default:
             return
@@ -27,7 +27,7 @@ extension SignUpCoordinator {
     
     private func userInformationIsRequired() {
         let vc = UserInformationCoordinator(navigationController: navigationController)
-        self.parentCoordinator = self
+        vc.parentCoordinator = self
         childCoordinators.append(vc)
         vc.start()
     }

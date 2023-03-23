@@ -41,7 +41,6 @@ final class SignUpViewModel: BaseViewModel {
     }
     
     func buttonDidTap() {
-        coordinator.navigate(to: .UserInformationIsRequired)
-        print("12")
+        coordinator.navigate(to: .userInformationIsRequired)
     }
 }

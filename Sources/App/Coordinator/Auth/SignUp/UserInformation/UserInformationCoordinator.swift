@@ -5,7 +5,7 @@ final class UserInformationCoordinator: BaseCoordinator {
         let vm = UserInformationViewModel(coordinator: self)
         let vc = UserInformationViewController(viewModel: vm)
         
-        navigationController.setViewControllers([vc], animated: true)
+        navigationController.pushViewController(vc, animated: true)
     }
     
     override func navigate(to step: ChoiceStep) {
