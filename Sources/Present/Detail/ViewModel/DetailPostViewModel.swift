@@ -43,7 +43,6 @@ final class DetailPostViewModel: BaseViewModel {
             switch response.result {
             case .success(let data):
                 let decodeResponse = try! JSONDecoder().decode(CommentModel.self, from: data)
-                print(decodeResponse)
                 self?.delegate?.writerImageStringData.onNext(decodeResponse.image)
                 self?.delegate?.writerNameData.onNext(decodeResponse.writer)
                 self?.delegate?.commentData.onNext(decodeResponse.comment)
