@@ -3,7 +3,7 @@ import Foundation
 final class SignUpCoordinator: BaseCoordinator {
     override func start() {
         let vm = SignUpViewModel(coordinator: self)
-        let vc = SignUpViewController(viewModel: vm)
+        let vc = UserSecurityViewController(viewModel: vm)
         
         navigationController.pushViewController(vc, animated: true)
     }

@@ -3,7 +3,7 @@ import Foundation
 final class UserInformationCoordinator: BaseCoordinator {
     override func start() {
         let vm = UserInformationViewModel(coordinator: self)
-        let vc = UserInformationViewController(viewModel: vm)
+        let vc = UserProfileViewController(viewModel: vm)
         
         navigationController.pushViewController(vc, animated: true)
     }
