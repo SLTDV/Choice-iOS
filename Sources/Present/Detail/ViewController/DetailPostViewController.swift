@@ -145,7 +145,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text else { return }
         
-        self.viewModel.createComment(idx: idx, content: content)
+        viewModel.createComment(idx: idx, content: content)
+        DispatchQueue.main.async {
+            self.commentTableView.reloadRows(at: self.commentTableView.indexPathsForVisibleRows!, with: .right)
+        }
     }
     
     private func commentButtonDidTap() {
