@@ -96,6 +96,8 @@ final class UserSecurityViewController: BaseVC<SignUpViewModel> {
     override func configureVC() {
         restoreFrameYValue = self.view.frame.origin.y
         signUpButtonDidTap()
+        
+        navigationItem.title = "회원가입"
     }
     
     override func addView() {
@@ -105,7 +107,7 @@ final class UserSecurityViewController: BaseVC<SignUpViewModel> {
     
     override func setLayout() {
         emailLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(50)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(70)
             $0.leading.equalToSuperview().inset(26)
         }
         
