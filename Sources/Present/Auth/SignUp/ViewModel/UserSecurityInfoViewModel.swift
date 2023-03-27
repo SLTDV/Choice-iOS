@@ -1,7 +1,7 @@
 import Foundation
 import Alamofire
 
-final class SignUpViewModel: BaseViewModel {
+final class UserSecurityInfoViewModel: BaseViewModel {
     func callToSignUpAPI(nickname: String, email: String, password: String){
         let url = APIConstants.signUpURL
         let body : Parameters = [
@@ -34,5 +34,9 @@ final class SignUpViewModel: BaseViewModel {
         let passwordRegEx = "^.*(?=^.{8,15}$)(?=.*\\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$"
         let passwordTest = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
         return passwordTest.evaluate(with: password)
+    }
+    
+    func buttonDidTap() {
+        coordinator.navigate(to: .userProfileInfoIsRequired)
     }
 }

@@ -1,9 +1,9 @@
 import Foundation
 
-final class SignUpCoordinator: BaseCoordinator {
+final class UserProfileInfoCoordinator: BaseCoordinator {
     override func start() {
-        let vm = SignUpViewModel(coordinator: self)
-        let vc = SignUpViewController(viewModel: vm)
+        let vm = UserProfileInfoViewModel(coordinator: self)
+        let vc = UserProfileInfoViewController(viewModel: vm)
         
         navigationController.pushViewController(vc, animated: true)
     }
@@ -18,8 +18,8 @@ final class SignUpCoordinator: BaseCoordinator {
     }
 }
 
-extension SignUpCoordinator {
+extension UserProfileInfoCoordinator {
     private func popVCIsRequired() {
-        navigationController.popViewController(animated: true)
+        navigationController.popToRootViewController(animated: true)
     }
 }
