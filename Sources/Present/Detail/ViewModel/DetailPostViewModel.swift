@@ -52,7 +52,7 @@ final class DetailPostViewModel: BaseViewModel {
         }
     }
     
-    func createComment(idx: Int, content: String) {
+    func createComment(idx: Int, content: String, completion: @escaping (Bool) -> ()) {
         let url = APIConstants.createCommentURL + "\(idx)"
         let headers: HTTPHeaders = ["Content-Type": "application/json"]
         let params = [
@@ -66,13 +66,17 @@ final class DetailPostViewModel: BaseViewModel {
                    headers: headers,
                    interceptor: JwtRequestInterceptor())
         .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
+        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
                 print("success")
-//                self?.callToCommentData(idx: idx)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                    LoadingIndicator.showLoading()
+                    completion(true)
+                }
             case .failure(let error):
                 print("post error = \(String(describing: error.localizedDescription))")
+                completion(false)
             }
         }
     }

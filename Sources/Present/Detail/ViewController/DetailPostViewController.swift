@@ -145,10 +145,18 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text else { return }
         
-        viewModel.createComment(idx: idx, content: content)
-        DispatchQueue.main.async {
-            self.commentTableView.reloadRows(at: self.commentTableView.indexPathsForVisibleRows!, with: .right)
+        viewModel.createComment(idx: idx, content: content) { arg in
+            if arg {
+                print("true")
+                DispatchQueue.main.async {
+                    self.commentTableView.reloadData()
+                    LoadingIndicator.hideLoading()
+                }
+            }
         }
+        //        DispatchQueue.main.async {
+        //            self.commentTableView.reloadRows(at: self.commentTableView.indexPathsForVisibleRows!, with: .none)
+        //        }
     }
     
     private func commentButtonDidTap() {
@@ -183,7 +191,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         votePostLayout(voting: model.voting)
         
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
-                                       secondVotingCount: Double(model.secondVotingCount))
+                                                                                 secondVotingCount: Double(model.secondVotingCount))
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
