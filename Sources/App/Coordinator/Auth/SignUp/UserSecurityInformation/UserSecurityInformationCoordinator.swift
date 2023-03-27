@@ -10,8 +10,6 @@ final class UserSecurityInformationCoordinator: BaseCoordinator {
     
     override func navigate(to step: ChoiceStep) {
         switch step {
-        case .popVCIsRequired:
-            popVCIsRequired()
         case .userProfileInformationIsRequired:
             userInformationIsRequired()
         default:
@@ -21,10 +19,6 @@ final class UserSecurityInformationCoordinator: BaseCoordinator {
 }
 
 extension UserSecurityInformationCoordinator {
-    private func popVCIsRequired() {
-        navigationController.popViewController(animated: true)
-    }
-    
     private func userInformationIsRequired() {
         let vc = UserProfileInformationCoordinator(navigationController: navigationController)
         vc.parentCoordinator = self

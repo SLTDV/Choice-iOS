@@ -20,6 +20,6 @@ final class UserProfileInformationCoordinator: BaseCoordinator {
 
 extension UserProfileInformationCoordinator {
     private func popVCIsRequired() {
-        navigationController.popViewController(animated: true)
+        navigationController.popToRootViewController(animated: true)
     }
 }
