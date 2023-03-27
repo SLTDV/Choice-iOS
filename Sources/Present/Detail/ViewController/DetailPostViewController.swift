@@ -12,7 +12,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private let disposeBag = DisposeBag()
     
     private let scrollView = UIScrollView().then {
-        $0.backgroundColor = .white
         $0.showsVerticalScrollIndicator = false
     }
     
@@ -37,7 +36,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let descriptionLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 10, weight: .regular)
+        $0.font = .systemFont(ofSize: 14, weight: .regular)
     }
     
     private let firstPostImageView = UIImageView().then {
@@ -154,9 +153,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 }
             }
         }
-        //        DispatchQueue.main.async {
-        //            self.commentTableView.reloadRows(at: self.commentTableView.indexPathsForVisibleRows!, with: .none)
-        //        }
     }
     
     private func commentButtonDidTap() {
