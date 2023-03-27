@@ -1,12 +1,9 @@
 import Foundation
 import Alamofire
 
-final class SignUpViewModel: BaseViewModel {
+final class UserSecurityInfoViewModel: BaseViewModel {
     func callToSignUpAPI(nickname: String, email: String, password: String){
         let url = APIConstants.signUpURL
-        
-        let header : HTTPHeaders = ["Content-Type" : "application/json"]
-        
         let body : Parameters = [
             "email" : email,
             "password" : password,
@@ -16,8 +13,7 @@ final class SignUpViewModel: BaseViewModel {
         AF.request(url,
                    method: .post,
                    parameters: body,
-                   encoding: JSONEncoding.default,
-                   headers: header).responseData { response in
+                   encoding: JSONEncoding.default).responseData { response in
             switch response.response?.statusCode {
             case 201:
                 self.coordinator.navigate(to: .popVCIsRequired)
@@ -38,5 +34,9 @@ final class SignUpViewModel: BaseViewModel {
         let passwordRegEx = "^.*(?=^.{8,15}$)(?=.*\\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$"
         let passwordTest = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
         return passwordTest.evaluate(with: password)
+    }
+    
+    func buttonDidTap() {
+        coordinator.navigate(to: .userProfileInfoIsRequired)
     }
 }

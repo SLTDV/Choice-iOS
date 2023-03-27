@@ -13,11 +13,9 @@ final class DetailPostViewModel: BaseViewModel {
     
     func deleteComment(commentIdx: Int) {
         let url = APIConstants.deleteCommentURL + "\(commentIdx)"
-        let headers: HTTPHeaders = ["Content-Type": "application/json"]
         AF.request(url,
                    method: .delete,
                    encoding: URLEncoding.queryString,
-                   headers: headers,
                    interceptor: JwtRequestInterceptor())
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
@@ -32,11 +30,9 @@ final class DetailPostViewModel: BaseViewModel {
     
     func callToCommentData(idx: Int) {
         let url = APIConstants.detailPostURL + "\(idx)"
-        let headers: HTTPHeaders = ["Content-Type": "application/json"]
         AF.request(url,
                    method: .get,
                    encoding: URLEncoding.queryString,
-                   headers: headers,
                    interceptor: JwtRequestInterceptor())
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
@@ -54,7 +50,6 @@ final class DetailPostViewModel: BaseViewModel {
     
     func createComment(idx: Int, content: String, completion: @escaping (Bool) -> ()) {
         let url = APIConstants.createCommentURL + "\(idx)"
-        let headers: HTTPHeaders = ["Content-Type": "application/json"]
         let params = [
             "content" : content
         ] as Dictionary
@@ -63,7 +58,6 @@ final class DetailPostViewModel: BaseViewModel {
                    method: .post,
                    parameters: params,
                    encoding: JSONEncoding.default,
-                   headers: headers,
                    interceptor: JwtRequestInterceptor())
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
