@@ -21,12 +21,9 @@ final class HomeViewModel: BaseViewModel {
         case .findBestPostData:
             url = APIConstants.findAllBestPostURL
         }
-        
-        let headers: HTTPHeaders = ["Content-Type": "application/json"]
         AF.request(url,
                    method: .get,
                    encoding: URLEncoding.queryString,
-                   headers: headers,
                    interceptor: JwtRequestInterceptor())
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
@@ -42,9 +39,6 @@ final class HomeViewModel: BaseViewModel {
     
     func callToAddVoteNumber(idx: Int, choice: Int) {
         let url = APIConstants.addVoteNumberURL + "\(idx)"
-        
-        let headers: HTTPHeaders = ["Content-Type": "application/json"]
-        
         let params = [
             "choice" : choice
         ] as Dictionary
@@ -53,7 +47,6 @@ final class HomeViewModel: BaseViewModel {
                    method: .post,
                    parameters: params,
                    encoding: JSONEncoding.default,
-                   headers: headers,
                    interceptor: JwtRequestInterceptor())
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
