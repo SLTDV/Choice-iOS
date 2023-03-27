@@ -1,6 +1,6 @@
 import UIKit
 
-final class UserProfileViewController: BaseVC<UserProfileInformationViewModel> {
+final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
@@ -78,7 +78,7 @@ final class UserProfileViewController: BaseVC<UserProfileInformationViewModel> {
     }
 }
 
-extension UserProfileViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension UserProfileInfoViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         var newImage: UIImage? = nil
         

@@ -2,7 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-final class UserSecurityViewController: BaseVC<UserSecurityInformationViewModel> {
+final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     private let disposeBag = DisposeBag()
     
     private lazy var restoreFrameYValue = 0.0
