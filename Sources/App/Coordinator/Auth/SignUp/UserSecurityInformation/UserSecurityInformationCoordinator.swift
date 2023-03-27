@@ -1,8 +1,8 @@
 import Foundation
 
-final class SignUpCoordinator: BaseCoordinator {
+final class UserSecurityInformationCoordinator: BaseCoordinator {
     override func start() {
-        let vm = SignUpViewModel(coordinator: self)
+        let vm = UserSecurityInformationViewModel(coordinator: self)
         let vc = UserSecurityViewController(viewModel: vm)
         
         navigationController.pushViewController(vc, animated: true)
@@ -12,7 +12,7 @@ final class SignUpCoordinator: BaseCoordinator {
         switch step {
         case .popVCIsRequired:
             popVCIsRequired()
-        case .userInformationIsRequired:
+        case .userProfileInformationIsRequired:
             userInformationIsRequired()
         default:
             return
@@ -20,13 +20,13 @@ final class SignUpCoordinator: BaseCoordinator {
     }
 }
 
-extension SignUpCoordinator {
+extension UserSecurityInformationCoordinator {
     private func popVCIsRequired() {
         navigationController.popViewController(animated: true)
     }
     
     private func userInformationIsRequired() {
-        let vc = UserInformationCoordinator(navigationController: navigationController)
+        let vc = UserProfileInformationCoordinator(navigationController: navigationController)
         vc.parentCoordinator = self
         childCoordinators.append(vc)
         vc.start()

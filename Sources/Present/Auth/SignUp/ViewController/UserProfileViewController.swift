@@ -1,6 +1,6 @@
 import UIKit
 
-final class UserProfileViewController: BaseVC<UserInformationViewModel> {
+final class UserProfileViewController: BaseVC<UserProfileInformationViewModel> {
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
@@ -9,7 +9,7 @@ final class UserProfileViewController: BaseVC<UserInformationViewModel> {
         $0.tintColor = .black
     }
     
-    private lazy var editProfileImageButton = UIButton().then {
+    private lazy var setProfileImageButton = UIButton().then {
         $0.setImage(UIImage(systemName: "plus.circle.fill",
                             withConfiguration: UIImage.SymbolConfiguration(pointSize: 30)), for: .normal)
         $0.tintColor = .systemBlue
@@ -44,7 +44,7 @@ final class UserProfileViewController: BaseVC<UserInformationViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(profileImageView, editProfileImageButton, userNameLabel, underLineView, completeButton)
+        view.addSubviews(profileImageView, setProfileImageButton, userNameLabel, underLineView, completeButton)
     }
     
     override func setLayout() {
@@ -54,7 +54,7 @@ final class UserProfileViewController: BaseVC<UserInformationViewModel> {
             $0.size.equalTo(140)
         }
         
-        editProfileImageButton.snp.makeConstraints {
+        setProfileImageButton.snp.makeConstraints {
             $0.trailing.equalTo(profileImageView.snp.trailing)
             $0.bottom.equalTo(profileImageView.snp.bottom)
         }

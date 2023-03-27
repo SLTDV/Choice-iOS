@@ -6,7 +6,7 @@ enum ChoiceStep {
     case mainVCIsRequried
     
     //SignUp
-    case userInformationIsRequired
+    case userProfileInformationIsRequired
     
     //Main
     case addPostIsRequired

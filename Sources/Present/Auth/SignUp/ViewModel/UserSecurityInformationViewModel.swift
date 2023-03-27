@@ -1,7 +1,7 @@
 import Foundation
 import Alamofire
 
-final class SignUpViewModel: BaseViewModel {
+final class UserSecurityInformationViewModel: BaseViewModel {
     func callToSignUpAPI(nickname: String, email: String, password: String){
         let url = APIConstants.signUpURL
         
@@ -41,6 +41,6 @@ final class SignUpViewModel: BaseViewModel {
     }
     
     func buttonDidTap() {
-        coordinator.navigate(to: .userInformationIsRequired)
+        coordinator.navigate(to: .userProfileInformationIsRequired)
     }
 }
