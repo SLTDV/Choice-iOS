@@ -2,12 +2,13 @@ import Foundation
 import Alamofire
 
 final class UserSecurityInfoViewModel: BaseViewModel {
-    func callToSignUpAPI(nickname: String, email: String, password: String){
+    func callToSignUpAPI(nickname: String, email: String, password: String, profileImgUrl: String?){
         let url = APIConstants.signUpURL
         let body : Parameters = [
             "email" : email,
             "password" : password,
-            "nickname" : nickname
+            "nickname" : nickname,
+            "profileImgUrl" : profileImgUrl ?? ""
         ]
         
         AF.request(url,
@@ -31,7 +32,7 @@ final class UserSecurityInfoViewModel: BaseViewModel {
     }
     
     func isValidPassword(password: String) -> Bool {
-        let passwordRegEx = "^.*(?=^.{8,15}$)(?=.*\\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$"
+        let passwordRegEx = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,16}$"
         let passwordTest = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
         return passwordTest.evaluate(with: password)
     }

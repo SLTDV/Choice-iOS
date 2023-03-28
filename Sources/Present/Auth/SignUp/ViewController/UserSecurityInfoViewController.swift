@@ -62,7 +62,8 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     private func signUpButtonDidTap() {
         signUpButton.rx.tap
             .bind(onNext: {
-                self.viewModel.buttonDidTap()
+                self.checkAvailabilitySignUp()
+//                self.viewModel.buttonDidTap()
             }).disposed(by: disposeBag)
     }
     
@@ -72,6 +73,24 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     
     func testPassword(password: String) -> Bool {
         return viewModel.isValidPassword(password: password)
+    }
+    
+    private func checkAvailabilitySignUp() {
+        guard let email = inputEmailTextfield.text else { return }
+        guard let password = inputPasswordTextfield.text else { return }
+        guard let checkPassword = inputCheckPasswordTextfield.text else { return }
+        
+        if password.elementsEqual(checkPassword){
+            if testEmail(email: email) && testPassword(password: password){
+                print("성공")
+            } else {
+                shakeAllTextField()
+                showWarningLabel(warning: "*이메일 또는 비밀번호 형식이 올바르지 않아요.")
+            }
+        } else {
+            shakeAllTextField()
+            showWarningLabel(warning: "*비밀번호가 일치하지 않아요.")
+        }
     }
     
     override func configureVC() {
