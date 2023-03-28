@@ -150,9 +150,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         LoadingIndicator.showLoading()
         viewModel.createComment(idx: idx, content: content) {
             DispatchQueue.main.async {
-                LoadingIndicator.hideLoading()
                 self.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
             }
+            LoadingIndicator.hideLoading()
         }
     }
     
