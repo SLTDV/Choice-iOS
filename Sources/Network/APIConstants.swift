@@ -10,6 +10,7 @@ struct APIConstants {
     
     //SignUp
     static let signUpURL = baseURL + "/auth/signup"
+    static let emailDuplicationURL = baseURL + "/auth/duplication"
     
     //Post
     static let findNewestPostURL = baseURL + "/post"
