@@ -41,7 +41,7 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     }
     
     private let warningLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 12)
+        $0.font = .systemFont(ofSize: 14)
         $0.isHidden = true
         $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
     }
@@ -63,7 +63,6 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
         signUpButton.rx.tap
             .bind(onNext: {
                 self.checkAvailabilitySignUp()
-//                self.viewModel.buttonDidTap()
             }).disposed(by: disposeBag)
     }
     
@@ -133,7 +132,7 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
         
         warningLabel.snp.makeConstraints {
             $0.leading.equalTo(signUpButton.snp.leading)
-            $0.top.equalTo(signUpButton.snp.bottom).offset(10)
+            $0.bottom.equalTo(signUpButton.snp.top).offset(-12)
         }
         
         signUpButton.snp.makeConstraints {
