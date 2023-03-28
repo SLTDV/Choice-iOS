@@ -17,28 +17,29 @@ final class CommentCell: UITableViewCell {
     }
     
     private let nicknameLabel = UILabel().then {
+        $0.sizeToFit()
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
     private let contentLabel = UILabel().then {
+        $0.numberOfLines = 0
+        $0.sizeToFit()
         $0.font = .systemFont(ofSize: 14, weight: .medium)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        contentView.layer.cornerRadius = 10
-        contentView.backgroundColor = ChoiceAsset.Colors.grayBackground.color
+
         selectionStyle = .none
         
         addView()
         setLayout()
     }
     
-    override func layoutSubviews() {
-      super.layoutSubviews()
-      contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 18, right: 0))
-    }
+//    override func layoutSubviews() {
+//      super.layoutSubviews()
+//      contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 18, right: 0))
+//    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -51,7 +52,7 @@ final class CommentCell: UITableViewCell {
     private func setLayout() {
         profileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().offset(10)
-            $0.leading.equalToSuperview().offset(10)
+            $0.leading.equalToSuperview().inset(32)
             $0.size.equalTo(25)
         }
         
@@ -62,7 +63,7 @@ final class CommentCell: UITableViewCell {
         
         contentLabel.snp.makeConstraints {
             $0.top.equalTo(profileImageView.snp.bottom).offset(15)
-            $0.leading.trailing.equalToSuperview().inset(10)
+            $0.leading.trailing.equalToSuperview().inset(32)
             $0.bottom.equalToSuperview().inset(10)
         }
     }
