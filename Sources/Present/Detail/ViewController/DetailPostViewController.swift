@@ -129,7 +129,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
                                                        cellType: CommentCell.self)) { (row, data, cell) in
             cell.changeCommentData(model: [data])
-            print("\(data), index = \(row)")
         }.disposed(by: disposeBag)
     }
     
