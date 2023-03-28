@@ -103,7 +103,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let commentTableView = UITableView().then {
-        $0.rowHeight = 300
         $0.estimatedRowHeight = UITableView.automaticDimension
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
     }
@@ -128,8 +127,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func bindTableView() {
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
                                                        cellType: CommentCell.self)) { (row, data, cell) in
-            cell.changeCommentData(model: [data])
+            cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
+        
+        commentTableView.rx.itemDeleted
+            .bind { _ in
+                
+            }.disposed(by: disposeBag)
     }
     
     private func bindUI() {
