@@ -15,13 +15,11 @@ final class CommentCell: UITableViewCell {
     }
     
     private let nicknameLabel = UILabel().then {
-        $0.sizeToFit()
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
     private let contentLabel = UILabel().then {
         $0.numberOfLines = 0
-        $0.sizeToFit()
         $0.font = .systemFont(ofSize: 14, weight: .medium)
     }
     
@@ -65,6 +63,7 @@ final class CommentCell: UITableViewCell {
         DispatchQueue.main.async {
             self.nicknameLabel.text = model.nickname
             self.contentLabel.text = model.content
+//            self.contentLabel.setNeedsLayout()
         }
     }
 }
