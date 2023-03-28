@@ -108,8 +108,8 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.addTarget(self, action: #selector(addPostViewButtonDidTap(_:)), for: .touchUpInside)
     }
     
-    @objc func tapMethod(_ sender: UITapGestureRecognizer) {
-        self.view.endEditing(true)
+    @objc private func tapMethod(_ sender: UITapGestureRecognizer) {
+        view.endEditing(true)
     }
     
     private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
@@ -130,11 +130,11 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     @objc private func addFirstImageButtonDidTap(_ sender: UIButton) {
-        self.present(firstImagePicker, animated: true)
+        present(firstImagePicker, animated: true)
     }
     
     @objc private func addSecondImageButtonDidTap(_ sender: UIButton) {
-        self.present(secondImagePicker, animated: true)
+        present(secondImagePicker, animated: true)
     }
     
     @objc private func SetTopicButtonDidTap(_ sender: UIButton) {
@@ -185,7 +185,6 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         inputDescriptionTextView.delegate = self
         firstImagePicker.delegate = self
         secondImagePicker.delegate = self
-        
         scrollView.addGestureRecognizer(tapGestureRecognizer)
         
         bindUI()
