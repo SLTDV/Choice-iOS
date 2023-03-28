@@ -9,8 +9,6 @@ final class CommentCell: UITableViewCell {
     
     weak var delegate: CommentFuncProtocol?
     
-    private var commentIdx: Int = 0
-    
     private let profileImageView = UIImageView().then {
         $0.tintColor = .black
         $0.image = UIImage(systemName: "person.crop.circle.fill")
@@ -35,11 +33,6 @@ final class CommentCell: UITableViewCell {
         addView()
         setLayout()
     }
-    
-//    override func layoutSubviews() {
-//      super.layoutSubviews()
-//      contentView.frame = contentView.frame.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 18, right: 0))
-//    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -70,7 +63,6 @@ final class CommentCell: UITableViewCell {
     
     func changeCommentData(model: CommentData) {
         DispatchQueue.main.async {
-            self.commentIdx = model.idx
             self.nicknameLabel.text = model.nickname
             self.contentLabel.text = model.content
         }

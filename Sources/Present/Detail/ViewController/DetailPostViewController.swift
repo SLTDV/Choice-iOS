@@ -104,7 +104,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let commentTableView = UITableView().then {
         $0.rowHeight = UITableView.automaticDimension
-        $0.estimatedRowHeight = 300
+        $0.estimatedRowHeight = 50
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
     }
     
@@ -130,11 +130,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                                                        cellType: CommentCell.self)) { (row, data, cell) in
             cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
-        
-        commentTableView.rx.itemDeleted
-            .bind { _ in
-                
-            }.disposed(by: disposeBag)
     }
     
     private func bindUI() {
@@ -191,8 +186,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     func setVoteButtonLayout(with model: PostModel) {
         votePostLayout(voting: model.voting)
         
-        let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
-                                                                                 secondVotingCount: Double(model.secondVotingCount))
+        let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
+            firstVotingCount: Double(model.firstVotingCount),
+            secondVotingCount: Double(model.secondVotingCount))
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
@@ -294,7 +290,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
         
         userNameLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaInsets).inset(28)
+            $0.centerY.equalTo(userImageView)
             $0.leading.equalTo(userImageView.snp.trailing).offset(9)
         }
         
