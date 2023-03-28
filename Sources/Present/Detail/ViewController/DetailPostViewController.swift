@@ -103,7 +103,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let commentTableView = UITableView().then {
-        $0.rowHeight = 160
+        $0.rowHeight = 300
+        $0.estimatedRowHeight = UITableView.automaticDimension
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
     }
     
@@ -128,6 +129,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
                                                        cellType: CommentCell.self)) { (row, data, cell) in
             cell.changeCommentData(model: [data])
+            print("\(data), index = \(row)")
         }.disposed(by: disposeBag)
     }
     
@@ -145,13 +147,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text else { return }
         
-        viewModel.createComment(idx: idx, content: content) { arg in
-            if arg {
-                print("true")
-                DispatchQueue.main.async {
-                    self.commentTableView.reloadData()
-                    LoadingIndicator.hideLoading()
-                }
+        LoadingIndicator.showLoading()
+        viewModel.createComment(idx: idx, content: content) {
+            DispatchQueue.main.async {
+                LoadingIndicator.hideLoading()
+                self.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
             }
         }
     }
@@ -375,7 +375,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         commentTableView.snp.makeConstraints {
             $0.top.equalTo(enterCommentButton.snp.bottom).offset(30)
             $0.leading.trailing.equalToSuperview().inset(30)
-            $0.bottom.equalToSuperview().inset(3)
+            $0.bottom.equalToSuperview()
             $0.height.equalTo(1)
         }
     }

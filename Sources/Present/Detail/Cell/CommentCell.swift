@@ -42,8 +42,8 @@ final class CommentCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
         contentView.layer.cornerRadius = 10
-        contentView.backgroundColor = .init(red: 0.929, green: 0.929, blue: 0.929, alpha: 1)
-        self.selectionStyle = .none
+        contentView.backgroundColor = ChoiceAsset.Colors.grayBackground.color
+        selectionStyle = .none
         
         addView()
         setLayout()
