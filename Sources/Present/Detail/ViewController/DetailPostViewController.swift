@@ -12,7 +12,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private let disposeBag = DisposeBag()
     
     private let scrollView = UIScrollView().then {
-        $0.backgroundColor = .white
         $0.showsVerticalScrollIndicator = false
     }
     
@@ -37,7 +36,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let descriptionLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 10, weight: .regular)
+        $0.font = .systemFont(ofSize: 14, weight: .regular)
     }
     
     private let firstPostImageView = UIImageView().then {
@@ -86,6 +85,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let enterCommentTextView = UITextView().then {
+        $0.resignFirstResponder()
         $0.text = "댓글을 입력해주세요"
         $0.font = .systemFont(ofSize: 14)
         $0.textColor = .lightGray
@@ -103,7 +103,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let commentTableView = UITableView().then {
-        $0.rowHeight = 160
+        $0.rowHeight = 300
+        $0.estimatedRowHeight = UITableView.automaticDimension
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
     }
     
@@ -145,7 +146,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text else { return }
         
-        self.viewModel.createComment(idx: idx, content: content)
+        LoadingIndicator.showLoading()
+        viewModel.createComment(idx: idx, content: content) {
+            DispatchQueue.main.async {
+                self.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+            }
+            LoadingIndicator.hideLoading()
+        }
     }
     
     private func commentButtonDidTap() {
@@ -180,7 +187,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         votePostLayout(voting: model.voting)
         
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
-                                       secondVotingCount: Double(model.secondVotingCount))
+                                                                                 secondVotingCount: Double(model.secondVotingCount))
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
@@ -367,7 +374,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         commentTableView.snp.makeConstraints {
             $0.top.equalTo(enterCommentButton.snp.bottom).offset(30)
             $0.leading.trailing.equalToSuperview().inset(30)
-            $0.bottom.equalToSuperview().inset(3)
+            $0.bottom.equalToSuperview()
             $0.height.equalTo(1)
         }
     }
