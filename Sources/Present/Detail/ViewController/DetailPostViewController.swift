@@ -85,7 +85,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let enterCommentTextView = UITextView().then {
-        $0.resignFirstResponder()
         $0.text = "댓글을 입력해주세요"
         $0.font = .systemFont(ofSize: 14)
         $0.textColor = .lightGray

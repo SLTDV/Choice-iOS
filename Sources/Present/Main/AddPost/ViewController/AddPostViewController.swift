@@ -108,6 +108,12 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.addTarget(self, action: #selector(addPostViewButtonDidTap(_:)), for: .touchUpInside)
     }
     
+    @objc func tapMethod(_ sender: UITapGestureRecognizer) {
+        self.view.endEditing(true)
+    }
+    
+    private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
+    
     private func bindUI() {
         let titleTextObservable = inputTitleTextField.rx.text.filter { $0!.count < 20 }
         let descriptionTextObservable = inputDescriptionTextView.rx.text.filter { $0!.count < 100 }
@@ -179,6 +185,8 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         inputDescriptionTextView.delegate = self
         firstImagePicker.delegate = self
         secondImagePicker.delegate = self
+        
+        scrollView.addGestureRecognizer(tapGestureRecognizer)
         
         bindUI()
     }
