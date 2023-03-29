@@ -40,8 +40,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     
     private let postTableView = UITableView().then {
         $0.rowHeight = 372
-        $0.backgroundColor = .white
-        $0.separatorStyle = .none
         $0.showsVerticalScrollIndicator = false
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }

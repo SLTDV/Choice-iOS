@@ -25,7 +25,7 @@ struct APIConstants {
     static let addVoteNumberURL = baseURL + "/post/vote/"
     
     //Comment
-    static let createCommentURL = baseURL + "/comment"
+    static let createCommentURL = baseURL + "/comment/"
     static let editCommentURL = baseURL + "/comment"
     static let deleteCommentURL = baseURL + "/comment"
     
@@ -35,5 +35,6 @@ struct APIConstants {
     static let membershipWithdrawalURL = baseURL + "/user"
     static let changeProfileImageURL = baseURL + "/user/image"
     static let profileImageUploadURL = baseURL + "/image/profile"
+    
     private init() {}
 }

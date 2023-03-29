@@ -96,10 +96,7 @@ final class PostCell: UITableViewCell{
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        contentView.layer.cornerRadius = 25
-        contentView.backgroundColor = ChoiceAsset.Colors.grayBackground.color
-        
+
         addView()
         setLayout()
         
