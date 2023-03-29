@@ -104,9 +104,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let commentTableView = UITableView().then {
         $0.rowHeight = UITableView.automaticDimension
-        $0.estimatedRowHeight = 50
+        $0.estimatedRowHeight = 80
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
     }
+    
+    private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
     
     init(viewModel: DetailPostViewModel, model: PostModel) {
         super.init(viewModel: viewModel)
@@ -123,7 +125,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.endEditing(true)
     }
     
-    private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
     
     private func bindTableView() {
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
@@ -157,9 +158,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func commentButtonDidTap() {
         enterCommentButton.rx.tap
-            .bind(onNext: {
-                self.enterComment()
-                self.callToCommentData()
+            .bind(with: self, onNext: { owner, _ in
+                owner.enterComment()
+                owner.callToCommentData()
             }).disposed(by: disposeBag)
     }
     

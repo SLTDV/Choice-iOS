@@ -1,4 +1,6 @@
 import UIKit
+import SnapKit
+import Then
 
 protocol CommentFuncProtocol: AnyObject {
     func deleteComment(commentIdx: Int)
@@ -42,7 +44,7 @@ final class CommentCell: UITableViewCell {
     
     private func setLayout() {
         profileImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(10)
+            $0.top.equalToSuperview().inset(10)
             $0.leading.equalToSuperview().inset(32)
             $0.size.equalTo(25)
         }
@@ -63,7 +65,7 @@ final class CommentCell: UITableViewCell {
         DispatchQueue.main.async {
             self.nicknameLabel.text = model.nickname
             self.contentLabel.text = model.content
-//            self.contentLabel.setNeedsLayout()
+            self.setLayout()
         }
     }
 }
