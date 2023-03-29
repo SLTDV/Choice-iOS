@@ -13,7 +13,8 @@ let project = Project(
         .RxSwift,
         .RxCocoa,
         .Alamofire,
-        .FlexLayout
+        .FlexLayout,
+        .PinLayout
     ],
     targets: [
         Target(
@@ -32,7 +33,8 @@ let project = Project(
                 .SPM.RxSwift,
                 .SPM.RxCocoa,
                 .SPM.Alamofire,
-                .SPM.FlexLayout
+                .SPM.FlexLayout,
+                .SPM.PinLayout
             ]
         )
     ]

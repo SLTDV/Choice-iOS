@@ -1,7 +1,7 @@
 import UIKit
-import SnapKit
 import Then
 import FlexLayout
+import PinLayout
 
 protocol CommentFuncProtocol: AnyObject {
     func deleteComment(commentIdx: Int)
@@ -24,10 +24,10 @@ final class CommentCell: UITableViewCell {
     }
     
     private let contentLabel = UILabel().then {
+        $0.text = "asdfafasfd\nasdfasdfasfasfasdf\nasdfasdfasdf"
         $0.numberOfLines = 0
         $0.font = .systemFont(ofSize: 14, weight: .medium)
     }
-
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -36,6 +36,8 @@ final class CommentCell: UITableViewCell {
         
         addView()
         setLayout()
+//        rootContainer.pin.all()
+        layout()
     }
     
     required init?(coder: NSCoder) {
@@ -43,10 +45,17 @@ final class CommentCell: UITableViewCell {
     }
     
     private func addView() {
+        contentView.addSubview(rootContainer)
     }
     
     private func setLayout() {
-            
+        rootContainer.flex.direction(.column).define { flex in
+            flex.addItem().direction(.row).padding(10, 32, 15).define { flex in
+                flex.addItem(profileImageView).size(25).marginRight(6)
+                flex.addItem(nicknameLabel).minWidth(37).layout(mode: .adjustHeight)
+            }
+            flex.addItem(contentLabel).margin(0, 32, 10)
+        }
     }
     
 //    private func addView() {
@@ -71,6 +80,16 @@ final class CommentCell: UITableViewCell {
 //            $0.bottom.equalToSuperview().inset(10)
 //        }
 //    }
+    private func layout() {
+        contentView.flex.layout(mode: .adjustHeight)
+        rootContainer.flex.layout(mode: .adjustHeight)
+    }
+    
+    override func sizeThatFits(_ size: CGSize) -> CGSize {
+        rootContainer.pin.size(size)
+        layout()
+        return contentView.frame.size
+    }
 }
 
 extension CommentCell {
@@ -78,6 +97,7 @@ extension CommentCell {
         DispatchQueue.main.async {
             self.nicknameLabel.text = model.nickname
             self.contentLabel.text = model.content
+            self.contentLabel.flex.layout(mode: .adjustHeight)
         }
     }
 }
