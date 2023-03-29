@@ -1,9 +1,9 @@
 import Foundation
 
 final class UserProfileInfoCoordinator: BaseCoordinator {
-    override func start() {
+    func startUserProfileInfoVC(model: SignUpModel) {
         let vm = UserProfileInfoViewModel(coordinator: self)
-        let vc = UserProfileInfoViewController(viewModel: vm)
+        let vc = UserProfileInfoViewController(viewModel: vm, model: model)
         
         navigationController.pushViewController(vc, animated: true)
     }

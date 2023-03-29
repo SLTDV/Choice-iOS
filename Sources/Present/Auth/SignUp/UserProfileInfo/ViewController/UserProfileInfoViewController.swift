@@ -1,6 +1,8 @@
 import UIKit
 
 final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
+    var model: SignUpModel?
+    
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
@@ -41,6 +43,15 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     
     override func configureVC() {
         imagePickerController.delegate = self
+    }
+    
+    init(viewModel: UserProfileInfoViewModel, model: SignUpModel) {
+        super.init(viewModel: viewModel)
+        self.model = model
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func addView() {
