@@ -24,6 +24,7 @@ final class CommentCell: UITableViewCell {
         $0.numberOfLines = 0
         $0.font = .systemFont(ofSize: 14, weight: .medium)
     }
+
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -60,12 +61,13 @@ final class CommentCell: UITableViewCell {
             $0.bottom.equalToSuperview().inset(10)
         }
     }
-    
+}
+
+extension CommentCell {
     func changeCommentData(model: CommentData) {
         DispatchQueue.main.async {
             self.nicknameLabel.text = model.nickname
             self.contentLabel.text = model.content
-            self.setLayout()
         }
     }
 }
