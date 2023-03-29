@@ -2,6 +2,9 @@ import Foundation
 import Alamofire
 
 final class UserSecurityInfoViewModel: BaseViewModel {
+    var email = ""
+    var password = ""
+    
     func checkDuplicateEmail(email: String, completion: @escaping (Bool) -> Void){
         let url = APIConstants.emailDuplicationURL
         let body : Parameters = [
@@ -36,7 +39,7 @@ final class UserSecurityInfoViewModel: BaseViewModel {
         return passwordTest.evaluate(with: password)
     }
     
-//    func buttonDidTap() {
-//        coordinator.navigate(to: .userProfileInfoIsRequired)
-//    }
+    func buttonDidTap() {
+        coordinator.navigate(to: .userProfileInfoIsRequired(email: email, password: password))
+    }
 }

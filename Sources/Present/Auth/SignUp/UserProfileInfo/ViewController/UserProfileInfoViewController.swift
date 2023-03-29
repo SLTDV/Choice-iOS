@@ -1,7 +1,8 @@
 import UIKit
 
 final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
-    var model: SignUpModel?
+    var email: String?
+    var password: String?
     
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
@@ -22,7 +23,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     
     private let imagePickerController = UIImagePickerController()
     
-    private let userNameLabel = UITextField().then {
+    private let userNameTextField = UITextField().then {
         $0.placeholder = "닉네임"
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
@@ -31,23 +32,38 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         $0.backgroundColor = .black
     }
     
-    private let completeButton = UIButton().then {
+    private lazy var completeButton = UIButton().then {
         $0.setTitle("완료", for: .normal)
         $0.backgroundColor = .black
         $0.layer.cornerRadius = 8
+        $0.addTarget(self, action: #selector(signUpButtonDidTap(_ :)), for: .touchUpInside)
     }
     
     @objc private func addImageButtonDidTap(_ sender: UIButton) {
         self.present(imagePickerController, animated: true)
     }
     
+    @objc private func signUpButtonDidTap(_ sender: UIButton) {
+        guard let email = email else { return  }
+        guard let password = password else { return  }
+        guard let nickName = userNameTextField.text else { return }
+        guard let profileImage = profileImageView.image else { return }
+        
+        viewModel.callToSignUp(email: email, password: password, nickname: nickName, profileImage: profileImage)
+        
+        print(email)
+        print(password)
+        print(nickName)
+    }
+    
     override func configureVC() {
         imagePickerController.delegate = self
     }
     
-    init(viewModel: UserProfileInfoViewModel, model: SignUpModel) {
+    init(viewModel: UserProfileInfoViewModel, email: String, password: String) {
         super.init(viewModel: viewModel)
-        self.model = model
+        self.email = email
+        self.password = password
     }
     
     required init?(coder: NSCoder) {
@@ -55,7 +71,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(profileImageView, setProfileImageButton, userNameLabel, underLineView, completeButton)
+        view.addSubviews(profileImageView, setProfileImageButton, userNameTextField, underLineView, completeButton)
     }
     
     override func setLayout() {
@@ -70,13 +86,13 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
             $0.bottom.equalTo(profileImageView.snp.bottom)
         }
         
-        userNameLabel.snp.makeConstraints {
+        userNameTextField.snp.makeConstraints {
             $0.top.equalTo(profileImageView.snp.bottom).offset(80)
             $0.centerX.equalToSuperview()
         }
         
         underLineView.snp.makeConstraints {
-            $0.top.equalTo(userNameLabel.snp.bottom).offset(10)
+            $0.top.equalTo(userNameTextField.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(100)
             $0.height.equalTo(1)
         }

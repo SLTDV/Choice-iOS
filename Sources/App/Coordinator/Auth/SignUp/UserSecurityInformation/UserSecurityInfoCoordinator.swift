@@ -10,8 +10,8 @@ final class UserSecurityInfoCoordinator: BaseCoordinator {
     
     override func navigate(to step: ChoiceStep) {
         switch step {
-        case .userProfileInfoIsRequired(let model):
-            userProfileInfoIsRequired(model: model)
+        case .userProfileInfoIsRequired(let email, let password):
+            userProfileInfoIsRequired(email: email, password: password)
         default:
             return
         }
@@ -19,10 +19,10 @@ final class UserSecurityInfoCoordinator: BaseCoordinator {
 }
 
 extension UserSecurityInfoCoordinator {
-    private func userProfileInfoIsRequired(model: SignUpModel) {
+    private func userProfileInfoIsRequired(email: String, password: String) {
         let vc = UserProfileInfoCoordinator(navigationController: navigationController)
         vc.parentCoordinator = self
         childCoordinators.append(vc)
-        vc.startUserProfileInfoVC(model: model)
+        vc.startUserProfileInfoVC(email: email, password: password)
     }
 }

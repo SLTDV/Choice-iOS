@@ -79,10 +79,14 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
         guard let password = inputPasswordTextfield.text else { return }
         guard let checkPassword = inputCheckPasswordTextfield.text else { return }
         
+        viewModel.email = email
+        viewModel.password = password
+        
         viewModel.checkDuplicateEmail(email: email) { isDuplicate in
             if isDuplicate {
                 if password.elementsEqual(checkPassword){
                     if self.testEmail(email: email) && self.testPassword(password: password){
+                        self.viewModel.buttonDidTap()
                     } else {
                         self.shakeAllTextField()
                         self.showWarningLabel(warning: "*이메일 또는 비밀번호 형식이 올바르지 않아요.")
