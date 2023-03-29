@@ -102,9 +102,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let commentTableView = UITableView().then {
+        $0.estimatedSectionHeaderHeight = 0
+        $0.estimatedSectionFooterHeight = 0
         $0.separatorStyle = .none
         $0.rowHeight = UITableView.automaticDimension
-        $0.estimatedRowHeight = 80
+        $0.estimatedRowHeight = 180
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
     }
     
@@ -124,7 +126,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     @objc func tapMethod(_ sender: UITapGestureRecognizer) {
         self.view.endEditing(true)
     }
-    
     
     private func bindTableView() {
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,

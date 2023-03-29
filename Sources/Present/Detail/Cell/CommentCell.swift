@@ -1,6 +1,7 @@
 import UIKit
 import SnapKit
 import Then
+import FlexLayout
 
 protocol CommentFuncProtocol: AnyObject {
     func deleteComment(commentIdx: Int)
@@ -10,6 +11,8 @@ final class CommentCell: UITableViewCell {
     static let identifier = "CommentCellIdentifier"
     
     weak var delegate: CommentFuncProtocol?
+    
+    private let rootContainer = UIView()
     
     private let profileImageView = UIImageView().then {
         $0.tintColor = .black
@@ -40,27 +43,34 @@ final class CommentCell: UITableViewCell {
     }
     
     private func addView() {
-        contentView.addSubviews(profileImageView, nicknameLabel, contentLabel)
     }
     
     private func setLayout() {
-        profileImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(10)
-            $0.leading.equalToSuperview().inset(32)
-            $0.size.equalTo(25)
-        }
-        
-        nicknameLabel.snp.makeConstraints {
-            $0.centerY.equalTo(profileImageView)
-            $0.leading.equalTo(profileImageView.snp.trailing).offset(8)
-        }
-        
-        contentLabel.snp.makeConstraints {
-            $0.top.equalTo(profileImageView.snp.bottom).offset(15)
-            $0.leading.trailing.equalToSuperview().inset(32)
-            $0.bottom.equalToSuperview().inset(10)
-        }
+            
     }
+    
+//    private func addView() {
+//        contentView.addSubviews(profileImageView, nicknameLabel, contentLabel)
+//    }
+//
+//    private func setLayout() {
+//        profileImageView.snp.makeConstraints {
+//            $0.top.equalToSuperview().inset(10)
+//            $0.leading.equalToSuperview().inset(32)
+//            $0.size.equalTo(25)
+//        }
+//
+//        nicknameLabel.snp.makeConstraints {
+//            $0.centerY.equalTo(profileImageView)
+//            $0.leading.equalTo(profileImageView.snp.trailing).offset(8)
+//        }
+//
+//        contentLabel.snp.makeConstraints {
+//            $0.top.equalTo(profileImageView.snp.bottom).offset(15)
+//            $0.leading.trailing.equalToSuperview().inset(32)
+//            $0.bottom.equalToSuperview().inset(10)
+//        }
+//    }
 }
 
 extension CommentCell {

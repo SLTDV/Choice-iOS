@@ -10,6 +10,15 @@
       }
     },
     {
+      "identity" : "flexlayout",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/layoutBox/FlexLayout",
+      "state" : {
+        "revision" : "761adb2e662ad9d4780cc44ee8f185564ce8e009",
+        "version" : "1.3.30"
+      }
+    },
+    {
       "identity" : "kingfisher",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/onevcat/Kingfisher",
