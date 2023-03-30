@@ -2,12 +2,13 @@ import Foundation
 import Alamofire
 
 final class UserSecurityInfoViewModel: BaseViewModel {
-    func callToSignUpAPI(nickname: String, email: String, password: String){
-        let url = APIConstants.signUpURL
+    var email = ""
+    var password = ""
+    
+    func checkDuplicateEmail(email: String, completion: @escaping (Bool) -> Void){
+        let url = APIConstants.emailDuplicationURL
         let body : Parameters = [
-            "email" : email,
-            "password" : password,
-            "nickname" : nickname
+            "email": email
         ]
         
         AF.request(url,
@@ -15,11 +16,13 @@ final class UserSecurityInfoViewModel: BaseViewModel {
                    parameters: body,
                    encoding: JSONEncoding.default).responseData { response in
             switch response.response?.statusCode {
-            case 201:
-                self.coordinator.navigate(to: .popVCIsRequired)
+            case 200:
+                completion(true)
+            case 409:
+                completion(false)
             default:
                 print(response.response?.statusCode ?? 0)
-                return 
+                completion(false)
             }
         }
     }
@@ -31,12 +34,12 @@ final class UserSecurityInfoViewModel: BaseViewModel {
     }
     
     func isValidPassword(password: String) -> Bool {
-        let passwordRegEx = "^.*(?=^.{8,15}$)(?=.*\\d)(?=.*[a-zA-Z])(?=.*[!@#$%^&+=]).*$"
+        let passwordRegEx = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,16}$"
         let passwordTest = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
         return passwordTest.evaluate(with: password)
     }
     
-    func buttonDidTap() {
-        coordinator.navigate(to: .userProfileInfoIsRequired)
+    func pushUserProfileInfoVC() {
+        coordinator.navigate(to: .userProfileInfoIsRequired(email: email, password: password))
     }
 }
