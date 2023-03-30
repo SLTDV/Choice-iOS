@@ -75,9 +75,9 @@ final class CommentCell: UITableViewCell {
 
 extension CommentCell {
     func changeCommentData(model: CommentData) {
-        self.nicknameLabel.text = model.nickname
-        self.contentLabel.text = model.content
-        self.contentLabel.flex.markDirty()
-        self.rootContainer.flex.layout()
+        nicknameLabel.text = model.nickname
+        contentLabel.text = model.content
+        contentLabel.flex.markDirty()
+        rootContainer.flex.layout()
     }
 }
