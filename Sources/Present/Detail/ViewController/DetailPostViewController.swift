@@ -102,8 +102,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let commentTableView = UITableView().then {
-        $0.estimatedSectionHeaderHeight = 0
-        $0.estimatedSectionFooterHeight = 0
         $0.rowHeight = UITableView.automaticDimension
         $0.estimatedRowHeight = 70
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
