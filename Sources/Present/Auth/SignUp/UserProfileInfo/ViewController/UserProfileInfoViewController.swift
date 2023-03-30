@@ -17,7 +17,9 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     }
     
     private lazy var setProfileImageButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "plus.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 30)), for: .normal)
+        $0.setImage(UIImage(systemName: "plus.circle.fill",
+                            withConfiguration: UIImage.SymbolConfiguration(pointSize: 30)),
+                            for: .normal)
         $0.tintColor = .systemBlue
         $0.backgroundColor = .white
         $0.layer.cornerRadius = 15
