@@ -49,11 +49,13 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         guard let nickName = userNameTextField.text else { return }
         guard let profileImage = profileImageView.image else { return }
         
-        viewModel.callToSignUp(email: email, password: password, nickname: nickName, profileImage: profileImage)
+        let trimmedNickName = nickName.trimmingCharacters(in: .whitespaces)
+        
+        viewModel.callToSignUp(email: email, password: password, nickname: trimmedNickName, profileImage: profileImage)
         
         print(email)
         print(password)
-        print(nickName)
+        print(trimmedNickName)
     }
     
     override func configureVC() {
