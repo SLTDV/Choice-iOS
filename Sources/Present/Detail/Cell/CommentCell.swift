@@ -24,7 +24,6 @@ final class CommentCell: UITableViewCell {
     }
     
     private let contentLabel = UILabel().then {
-        //        $0.text = "asdfafasfd\nasdfasdfasfasfasdf\nasdfasdfasdf"
         $0.numberOfLines = 0
         $0.font = .systemFont(ofSize: 14, weight: .medium)
     }
@@ -59,7 +58,6 @@ final class CommentCell: UITableViewCell {
     
     private func layout() {
         rootContainer.flex.layout(mode: .adjustHeight)
-        contentView.flex.layout(mode: .adjustHeight)
     }
     
     override func layoutSubviews() {
