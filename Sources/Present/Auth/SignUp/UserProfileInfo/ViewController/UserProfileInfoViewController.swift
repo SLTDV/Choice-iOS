@@ -17,8 +17,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     }
     
     private lazy var setProfileImageButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "plus.circle.fill",
-                            withConfiguration: UIImage.SymbolConfiguration(pointSize: 30)), for: .normal)
+        $0.setImage(UIImage(systemName: "plus.circle.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 30)), for: .normal)
         $0.tintColor = .systemBlue
         $0.backgroundColor = .white
         $0.layer.cornerRadius = 15
@@ -41,7 +40,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     private lazy var completeButton = UIButton().then {
         $0.setTitle("완료", for: .normal)
         $0.isEnabled = false
-        $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
+        $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(signUpButtonDidTap(_ :)), for: .touchUpInside)
     }
@@ -51,8 +50,8 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     }
     
     private func checkNicknameValid(_ nickname: String) -> Bool {
-        let trimmedNickname = nickname.trimmingCharacters(in: .whitespaces)
-        return trimmedNickname.count < 2 || trimmedNickname.count > 6
+        let trimmedNicknameCount = nickname.trimmingCharacters(in: .whitespaces).count
+        return trimmedNicknameCount < 2 || trimmedNicknameCount > 6
     }
     
     private func bindUI() {
@@ -64,7 +63,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
                     self.warningLabel.text = "*2자 이상 6자 이하로 입력 해주세요."
                     
                     self.completeButton.isEnabled = false
-                    self.completeButton.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
+                    self.completeButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
                 } else {
                     self.warningLabel.text = ""
                     
@@ -121,7 +120,8 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(profileImageView, setProfileImageButton, userNameTextField, warningLabel, completeButton)
+        view.addSubviews(profileImageView, setProfileImageButton,
+                         userNameTextField, warningLabel, completeButton)
     }
     
     override func setLayout() {
