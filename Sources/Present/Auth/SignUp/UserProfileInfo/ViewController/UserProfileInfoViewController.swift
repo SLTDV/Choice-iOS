@@ -32,6 +32,12 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         $0.backgroundColor = .black
     }
     
+    private let warningLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 14)
+        $0.isHidden = true
+        $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
+    }
+    
     private lazy var completeButton = UIButton().then {
         $0.setTitle("완료", for: .normal)
         $0.backgroundColor = .black
@@ -51,11 +57,20 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         
         let trimmedNickName = nickName.trimmingCharacters(in: .whitespaces)
         
-        viewModel.callToSignUp(email: email, password: password, nickname: trimmedNickName, profileImage: profileImage)
-        
-        print(email)
-        print(password)
-        print(trimmedNickName)
+        viewModel.callToSignUp(email: email, password: password, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
+            if isDuplicate {
+                self.viewModel.navigateRootVC()
+            } else {
+                self.showWarningLabel(warning: "*이미 존재하는 닉네임 입니다.")
+            }
+        }
+    }
+    
+    private func showWarningLabel(warning: String) {
+        DispatchQueue.main.async {
+            self.warningLabel.isHidden = false
+            self.warningLabel.text = warning
+        }
     }
     
     override func configureVC() {
@@ -73,7 +88,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(profileImageView, setProfileImageButton, userNameTextField, underLineView, completeButton)
+        view.addSubviews(profileImageView, setProfileImageButton, userNameTextField, underLineView, warningLabel, completeButton)
     }
     
     override func setLayout() {
@@ -97,6 +112,11 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
             $0.top.equalTo(userNameTextField.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(100)
             $0.height.equalTo(1)
+        }
+        
+        warningLabel.snp.makeConstraints {
+            $0.leading.equalTo(completeButton.snp.leading)
+            $0.bottom.equalTo(completeButton.snp.top).offset(-12)
         }
         
         completeButton.snp.makeConstraints {

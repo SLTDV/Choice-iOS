@@ -2,7 +2,7 @@ import UIKit
 import Alamofire
 
 final class UserProfileInfoViewModel: BaseViewModel {
-    func callToSignUp(email: String, password: String, nickname: String, profileImage: UIImage) {
+    func callToSignUp(email: String, password: String, nickname: String, profileImage: UIImage, completion: @escaping (Bool) -> Void) {
         var url = APIConstants.profileImageUploadURL
         var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
         
@@ -33,15 +33,18 @@ final class UserProfileInfoViewModel: BaseViewModel {
                            encoding: JSONEncoding.default).responseData { response in
                     switch response.response?.statusCode {
                     case 201:
-                        self.coordinator.navigate(to: .popVCIsRequired)
+                        completion(true)
                     default:
-                        print(response.response?.statusCode ?? 0)
-                        return
+                        completion(false)
                     }
                 }
             case .failure(let error):
                 print("upload error \(String(describing: error.localizedDescription))")
             }
         }
+    }
+    
+    func navigateRootVC() {
+        self.coordinator.navigate(to: .popVCIsRequired)
     }
 }
