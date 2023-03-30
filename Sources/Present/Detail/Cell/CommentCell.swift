@@ -31,9 +31,6 @@ final class CommentCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        selectionStyle = .none
-        separatorInset = .zero
-        
         addView()
         setLayout()
     }
