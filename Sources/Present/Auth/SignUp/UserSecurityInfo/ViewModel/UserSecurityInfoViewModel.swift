@@ -39,7 +39,7 @@ final class UserSecurityInfoViewModel: BaseViewModel {
         return passwordTest.evaluate(with: password)
     }
     
-    func buttonDidTap() {
+    func pushUserProfileInfoVC() {
         coordinator.navigate(to: .userProfileInfoIsRequired(email: email, password: password))
     }
 }

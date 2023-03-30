@@ -86,7 +86,7 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
             if isDuplicate {
                 if password.elementsEqual(checkPassword){
                     if self.testEmail(email: email) && self.testPassword(password: password){
-                        self.viewModel.buttonDidTap()
+                        self.viewModel.pushUserProfileInfoVC()
                     } else {
                         self.shakeAllTextField()
                         self.showWarningLabel(warning: "*이메일 또는 비밀번호 형식이 올바르지 않아요.")
