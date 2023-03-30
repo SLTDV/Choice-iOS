@@ -25,7 +25,6 @@ final class UserProfileInfoViewModel: BaseViewModel {
                     "nickname" : nickname,
                     "profileImgUrl" : profileImageUrl
                 ]
-                print("profileImage = \(profileImageUrl)")
                 
                 AF.request(url,
                            method: .post,
