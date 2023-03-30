@@ -59,18 +59,18 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     private func bindUI() {
         userNameTextField.rx.text.orEmpty
             .map(checkNicknameValid(_:))
-            .subscribe(onNext: { a in
-                if a {
-                    self.warningLabel.textColor = .red
-                    self.warningLabel.text = "*2자 이상 6자 이하로 입력 해주세요."
+            .bind(with: self, onNext: { owner, isValid  in
+                if isValid {
+                    owner.warningLabel.textColor = .red
+                    owner.warningLabel.text = "*2자 이상 6자 이하로 입력 해주세요."
                     
-                    self.completeButton.isEnabled = false
-                    self.completeButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+                    owner.completeButton.isEnabled = false
+                    owner.completeButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
                 } else {
-                    self.warningLabel.text = ""
+                    owner.warningLabel.text = ""
                     
-                    self.completeButton.isEnabled = true
-                    self.completeButton.backgroundColor = .black
+                    owner.completeButton.isEnabled = true
+                    owner.completeButton.backgroundColor = .black
                 }
             })
             .disposed(by: disposeBag)
