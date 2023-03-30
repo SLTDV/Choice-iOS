@@ -24,20 +24,19 @@ final class CommentCell: UITableViewCell {
     }
     
     private let contentLabel = UILabel().then {
-        $0.text = "asdfafasfd\nasdfasdfasfasfasdf\nasdfasdfasdf"
+        //        $0.text = "asdfafasfd\nasdfasdfasfasfasdf\nasdfasdfasdf"
         $0.numberOfLines = 0
         $0.font = .systemFont(ofSize: 14, weight: .medium)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-
+        
         selectionStyle = .none
+        separatorInset = .zero
         
         addView()
         setLayout()
-//        rootContainer.pin.all()
-        layout()
     }
     
     required init?(coder: NSCoder) {
@@ -49,55 +48,38 @@ final class CommentCell: UITableViewCell {
     }
     
     private func setLayout() {
-        rootContainer.flex.direction(.column).define { flex in
-            flex.addItem().direction(.row).padding(10, 32, 15).define { flex in
+        rootContainer.flex.define { flex in
+            flex.addItem().direction(.row).padding(10, 32, 0).define { flex in
                 flex.addItem(profileImageView).size(25).marginRight(6)
-                flex.addItem(nicknameLabel).minWidth(37).layout(mode: .adjustHeight)
+                flex.addItem(nicknameLabel).grow(1)
             }
-            flex.addItem(contentLabel).margin(0, 32, 10)
+            flex.addItem(contentLabel).margin(10, 32, 10)
         }
     }
     
-//    private func addView() {
-//        contentView.addSubviews(profileImageView, nicknameLabel, contentLabel)
-//    }
-//
-//    private func setLayout() {
-//        profileImageView.snp.makeConstraints {
-//            $0.top.equalToSuperview().inset(10)
-//            $0.leading.equalToSuperview().inset(32)
-//            $0.size.equalTo(25)
-//        }
-//
-//        nicknameLabel.snp.makeConstraints {
-//            $0.centerY.equalTo(profileImageView)
-//            $0.leading.equalTo(profileImageView.snp.trailing).offset(8)
-//        }
-//
-//        contentLabel.snp.makeConstraints {
-//            $0.top.equalTo(profileImageView.snp.bottom).offset(15)
-//            $0.leading.trailing.equalToSuperview().inset(32)
-//            $0.bottom.equalToSuperview().inset(10)
-//        }
-//    }
     private func layout() {
-        contentView.flex.layout(mode: .adjustHeight)
         rootContainer.flex.layout(mode: .adjustHeight)
+        contentView.flex.layout(mode: .adjustHeight)
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        rootContainer.pin.all()
+        layout()
     }
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
-        rootContainer.pin.size(size)
+        rootContainer.pin.width(size.width)
         layout()
-        return contentView.frame.size
+        return rootContainer.frame.size
     }
 }
 
 extension CommentCell {
     func changeCommentData(model: CommentData) {
-        DispatchQueue.main.async {
-            self.nicknameLabel.text = model.nickname
-            self.contentLabel.text = model.content
-            self.contentLabel.flex.layout(mode: .adjustHeight)
-        }
+        self.nicknameLabel.text = model.nickname
+        self.contentLabel.text = model.content
+        self.contentLabel.flex.markDirty()
+        self.rootContainer.flex.layout()
     }
 }
