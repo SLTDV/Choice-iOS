@@ -1,8 +1,12 @@
 import UIKit
+import RxSwift
+import RxCocoa
 
 final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     var email: String?
     var password: String?
+    
+    private let disposeBag = DisposeBag()
     
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
@@ -23,30 +27,52 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     
     private let imagePickerController = UIImagePickerController()
     
-    private let userNameTextField = UITextField().then {
-        $0.placeholder = "닉네임"
+    private let userNameTextField = UnderLineTextField().then {
+        $0.setPlaceholder(placeholder: "닉네임")
+        $0.textAlignment = .center
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
-    }
-    
-    private let underLineView = UIView().then {
-        $0.backgroundColor = .black
     }
     
     private let warningLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 14)
-        $0.isHidden = true
         $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
     }
     
     private lazy var completeButton = UIButton().then {
         $0.setTitle("완료", for: .normal)
-        $0.backgroundColor = .black
+        $0.isEnabled = false
+        $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(signUpButtonDidTap(_ :)), for: .touchUpInside)
     }
     
     @objc private func addImageButtonDidTap(_ sender: UIButton) {
         self.present(imagePickerController, animated: true)
+    }
+    
+    private func checkNicknameValid(_ nickname: String) -> Bool {
+        let trimmedNickname = nickname.trimmingCharacters(in: .whitespaces)
+        return trimmedNickname.count < 2 || trimmedNickname.count > 6
+    }
+    
+    private func bindUI() {
+        userNameTextField.rx.text.orEmpty
+            .map(checkNicknameValid(_:))
+            .subscribe(onNext: { a in
+                if a {
+                    self.warningLabel.textColor = .red
+                    self.warningLabel.text = "*2자 이상 6자 이하로 입력 해주세요."
+                    
+                    self.completeButton.isEnabled = false
+                    self.completeButton.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
+                } else {
+                    self.warningLabel.text = ""
+                    
+                    self.completeButton.isEnabled = true
+                    self.completeButton.backgroundColor = .black
+                }
+            })
+            .disposed(by: disposeBag)
     }
     
     @objc private func signUpButtonDidTap(_ sender: UIButton) {
@@ -61,20 +87,27 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
             if isDuplicate {
                 self.viewModel.navigateRootVC()
             } else {
+                self.shakeAllTextField()
                 self.showWarningLabel(warning: "*이미 존재하는 닉네임 입니다.")
             }
         }
     }
     
+    private func shakeAllTextField() {
+        userNameTextField.shake()
+    }
+    
     private func showWarningLabel(warning: String) {
         DispatchQueue.main.async {
-            self.warningLabel.isHidden = false
+            self.warningLabel.textColor = .red
             self.warningLabel.text = warning
         }
     }
     
     override func configureVC() {
         imagePickerController.delegate = self
+        
+        bindUI()
     }
     
     init(viewModel: UserProfileInfoViewModel, email: String, password: String) {
@@ -88,7 +121,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(profileImageView, setProfileImageButton, userNameTextField, underLineView, warningLabel, completeButton)
+        view.addSubviews(profileImageView, setProfileImageButton, userNameTextField, warningLabel, completeButton)
     }
     
     override func setLayout() {
@@ -105,13 +138,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         
         userNameTextField.snp.makeConstraints {
             $0.top.equalTo(profileImageView.snp.bottom).offset(80)
-            $0.centerX.equalToSuperview()
-        }
-        
-        underLineView.snp.makeConstraints {
-            $0.top.equalTo(userNameTextField.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(100)
-            $0.height.equalTo(1)
         }
         
         warningLabel.snp.makeConstraints {
