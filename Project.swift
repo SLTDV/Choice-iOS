@@ -12,9 +12,7 @@ let project = Project(
         .Kingfisher,
         .RxSwift,
         .RxCocoa,
-        .Alamofire,
-        .FlexLayout,
-        .PinLayout
+        .Alamofire
     ],
     targets: [
         Target(
@@ -32,9 +30,7 @@ let project = Project(
                 .SPM.Kingfisher,
                 .SPM.RxSwift,
                 .SPM.RxCocoa,
-                .SPM.Alamofire,
-                .SPM.FlexLayout,
-                .SPM.PinLayout
+                .SPM.Alamofire
             ]
         )
     ]
