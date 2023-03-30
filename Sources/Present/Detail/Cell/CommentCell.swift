@@ -1,7 +1,6 @@
 import UIKit
 import Then
-import FlexLayout
-import PinLayout
+import SnapKit
 
 protocol CommentFuncProtocol: AnyObject {
     func deleteComment(commentIdx: Int)
@@ -11,9 +10,7 @@ final class CommentCell: UITableViewCell {
     static let identifier = "CommentCellIdentifier"
     
     weak var delegate: CommentFuncProtocol?
-    
-    private let rootContainer = UIView()
-    
+
     private let profileImageView = UIImageView().then {
         $0.tintColor = .black
         $0.image = UIImage(systemName: "person.crop.circle.fill")
@@ -31,6 +28,9 @@ final class CommentCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
+        selectionStyle = .none
+        separatorInset = .zero
+        
         addView()
         setLayout()
     }
@@ -40,41 +40,33 @@ final class CommentCell: UITableViewCell {
     }
     
     private func addView() {
-        contentView.addSubview(rootContainer)
+        contentView.addSubviews(profileImageView, nicknameLabel, contentLabel)
     }
-    
+
     private func setLayout() {
-        rootContainer.flex.define { flex in
-            flex.addItem().direction(.row).padding(10, 32, 0).define { flex in
-                flex.addItem(profileImageView).size(25).marginRight(6)
-                flex.addItem(nicknameLabel).grow(1)
-            }
-            flex.addItem(contentLabel).margin(10, 32, 10)
+        profileImageView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(10)
+            $0.leading.equalToSuperview().inset(32)
+            $0.size.equalTo(25)
         }
-    }
-    
-    private func layout() {
-        rootContainer.flex.layout(mode: .adjustHeight)
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        rootContainer.pin.all()
-        layout()
-    }
-    
-    override func sizeThatFits(_ size: CGSize) -> CGSize {
-        rootContainer.pin.width(size.width)
-        layout()
-        return rootContainer.frame.size
+
+        nicknameLabel.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(14)
+            $0.centerY.equalTo(profileImageView)
+            $0.leading.equalTo(profileImageView.snp.trailing).offset(8)
+        }
+
+        contentLabel.snp.makeConstraints {
+            $0.top.equalTo(nicknameLabel.snp.bottom).offset(15)
+            $0.leading.trailing.equalToSuperview().inset(35)
+            $0.bottom.equalToSuperview().inset(10)
+        }
     }
 }
 
 extension CommentCell {
     func changeCommentData(model: CommentData) {
-        nicknameLabel.text = model.nickname
-        contentLabel.text = model.content
-        contentLabel.flex.markDirty()
-        rootContainer.flex.layout()
+        self.nicknameLabel.text = model.nickname
+        self.contentLabel.text = model.content
     }
 }
