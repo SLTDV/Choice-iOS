@@ -41,7 +41,7 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     }
     
     private let warningLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 12)
+        $0.font = .systemFont(ofSize: 14)
         $0.isHidden = true
         $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
     }
@@ -62,7 +62,7 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     private func signUpButtonDidTap() {
         signUpButton.rx.tap
             .bind(onNext: {
-                self.viewModel.buttonDidTap()
+                self.checkAvailabilitySignUp()
             }).disposed(by: disposeBag)
     }
     
@@ -72,6 +72,34 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     
     func testPassword(password: String) -> Bool {
         return viewModel.isValidPassword(password: password)
+    }
+    
+    private func checkAvailabilitySignUp() {
+        guard let email = inputEmailTextfield.text else { return }
+        guard let password = inputPasswordTextfield.text else { return }
+        guard let checkPassword = inputCheckPasswordTextfield.text else { return }
+        
+        viewModel.email = email
+        viewModel.password = password
+        
+        viewModel.checkDuplicateEmail(email: email) { isDuplicate in
+            if isDuplicate {
+                if password.elementsEqual(checkPassword){
+                    if self.testEmail(email: email) && self.testPassword(password: password){
+                        self.viewModel.pushUserProfileInfoVC()
+                    } else {
+                        self.shakeAllTextField()
+                        self.showWarningLabel(warning: "*이메일 또는 비밀번호 형식이 올바르지 않아요.")
+                    }
+                } else {
+                    self.shakeAllTextField()
+                    self.showWarningLabel(warning: "*비밀번호가 일치하지 않아요.")
+                }
+            } else {
+                self.shakeAllTextField()
+                self.showWarningLabel(warning: "*이미 가입된 이메일 입니다.")
+            }
+        }
     }
     
     override func configureVC() {
@@ -114,7 +142,7 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
         
         warningLabel.snp.makeConstraints {
             $0.leading.equalTo(signUpButton.snp.leading)
-            $0.top.equalTo(signUpButton.snp.bottom).offset(10)
+            $0.bottom.equalTo(signUpButton.snp.top).offset(-12)
         }
         
         signUpButton.snp.makeConstraints {
