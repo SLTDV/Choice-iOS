@@ -11,8 +11,6 @@ public extension TargetDependency.SPM {
     static let RxSwift = TargetDependency.package(product: "RxSwift")
     static let RxCocoa = TargetDependency.package(product: "RxCocoa")
     static let Alamofire = TargetDependency.package(product: "Alamofire")
-    static let FlexLayout = TargetDependency.package(product: "FlexLayout")
-    static let PinLayout = TargetDependency.package(product: "PinLayout")
 }
 
 public extension Package {
@@ -34,10 +32,4 @@ public extension Package {
     static let Alamofire = Package.remote(
         url: "https://github.com/Alamofire/Alamofire",
         requirement: .upToNextMajor(from: "5.6.4"))
-    static let FlexLayout = Package.remote(
-        url: "https://github.com/layoutBox/FlexLayout",
-        requirement: .upToNextMajor(from: "1.3.30"))
-    static let PinLayout = Package.remote(
-        url: "https://github.com/layoutBox/PinLayout",
-        requirement: .upToNextMajor(from: "1.10.4"))
 }
