@@ -102,10 +102,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let commentTableView = UITableView().then {
-        $0.rowHeight = 300
-        $0.estimatedRowHeight = UITableView.automaticDimension
+        $0.rowHeight = UITableView.automaticDimension
+        $0.estimatedRowHeight = 70
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
     }
+    
+    private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
     
     init(viewModel: DetailPostViewModel, model: PostModel) {
         super.init(viewModel: viewModel)
@@ -122,12 +124,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.endEditing(true)
     }
     
-    private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
-    
     private func bindTableView() {
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
                                                        cellType: CommentCell.self)) { (row, data, cell) in
-            cell.changeCommentData(model: [data])
+                cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
     }
     
@@ -156,9 +156,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func commentButtonDidTap() {
         enterCommentButton.rx.tap
-            .bind(onNext: {
-                self.enterComment()
-                self.callToCommentData()
+            .bind(with: self, onNext: { owner, _ in
+                owner.enterComment()
+                owner.callToCommentData()
             }).disposed(by: disposeBag)
     }
     
@@ -185,8 +185,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     func setVoteButtonLayout(with model: PostModel) {
         votePostLayout(voting: model.voting)
         
-        let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
-                                                                                 secondVotingCount: Double(model.secondVotingCount))
+        let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
+            firstVotingCount: Double(model.firstVotingCount),
+            secondVotingCount: Double(model.secondVotingCount))
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
@@ -288,7 +289,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
         
         userNameLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaInsets).inset(28)
+            $0.centerY.equalTo(userImageView)
             $0.leading.equalTo(userImageView.snp.trailing).offset(9)
         }
         
@@ -372,7 +373,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         commentTableView.snp.makeConstraints {
             $0.top.equalTo(enterCommentButton.snp.bottom).offset(30)
-            $0.leading.trailing.equalToSuperview().inset(30)
+            $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
             $0.height.equalTo(1)
         }
