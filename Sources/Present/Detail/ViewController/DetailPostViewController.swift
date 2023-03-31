@@ -129,6 +129,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                                                        cellType: CommentCell.self)) { (row, data, cell) in
                 cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
+        
+        commentTableView.rx.itemDeleted.bind(onNext: { _ in
+            
+        })
     }
     
     private func bindUI() {

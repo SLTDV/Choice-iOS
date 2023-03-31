@@ -2,14 +2,8 @@ import UIKit
 import Then
 import SnapKit
 
-protocol CommentFuncProtocol: AnyObject {
-    func deleteComment(commentIdx: Int)
-}
-
 final class CommentCell: UITableViewCell {
     static let identifier = "CommentCellIdentifier"
-    
-    weak var delegate: CommentFuncProtocol?
 
     private let profileImageView = UIImageView().then {
         $0.tintColor = .black
