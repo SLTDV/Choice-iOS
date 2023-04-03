@@ -125,22 +125,29 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                                                        cellType: CommentCell.self)) { (row, data, cell) in
             cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
-
-        commentTableView.rx.modelDeleted(CommentData.self)
-            .bind(with: self, onNext: { owner, arg in
-                owner.viewModel.deleteComment(postIdx: owner.model!.idx, commentIdx: arg.idx) { result in
-                    switch result {
-                    case .success(()):
-                        owner.viewModel.callToCommentData(idx: owner.model!.idx)
-                        owner.commentTableView.reloadRows(
-                            at: [IndexPath(row: arg.idx, section: 0)],
-                            with: .automatic
-                        )
-                    case .failure(let error):
-                        print("Delete Comment Error - \(error.localizedDescription)")
-                    }
-                }
-            }).disposed(by: disposeBag)
+        
+//        commentTableView.rx.modelDeleted(CommentData.self)
+//            .bind(with: self, onNext: { owner, arg in
+//                owner.viewModel.deleteComment(postIdx: owner.model!.idx, commentIdx: arg.idx) { result in
+//                    switch result {
+//                    case .success(()):
+//                        owner.viewModel.callToCommentData(idx: owner.model!.idx)
+//                        owner.commentTableView.reloadRows(
+//                            at: [IndexPath(row: arg.idx, section: 0)],
+//                            with: .automatic
+//                        )
+//                    case .failure(let error):
+//                        print("Delete Comment Error - \(error.localizedDescription)")
+//                        let sheet = UIAlertController(
+//                            title: "실패",
+//                            message: "자신이 작성한 댓글만 삭제할 수 있습니다.",
+//                            preferredStyle: .alert
+//                        )
+//                        sheet.addAction(UIAlertAction(title: "확인", style: .cancel))
+//                        owner.present(sheet, animated: true)
+//                    }
+//                }
+//            }).disposed(by: disposeBag)
     }
     
     private func bindUI() {
