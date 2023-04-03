@@ -284,6 +284,16 @@ final class PostCell: UITableViewCell{
                 $0.backgroundColor = .black
             }
         default:
+            firstPostVoteButton = firstPostVoteButton.then {
+                $0.layer.borderColor = UIColor.clear.cgColor
+                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            }
+            
+            secondPostVoteButton = secondPostVoteButton.then {
+                $0.layer.borderColor = UIColor.clear.cgColor
+                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            }
+
             firstPostVoteButton.setTitle("0%(0명)", for: .normal)
             secondPostVoteButton.setTitle("0%(0명)", for: .normal)
         }
