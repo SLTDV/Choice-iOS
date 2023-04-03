@@ -42,8 +42,6 @@ final class PostCell: UITableViewCell{
     
     private let firstPostImageView = UIImageView().then {
         $0.clipsToBounds = true
-        $0.layer.borderColor = UIColor.clear.cgColor
-        $0.layer.borderWidth = 4
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
@@ -55,8 +53,6 @@ final class PostCell: UITableViewCell{
     
     private let secondPostImageView = UIImageView().then {
         $0.clipsToBounds = true
-        $0.layer.borderWidth = 4
-        $0.layer.borderColor = UIColor.clear.cgColor
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
@@ -205,9 +201,6 @@ final class PostCell: UITableViewCell{
     private func setHomeVotePostLayout(voting: Int?) {
         switch voting {
         case 1:
-            firstPostImageView.layer.borderColor = UIColor.black.cgColor
-            secondPostImageView.layer.borderColor = UIColor.clear.cgColor
-            
             firstPostVoteButton = firstPostVoteButton.then {
                 $0.isEnabled = false
                 $0.backgroundColor = .black
@@ -220,9 +213,6 @@ final class PostCell: UITableViewCell{
                 $0.setTitleColor(.gray, for: .normal)
             }
         case 2:
-            firstPostImageView.layer.borderColor = UIColor.clear.cgColor
-            secondPostImageView.layer.borderColor = UIColor.black.cgColor
-            
             firstPostVoteButton = firstPostVoteButton.then {
                 $0.isEnabled = true
                 $0.backgroundColor = .clear
@@ -235,9 +225,6 @@ final class PostCell: UITableViewCell{
                 $0.setTitleColor(.white, for: .normal)
             }
         default:
-            firstPostImageView.layer.borderColor = UIColor.clear.cgColor
-            secondPostImageView.layer.borderColor = UIColor.clear.cgColor
-            
             firstPostVoteButton = firstPostVoteButton.then {
                 $0.backgroundColor = .clear
                 $0.setTitleColor(.gray, for: .normal)
@@ -277,8 +264,6 @@ final class PostCell: UITableViewCell{
         
         switch voting {
         case 1:
-            firstPostImageView.layer.borderColor = UIColor.black.cgColor
-            
             firstPostVoteButton = firstPostVoteButton.then {
                 $0.layer.borderColor = UIColor.black.cgColor
                 $0.backgroundColor = .black
@@ -289,8 +274,6 @@ final class PostCell: UITableViewCell{
                 $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
             }
         case 2:
-            secondPostImageView.layer.borderColor = UIColor.black.cgColor
-            
             firstPostVoteButton = firstPostVoteButton.then {
                 $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
                 $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
