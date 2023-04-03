@@ -11,7 +11,6 @@ public extension TargetDependency.SPM {
     static let RxSwift = TargetDependency.package(product: "RxSwift")
     static let RxCocoa = TargetDependency.package(product: "RxCocoa")
     static let Alamofire = TargetDependency.package(product: "Alamofire")
-    static let RxDataSources = TargetDependency.package(product: "RxDataSources")
 }
 
 public extension Package {
@@ -33,7 +32,4 @@ public extension Package {
     static let Alamofire = Package.remote(
         url: "https://github.com/Alamofire/Alamofire",
         requirement: .upToNextMajor(from: "5.6.4"))
-    static let RxDataSources = Package.remote(
-        url: "https://github.com/RxSwiftCommunity/RxDataSources",
-        requirement: .upToNextMajor(from: "5.0.2"))
 }

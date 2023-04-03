@@ -12,8 +12,7 @@ let project = Project(
         .Kingfisher,
         .RxSwift,
         .RxCocoa,
-        .Alamofire,
-        .RxDataSources
+        .Alamofire
     ],
     targets: [
         Target(
@@ -31,8 +30,7 @@ let project = Project(
                 .SPM.Kingfisher,
                 .SPM.RxSwift,
                 .SPM.RxCocoa,
-                .SPM.Alamofire,
-                .SPM.RxDataSources
+                .SPM.Alamofire
             ]
         )
     ]

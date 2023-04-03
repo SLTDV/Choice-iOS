@@ -1,6 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import RxDataSources
 import Kingfisher
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
@@ -269,6 +270,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func configureVC() {
         enterCommentTextView.delegate = self
         viewModel.delegate = self
+        commentTableView.delegate = self
         
         bindTableView()
         bindUI()
@@ -415,5 +417,39 @@ extension DetailPostViewController: UITextViewDelegate {
         if textView.text == "" {
             setTextViewPlaceholder()
         }
+    }
+}
+
+extension DetailPostViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        print("asdfsafasd")
+        self.commentTableView.rx.modelDeleted(CommentData.self)
+            .bind(with: self, onNext: { owner, arg in
+                owner.viewModel.deleteComment(postIdx: owner.model!.idx, commentIdx: arg.idx) { result in
+//                    return result ? configuration : configuration
+//                    switch result {
+//                    case .success(()):
+//                        owner.viewModel.callToCommentData(idx: owner.model!.idx)
+//                        owner.commentTableView.reloadRows(
+//                            at: [IndexPath(row: arg.idx, section: 0)],
+//                            with: .automatic
+//                        )
+//                        configuration = UISwipeActionsConfiguration(actions: [UIContextualAction(style: .destructive, title: "삭제", handler: { UIContextual, view, _ in
+//                        })])
+//                    case .failure(let error):
+//                        print("Delete Comment Error - \(error.localizedDescription)")
+//                        let sheet = UIAlertController(
+//                            title: "실패",
+//                            message: "자신이 작성한 댓글만 삭제할 수 있습니다.",
+//                            preferredStyle: .alert
+//                        )
+//                        sheet.addAction(UIAlertAction(title: "확인", style: .cancel))
+//                        owner.present(sheet, animated: true)
+//                        configuration = .none
+//                    }
+                }
+            }).disposed(by: self.disposeBag)
+        return UISwipeActionsConfiguration(actions: [UIContextualAction(style: .destructive, title: "삭제", handler: { UIContextual, view, _ in
+        })])
     }
 }
