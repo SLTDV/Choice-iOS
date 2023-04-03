@@ -58,13 +58,8 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
             resultSelector: { s1, s2, s3 in (s1.count > 0) && (s2.count > 0) && (s3.count > 0) }
         )
         .bind(with: self, onNext: { owner, isValid in
-            if isValid {
-                owner.signUpButton.isEnabled = true
-                owner.signUpButton.backgroundColor = .black
-            } else {
-                owner.signUpButton.isEnabled = false
-                owner.signUpButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
+            owner.signUpButton.isEnabled = isValid
+            owner.signUpButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayDark.color
         })
         .disposed(by: disposeBag)
     }
