@@ -128,12 +128,17 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
 
         commentTableView.rx.modelDeleted(CommentData.self)
             .bind(with: self, onNext: { owner, arg in
-                owner.viewModel.deleteComment(postIdx: owner.model!.idx, commentIdx: arg.idx) {
-                    owner.viewModel.callToCommentData(idx: owner.model!.idx)
-                    owner.commentTableView.reloadRows(at: [IndexPath(row: arg.idx, section: 0)], with: .automatic)
+                owner.viewModel.deleteComment(postIdx: owner.model!.idx, commentIdx: arg.idx) { result in
+                    
+                    switch result {
+                    case .success(()):
+                        owner.viewModel.callToCommentData(idx: owner.model!.idx)
+                        owner.commentTableView.reloadRows(at: [IndexPath(row: arg.idx, section: 03)], with: .automatic)
+                    case .failure(let error):
+                        print("Delete Comment Error - \(error.localizedDescription)")
+                    }
                 }
             }).disposed(by: disposeBag)
-        
     }
     
     private func bindUI() {

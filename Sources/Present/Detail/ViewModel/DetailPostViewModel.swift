@@ -11,20 +11,20 @@ protocol CommentDataProtocol: AnyObject {
 final class DetailPostViewModel: BaseViewModel {
     weak var delegate: CommentDataProtocol?
     
-    func deleteComment(postIdx: Int, commentIdx: Int, completion: @escaping () -> ()) {
-        print(commentIdx)
+    func deleteComment(postIdx: Int, commentIdx: Int, completion: @escaping (Result<Void, Error>) -> ()) {
         let url = APIConstants.deleteCommentURL + "\(postIdx)/" + "\(commentIdx)"
         AF.request(url,
                    method: .delete,
                    encoding: URLEncoding.queryString,
                    interceptor: JwtRequestInterceptor())
         .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
+        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
                 print("success")
-                completion()
+                completion(.success(()))
             case .failure(let error):
+                completion(.failure(error))
                 print(error)
             }
         }
