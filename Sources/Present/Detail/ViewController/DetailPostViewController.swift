@@ -154,7 +154,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text else { return }
         
-        LoadingIndicator.showLoading()
+        LoadingIndicator.showLoading(text: "게시 중")
         viewModel.createComment(idx: idx, content: content) {
             DispatchQueue.main.async {
                 self.viewModel.callToCommentData(idx: idx)
