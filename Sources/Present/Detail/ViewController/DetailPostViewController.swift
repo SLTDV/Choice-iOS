@@ -41,8 +41,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let firstPostImageView = UIImageView().then {
         $0.clipsToBounds = true
-        $0.layer.borderColor = UIColor.clear.cgColor
-        $0.layer.borderWidth = 4
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
@@ -50,8 +48,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let secondPostImageView = UIImageView().then {
         $0.clipsToBounds = true
-        $0.layer.borderColor = UIColor.clear.cgColor
-        $0.layer.borderWidth = 4
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
@@ -195,8 +191,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func votePostLayout(voting: Int) {
         switch voting {
         case 1:
-            firstPostImageView.layer.borderColor = UIColor.black.cgColor
-            
             firstVoteButton = firstVoteButton.then {
                 $0.layer.borderColor = UIColor.black.cgColor
                 $0.isEnabled = false
@@ -209,8 +203,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
             }
         case 2:
-            secondPostImageView.layer.borderColor = UIColor.black.cgColor
-            
             firstVoteButton = firstVoteButton.then {
                 $0.layer.borderColor = UIColor.clear.cgColor
                 $0.isEnabled = true
