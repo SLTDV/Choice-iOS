@@ -132,9 +132,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
 
         commentTableView.rx.modelDeleted(CommentData.self)
             .bind(with: self, onNext: { owner, arg in
-                print("commentData = \(arg.idx)")
-                print("postModel = \(owner.model?.idx)")
-                owner.viewModel.deleteComment(postIdx: owner.model!.idx, commentIdx: arg.idx)
+                owner.viewModel.deleteComment(postIdx: owner.model!.idx, commentIdx: arg.idx) {
+                    owner.viewModel.callToCommentData(idx: owner.model!.idx)
+                    owner.commentTableView.reloadRows(at: [IndexPath(row: arg.idx, section: 0)], with: .automatic)
+                }
             }).disposed(by: disposeBag)
         
     }
@@ -156,6 +157,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         LoadingIndicator.showLoading()
         viewModel.createComment(idx: idx, content: content) {
             DispatchQueue.main.async {
+                self.viewModel.callToCommentData(idx: idx)
                 self.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
             }
             LoadingIndicator.hideLoading()

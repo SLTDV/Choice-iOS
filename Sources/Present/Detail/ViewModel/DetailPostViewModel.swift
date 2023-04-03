@@ -11,7 +11,7 @@ protocol CommentDataProtocol: AnyObject {
 final class DetailPostViewModel: BaseViewModel {
     weak var delegate: CommentDataProtocol?
     
-    func deleteComment(postIdx: Int, commentIdx: Int) {
+    func deleteComment(postIdx: Int, commentIdx: Int, completion: @escaping () -> ()) {
         print(commentIdx)
         let url = APIConstants.deleteCommentURL + "\(postIdx)/" + "\(commentIdx)"
         AF.request(url,
@@ -19,10 +19,11 @@ final class DetailPostViewModel: BaseViewModel {
                    encoding: URLEncoding.queryString,
                    interceptor: JwtRequestInterceptor())
         .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success:
                 print("success")
+                completion()
             case .failure(let error):
                 print(error)
             }
@@ -64,7 +65,6 @@ final class DetailPostViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
-                self.callToCommentData(idx: idx)
                 completion()
             case .failure(let error):
                 print("post error = \(String(describing: error.localizedDescription))")
