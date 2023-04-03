@@ -28,14 +28,10 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     
     private let imagePickerController = UIImagePickerController()
     
-    private let userNameTextField = UITextField().then {
-        $0.placeholder = "닉네임을 입력해 주세요"
+    private let userNameTextField = UnderLineTextField().then {
+        $0.setPlaceholder(placeholder: "닉네임을 입력해 주세요")
         $0.textAlignment = .center
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
-    }
-    
-    private let underLineView = UIView().then {
-        $0.backgroundColor = .gray
     }
     
     private let warningLabel = UILabel().then {
@@ -127,7 +123,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     
     override func addView() {
         view.addSubviews(profileImageView, setProfileImageButton,
-                         userNameTextField, underLineView, warningLabel, completeButton)
+                         userNameTextField, warningLabel, completeButton)
     }
     
     override func setLayout() {
@@ -145,13 +141,6 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         userNameTextField.snp.makeConstraints {
             $0.top.equalTo(profileImageView.snp.bottom).offset(80)
             $0.centerX.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(93)
-        }
-        
-        underLineView.snp.makeConstraints {
-            $0.top.equalTo(userNameTextField.snp.bottom).offset(10)
-            $0.centerX.equalToSuperview()
-            $0.height.equalTo(1)
             $0.leading.trailing.equalToSuperview().inset(93)
         }
         
