@@ -11,8 +11,9 @@ protocol CommentDataProtocol: AnyObject {
 final class DetailPostViewModel: BaseViewModel {
     weak var delegate: CommentDataProtocol?
     
-    func deleteComment(commentIdx: Int) {
-        let url = APIConstants.deleteCommentURL + "\(commentIdx)"
+    func deleteComment(postIdx: Int, commentIdx: Int) {
+        print(commentIdx)
+        let url = APIConstants.deleteCommentURL + "\(postIdx)/" + "\(commentIdx)"
         AF.request(url,
                    method: .delete,
                    encoding: URLEncoding.queryString,

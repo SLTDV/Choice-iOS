@@ -127,12 +127,16 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func bindTableView() {
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
                                                        cellType: CommentCell.self)) { (row, data, cell) in
-                cell.changeCommentData(model: data)
+            cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
+
+        commentTableView.rx.modelDeleted(CommentData.self)
+            .bind(with: self, onNext: { owner, arg in
+                print("commentData = \(arg.idx)")
+                print("postModel = \(owner.model?.idx)")
+                owner.viewModel.deleteComment(postIdx: owner.model!.idx, commentIdx: arg.idx)
+            }).disposed(by: disposeBag)
         
-        commentTableView.rx.itemDeleted.bind(onNext: { _ in
-            
-        })
     }
     
     private func bindUI() {
