@@ -41,8 +41,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let firstPostImageView = UIImageView().then {
         $0.clipsToBounds = true
-        $0.layer.borderColor = UIColor.clear.cgColor
-        $0.layer.borderWidth = 4
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
@@ -50,8 +48,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let secondPostImageView = UIImageView().then {
         $0.clipsToBounds = true
-        $0.layer.borderColor = UIColor.clear.cgColor
-        $0.layer.borderWidth = 4
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleToFill
@@ -65,14 +61,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.setTitleColor(.white, for: .normal)
         $0.isEnabled = false
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
+        $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
     }
     
     private lazy var secondVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.isEnabled = false
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = .init(red: 0.79, green: 0.81, blue: 0.83, alpha: 1)
+        $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
     }
     
     private let divideCommentLineView = UIView().then {
@@ -205,8 +201,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func votePostLayout(voting: Int) {
         switch voting {
         case 1:
-            firstPostImageView.layer.borderColor = UIColor.black.cgColor
-            
             firstVoteButton = firstVoteButton.then {
                 $0.layer.borderColor = UIColor.black.cgColor
                 $0.isEnabled = false
@@ -219,8 +213,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
             }
         case 2:
-            secondPostImageView.layer.borderColor = UIColor.black.cgColor
-            
             firstVoteButton = firstVoteButton.then {
                 $0.layer.borderColor = UIColor.clear.cgColor
                 $0.isEnabled = true
