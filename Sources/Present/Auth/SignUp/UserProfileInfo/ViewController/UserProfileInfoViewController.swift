@@ -11,7 +11,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
-        $0.layer.cornerRadius = 50
+        $0.layer.cornerRadius = 70
         $0.image = UIImage(systemName: "person.crop.circle.fill")
         $0.tintColor = .black
     }
@@ -28,10 +28,14 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     
     private let imagePickerController = UIImagePickerController()
     
-    private let userNameTextField = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "닉네임")
+    private let userNameTextField = UITextField().then {
+        $0.placeholder = "닉네임을 입력해 주세요"
         $0.textAlignment = .center
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
+    }
+    
+    private let underLineView = UIView().then {
+        $0.backgroundColor = .gray
     }
     
     private let warningLabel = UILabel().then {
@@ -62,7 +66,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
             .bind(with: self, onNext: { owner, isValid  in
                 if isValid {
                     owner.warningLabel.textColor = .red
-                    owner.warningLabel.text = "*2자 이상 6자 이하로 입력 해주세요."
+                    owner.warningLabel.text = "*2자 이상 6자 이하로 입력해 주세요."
                     
                     owner.completeButton.isEnabled = false
                     owner.completeButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
@@ -123,7 +127,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     
     override func addView() {
         view.addSubviews(profileImageView, setProfileImageButton,
-                         userNameTextField, warningLabel, completeButton)
+                         userNameTextField, underLineView, warningLabel, completeButton)
     }
     
     override func setLayout() {
@@ -140,7 +144,15 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         
         userNameTextField.snp.makeConstraints {
             $0.top.equalTo(profileImageView.snp.bottom).offset(80)
-            $0.leading.trailing.equalToSuperview().inset(100)
+            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(93)
+        }
+        
+        underLineView.snp.makeConstraints {
+            $0.top.equalTo(userNameTextField.snp.bottom).offset(10)
+            $0.centerX.equalToSuperview()
+            $0.height.equalTo(1)
+            $0.leading.trailing.equalToSuperview().inset(93)
         }
         
         warningLabel.snp.makeConstraints {
