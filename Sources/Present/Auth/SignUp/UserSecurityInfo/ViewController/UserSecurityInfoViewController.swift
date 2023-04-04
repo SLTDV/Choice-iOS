@@ -35,8 +35,8 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     
     private lazy var signUpButton = UIButton().then {
         $0.setTitle("다음", for: .normal)
-        $0.setTitleColor(.white, for: .normal)
-        $0.backgroundColor = .black
+        $0.isEnabled = false
+        $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
         $0.layer.cornerRadius = 8
     }
     
@@ -44,6 +44,24 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
         $0.font = .systemFont(ofSize: 14)
         $0.isHidden = true
         $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
+    }
+    
+    private func bindUI() {
+        let titleTextObservable = inputEmailTextfield.rx.text.orEmpty
+        let descriptionTextObservable = inputPasswordTextfield.rx.text.orEmpty
+        let checkPasswordTestObservable = inputCheckPasswordTextfield.rx.text.orEmpty
+
+        Observable.combineLatest(
+            titleTextObservable,
+            descriptionTextObservable,
+            checkPasswordTestObservable,
+            resultSelector: { s1, s2, s3 in (s1.count > 0) && (s2.count > 0) && (s3.count > 0) }
+        )
+        .bind(with: self, onNext: { owner, isValid in
+            owner.signUpButton.isEnabled = isValid
+            owner.signUpButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayDark.color
+        })
+        .disposed(by: disposeBag)
     }
     
     private func shakeAllTextField() {
@@ -105,6 +123,8 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     override func configureVC() {
         restoreFrameYValue = self.view.frame.origin.y
         signUpButtonDidTap()
+        
+        bindUI()
         
         navigationItem.title = "회원가입"
     }
