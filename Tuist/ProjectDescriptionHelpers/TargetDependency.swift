@@ -22,7 +22,7 @@ public extension Package {
         requirement: .upToNextMajor(from: "3.0.0"))
     static let Kingfisher = Package.remote(
         url: "https://github.com/onevcat/Kingfisher",
-        requirement: .upToNextMajor(from: "7.4.1"))
+        requirement: .upToNextMajor(from: "7.6.1"))
     static let RxSwift = Package.remote(
         url: "https://github.com/ReactiveX/RxSwift",
         requirement: .upToNextMajor(from: "6.5.0"))
