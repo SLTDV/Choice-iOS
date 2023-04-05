@@ -1,11 +1,12 @@
 import Foundation
 import RxSwift
 import Alamofire
+import RxRelay
 
 protocol CommentDataProtocol: AnyObject {
     var writerNameData: PublishSubject<String> { get set  }
     var writerImageStringData: PublishSubject<String> { get set }
-    var commentData: PublishSubject<[CommentData]> { get set }
+    var commentData: BehaviorRelay<[CommentData]> { get set }
 }
 
 final class DetailPostViewModel: BaseViewModel {
@@ -42,7 +43,7 @@ final class DetailPostViewModel: BaseViewModel {
                 let decodeResponse = try! JSONDecoder().decode(CommentModel.self, from: data)
                 self?.delegate?.writerImageStringData.onNext(decodeResponse.image)
                 self?.delegate?.writerNameData.onNext(decodeResponse.writer)
-                self?.delegate?.commentData.onNext(decodeResponse.comment)
+                self?.delegate?.commentData.accept(decodeResponse.comment)
             case .failure(let error):
                 print("comment = \(error.localizedDescription)")
             }

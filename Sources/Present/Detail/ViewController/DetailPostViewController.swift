@@ -7,8 +7,8 @@ import Kingfisher
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
     var writerNameData = PublishSubject<String>()
     var writerImageStringData = PublishSubject<String>()
-    var commentData = PublishSubject<[CommentData]>()
-    var model: PostModel?
+    var commentData = BehaviorRelay<[CommentData]>(value: [])
+    private var model: PostModel?
     
     private let disposeBag = DisposeBag()
     
@@ -126,29 +126,27 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                                                        cellType: CommentCell.self)) { (row, data, cell) in
             cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
+
         
-        commentTableView.rx.modelDeleted(CommentData.self)
-            .bind(with: self, onNext: { owner, arg in
-                owner.viewModel.deleteComment(postIdx: owner.model!.idx, commentIdx: arg.idx) { result in
-                    switch result {
-                    case .success(()):
-                        owner.viewModel.callToCommentData(idx: owner.model!.idx)
-                        owner.commentTableView.reloadRows(
-                            at: [IndexPath(row: arg.idx, section: 0)],
-                            with: .automatic
-                        )
-                    case .failure(let error):
-                        print("Delete Comment Error - \(error.localizedDescription)")
-                        let sheet = UIAlertController(  
-                            title: "실패",
-                            message: "자신이 작성한 댓글만 삭제할 수 있습니다.",
-                            preferredStyle: .alert
-                        )
-                        sheet.addAction(UIAlertAction(title: "확인", style: .cancel))
-                        owner.present(sheet, animated: true)
-                    }
-                }
-            }).disposed(by: disposeBag)
+//        viewModel.deleteComment(postIdx: model!.idx, commentIdx: 1) { [weak self] result in
+//            switch result {
+//            case .success(()):
+//                self?.viewModel.callToCommentData(idx: (self?.model!.idx)!)
+////                commentTableView.reloadRows(
+////                    at: [IndexPath(row: arg.idx, section: 0)],
+////                    with: .automatic
+////                )
+//            case .failure(let error):
+//                print("Delete Comment Error - \(error.localizedDescription)")
+//                let sheet = UIAlertController(
+//                    title: "실패",
+//                    message: "자신이 작성한 댓글만 삭제할 수 있습니다.",
+//                    preferredStyle: .alert
+//                )
+//                sheet.addAction(UIAlertAction(title: "확인", style: .cancel))
+//                self?.present(sheet, animated: true)
+//            }
+//        }
     }
     
     private func bindUI() {
@@ -179,16 +177,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         enterCommentButton.rx.tap
             .bind(with: self, onNext: { owner, _ in
                 owner.enterComment()
-//                owner.callToCommentData()
                 owner.viewModel.callToCommentData(idx: owner.model!.idx)
             }).disposed(by: disposeBag)
     }
-    
-//    private func callToCommentData() {
-//        guard let idx = model?.idx else { return }
-//
-//        viewModel.callToCommentData(idx: idx)
-//    }
     
     private func changePostData(model: PostModel) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
@@ -249,7 +240,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
-//        callToCommentData()
+        //        callToCommentData()
         viewModel.callToCommentData(idx: model!.idx)
     }
     
@@ -424,7 +415,25 @@ extension DetailPostViewController: UITextViewDelegate {
 
 extension DetailPostViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        return UISwipeActionsConfiguration(actions: [UIContextualAction(style: .destructive, title: "hi", handler: { first, second, _ in
-        })])
+        var config: UISwipeActionsConfiguration? = nil
+        let commentModel = commentData.value[indexPath.row]
+        
+        if commentModel.isMine {
+            config = UISwipeActionsConfiguration(actions: [UIContextualAction(style: .destructive, title: "hi", handler: { [weak self] first, second, _ in
+                self?.viewModel.deleteComment(postIdx: self!.model!.idx, commentIdx: commentModel.idx, completion: { result in
+                    switch result {
+                    case .success(()):
+                        self?.viewModel.callToCommentData(idx: self!.model!.idx)
+                        self?.commentTableView.reloadRows(
+                        at: [IndexPath(row: commentModel.idx, section: 0)],
+                        with: .automatic
+                        )
+                    case .failure(let error):
+                        print("Delete Faield = \(error.localizedDescription)")
+                    }
+                })
+            })])
+        }
+        return config
     }
 }
