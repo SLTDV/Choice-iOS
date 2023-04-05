@@ -1,7 +1,7 @@
 import Foundation
+import RxRelay
 import RxSwift
 import Alamofire
-import RxRelay
 
 protocol CommentDataProtocol: AnyObject {
     var writerNameData: PublishSubject<String> { get set  }

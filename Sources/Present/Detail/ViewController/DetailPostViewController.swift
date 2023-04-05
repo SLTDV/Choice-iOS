@@ -1,7 +1,6 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import RxDataSources
 import Kingfisher
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
