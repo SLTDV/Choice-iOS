@@ -176,7 +176,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         }
 
         viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage, firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
-        LoadingIndicator.showLoading()
+        LoadingIndicator.showLoading(text: "게시 중")
     }
     
     override func configureVC() {
