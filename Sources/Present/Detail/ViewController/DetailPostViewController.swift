@@ -127,28 +127,28 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
         
-//        commentTableView.rx.modelDeleted(CommentData.self)
-//            .bind(with: self, onNext: { owner, arg in
-//                owner.viewModel.deleteComment(postIdx: owner.model!.idx, commentIdx: arg.idx) { result in
-//                    switch result {
-//                    case .success(()):
-//                        owner.viewModel.callToCommentData(idx: owner.model!.idx)
-//                        owner.commentTableView.reloadRows(
-//                            at: [IndexPath(row: arg.idx, section: 0)],
-//                            with: .automatic
-//                        )
-//                    case .failure(let error):
-//                        print("Delete Comment Error - \(error.localizedDescription)")
-//                        let sheet = UIAlertController(
-//                            title: "실패",
-//                            message: "자신이 작성한 댓글만 삭제할 수 있습니다.",
-//                            preferredStyle: .alert
-//                        )
-//                        sheet.addAction(UIAlertAction(title: "확인", style: .cancel))
-//                        owner.present(sheet, animated: true)
-//                    }
-//                }
-//            }).disposed(by: disposeBag)
+        commentTableView.rx.modelDeleted(CommentData.self)
+            .bind(with: self, onNext: { owner, arg in
+                owner.viewModel.deleteComment(postIdx: owner.model!.idx, commentIdx: arg.idx) { result in
+                    switch result {
+                    case .success(()):
+                        owner.viewModel.callToCommentData(idx: owner.model!.idx)
+                        owner.commentTableView.reloadRows(
+                            at: [IndexPath(row: arg.idx, section: 0)],
+                            with: .automatic
+                        )
+                    case .failure(let error):
+                        print("Delete Comment Error - \(error.localizedDescription)")
+                        let sheet = UIAlertController(  
+                            title: "실패",
+                            message: "자신이 작성한 댓글만 삭제할 수 있습니다.",
+                            preferredStyle: .alert
+                        )
+                        sheet.addAction(UIAlertAction(title: "확인", style: .cancel))
+                        owner.present(sheet, animated: true)
+                    }
+                }
+            }).disposed(by: disposeBag)
     }
     
     private func bindUI() {
@@ -179,15 +179,16 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         enterCommentButton.rx.tap
             .bind(with: self, onNext: { owner, _ in
                 owner.enterComment()
-                owner.callToCommentData()
+//                owner.callToCommentData()
+                owner.viewModel.callToCommentData(idx: owner.model!.idx)
             }).disposed(by: disposeBag)
     }
     
-    private func callToCommentData() {
-        guard let idx = model?.idx else { return }
-        
-        viewModel.callToCommentData(idx: idx)
-    }
+//    private func callToCommentData() {
+//        guard let idx = model?.idx else { return }
+//
+//        viewModel.callToCommentData(idx: idx)
+//    }
     
     private func changePostData(model: PostModel) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
@@ -248,7 +249,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
-        callToCommentData()
+//        callToCommentData()
+        viewModel.callToCommentData(idx: model!.idx)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -422,34 +424,7 @@ extension DetailPostViewController: UITextViewDelegate {
 
 extension DetailPostViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
-        print("asdfsafasd")
-        self.commentTableView.rx.modelDeleted(CommentData.self)
-            .bind(with: self, onNext: { owner, arg in
-                owner.viewModel.deleteComment(postIdx: owner.model!.idx, commentIdx: arg.idx) { result in
-//                    return result ? configuration : configuration
-//                    switch result {
-//                    case .success(()):
-//                        owner.viewModel.callToCommentData(idx: owner.model!.idx)
-//                        owner.commentTableView.reloadRows(
-//                            at: [IndexPath(row: arg.idx, section: 0)],
-//                            with: .automatic
-//                        )
-//                        configuration = UISwipeActionsConfiguration(actions: [UIContextualAction(style: .destructive, title: "삭제", handler: { UIContextual, view, _ in
-//                        })])
-//                    case .failure(let error):
-//                        print("Delete Comment Error - \(error.localizedDescription)")
-//                        let sheet = UIAlertController(
-//                            title: "실패",
-//                            message: "자신이 작성한 댓글만 삭제할 수 있습니다.",
-//                            preferredStyle: .alert
-//                        )
-//                        sheet.addAction(UIAlertAction(title: "확인", style: .cancel))
-//                        owner.present(sheet, animated: true)
-//                        configuration = .none
-//                    }
-                }
-            }).disposed(by: self.disposeBag)
-        return UISwipeActionsConfiguration(actions: [UIContextualAction(style: .destructive, title: "삭제", handler: { UIContextual, view, _ in
+        return UISwipeActionsConfiguration(actions: [UIContextualAction(style: .destructive, title: "hi", handler: { first, second, _ in
         })])
     }
 }

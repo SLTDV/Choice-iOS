@@ -11,4 +11,5 @@ struct CommentData: Codable {
     var nickname: String
     var content: String
     var image: String
+    var isMine: Bool
 }
