@@ -65,7 +65,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private let inputDescriptionTextView = UITextView().then {
-        $0.text = "내용입력 (20~100)"
+        $0.text = "내용입력 (2~100)"
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
         $0.textColor = .lightGray
         $0.layer.cornerRadius = 8
@@ -138,7 +138,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     @objc private func SetTopicButtonDidTap(_ sender: UIButton) {
-        let alert = UIAlertController(title: "주제", message: "주제를 입력해주세요.", preferredStyle: .alert)
+        let alert = UIAlertController(title: "주제", message: "주제를 입력해주세요.(2~8 글자)", preferredStyle: .alert)
         alert.addTextField()
         
         let ok = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
