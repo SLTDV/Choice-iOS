@@ -401,7 +401,7 @@ extension DetailPostViewController: UITableViewDelegate {
                 case .success(()):
                     self?.viewModel.callToCommentData(idx: self!.model!.idx)
                     self?.commentTableView.reloadRows(
-                    at: [IndexPath(row: commentModel.idx, section: 0)],
+                    at: [indexPath],
                     with: .automatic
                     )
                 case .failure(let error):
