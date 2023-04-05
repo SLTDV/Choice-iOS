@@ -395,22 +395,24 @@ extension DetailPostViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         var config: UISwipeActionsConfiguration? = nil
         let commentModel = commentData.value[indexPath.row]
-        
+        lazy var contextual = UIContextualAction(style: .destructive, title: nil, handler: { [weak self] _, _, _ in
+            self?.viewModel.deleteComment(postIdx: self!.model!.idx, commentIdx: commentModel.idx, completion: { result in
+                switch result {
+                case .success(()):
+                    self?.viewModel.callToCommentData(idx: self!.model!.idx)
+                    self?.commentTableView.reloadRows(
+                    at: [IndexPath(row: commentModel.idx, section: 0)],
+                    with: .automatic
+                    )
+                case .failure(let error):
+                    print("Delete Faield = \(error.localizedDescription)")
+                }
+            })
+        })
+        contextual.image = UIImage(systemName: "trash")
+
         if commentModel.isMine {
-            config = UISwipeActionsConfiguration(actions: [UIContextualAction(style: .destructive, title: "hi", handler: { [weak self] first, second, _ in
-                self?.viewModel.deleteComment(postIdx: self!.model!.idx, commentIdx: commentModel.idx, completion: { result in
-                    switch result {
-                    case .success(()):
-                        self?.viewModel.callToCommentData(idx: self!.model!.idx)
-                        self?.commentTableView.reloadRows(
-                        at: [IndexPath(row: commentModel.idx, section: 0)],
-                        with: .automatic
-                        )
-                    case .failure(let error):
-                        print("Delete Faield = \(error.localizedDescription)")
-                    }
-                })
-            })])
+            config = UISwipeActionsConfiguration(actions: [contextual])
         }
         return config
     }
