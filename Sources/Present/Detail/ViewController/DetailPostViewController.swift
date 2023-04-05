@@ -126,27 +126,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                                                        cellType: CommentCell.self)) { (row, data, cell) in
             cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
-
-        
-//        viewModel.deleteComment(postIdx: model!.idx, commentIdx: 1) { [weak self] result in
-//            switch result {
-//            case .success(()):
-//                self?.viewModel.callToCommentData(idx: (self?.model!.idx)!)
-////                commentTableView.reloadRows(
-////                    at: [IndexPath(row: arg.idx, section: 0)],
-////                    with: .automatic
-////                )
-//            case .failure(let error):
-//                print("Delete Comment Error - \(error.localizedDescription)")
-//                let sheet = UIAlertController(
-//                    title: "실패",
-//                    message: "자신이 작성한 댓글만 삭제할 수 있습니다.",
-//                    preferredStyle: .alert
-//                )
-//                sheet.addAction(UIAlertAction(title: "확인", style: .cancel))
-//                self?.present(sheet, animated: true)
-//            }
-//        }
     }
     
     private func bindUI() {
@@ -240,7 +219,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
-        //        callToCommentData()
         viewModel.callToCommentData(idx: model!.idx)
     }
     
