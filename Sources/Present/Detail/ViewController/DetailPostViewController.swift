@@ -6,8 +6,8 @@ import Kingfisher
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
     var writerNameData = PublishSubject<String>()
     var writerImageStringData = PublishSubject<String>()
-    var commentData = PublishSubject<[CommentData]>()
-    var model: PostModel?
+    var commentData = BehaviorRelay<[CommentData]>(value: [])
+    private var model: PostModel?
     
     private let disposeBag = DisposeBag()
     
@@ -123,7 +123,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func bindTableView() {
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
                                                        cellType: CommentCell.self)) { (row, data, cell) in
-                cell.changeCommentData(model: data)
+            cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
     }
     
@@ -141,9 +141,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text else { return }
         
-        LoadingIndicator.showLoading()
+        LoadingIndicator.showLoading(text: "게시 중")
         viewModel.createComment(idx: idx, content: content) {
             DispatchQueue.main.async {
+                self.viewModel.callToCommentData(idx: idx)
                 self.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
             }
             LoadingIndicator.hideLoading()
@@ -154,14 +155,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         enterCommentButton.rx.tap
             .bind(with: self, onNext: { owner, _ in
                 owner.enterComment()
-                owner.callToCommentData()
+                owner.viewModel.callToCommentData(idx: owner.model!.idx)
             }).disposed(by: disposeBag)
-    }
-    
-    private func callToCommentData() {
-        guard let idx = model?.idx else { return }
-        
-        viewModel.callToCommentData(idx: idx)
     }
     
     private func changePostData(model: PostModel) {
@@ -223,7 +218,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
-        callToCommentData()
+        viewModel.callToCommentData(idx: model!.idx)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -245,6 +240,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func configureVC() {
         enterCommentTextView.delegate = self
         viewModel.delegate = self
+        commentTableView.delegate = self
         
         bindTableView()
         bindUI()
@@ -391,5 +387,32 @@ extension DetailPostViewController: UITextViewDelegate {
         if textView.text == "" {
             setTextViewPlaceholder()
         }
+    }
+}
+
+extension DetailPostViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        var config: UISwipeActionsConfiguration? = nil
+        let commentModel = commentData.value[indexPath.row]
+        lazy var contextual = UIContextualAction(style: .destructive, title: nil, handler: { [weak self] _, _, _ in
+            self?.viewModel.deleteComment(postIdx: self!.model!.idx, commentIdx: commentModel.idx, completion: { result in
+                switch result {
+                case .success(()):
+                    self?.viewModel.callToCommentData(idx: self!.model!.idx)
+                    self?.commentTableView.reloadRows(
+                    at: [indexPath],
+                    with: .automatic
+                    )
+                case .failure(let error):
+                    print("Delete Faield = \(error.localizedDescription)")
+                }
+            })
+        })
+        contextual.image = UIImage(systemName: "trash")
+
+        if commentModel.isMine {
+            config = UISwipeActionsConfiguration(actions: [contextual])
+        }
+        return config
     }
 }

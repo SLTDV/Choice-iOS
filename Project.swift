@@ -35,7 +35,3 @@ let project = Project(
         )
     ]
 )
-
-let baseSettings: [String: SettingValue] = [
-    "Preprocessor_Macros" : "FLEXLAYOUT_SWIFT_PACKAGE=1"
-]

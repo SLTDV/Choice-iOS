@@ -1,19 +1,14 @@
 import UIKit
 import Then
 import SnapKit
-
-protocol CommentFuncProtocol: AnyObject {
-    func deleteComment(commentIdx: Int)
-}
+import Kingfisher
 
 final class CommentCell: UITableViewCell {
     static let identifier = "CommentCellIdentifier"
-    
-    weak var delegate: CommentFuncProtocol?
 
     private let profileImageView = UIImageView().then {
-        $0.tintColor = .black
-        $0.image = UIImage(systemName: "person.crop.circle.fill")
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 12
     }
     
     private let nicknameLabel = UILabel().then {
@@ -46,7 +41,7 @@ final class CommentCell: UITableViewCell {
     private func setLayout() {
         profileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
-            $0.leading.equalToSuperview().inset(32)
+            $0.leading.equalToSuperview().inset(30)
             $0.size.equalTo(25)
         }
 
@@ -58,7 +53,7 @@ final class CommentCell: UITableViewCell {
 
         contentLabel.snp.makeConstraints {
             $0.top.equalTo(nicknameLabel.snp.bottom).offset(15)
-            $0.leading.trailing.equalToSuperview().inset(35)
+            $0.leading.trailing.equalToSuperview().inset(33)
             $0.bottom.equalToSuperview().inset(10)
         }
     }
@@ -67,6 +62,7 @@ final class CommentCell: UITableViewCell {
 extension CommentCell {
     func changeCommentData(model: CommentData) {
         self.nicknameLabel.text = model.nickname
+        self.profileImageView.kf.setImage(with: URL(string: model.image ?? ""))
         self.contentLabel.text = model.content
     }
 }
