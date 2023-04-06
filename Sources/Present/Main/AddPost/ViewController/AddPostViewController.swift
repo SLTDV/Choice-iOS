@@ -56,7 +56,6 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     private let inputTitleTextField = UITextField().then {
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.placeholder = "제목입력 (2~16)"
-        $0.textColor = .lightGray
         $0.borderStyle = .none
     }
     
@@ -140,7 +139,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     @objc private func SetTopicButtonDidTap(_ sender: UIButton) {
-        let alert = UIAlertController(title: "주제", message: "주제를 입력해주세요.(2~8 글자)", preferredStyle: .alert)
+        let alert = UIAlertController(title: "주제", message: "주제를 입력해주세요.(1~8 글자)", preferredStyle: .alert)
         alert.addTextField()
         
         let ok = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
@@ -171,7 +170,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         guard let firstImage = addFirstImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let secondImage = addSecondImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let firstVotingOption = firstSetTopicButton.titleLabel?.text?.trimmingCharacters(in: .whitespaces) else { return }
-        guard let secondVotingOtion = secondSetTopicButton.titleLabel?.text.trimmingCharacters(in: .whitespaces) else { return }
+        guard let secondVotingOtion = secondSetTopicButton.titleLabel?.text?.trimmingCharacters(in: .whitespaces) else { return }
         if firstVotingOption.elementsEqual("주제1 ✏️") || secondVotingOtion.elementsEqual("주제2 ✏️") {
             alert.message = "주제를 입력해주세요."
             return present(alert, animated: true)
@@ -179,7 +178,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         
         if (1...8).contains(firstVotingOption.count) && (1...8).contains(secondVotingOtion.count) {
             viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage, firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
-            LoadingIndicator.showLoading()
+            LoadingIndicator.showLoading(text: "게시 중")
         } else {
             alert.message = "주제는 1~8 글자 만 입력 가능합니다."
             return present(alert, animated: true)
