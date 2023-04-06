@@ -2,7 +2,7 @@ import Foundation
 
 struct CommentModel: Codable {
     var writer: String
-    var image: String
+    var image: String?
     var comment : [CommentData]
 }
 
