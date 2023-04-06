@@ -30,11 +30,11 @@ struct APIConstants {
     static let deleteCommentURL = baseURL + "comment/"
     
     //Profile
-    static let profileURL = baseURL + "/user"
-    static let changeNicknameURL = baseURL + "/user"
-    static let membershipWithdrawalURL = baseURL + "/user"
-    static let changeProfileImageURL = baseURL + "/user/image"
-    static let profileImageUploadURL = baseURL + "/image/profile"
+    static let profileURL = baseURL + "user"
+    static let changeNicknameURL = baseURL + "user"
+    static let membershipWithdrawalURL = baseURL + "user"
+    static let changeProfileImageURL = baseURL + "user/image"
+    static let profileImageUploadURL = baseURL + "image/profile"
     
     private init() {}
 }
