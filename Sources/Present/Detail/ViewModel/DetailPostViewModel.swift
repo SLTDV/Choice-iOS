@@ -5,7 +5,7 @@ import Alamofire
 
 protocol CommentDataProtocol: AnyObject {
     var writerNameData: PublishSubject<String> { get set  }
-    var writerImageStringData: PublishSubject<String> { get set }
+    var writerImageStringData: PublishSubject<String?> { get set }
     var commentData: BehaviorRelay<[CommentData]> { get set }
 }
 
