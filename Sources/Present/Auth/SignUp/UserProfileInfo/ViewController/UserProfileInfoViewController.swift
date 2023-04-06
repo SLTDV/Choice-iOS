@@ -5,6 +5,8 @@ import RxCocoa
 final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     var email: String?
     var password: String?
+
+    var isImageChanged = false
     
     private let disposeBag = DisposeBag()
     
@@ -80,9 +82,10 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         guard let email = email else { return  }
         guard let password = password else { return  }
         guard let nickName = userNameTextField.text else { return }
-        guard let profileImage = profileImageView.image else { return }
         
         let trimmedNickName = nickName.trimmingCharacters(in: .whitespaces)
+    
+        let profileImage = isImageChanged ? profileImageView.image : nil
         
         viewModel.callToSignUp(email: email, password: password, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
             if isDuplicate {
@@ -170,5 +173,6 @@ extension UserProfileInfoViewController: UIImagePickerControllerDelegate, UINavi
         self.profileImageView.image = newImage
         
         picker.dismiss(animated: true, completion: nil)
+        isImageChanged = true
     }
 }

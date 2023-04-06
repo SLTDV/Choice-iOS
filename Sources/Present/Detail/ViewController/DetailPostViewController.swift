@@ -5,7 +5,7 @@ import Kingfisher
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
     var writerNameData = PublishSubject<String>()
-    var writerImageStringData = PublishSubject<String>()
+    var writerImageStringData = PublishSubject<String?>()
     var commentData = BehaviorRelay<[CommentData]>(value: [])
     private var model: PostModel?
     
@@ -18,8 +18,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private let contentView = UIView()
     
     private let userImageView = UIImageView().then {
+        $0.image = UIImage(systemName: "person.crop.circle.fill")
+        $0.tintColor = .black
         $0.clipsToBounds = true
-        $0.backgroundColor = .gray
         $0.layer.cornerRadius = 12
     }
     
@@ -133,7 +134,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }).disposed(by: disposeBag)
         
         writerImageStringData.bind(with: self, onNext: { owner, arg in
-            owner.userImageView.kf.setImage(with: URL(string: arg))
+            guard arg == nil else {
+                owner.userImageView.kf.setImage(with: URL(string: arg!))
+                return
+            }
         }).disposed(by: disposeBag)
     }
     
