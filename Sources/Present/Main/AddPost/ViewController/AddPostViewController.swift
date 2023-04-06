@@ -115,14 +115,13 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     
     private func bindUI() {
         let titleTextObservable = inputTitleTextField.rx.text.orEmpty
-            .filter { $0.count < 20 }
         let descriptionTextObservable = inputDescriptionTextView.rx.text.orEmpty
-            .filter { $0 != "내용입력 (2~100)" && $0.count < 100 }
+            .filter { $0 != "내용입력 (2~100)" }
         
         Observable.combineLatest(
             titleTextObservable,
             descriptionTextObservable,
-            resultSelector: { s1, s2 in (s1.count > 1) && (s2.count > 1) }
+            resultSelector: { s1, s2 in (2...16).contains(s1.count) && (2...100).contains(s2.count) }
         )
         .bind(with: self, onNext: { owner, arg in
             owner.addPostViewButton.isEnabled = arg
