@@ -41,7 +41,7 @@ final class CommentCell: UITableViewCell {
     private func setLayout() {
         profileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
-            $0.leading.equalToSuperview().inset(32)
+            $0.leading.equalToSuperview().inset(30)
             $0.size.equalTo(25)
         }
 
@@ -53,7 +53,7 @@ final class CommentCell: UITableViewCell {
 
         contentLabel.snp.makeConstraints {
             $0.top.equalTo(nicknameLabel.snp.bottom).offset(15)
-            $0.leading.trailing.equalToSuperview().inset(35)
+            $0.leading.trailing.equalToSuperview().inset(33)
             $0.bottom.equalToSuperview().inset(10)
         }
     }
