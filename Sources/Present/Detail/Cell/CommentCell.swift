@@ -1,12 +1,15 @@
 import UIKit
 import Then
 import SnapKit
+import Kingfisher
 
 final class CommentCell: UITableViewCell {
     static let identifier = "CommentCellIdentifier"
 
     private let profileImageView = UIImageView().then {
-        $0.tintColor = .black
+        $0.clipsToBounds = true
+        $0.backgroundColor = .gray
+        $0.layer.cornerRadius = 12
         $0.image = UIImage(systemName: "person.crop.circle.fill")
     }
     
@@ -61,6 +64,7 @@ final class CommentCell: UITableViewCell {
 extension CommentCell {
     func changeCommentData(model: CommentData) {
         self.nicknameLabel.text = model.nickname
+        self.profileImageView.kf.setImage(with: URL(string: model.image))
         self.contentLabel.text = model.content
     }
 }
