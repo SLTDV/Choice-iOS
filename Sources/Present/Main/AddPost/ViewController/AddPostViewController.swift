@@ -170,8 +170,8 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         guard let content = inputDescriptionTextView.text else { return }
         guard let firstImage = addFirstImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let secondImage = addSecondImageButton.imageView?.image else { return present(alert, animated: true) }
-        guard let firstVotingOption = firstSetTopicButton.titleLabel?.text else { return }
-        guard let secondVotingOtion = secondSetTopicButton.titleLabel?.text else { return }
+        guard let firstVotingOption = firstSetTopicButton.titleLabel?.text?.trimmingCharacters(in: .whitespaces) else { return }
+        guard let secondVotingOtion = secondSetTopicButton.titleLabel?.text.trimmingCharacters(in: .whitespaces) else { return }
         if firstVotingOption.elementsEqual("주제1 ✏️") || secondVotingOtion.elementsEqual("주제2 ✏️") {
             alert.message = "주제를 입력해주세요."
             return present(alert, animated: true)
