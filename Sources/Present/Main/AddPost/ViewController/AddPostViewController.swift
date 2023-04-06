@@ -115,13 +115,15 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
     
     private func bindUI() {
-        let titleTextObservable = inputTitleTextField.rx.text.filter { $0!.count < 20 }
-        let descriptionTextObservable = inputDescriptionTextView.rx.text.filter { $0!.count < 100 }
+        let titleTextObservable = inputTitleTextField.rx.text.orEmpty
+            .filter { $0.count < 20 }
+        let descriptionTextObservable = inputDescriptionTextView.rx.text.orEmpty
+            .filter { $0 != "내용입력 (2~100)" && $0.count < 100 }
         
         Observable.combineLatest(
             titleTextObservable,
             descriptionTextObservable,
-            resultSelector: { s1, s2 in (s1!.count > 2) && (s2!.count > 20) }
+            resultSelector: { s1, s2 in (s1.count > 2) && (s2.count > 2) }
         )
         .subscribe(with: self, onNext: { owner, arg in
             owner.addPostViewButton.isEnabled = arg
@@ -174,9 +176,14 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
             alert.message = "주제를 입력해주세요."
             return present(alert, animated: true)
         }
-
-        viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage, firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
-        LoadingIndicator.showLoading()
+        
+        if 1 < firstVotingOption.count, secondVotingOtion.count < 9 {
+            viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage, firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
+            LoadingIndicator.showLoading()
+        } else {
+            alert.message = "주제는 1~8 글자 만 입력 가능합니다."
+            return present(alert, animated: true)
+        }
     }
     
     override func configureVC() {
@@ -273,9 +280,9 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
 extension AddPostViewController: UITextViewDelegate {
     private func setTextViewPlaceholder() {
         if inputDescriptionTextView.text.isEmpty {
-            inputDescriptionTextView.text = "내용입력 (20~100)"
+            inputDescriptionTextView.text = "내용입력 (2~100)"
             inputDescriptionTextView.textColor = UIColor.lightGray
-        } else if inputDescriptionTextView.text == "내용입력 (20~100)" {
+        } else if inputDescriptionTextView.text == "내용입력 (2~100)" {
             inputDescriptionTextView.text = ""
             inputDescriptionTextView.textColor = UIColor.black
         }
