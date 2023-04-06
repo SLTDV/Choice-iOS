@@ -176,11 +176,11 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         }
         
         if (1...8).contains(firstVotingOption.count) && (1...8).contains(secondVotingOtion.count) {
+            LoadingIndicator.showLoading(text: "게시 중")
+            
             viewModel.createPost(title: title, content: content,
                                  firstImage: firstImage, secondImage: secondImage,
                                  firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
-            
-            LoadingIndicator.showLoading(text: "게시 중")
         } else {
             alert.message = "주제는 1~8 글자만 입력 가능합니다."
             return present(alert, animated: true)
