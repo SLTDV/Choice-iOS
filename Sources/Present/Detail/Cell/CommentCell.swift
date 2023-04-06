@@ -7,6 +7,8 @@ final class CommentCell: UITableViewCell {
     static let identifier = "CommentCellIdentifier"
 
     private let profileImageView = UIImageView().then {
+        $0.image = UIImage(systemName: "person.crop.circle.fill")
+        $0.tintColor = .black
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 12
     }
@@ -62,7 +64,10 @@ final class CommentCell: UITableViewCell {
 extension CommentCell {
     func changeCommentData(model: CommentData) {
         self.nicknameLabel.text = model.nickname
-        self.profileImageView.kf.setImage(with: URL(string: model.image ?? ""))
         self.contentLabel.text = model.content
+        guard model.image == nil else {
+            self.profileImageView.kf.setImage(with: URL(string: model.image!))
+            return
+        }
     }
 }
