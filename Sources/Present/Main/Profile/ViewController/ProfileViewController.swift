@@ -76,7 +76,11 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         }).disposed(by: disposeBag)
         
         imageData.bind(with: self, onNext: { owner, arg in
-            owner.profileImageView.kf.setImage(with: URL(string: arg))
+            guard arg.isEmpty else {
+                owner.profileImageView.kf.setImage(with: URL(string: arg))
+                return
+            }
+            owner.profileImageView.image = UIImage(systemName: "person.crop.circle.fill")
         }).disposed(by: disposeBag)
     }
     
