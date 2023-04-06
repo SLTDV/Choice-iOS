@@ -123,7 +123,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         Observable.combineLatest(
             titleTextObservable,
             descriptionTextObservable,
-            resultSelector: { s1, s2 in (s1.count > 2) && (s2.count > 2) }
+            resultSelector: { s1, s2 in (s1.count > 1) && (s2.count > 1) }
         )
         .subscribe(with: self, onNext: { owner, arg in
             owner.addPostViewButton.isEnabled = arg
@@ -177,7 +177,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
             return present(alert, animated: true)
         }
         
-        if 1 < firstVotingOption.count, secondVotingOtion.count < 9 {
+        if (1...8).contains(firstVotingOption.count) && (1...8).contains(secondVotingOtion.count) {
             viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage, firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
             LoadingIndicator.showLoading()
         } else {
