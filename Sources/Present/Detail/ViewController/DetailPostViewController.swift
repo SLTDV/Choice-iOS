@@ -76,26 +76,24 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.backgroundColor = .black
     }
     
-    private let commentCountLabel = UILabel().then {
-        $0.text = "댓글"
-        $0.font = .systemFont(ofSize: 14, weight: .medium)
+    private let whiteBackgroundView = UIView().then {
+        $0.backgroundColor = .white
     }
     
     private let enterCommentTextView = UITextView().then {
         $0.text = "댓글을 입력해주세요"
         $0.font = .systemFont(ofSize: 14)
         $0.textColor = .lightGray
-        $0.layer.cornerRadius = 10
+        $0.layer.cornerRadius = 25
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = .init(red: 0.629, green: 0.629, blue: 0.629, alpha: 1)
+        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
     }
     
     private let enterCommentButton = UIButton().then {
         $0.setTitle("게시", for: .normal)
+        $0.setTitleColor(.blue, for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        $0.layer.cornerRadius = 10
-        $0.backgroundColor = .black
-        $0.isHidden = false
+        $0.backgroundColor = .red
     }
     
     private let commentTableView = UITableView().then {
@@ -253,16 +251,17 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     override func addView() {
-        view.addSubview(scrollView)
+        view.addSubviews(scrollView, whiteBackgroundView)
         scrollView.addSubview(contentView)
         contentView.addSubviews(userImageView, userNameLabel,titleLabel,
                                 divideVotePostImageLineView, descriptionLabel,
                                 firstPostImageView, secondPostImageView,
                                 firstVoteButton, secondVoteButton,
-                                divideCommentLineView, commentCountLabel,
-                                enterCommentTextView, enterCommentButton, commentTableView)
+                                divideCommentLineView, commentTableView)
         firstPostImageView.addSubview(firstVoteOptionBackgroundView)
         secondPostImageView.addSubview(secondVoteOptionBackgroundView)
+        whiteBackgroundView.addSubview(enterCommentTextView)
+        enterCommentTextView.addSubview(enterCommentButton)
     }
     
     override func setLayout() {
@@ -344,30 +343,29 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.leading.trailing.equalToSuperview().inset(38)
             $0.height.equalTo(1)
         }
-        
-        commentCountLabel.snp.makeConstraints {
-            $0.top.equalTo(divideCommentLineView.snp.bottom).offset(18)
-            $0.leading.equalToSuperview().offset(30)
-        }
-        
-        enterCommentTextView.snp.makeConstraints {
-            $0.top.equalTo(commentCountLabel.snp.bottom).offset(10)
-            $0.leading.trailing.equalToSuperview().inset(30)
-            $0.height.equalTo(83)
-        }
-        
-        enterCommentButton.snp.makeConstraints {
-            $0.top.equalTo(enterCommentTextView.snp.bottom).offset(10)
-            $0.trailing.equalTo(enterCommentTextView.snp.trailing)
-            $0.leading.equalTo(enterCommentTextView.snp.leading).inset(250)
-            $0.height.equalTo(30)
-        }
-        
+
         commentTableView.snp.makeConstraints {
-            $0.top.equalTo(enterCommentButton.snp.bottom).offset(30)
+            $0.top.equalTo(divideCommentLineView).offset(32)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
             $0.height.equalTo(1)
+        }
+        
+        whiteBackgroundView.snp.makeConstraints {
+            $0.bottom.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.height.equalTo(100)
+        }
+        
+        enterCommentTextView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(10)
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalToSuperview().inset(43)
+        }
+        
+        enterCommentButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalToSuperview()
         }
     }
 }
