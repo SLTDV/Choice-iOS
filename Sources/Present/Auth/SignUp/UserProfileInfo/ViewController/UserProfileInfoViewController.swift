@@ -95,7 +95,6 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
                 self.showWarningLabel(warning: "*이미 존재하는 닉네임 입니다.")
             }
         }
-        
     }
     
     private func shakeAllTextField() {
@@ -172,7 +171,6 @@ extension UserProfileInfoViewController: UIImagePickerControllerDelegate, UINavi
         }
         
         self.profileImageView.image = newImage
-        
         
         picker.dismiss(animated: true, completion: nil)
         isImageChanged = true
