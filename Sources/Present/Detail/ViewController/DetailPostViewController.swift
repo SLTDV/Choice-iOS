@@ -130,7 +130,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func bindUI() {
         writerNameData.bind(with: self, onNext: { owner, arg in
-            print("name = \(arg)")
             owner.userNameLabel.text = arg
         }).disposed(by: disposeBag)
         
