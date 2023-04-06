@@ -62,7 +62,7 @@ final class CommentCell: UITableViewCell {
 extension CommentCell {
     func changeCommentData(model: CommentData) {
         self.nicknameLabel.text = model.nickname
-        self.profileImageView.kf.setImage(with: URL(string: model.image ?? ""))
+        self.profileImageView.kf.setImage(with: URL(string: model.image))
         self.contentLabel.text = model.content
     }
 }
