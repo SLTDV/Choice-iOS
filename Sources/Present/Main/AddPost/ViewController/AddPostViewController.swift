@@ -124,7 +124,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
             descriptionTextObservable,
             resultSelector: { s1, s2 in (s1.count > 1) && (s2.count > 1) }
         )
-        .subscribe(with: self, onNext: { owner, arg in
+        .bind(with: self, onNext: { owner, arg in
             owner.addPostViewButton.isEnabled = arg
             owner.addPostViewButton.backgroundColor = arg ? .black : ChoiceAsset.Colors.grayMedium.color
         }).disposed(by: disposeBag)
