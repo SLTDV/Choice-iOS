@@ -25,10 +25,10 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     }
     
     private let profileImageView = UIImageView().then {
-        $0.clipsToBounds = true
-        $0.layer.cornerRadius = 50
         $0.image = UIImage(systemName: "person.crop.circle.fill")
         $0.tintColor = .black
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 50
     }
     
     private lazy var editProfileImageButton = UIButton().then {
@@ -80,7 +80,6 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
                 owner.profileImageView.kf.setImage(with: URL(string: arg!))
                 return
             }
-            owner.profileImageView.image = UIImage(systemName: "person.crop.circle.fill")
         }).disposed(by: disposeBag)
     }
     
