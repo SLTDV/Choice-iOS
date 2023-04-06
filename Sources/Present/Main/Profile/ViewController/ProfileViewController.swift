@@ -5,7 +5,7 @@ import Kingfisher
 
 final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
     var nicknameData = PublishSubject<String>()
-    var imageData = PublishSubject<String>()
+    var imageData = PublishSubject<String?>()
     var postListData = PublishSubject<[PostModel]>()
     
     private let disposeBag = DisposeBag()
@@ -76,8 +76,8 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         }).disposed(by: disposeBag)
         
         imageData.bind(with: self, onNext: { owner, arg in
-            guard arg.isEmpty else {
-                owner.profileImageView.kf.setImage(with: URL(string: arg))
+            guard arg == nil else {
+                owner.profileImageView.kf.setImage(with: URL(string: arg!))
                 return
             }
             owner.profileImageView.image = UIImage(systemName: "person.crop.circle.fill")
