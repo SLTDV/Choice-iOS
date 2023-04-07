@@ -56,7 +56,6 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     private let inputTitleTextField = UITextField().then {
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.placeholder = "제목입력 (2~16)"
-        $0.textColor = .lightGray
         $0.borderStyle = .none
     }
     
@@ -65,7 +64,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private let inputDescriptionTextView = UITextView().then {
-        $0.text = "내용입력 (20~100)"
+        $0.text = "내용입력 (2~100)"
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
         $0.textColor = .lightGray
         $0.layer.cornerRadius = 8
@@ -108,31 +107,38 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.addTarget(self, action: #selector(addPostViewButtonDidTap(_:)), for: .touchUpInside)
     }
     
+    @objc private func tapMethod(_ sender: UITapGestureRecognizer) {
+        view.endEditing(true)
+    }
+    
+    private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
+    
     private func bindUI() {
-        let titleTextObservable = inputTitleTextField.rx.text.filter { $0!.count < 20 }
-        let descriptionTextObservable = inputDescriptionTextView.rx.text.filter { $0!.count < 100 }
+        let titleTextObservable = inputTitleTextField.rx.text.orEmpty
+        let descriptionTextObservable = inputDescriptionTextView.rx.text.orEmpty
+            .filter { $0 != "내용입력 (2~100)" }
         
         Observable.combineLatest(
             titleTextObservable,
             descriptionTextObservable,
-            resultSelector: { s1, s2 in (s1!.count > 2) && (s2!.count > 20) }
+            resultSelector: { s1, s2 in (2...16).contains(s1.count) && (2...100).contains(s2.count) }
         )
-        .subscribe(with: self, onNext: { owner, arg in
+        .bind(with: self, onNext: { owner, arg in
             owner.addPostViewButton.isEnabled = arg
             owner.addPostViewButton.backgroundColor = arg ? .black : ChoiceAsset.Colors.grayMedium.color
         }).disposed(by: disposeBag)
     }
     
     @objc private func addFirstImageButtonDidTap(_ sender: UIButton) {
-        self.present(firstImagePicker, animated: true)
+        present(firstImagePicker, animated: true)
     }
     
     @objc private func addSecondImageButtonDidTap(_ sender: UIButton) {
-        self.present(secondImagePicker, animated: true)
+        present(secondImagePicker, animated: true)
     }
     
     @objc private func SetTopicButtonDidTap(_ sender: UIButton) {
-        let alert = UIAlertController(title: "주제", message: "주제를 입력해주세요.", preferredStyle: .alert)
+        let alert = UIAlertController(title: "주제", message: "주제를 입력해주세요.(1~8 글자)", preferredStyle: .alert)
         alert.addTextField()
         
         let ok = UIAlertAction(title: "OK", style: .default) { [weak self] _ in
@@ -162,16 +168,23 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         guard let content = inputDescriptionTextView.text else { return }
         guard let firstImage = addFirstImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let secondImage = addSecondImageButton.imageView?.image else { return present(alert, animated: true) }
-        guard let firstVotingOption = firstSetTopicButton.titleLabel?.text else { return }
-        guard let secondVotingOtion = secondSetTopicButton.titleLabel?.text else { return }
+        guard let firstVotingOption = firstSetTopicButton.titleLabel?.text?.trimmingCharacters(in: .whitespaces) else { return }
+        guard let secondVotingOtion = secondSetTopicButton.titleLabel?.text?.trimmingCharacters(in: .whitespaces) else { return }
         if firstVotingOption.elementsEqual("주제1 ✏️") || secondVotingOtion.elementsEqual("주제2 ✏️") {
             alert.message = "주제를 입력해주세요."
             return present(alert, animated: true)
         }
-
-        viewModel.createPost(title: title, content: content, firstImage: firstImage, secondImage: secondImage,
-                             firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
-        LoadingIndicator.showLoading()
+        
+        if (1...8).contains(firstVotingOption.count) && (1...8).contains(secondVotingOtion.count) {
+            LoadingIndicator.showLoading(text: "게시 중")
+            
+            viewModel.createPost(title: title, content: content,
+                                 firstImage: firstImage, secondImage: secondImage,
+                                 firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
+        } else {
+            alert.message = "주제는 1~8 글자만 입력 가능합니다."
+            return present(alert, animated: true)
+        }
     }
     
     override func configureVC() {
@@ -180,6 +193,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         inputDescriptionTextView.delegate = self
         firstImagePicker.delegate = self
         secondImagePicker.delegate = self
+        scrollView.addGestureRecognizer(tapGestureRecognizer)
         
         bindUI()
     }
@@ -267,9 +281,9 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
 extension AddPostViewController: UITextViewDelegate {
     private func setTextViewPlaceholder() {
         if inputDescriptionTextView.text.isEmpty {
-            inputDescriptionTextView.text = "내용입력 (20~100)"
+            inputDescriptionTextView.text = "내용입력 (2~100)"
             inputDescriptionTextView.textColor = UIColor.lightGray
-        } else if inputDescriptionTextView.text == "내용입력 (20~100)" {
+        } else if inputDescriptionTextView.text == "내용입력 (2~100)" {
             inputDescriptionTextView.text = ""
             inputDescriptionTextView.textColor = UIColor.black
         }
