@@ -93,7 +93,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.setTitle("게시", for: .normal)
         $0.setTitleColor(.blue, for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        $0.backgroundColor = .red
     }
     
     private let commentTableView = UITableView().then {
@@ -260,8 +259,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                                 divideCommentLineView, commentTableView)
         firstPostImageView.addSubview(firstVoteOptionBackgroundView)
         secondPostImageView.addSubview(secondVoteOptionBackgroundView)
-        whiteBackgroundView.addSubview(enterCommentTextView)
-        enterCommentTextView.addSubview(enterCommentButton)
+        whiteBackgroundView.addSubviews(enterCommentTextView, enterCommentButton)
     }
     
     override func setLayout() {
@@ -364,8 +362,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
         
         enterCommentButton.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview()
+            $0.centerY.equalTo(enterCommentTextView)
+            $0.trailing.equalTo(enterCommentTextView).inset(17)
         }
     }
 }
