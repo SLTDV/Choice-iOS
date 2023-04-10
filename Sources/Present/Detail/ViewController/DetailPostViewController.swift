@@ -168,6 +168,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             DispatchQueue.main.async {
                 self.viewModel.callToCommentData(idx: idx)
                 self.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                self.enterCommentTextView.text = ""
+                self.setDefaultSubmitButton()
             }
             LoadingIndicator.hideLoading()
         }
