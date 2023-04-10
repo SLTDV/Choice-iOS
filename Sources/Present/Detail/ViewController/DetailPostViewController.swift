@@ -156,7 +156,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
     }
     
-    private func submitcommentButtonDidTap() {
+    private func submitCommentButtonDidTap() {
         submitCommentButton.rx.tap
             .bind(with: self, onNext: { owner, _ in
                 owner.submitComment()
@@ -249,7 +249,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         bindTableView()
         bindUI()
-        submitcommentButtonDidTap()
+        submitCommentButtonDidTap()
         changePostData(model: model!)
     }
     
