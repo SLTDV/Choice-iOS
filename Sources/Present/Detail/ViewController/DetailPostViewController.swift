@@ -82,11 +82,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let enterCommentTextView = UITextView().then {
-        $0.text = "댓글을 입력해주세요"
+        $0.textContainerInset = UIEdgeInsets(top: 13, left: 14, bottom: 14, right: 14)
+        $0.text = "댓글을 입력해주세요."
         $0.isScrollEnabled = false
         $0.font = .systemFont(ofSize: 14)
         $0.textColor = .lightGray
-        $0.layer.cornerRadius = 25
+        $0.layer.cornerRadius = 22
         $0.layer.borderWidth = 1
         $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
     }
@@ -357,7 +358,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
         
         enterCommentTextView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(10)
+            $0.top.equalToSuperview().inset(5)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().inset(43)
         }
@@ -370,12 +371,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
 }
 
 extension DetailPostViewController: UITextViewDelegate {
-    
     private func setTextViewPlaceholder() {
         if enterCommentTextView.text.isEmpty {
-            enterCommentTextView.text = "댓글을 입력해주세요"
+            enterCommentTextView.text = "댓글을 입력해주세요."
             enterCommentTextView.textColor = UIColor.lightGray
-        } else if enterCommentTextView.text == "댓글을 입력해주세요"{
+        } else if enterCommentTextView.text == "댓글을 입력해주세요."{
             enterCommentTextView.text = ""
             enterCommentTextView.textColor = UIColor.black
         }
@@ -393,8 +393,12 @@ extension DetailPostViewController: UITextViewDelegate {
     
     func textViewDidChange(_ textView: UITextView) {
         let fixedWidth = textView.frame.width
-        let size = CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude)
-        whiteBackgroundView.frame.size = CGSize(width: max(size.width, fixedWidth), height: size.height)
+        let size = CGSize(width: fixedWidth, height: textView.frame.height)
+        print("size height = \(size.height)")
+        
+//        textView.sizeThatFits(size)
+//        textView.reloadInputViews()
+        whiteBackgroundView.sizeThatFits(size)
     }
 }
 
