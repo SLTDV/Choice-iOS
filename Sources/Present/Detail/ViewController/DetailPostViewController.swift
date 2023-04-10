@@ -161,9 +161,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func submitComment() {
         guard let idx = model?.idx else { return }
-        guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespaces) else { return }
+        guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         LoadingIndicator.showLoading(text: "게시 중")
+        print("comment = \(content.count)")
         viewModel.createComment(idx: idx, content: content) {
             DispatchQueue.main.async {
                 self.viewModel.callToCommentData(idx: idx)
@@ -410,7 +411,7 @@ extension DetailPostViewController: UITextViewDelegate {
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.trimmingCharacters(in: .whitespaces) == "" {
+        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
             enterCommentTextView.text = "댓글을 입력해주세요."
             enterCommentTextView.textColor = UIColor.lightGray
             setDefaultSubmitButton()
@@ -422,7 +423,7 @@ extension DetailPostViewController: UITextViewDelegate {
         let size = CGSize(width: fixedWidth, height: textView.frame.height)
         whiteBackgroundView.sizeThatFits(size)
         
-        if enterCommentTextView.text.trimmingCharacters(in: .whitespaces).count >= 1 {
+        if enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 1 {
             submitCommentButton.isEnabled = true
             submitCommentButton.setTitleColor(.blue, for: .normal)
         } else {
