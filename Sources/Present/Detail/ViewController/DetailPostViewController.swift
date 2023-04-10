@@ -91,7 +91,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
     }
     
-    private let enterCommentButton = UIButton().then {
+    private let submitCommentButton = UIButton().then {
         $0.setTitle("게시", for: .normal)
         $0.setTitleColor(.blue, for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
@@ -140,7 +140,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }).disposed(by: disposeBag)
     }
     
-    private func enterComment() {
+    private func submitComment() {
         guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text else { return }
         
@@ -154,10 +154,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
     }
     
-    private func commentButtonDidTap() {
-        enterCommentButton.rx.tap
+    private func submitcommentButtonDidTap() {
+        submitCommentButton.rx.tap
             .bind(with: self, onNext: { owner, _ in
-                owner.enterComment()
+                owner.submitComment()
                 owner.viewModel.callToCommentData(idx: owner.model!.idx)
             }).disposed(by: disposeBag)
     }
@@ -247,7 +247,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         bindTableView()
         bindUI()
-        commentButtonDidTap()
+        submitcommentButtonDidTap()
         changePostData(model: model!)
     }
     
@@ -261,7 +261,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                                 divideCommentLineView, commentTableView)
         firstPostImageView.addSubview(firstVoteOptionBackgroundView)
         secondPostImageView.addSubview(secondVoteOptionBackgroundView)
-        whiteBackgroundView.addSubviews(enterCommentTextView, enterCommentButton)
+        whiteBackgroundView.addSubviews(enterCommentTextView, submitCommentButton)
     }
     
     override func setLayout() {
@@ -362,7 +362,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.bottom.equalToSuperview().inset(43)
         }
         
-        enterCommentButton.snp.makeConstraints {
+        submitCommentButton.snp.makeConstraints {
             $0.centerY.equalTo(enterCommentTextView)
             $0.trailing.equalTo(enterCommentTextView).inset(17)
         }
