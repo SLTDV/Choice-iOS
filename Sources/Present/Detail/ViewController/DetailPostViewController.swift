@@ -77,11 +77,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let whiteBackgroundView = UIView().then {
+        $0.autoresizingMask = .flexibleHeight
         $0.backgroundColor = .white
     }
     
     private let enterCommentTextView = UITextView().then {
         $0.text = "댓글을 입력해주세요"
+        $0.isScrollEnabled = false
         $0.font = .systemFont(ofSize: 14)
         $0.textColor = .lightGray
         $0.layer.cornerRadius = 25
@@ -352,7 +354,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         whiteBackgroundView.snp.makeConstraints {
             $0.bottom.equalToSuperview()
             $0.leading.trailing.equalToSuperview()
-            $0.height.equalTo(100)
         }
         
         enterCommentTextView.snp.makeConstraints {
@@ -369,6 +370,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
 }
 
 extension DetailPostViewController: UITextViewDelegate {
+    
     private func setTextViewPlaceholder() {
         if enterCommentTextView.text.isEmpty {
             enterCommentTextView.text = "댓글을 입력해주세요"
@@ -387,6 +389,12 @@ extension DetailPostViewController: UITextViewDelegate {
         if textView.text == "" {
             setTextViewPlaceholder()
         }
+    }
+    
+    func textViewDidChange(_ textView: UITextView) {
+        let fixedWidth = textView.frame.width
+        let size = CGSize(width: fixedWidth, height: CGFloat.greatestFiniteMagnitude)
+        whiteBackgroundView.frame.size = CGSize(width: max(size.width, fixedWidth), height: size.height)
     }
 }
 
