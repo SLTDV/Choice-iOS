@@ -157,6 +157,51 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 return
             }
         }).disposed(by: disposeBag)
+        
+        enterCommentTextView.rx.didBeginEditing
+            .bind(with: self, onNext: { owner, _ in
+                print("begin")
+                if owner.enterCommentTextView.text == "댓글을 입력해주세요." {
+                    owner.enterCommentTextView.text = ""
+                    owner.enterCommentTextView.textColor = UIColor.black
+                }
+            }).disposed(by: disposeBag)
+        
+        enterCommentTextView.rx.didEndEditing
+            .bind(with: self, onNext: { owner, _ in
+                print("didend")
+                if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+                    owner.enterCommentTextView.text = "댓글을 입력해주세요."
+                    owner.enterCommentTextView.textColor = UIColor.lightGray
+                    owner.setDefaultSubmitButton()
+                }
+            }).disposed(by: disposeBag)
+        
+        enterCommentTextView.rx.didChange
+            .bind(with: self, onNext: { owner, arg in
+                let fixedWidth = owner.enterCommentTextView.frame.height
+                let size = CGSize(width: fixedWidth, height: owner.enterCommentTextView.frame.height)
+                let countNewline = owner.enterCommentTextView.text.filter { $0 == "\n" }
+                
+                if countNewline.count > 3 {
+                    owner.enterCommentTextView.snp.makeConstraints {
+                        $0.height.equalTo(94)
+                    }
+                    owner.enterCommentTextView.isScrollEnabled = true
+                } else {
+                    owner.enterCommentTextView.sizeThatFits(CGSize(width: fixedWidth,
+                                                                   height: owner.enterCommentTextView.frame.height
+                                                                  ))
+                    owner.enterCommentTextView.isScrollEnabled = false
+                }
+                
+                if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 1 {
+                    owner.submitCommentButton.isEnabled = true
+                    owner.submitCommentButton.setTitleColor(.blue, for: .normal)
+                } else {
+                    owner.setDefaultSubmitButton()
+                }
+            }).disposed(by: disposeBag)
     }
     
     private func submitComment() {
@@ -269,7 +314,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     override func configureVC() {
-        enterCommentTextView.delegate = self
         viewModel.delegate = self
         commentTableView.delegate = self
         
@@ -397,38 +441,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
 }
 
-extension DetailPostViewController: UITextViewDelegate {
+extension DetailPostViewController {
     private func setDefaultSubmitButton() {
         submitCommentButton.isEnabled = false
         submitCommentButton.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
-    }
-    
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        if enterCommentTextView.text == "댓글을 입력해주세요." {
-            enterCommentTextView.text = ""
-            enterCommentTextView.textColor = UIColor.black
-        }
-    }
-    
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-            enterCommentTextView.text = "댓글을 입력해주세요."
-            enterCommentTextView.textColor = UIColor.lightGray
-            setDefaultSubmitButton()
-        }
-    }
-    
-    func textViewDidChange(_ textView: UITextView) {
-        let fixedWidth = textView.frame.width
-        let size = CGSize(width: fixedWidth, height: textView.frame.height)
-        whiteBackgroundView.sizeThatFits(size)
-        
-        if enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 1 {
-            submitCommentButton.isEnabled = true
-            submitCommentButton.setTitleColor(.blue, for: .normal)
-        } else {
-            setDefaultSubmitButton()
-        }
     }
 }
 
