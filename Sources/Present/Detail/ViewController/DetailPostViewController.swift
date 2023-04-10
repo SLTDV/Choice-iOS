@@ -93,8 +93,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let submitCommentButton = UIButton().then {
+        $0.isEnabled = false
         $0.setTitle("게시", for: .normal)
-        $0.setTitleColor(.blue, for: .normal)
+        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
     }
     
@@ -372,32 +373,50 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
 
 extension DetailPostViewController: UITextViewDelegate {
     private func setTextViewPlaceholder() {
-        if enterCommentTextView.text.isEmpty {
-            enterCommentTextView.text = "댓글을 입력해주세요."
-            enterCommentTextView.textColor = UIColor.lightGray
-        } else if enterCommentTextView.text == "댓글을 입력해주세요."{
-            enterCommentTextView.text = ""
-            enterCommentTextView.textColor = UIColor.black
-        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+//        if enterCommentTextView.text.trimmingCharacters(in: .whitespaces).isEmpty {
+//            enterCommentTextView.text = "댓글을 입력해주세요."
+//            enterCommentTextView.textColor = UIColor.lightGray
+//            submitCommentButton.isEnabled = false
+//            submitCommentButton.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
+//        } else if enterCommentTextView.text == "댓글을 입력해주세요." {
+//            enterCommentTextView.text = ""
+//            enterCommentTextView.textColor = UIColor.black
+//            submitCommentButton.isEnabled = true
+//            submitCommentButton.setTitleColor(.blue, for: .normal)
+//        }
     }
     
     func textViewDidBeginEditing(_ textView: UITextView) {
-        setTextViewPlaceholder()
+        if enterCommentTextView.text == "댓글을 입력해주세요." {
+            enterCommentTextView.text = ""
+            enterCommentTextView.textColor = UIColor.black
+            submitCommentButton.isEnabled = true
+            submitCommentButton.setTitleColor(.blue, for: .normal)
+        }
+//        setTextViewPlaceholder()
     }
     
     func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text == "" {
-            setTextViewPlaceholder()
+        if textView.text.trimmingCharacters(in: .whitespaces) == "" {
+            enterCommentTextView.text = "댓글을 입력해주세요."
+            enterCommentTextView.textColor = UIColor.lightGray
+            submitCommentButton.isEnabled = false
+            submitCommentButton.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
         }
     }
     
     func textViewDidChange(_ textView: UITextView) {
         let fixedWidth = textView.frame.width
         let size = CGSize(width: fixedWidth, height: textView.frame.height)
-        print("size height = \(size.height)")
-        
-//        textView.sizeThatFits(size)
-//        textView.reloadInputViews()
         whiteBackgroundView.sizeThatFits(size)
     }
 }
