@@ -124,8 +124,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     @objc func keyboardUp(_ notification: NSNotification) {
         if let keyboardFrame:NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-           let keyboardRectangle = keyboardFrame.cgRectValue
-       
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            
             UIView.animate(
                 withDuration: 0.3
                 , animations: {
@@ -160,7 +160,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         enterCommentTextView.rx.didBeginEditing
             .bind(with: self, onNext: { owner, _ in
-                print("begin")
                 if owner.enterCommentTextView.text == "댓글을 입력해주세요." {
                     owner.enterCommentTextView.text = ""
                     owner.enterCommentTextView.textColor = UIColor.black
@@ -169,7 +168,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         enterCommentTextView.rx.didEndEditing
             .bind(with: self, onNext: { owner, _ in
-                print("didend")
                 if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
                     owner.enterCommentTextView.text = "댓글을 입력해주세요."
                     owner.enterCommentTextView.textColor = UIColor.lightGray
@@ -178,23 +176,16 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }).disposed(by: disposeBag)
         
         enterCommentTextView.rx.didChange
-            .bind(with: self, onNext: { owner, arg in
-                let fixedWidth = owner.enterCommentTextView.frame.height
-                let size = CGSize(width: fixedWidth, height: owner.enterCommentTextView.frame.height)
-                let countNewline = owner.enterCommentTextView.text.filter { $0 == "\n" }
-                
-                if countNewline.count > 3 {
-                    owner.enterCommentTextView.snp.makeConstraints {
-                        $0.height.equalTo(94)
-                    }
-                    owner.enterCommentTextView.isScrollEnabled = true
-                } else {
-                    owner.enterCommentTextView.sizeThatFits(CGSize(width: fixedWidth,
-                                                                   height: owner.enterCommentTextView.frame.height
-                                                                  ))
-                    owner.enterCommentTextView.isScrollEnabled = false
+            .bind(with: self, onNext: { owner, _ in
+                let maxHeight = 94.0
+                let fixedWidth = owner.enterCommentTextView.frame.size.width
+                let size = owner.enterCommentTextView.sizeThatFits(CGSize(width: fixedWidth, height: .infinity))
+
+                owner.enterCommentTextView.isScrollEnabled = size.height > maxHeight
+                owner.enterCommentTextView.snp.updateConstraints {
+                    $0.height.equalTo(min(maxHeight, size.height))
                 }
-                
+
                 if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 1 {
                     owner.submitCommentButton.isEnabled = true
                     owner.submitCommentButton.setTitleColor(.blue, for: .normal)
@@ -209,7 +200,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         LoadingIndicator.showLoading(text: "게시 중")
-        print("comment = \(content.count)")
         viewModel.createComment(idx: idx, content: content) {
             DispatchQueue.main.async {
                 self.viewModel.callToCommentData(idx: idx)
@@ -415,7 +405,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.leading.trailing.equalToSuperview().inset(38)
             $0.height.equalTo(1)
         }
-
+        
         commentTableView.snp.makeConstraints {
             $0.top.equalTo(divideCommentLineView).offset(32)
             $0.leading.trailing.equalToSuperview()
@@ -430,6 +420,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         enterCommentTextView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(5)
+            $0.height.equalTo(47)
             $0.leading.trailing.equalToSuperview().inset(20)
             $0.bottom.equalToSuperview().inset(33)
         }
@@ -458,8 +449,8 @@ extension DetailPostViewController: UITableViewDelegate {
                 case .success(()):
                     self?.viewModel.callToCommentData(idx: self!.model!.idx)
                     self?.commentTableView.reloadRows(
-                    at: [indexPath],
-                    with: .automatic
+                        at: [indexPath],
+                        with: .automatic
                     )
                 case .failure(let error):
                     print("Delete Faield = \(error.localizedDescription)")
@@ -467,7 +458,7 @@ extension DetailPostViewController: UITableViewDelegate {
             })
         })
         contextual.image = UIImage(systemName: "trash")
-
+        
         if commentModel.isMine {
             config = UISwipeActionsConfiguration(actions: [contextual])
         }
