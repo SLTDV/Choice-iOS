@@ -36,8 +36,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.backgroundColor = .black
     }
     
-    private let descriptionLabel = UILabel().then {
+    private let contentLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.numberOfLines = 0
     }
     
     private let firstPostImageView = UIImageView().then {
@@ -224,7 +225,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
-            self.descriptionLabel.text = model.content
+            self.contentLabel.text = model.content
             self.firstVoteOptionBackgroundView.setVoteOptionLabel(model.firstVotingOption)
             self.secondVoteOptionBackgroundView.setVoteOptionLabel(model.secondVotingOption)
             self.firstPostImageView.kf.setImage(with: firstImageUrl)
@@ -317,7 +318,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         view.addSubviews(scrollView, whiteBackgroundView)
         scrollView.addSubview(contentView)
         contentView.addSubviews(userImageView, userNameLabel,titleLabel,
-                                divideVotePostImageLineView, descriptionLabel,
+                                divideVotePostImageLineView, contentLabel,
                                 firstPostImageView, secondPostImageView,
                                 firstVoteButton, secondVoteButton,
                                 divideCommentLineView, commentTableView)
@@ -357,20 +358,20 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.height.equalTo(1)
         }
         
-        descriptionLabel.snp.makeConstraints {
+        contentLabel.snp.makeConstraints {
             $0.top.equalTo(divideVotePostImageLineView.snp.bottom).offset(22)
-            $0.leading.trailing.equalToSuperview().offset(43)
+            $0.leading.trailing.equalToSuperview().inset(43)
         }
         
         firstPostImageView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(64)
+            $0.top.equalTo(contentLabel.snp.bottom).offset(64)
             $0.leading.equalToSuperview().inset(37)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
         }
         
         secondPostImageView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(64)
+            $0.top.equalTo(contentLabel.snp.bottom).offset(64)
             $0.trailing.equalToSuperview().inset(37)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
