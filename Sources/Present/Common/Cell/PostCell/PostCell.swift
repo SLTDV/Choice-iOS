@@ -26,7 +26,7 @@ final class PostCell: UITableViewCell {
         $0.font = .systemFont(ofSize: 16, weight: .semibold)
     }
     
-    private let descriptionLabel = UILabel().then {
+    private let contentLabel = UILabel().then {
         $0.numberOfLines = 0
         $0.font = .systemFont(ofSize: 14)
     }
@@ -116,7 +116,7 @@ final class PostCell: UITableViewCell {
     }
 
     private func addView() {
-        contentView.addSubviews(titleLabel, descriptionLabel, removePostButton, firstPostImageView,
+        contentView.addSubviews(titleLabel, contentLabel, removePostButton, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
                                  participantsCountLabel, commentCountLabel)
     }
@@ -129,10 +129,9 @@ final class PostCell: UITableViewCell {
             $0.height.equalTo(21)
         }
         
-        descriptionLabel.snp.makeConstraints {
+        contentLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(23)
-            $0.height.equalTo(17)
         }
         
         removePostButton.snp.makeConstraints {
@@ -288,9 +287,9 @@ final class PostCell: UITableViewCell {
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
-            self.descriptionLabel.text = model.content
             self.firstPostVoteButton.setTitle(model.firstVotingOption, for: .normal)
             self.secondPostVoteButton.setTitle(model.secondVotingOption, for: .normal)
+            self.contentLabel.text = model.content
             self.firstPostImageView.kf.setImage(with: firstImageUrl)
             self.secondPostImageView.kf.setImage(with: secondImageUrl)
             switch type {

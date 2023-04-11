@@ -35,15 +35,6 @@ final class KeyChain {
         }
     }
     
-    func delete(key: String) {
-        let query: NSDictionary = [
-            kSecClass: kSecClassGenericPassword,
-            kSecAttrAccount: key
-        ]
-        let status = SecItemDelete(query)
-        assert(status == noErr, "failed to delete the value, status code = \(status)")
-    }
-    
     func deleteAll()  {
       let secItemClasses =  [
         kSecClassGenericPassword,
