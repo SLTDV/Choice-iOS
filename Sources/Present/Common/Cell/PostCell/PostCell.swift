@@ -26,7 +26,7 @@ final class PostCell: UITableViewCell {
         $0.font = .systemFont(ofSize: 16, weight: .semibold)
     }
     
-    private let descriptionLabel = UILabel().then {
+    private let contentLabel = UILabel().then {
         $0.numberOfLines = 0
         $0.font = .systemFont(ofSize: 14)
     }
@@ -120,7 +120,7 @@ final class PostCell: UITableViewCell {
     }
 
     private func addView() {
-        contentView.addSubviews(titleLabel, descriptionLabel, removePostButton, firstPostImageView,
+        contentView.addSubviews(titleLabel, contentLabel, removePostButton, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
                                  participantsCountLabel, commentCountLabel)
         firstPostImageView.addSubview(firstVoteOptionBackgroundView)
@@ -135,10 +135,9 @@ final class PostCell: UITableViewCell {
             $0.height.equalTo(21)
         }
         
-        descriptionLabel.snp.makeConstraints {
+        contentLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
             $0.leading.trailing.equalToSuperview().inset(23)
-            $0.height.equalTo(17)
         }
         
         removePostButton.snp.makeConstraints {
@@ -147,14 +146,14 @@ final class PostCell: UITableViewCell {
         }
         
         firstPostImageView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(24)
+            $0.top.equalTo(contentLabel.snp.bottom).offset(24)
             $0.leading.equalToSuperview().inset(21)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
         }
         
         secondPostImageView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(24)
+            $0.top.equalTo(contentLabel.snp.bottom).offset(24)
             $0.trailing.equalToSuperview().inset(21)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
@@ -304,7 +303,7 @@ final class PostCell: UITableViewCell {
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
-            self.descriptionLabel.text = model.content
+            self.contentLabel.text = model.content
             self.firstVoteOptionBackgroundView.setVoteOptionLabel(model.firstVotingOption)
             self.secondVoteOptionBackgroundView.setVoteOptionLabel(model.secondVotingOption)
             self.firstPostImageView.kf.setImage(with: firstImageUrl)
