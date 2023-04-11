@@ -1,18 +1,19 @@
 import Foundation
+import RxRelay
 import RxSwift
 import Alamofire
 
 protocol CommentDataProtocol: AnyObject {
     var writerNameData: PublishSubject<String> { get set  }
-    var writerImageStringData: PublishSubject<String> { get set }
-    var commentData: PublishSubject<[CommentData]> { get set }
+    var writerImageStringData: PublishSubject<String?> { get set }
+    var commentData: BehaviorRelay<[CommentData]> { get set }
 }
 
 final class DetailPostViewModel: BaseViewModel {
     weak var delegate: CommentDataProtocol?
     
-    func deleteComment(commentIdx: Int) {
-        let url = APIConstants.deleteCommentURL + "\(commentIdx)"
+    func deleteComment(postIdx: Int, commentIdx: Int, completion: @escaping (Result<Void, Error>) -> ()) {
+        let url = APIConstants.deleteCommentURL + "\(postIdx)/" + "\(commentIdx)"
         AF.request(url,
                    method: .delete,
                    encoding: URLEncoding.queryString,
@@ -22,8 +23,9 @@ final class DetailPostViewModel: BaseViewModel {
             switch response.result {
             case .success:
                 print("success")
+                completion(.success(()))
             case .failure(let error):
-                print(error)
+                completion(.failure(error))
             }
         }
     }
@@ -41,7 +43,7 @@ final class DetailPostViewModel: BaseViewModel {
                 let decodeResponse = try! JSONDecoder().decode(CommentModel.self, from: data)
                 self?.delegate?.writerImageStringData.onNext(decodeResponse.image)
                 self?.delegate?.writerNameData.onNext(decodeResponse.writer)
-                self?.delegate?.commentData.onNext(decodeResponse.comment)
+                self?.delegate?.commentData.accept(decodeResponse.comment)
             case .failure(let error):
                 print("comment = \(error.localizedDescription)")
             }
@@ -63,7 +65,6 @@ final class DetailPostViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
-                self.callToCommentData(idx: idx)
                 completion()
             case .failure(let error):
                 print("post error = \(String(describing: error.localizedDescription))")

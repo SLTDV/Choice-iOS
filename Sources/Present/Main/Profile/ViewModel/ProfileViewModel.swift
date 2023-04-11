@@ -4,7 +4,7 @@ import RxSwift
 
 protocol ProfileDataProtocol: AnyObject {
     var nicknameData: PublishSubject<String> { get set }
-    var imageData: PublishSubject<String> { get set }
+    var imageData: PublishSubject<String?> { get set }
     var postListData: PublishSubject<[PostModel]> { get set }
 }
 
@@ -23,10 +23,10 @@ final class ProfileViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success(let data):
-                let decodeResponse = try? JSONDecoder().decode(ProfileModel.self, from: data)
-                self?.delegate?.postListData.onNext(decodeResponse?.postList ?? .init())
-                self?.delegate?.nicknameData.onNext(decodeResponse?.nickname ?? .init())
-                self?.delegate?.imageData.onNext(decodeResponse?.image ?? .init())
+                let decodeResponse = try! JSONDecoder().decode(ProfileModel.self, from: data)
+                self?.delegate?.postListData.onNext(decodeResponse.postList ?? .init())
+                self?.delegate?.nicknameData.onNext(decodeResponse.nickname)
+                self?.delegate?.imageData.onNext(decodeResponse.image)
             case .failure(let error):
                 print("error = \(error.localizedDescription)")
             }

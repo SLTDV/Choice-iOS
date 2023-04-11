@@ -13,8 +13,7 @@ protocol PostVoteButtonDidTapDelegate: AnyObject {
     func postVoteButtonDidTap(idx: Int, choice: Int)
 }
 
-final class PostCell: UITableViewCell{
-    let vm = HomeViewModel(coordinator: .init(navigationController: UINavigationController()))
+final class PostCell: UITableViewCell {
     var model: PostModel?
     var delegate: PostTableViewCellButtonDelegate?
     var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?

@@ -5,13 +5,15 @@ import RxCocoa
 final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     var email: String?
     var password: String?
+
+    var isImageChanged = false
     
     private let disposeBag = DisposeBag()
     
     private let profileImageView = UIImageView().then {
         $0.contentMode = .scaleAspectFill
         $0.clipsToBounds = true
-        $0.layer.cornerRadius = 50
+        $0.layer.cornerRadius = 70
         $0.image = UIImage(systemName: "person.crop.circle.fill")
         $0.tintColor = .black
     }
@@ -29,7 +31,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     private let imagePickerController = UIImagePickerController()
     
     private let userNameTextField = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "닉네임")
+        $0.setPlaceholder(placeholder: "닉네임을 입력해 주세요")
         $0.textAlignment = .center
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
@@ -62,7 +64,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
             .bind(with: self, onNext: { owner, isValid  in
                 if isValid {
                     owner.warningLabel.textColor = .red
-                    owner.warningLabel.text = "*2자 이상 6자 이하로 입력 해주세요."
+                    owner.warningLabel.text = "*2자 이상 6자 이하로 입력해 주세요."
                     
                     owner.completeButton.isEnabled = false
                     owner.completeButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
@@ -80,9 +82,10 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         guard let email = email else { return  }
         guard let password = password else { return  }
         guard let nickName = userNameTextField.text else { return }
-        guard let profileImage = profileImageView.image else { return }
         
         let trimmedNickName = nickName.trimmingCharacters(in: .whitespaces)
+    
+        let profileImage = isImageChanged ? profileImageView.image : nil
         
         viewModel.callToSignUp(email: email, password: password, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
             if isDuplicate {
@@ -140,7 +143,8 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         
         userNameTextField.snp.makeConstraints {
             $0.top.equalTo(profileImageView.snp.bottom).offset(80)
-            $0.leading.trailing.equalToSuperview().inset(100)
+            $0.centerX.equalToSuperview()
+            $0.leading.trailing.equalToSuperview().inset(93)
         }
         
         warningLabel.snp.makeConstraints {
@@ -169,5 +173,6 @@ extension UserProfileInfoViewController: UIImagePickerControllerDelegate, UINavi
         self.profileImageView.image = newImage
         
         picker.dismiss(animated: true, completion: nil)
+        isImageChanged = true
     }
 }
