@@ -46,10 +46,6 @@ final class PostCell: UITableViewCell {
         $0.contentMode = .scaleToFill
     }
     
-    private let firstVoteOptionBackgroundView = VoteOptionView()
-    
-    private let secondVoteOptionBackgroundView = VoteOptionView()
-    
     private let secondPostImageView = UIImageView().then {
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 25
@@ -123,8 +119,6 @@ final class PostCell: UITableViewCell {
         contentView.addSubviews(titleLabel, descriptionLabel, removePostButton, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
                                  participantsCountLabel, commentCountLabel)
-        firstPostImageView.addSubview(firstVoteOptionBackgroundView)
-        secondPostImageView.addSubview(secondVoteOptionBackgroundView)
     }
     
     private func setLayout() {
@@ -148,40 +142,30 @@ final class PostCell: UITableViewCell {
         
         firstPostImageView.snp.makeConstraints {
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(24)
-            $0.leading.equalToSuperview().inset(21)
+            $0.leading.equalToSuperview().inset(31)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
         }
         
         secondPostImageView.snp.makeConstraints {
             $0.top.equalTo(descriptionLabel.snp.bottom).offset(24)
-            $0.trailing.equalToSuperview().inset(21)
+            $0.trailing.equalToSuperview().inset(31)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
         }
         
-        firstVoteOptionBackgroundView.snp.makeConstraints {
-            $0.height.equalTo(52)
-            $0.leading.trailing.bottom.equalToSuperview()
-        }
-        
-        secondVoteOptionBackgroundView.snp.makeConstraints {
-            $0.height.equalTo(52)
-            $0.leading.trailing.bottom.equalToSuperview()
-        }
-        
         firstPostVoteButton.snp.makeConstraints {
-            $0.top.equalTo(firstPostImageView.snp.bottom).offset(16)
-            $0.leading.equalToSuperview().inset(38)
-            $0.width.equalTo(101)
-            $0.height.equalTo(38)
+            $0.top.equalTo(firstPostImageView.snp.bottom).offset(26)
+            $0.leading.equalTo(firstPostImageView.snp.leading)
+            $0.trailing.equalTo(firstPostImageView.snp.trailing)
+            $0.height.equalTo(56)
         }
         
         secondPostVoteButton.snp.makeConstraints {
-            $0.top.equalTo(secondPostImageView.snp.bottom).offset(16)
-            $0.trailing.equalToSuperview().inset(38)
-            $0.width.equalTo(101)
-            $0.height.equalTo(38)
+            $0.top.equalTo(secondPostImageView.snp.bottom).offset(26)
+            $0.leading.equalTo(secondPostImageView.snp.leading)
+            $0.trailing.equalTo(secondPostImageView.snp.trailing)
+            $0.height.equalTo(56)
         }
 
         participantsCountLabel.snp.makeConstraints {
@@ -305,8 +289,8 @@ final class PostCell: UITableViewCell {
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
             self.descriptionLabel.text = model.content
-            self.firstVoteOptionBackgroundView.setVoteOptionLabel(model.firstVotingOption)
-            self.secondVoteOptionBackgroundView.setVoteOptionLabel(model.secondVotingOption)
+            self.firstPostVoteButton.setTitle(model.firstVotingOption, for: .normal)
+            self.secondPostVoteButton.setTitle(model.secondVotingOption, for: .normal)
             self.firstPostImageView.kf.setImage(with: firstImageUrl)
             self.secondPostImageView.kf.setImage(with: secondImageUrl)
             switch type {
