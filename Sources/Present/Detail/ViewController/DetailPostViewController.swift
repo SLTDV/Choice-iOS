@@ -38,6 +38,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let descriptionLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.numberOfLines = 0
     }
     
     private let firstPostImageView = UIImageView().then {
@@ -359,7 +360,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         descriptionLabel.snp.makeConstraints {
             $0.top.equalTo(divideVotePostImageLineView.snp.bottom).offset(22)
-            $0.leading.trailing.equalToSuperview().offset(43)
+            $0.leading.trailing.equalToSuperview().inset(43)
         }
         
         firstPostImageView.snp.makeConstraints {
