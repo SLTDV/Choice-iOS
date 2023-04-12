@@ -100,8 +100,6 @@ final class PostCell: UITableViewCell {
         setLayout()
         
         selectionStyle = .none
-        
-        
     }
     
     required init?(coder: NSCoder) {
