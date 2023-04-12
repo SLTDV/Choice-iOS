@@ -37,7 +37,7 @@ final class HomeViewModel: BaseViewModel {
         }
     }
     
-    func callToAddVoteNumber(idx: Int, choice: Int) {
+    func callToAddVoteNumber(idx: Int, choice: Int, completion: @escaping (Result<Void, Error>) -> ()) {
         let url = APIConstants.addVoteNumberURL + "\(idx)"
         let params = [
             "choice" : choice
@@ -49,12 +49,12 @@ final class HomeViewModel: BaseViewModel {
                    encoding: JSONEncoding.default,
                    interceptor: JwtRequestInterceptor())
         .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
+        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
-                self?.callToFindData(type: .findNewestPostData)
+                completion(.success(()))
             case .failure(let error):
-                print("error = \(error.localizedDescription)")
+                completion(.failure(error))
             }
         }
     }

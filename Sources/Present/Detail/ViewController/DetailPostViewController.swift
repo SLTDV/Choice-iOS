@@ -282,7 +282,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardUp), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDown), name: UIResponder.keyboardWillHideNotification, object: nil)
         
-        
         viewModel.callToCommentData(idx: model!.idx)
     }
     

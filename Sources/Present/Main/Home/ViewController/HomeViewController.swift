@@ -70,7 +70,23 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     func postVoteButtonDidTap(idx: Int, choice: Int) {
-        viewModel.callToAddVoteNumber(idx: idx, choice: choice)
+        viewModel.callToAddVoteNumber(idx: idx, choice: choice) { [weak self] result in
+            switch result {
+            case .success(()):
+                LoadingIndicator.showLoading(text: "투표 중")
+                self?.viewModel.callToFindData(type: .findNewestPostData)
+                DispatchQueue.main.async {
+//                    self?.postTableView.reloadRows(
+//                        at: [IndexPath(row: idx, section: 0)],
+//                        with: .automatic
+//                    )
+                    self?.postTableView.reloadData()
+                }
+                LoadingIndicator.hideLoading()
+            case .failure(let error):
+                print("error = \(error)")
+            }
+        }
     }
     
     override func configureVC() {

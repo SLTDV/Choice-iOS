@@ -111,15 +111,13 @@ final class PostCell: UITableViewCell {
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
         switch sender.tag {
         case 0:
-            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 1)
             setHomeVotePostLayout(voting: model!.voting)
-            
             startAnimation(button: firstPostVoteButton)
+            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 1)
         case 1:
-            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 2)
             setHomeVotePostLayout(voting: model!.voting)
-            
             startAnimation(button: secondPostVoteButton)
+            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 2)
         default:
             return
         }
