@@ -5,6 +5,8 @@ import Kingfisher
 import RxSwift
 import RxCocoa
 
+// MARK: - Protocol
+
 protocol PostTableViewCellButtonDelegate: AnyObject {
     func removePostButtonDidTap(postIdx: Int)
 }
@@ -14,6 +16,8 @@ protocol PostVoteButtonDidTapDelegate: AnyObject {
 }
 
 final class PostCell: UITableViewCell {
+    // MARK: - Properties
+    
     var model: PostModel?
     var delegate: PostTableViewCellButtonDelegate?
     var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
@@ -94,14 +98,20 @@ final class PostCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Function
+    
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
         switch sender.tag {
         case 0:
             postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 1)
             setHomeVotePostLayout(voting: model!.voting)
+            
+            startAnimation(button: firstPostVoteButton)
         case 1:
             postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 2)
             setHomeVotePostLayout(voting: model!.voting)
+            
+            startAnimation(button: secondPostVoteButton)
         default:
             return
         }
