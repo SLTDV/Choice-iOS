@@ -57,9 +57,7 @@ final class PostCell: UITableViewCell {
         $0.tag = 0
         $0.setTitle("✓", for: .normal)
         $0.setTitleColor(.white, for: .normal)
-        $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 10
-        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
         $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
         $0.addTarget(self, action: #selector(PostVoteButtonDidTap(_:)), for: .touchUpInside)
     }
@@ -68,9 +66,7 @@ final class PostCell: UITableViewCell {
         $0.tag = 1
         $0.setTitle("✓", for: .normal)
         $0.setTitleColor(.white, for: .normal)
-        $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 10
-        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
         $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
         $0.addTarget(self, action: #selector(PostVoteButtonDidTap(_:)), for: .touchUpInside)
     }
@@ -124,14 +120,14 @@ final class PostCell: UITableViewCell {
     private func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.top.equalToSuperview().inset(31)
-            $0.leading.equalToSuperview().inset(23)
+            $0.leading.equalToSuperview().inset(31)
             $0.trailing.equalToSuperview()
             $0.height.equalTo(21)
         }
         
         contentLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview().inset(23)
+            $0.leading.trailing.equalToSuperview().inset(31)
         }
         
         removePostButton.snp.makeConstraints {
@@ -191,13 +187,13 @@ final class PostCell: UITableViewCell {
             
             secondPostVoteButton = secondPostVoteButton.then {
                 $0.isEnabled = true
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+                $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
                 $0.setTitleColor(.white, for: .normal)
             }
         case 2:
             firstPostVoteButton = firstPostVoteButton.then {
                 $0.isEnabled = true
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+                $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
                 $0.setTitleColor(.white, for: .normal)
             }
             
@@ -243,32 +239,26 @@ final class PostCell: UITableViewCell {
         switch voting {
         case 1:
             firstPostVoteButton = firstPostVoteButton.then {
-                $0.layer.borderColor = UIColor.black.cgColor
                 $0.backgroundColor = .black
             }
             
             secondPostVoteButton = secondPostVoteButton.then {
-                $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
                 $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
             }
         case 2:
             firstPostVoteButton = firstPostVoteButton.then {
-                $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
                 $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
             }
             
             secondPostVoteButton = secondPostVoteButton.then {
-                $0.layer.borderColor = UIColor.black.cgColor
                 $0.backgroundColor = .black
             }
         default:
             firstPostVoteButton = firstPostVoteButton.then {
-                $0.layer.borderColor = UIColor.clear.cgColor
                 $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
             }
             
             secondPostVoteButton = secondPostVoteButton.then {
-                $0.layer.borderColor = UIColor.clear.cgColor
                 $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
             }
 
