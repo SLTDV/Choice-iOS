@@ -5,7 +5,7 @@ import RxCocoa
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVoteButtonDidTapDelegate {
     private let disposeBag = DisposeBag()
     
-    var postItemsData = PublishSubject<[PostModel]>()
+    var postItemsData = BehaviorRelay<[PostModel]>(value: [])
 
     private let leftLogoImageView = UIImageView().then {
         $0.image = ChoiceAsset.Images.homeLogo.image

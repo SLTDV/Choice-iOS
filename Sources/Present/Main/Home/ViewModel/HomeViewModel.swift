@@ -4,7 +4,7 @@ import Alamofire
 import RxCocoa
 
 protocol PostItemsProtocol: AnyObject {
-    var postItemsData: PublishSubject<[PostModel]> { get set }
+    var postItemsData: BehaviorRelay<[PostModel]> { get set }
 }
 
 final class HomeViewModel: BaseViewModel {
@@ -30,7 +30,7 @@ final class HomeViewModel: BaseViewModel {
             switch response.result {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: data)
-                self?.delegate?.postItemsData.onNext(decodeResponse ?? .init())
+                self?.delegate?.postItemsData.accept(decodeResponse ?? .init())
             case .failure(let error):
                 print("main error = \(error.localizedDescription)")
             }
