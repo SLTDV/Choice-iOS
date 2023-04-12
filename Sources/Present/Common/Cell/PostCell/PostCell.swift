@@ -23,7 +23,7 @@ final class PostCell: UITableViewCell {
     static let identifier = "PostCellIdentifier"
     
     private let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .semibold)
+        $0.font = .systemFont(ofSize: 21, weight: .semibold)
     }
     
     private let contentLabel = UILabel().then {
@@ -168,13 +168,13 @@ final class PostCell: UITableViewCell {
         }
 
         participantsCountLabel.snp.makeConstraints {
-            $0.top.equalTo(firstPostVoteButton.snp.bottom)
+            $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(20)
             $0.leading.equalToSuperview().inset(33)
             $0.bottom.equalToSuperview().inset(16)
         }
         
         commentCountLabel.snp.makeConstraints {
-            $0.top.equalTo(firstPostVoteButton.snp.bottom)
+            $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(20)
             $0.leading.equalTo(participantsCountLabel.snp.trailing).offset(13)
             $0.bottom.equalToSuperview().inset(16)
         }
@@ -191,14 +191,14 @@ final class PostCell: UITableViewCell {
             
             secondPostVoteButton = secondPostVoteButton.then {
                 $0.isEnabled = true
-                $0.backgroundColor = .clear
-                $0.setTitleColor(.gray, for: .normal)
+                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+                $0.setTitleColor(.white, for: .normal)
             }
         case 2:
             firstPostVoteButton = firstPostVoteButton.then {
                 $0.isEnabled = true
-                $0.backgroundColor = .clear
-                $0.setTitleColor(.gray, for: .normal)
+                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+                $0.setTitleColor(.white, for: .normal)
             }
             
             secondPostVoteButton = secondPostVoteButton.then {
@@ -233,14 +233,10 @@ final class PostCell: UITableViewCell {
     
     private func votePostButtonLayout(voting: Int) {
         firstPostVoteButton.snp.updateConstraints {
-            $0.leading.equalToSuperview().inset(20)
-            $0.width.equalTo(144)
             $0.height.equalTo(52)
         }
         
         secondPostVoteButton.snp.updateConstraints {
-            $0.trailing.equalToSuperview().inset(20)
-            $0.width.equalTo(144)
             $0.height.equalTo(52)
         }
         
