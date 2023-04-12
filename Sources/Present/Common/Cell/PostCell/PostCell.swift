@@ -140,14 +140,14 @@ final class PostCell: UITableViewCell {
         }
         
         firstPostImageView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(24)
+            $0.top.equalTo(contentLabel.snp.bottom).offset(24)
             $0.leading.equalToSuperview().inset(31)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
         }
         
         secondPostImageView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(24)
+            $0.top.equalTo(contentLabel.snp.bottom).offset(24)
             $0.trailing.equalToSuperview().inset(31)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
