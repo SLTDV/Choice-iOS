@@ -75,12 +75,13 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         viewModel.callToAddVoteNumber(idx: idx, choice: choice) { [weak self] result in
             switch result {
             case .success(()):
+//                self?.viewModel.callToFindData(type: .findNewestPostData)
                 DispatchQueue.main.async {
                     self?.postTableView.reloadRows(
                         at: [IndexPath(row: idx, section: 0)],
                         with: .none
                     )
-                    self?.viewModel.callToFindData(type: .findNewestPostData)
+//                self?.postTableView.reloadData()
                 }
             case .failure(let error):
                 print("error = \(error)")

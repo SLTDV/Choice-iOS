@@ -239,7 +239,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
             firstVotingCount: Double(model.firstVotingCount),
-            secondVotingCount: Double(model.secondVotingCount))
+            secondVotingCount: Double(model.secondVotingCount)
+        )
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
@@ -443,8 +444,10 @@ extension DetailPostViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         var config: UISwipeActionsConfiguration? = nil
         let commentModel = commentData.value[indexPath.row]
-        lazy var contextual = UIContextualAction(style: .destructive, title: nil, handler: { [weak self] _, _, _ in
-            self?.viewModel.deleteComment(postIdx: self!.model!.idx, commentIdx: commentModel.idx, completion: { result in
+        lazy var contextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
+            self.viewModel.deleteComment(postIdx: self.model!.idx,
+                                         commentIdx: commentModel.idx,
+                                         completion: { [weak self] result in
                 switch result {
                 case .success(()):
                     self?.viewModel.callToCommentData(idx: self!.model!.idx)
