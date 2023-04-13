@@ -109,18 +109,17 @@ final class PostCell: UITableViewCell {
     // MARK: - Function
     
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
-        print("button tag = \(sender.tag)")
         switch sender.tag {
         case 0:
-            setHomeVotePostLayout(voting: model!.votingState)
+            setHomeVotePostLayout(voting: 1)
             postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 1)
             
-            //            startAnimation(button: firstPostVoteButton)
+            startAnimation(button: firstPostVoteButton)
         case 1:
-            setHomeVotePostLayout(voting: model!.votingState)
+            setHomeVotePostLayout(voting: 2)
             postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 2)
             
-            //            startAnimation(button: secondPostVoteButton)
+            startAnimation(button: secondPostVoteButton)
         default:
             return
         }
@@ -207,43 +206,49 @@ final class PostCell: UITableViewCell {
         }
     }
     
-    private func setHomeVotePostLayout(voting: Int?) {
-        switch voting {
-        case 1:
-            firstPostVoteButton.isEnabled = false
-            firstPostVoteButton.backgroundColor = .black
-            firstPostVoteButton.setTitleColor(.white, for: .normal)
-            
-            secondPostVoteButton.isEnabled = true
-            secondPostVoteButton.backgroundColor = .clear
-            secondPostVoteButton.setTitleColor(.gray, for: .normal)
-        case 2:
-            firstPostVoteButton.isEnabled = true
-            firstPostVoteButton.backgroundColor = .clear
-            firstPostVoteButton.setTitleColor(.gray, for: .normal)
-            
-            secondPostVoteButton.isEnabled = false
-            secondPostVoteButton.backgroundColor = .black
-            secondPostVoteButton.setTitleColor(.white, for: .normal)
-        default:
-            firstPostVoteButton.backgroundColor = .clear
-            firstPostVoteButton.setTitleColor(.gray, for: .normal)
-            
-            secondPostVoteButton.backgroundColor = .clear
-            secondPostVoteButton.setTitleColor(.gray, for: .normal)
+    private func setHomeVotePostLayout(voting: Int) {
+        DispatchQueue.main.async { [weak self] in
+            switch voting {
+            case 1:
+                self?.firstPostVoteButton.isEnabled = false
+                self?.firstPostVoteButton.backgroundColor = .black
+                self?.firstPostVoteButton.setTitleColor(.white, for: .normal)
+
+                self?.secondPostVoteButton.isEnabled = true
+                self?.secondPostVoteButton.backgroundColor = .clear
+                self?.secondPostVoteButton.setTitleColor(.gray, for: .normal)
+            case 2:
+                self?.firstPostVoteButton.isEnabled = true
+                self?.firstPostVoteButton.backgroundColor = .clear
+                self?.firstPostVoteButton.setTitleColor(.gray, for: .normal)
+                
+                self?.secondPostVoteButton.isEnabled = false
+                self?.secondPostVoteButton.backgroundColor = .black
+                self?.secondPostVoteButton.setTitleColor(.white, for: .normal)
+            default:
+                self?.firstPostVoteButton.backgroundColor = .clear
+                self?.firstPostVoteButton.setTitleColor(.gray, for: .normal)
+
+                self?.secondPostVoteButton.backgroundColor = .clear
+                self?.secondPostVoteButton.setTitleColor(.gray, for: .normal)
+            }
         }
     }
     
     func setProfileVoteButtonLayout(with model: PostModel) {
-        firstPostVoteButton.isEnabled = false
-        secondPostVoteButton.isEnabled = false
-        votePostButtonLayout(voting: model.votingState)
-        
         let data = CalculateToVoteCountPercentage
             .calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
                                             secondVotingCount: Double(model.secondVotingCount))
-        firstPostVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
-        secondPostVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.firstPostVoteButton.isEnabled = false
+            self?.secondPostVoteButton.isEnabled = false
+
+            self?.firstPostVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
+            self?.secondPostVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
+        }
+        
+        votePostButtonLayout(voting: model.votingState)
     }
     
     private func votePostButtonLayout(voting: Int) {

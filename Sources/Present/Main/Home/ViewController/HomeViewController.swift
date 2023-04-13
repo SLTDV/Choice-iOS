@@ -67,21 +67,15 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             }).disposed(by: disposeBag)
     }
     
-    private func callToFindAllData(type: MenuOptionType) {
-        viewModel.callToFindData(type: type)
-    }
-    
     func postVoteButtonDidTap(idx: Int, choice: Int) {
         viewModel.callToAddVoteNumber(idx: idx, choice: choice) { [weak self] result in
             switch result {
             case .success(()):
-//                self?.viewModel.callToFindData(type: .findNewestPostData)
                 DispatchQueue.main.async {
                     self?.postTableView.reloadRows(
                         at: [IndexPath(row: idx, section: 0)],
                         with: .none
                     )
-//                self?.postTableView.reloadData()
                 }
             case .failure(let error):
                 print("error = \(error)")
@@ -103,9 +97,9 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
         
         let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"),
-                                  handler: { [weak self] _ in self?.callToFindAllData(type: .findNewestPostData)})
+                                  handler: { [weak self] _ in self?.viewModel.callToFindData(type: .findNewestPostData)})
         let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"),
-                                   handler: { [weak self] _ in self?.callToFindAllData(type: .findBestPostData)})
+                                   handler: { [weak self] _ in self?.viewModel.callToFindData(type: .findBestPostData)})
         
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
         
@@ -114,7 +108,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        callToFindAllData(type: .findNewestPostData)
+        viewModel.callToFindData(type: .findNewestPostData)
     }
     
     override func addView() {
