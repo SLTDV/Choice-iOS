@@ -267,25 +267,28 @@ final class PostCell: UITableViewCell {
             $0.height.equalTo(52)
         }
         
+        firstPostVoteButton.setTitleColor(.white, for: .normal)
+        secondPostVoteButton.setTitleColor(.white, for: .normal)
+        
         switch voting {
         case 1:
-            firstPostVoteButton.layer.borderColor = UIColor.black.cgColor
             firstPostVoteButton.backgroundColor = .black
+            firstPostVoteButton.setTitleColor(.white, for: .normal)
             
-            secondPostVoteButton.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
             secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            secondPostVoteButton.setTitleColor(.white, for: .normal)
         case 2:
-            firstPostVoteButton.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
             firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            firstPostVoteButton.setTitleColor(.white, for: .normal)
             
-            secondPostVoteButton.layer.borderColor = UIColor.black.cgColor
             secondPostVoteButton.backgroundColor = .black
+            secondPostVoteButton.setTitleColor(.white, for: .normal)
         default:
-            firstPostVoteButton.layer.borderColor = UIColor.clear.cgColor
             firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            firstPostVoteButton.setTitleColor(.white, for: .normal)
             
-            secondPostVoteButton.layer.borderColor = UIColor.clear.cgColor
             secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            secondPostVoteButton.setTitleColor(.white, for: .normal)
             
             firstPostVoteButton.setTitle("0%(0명)", for: .normal)
             secondPostVoteButton.setTitle("0%(0명)", for: .normal)

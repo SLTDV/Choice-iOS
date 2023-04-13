@@ -248,29 +248,21 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func votePostLayout(voting: Int) {
         switch voting {
         case 1:
-            firstVoteButton = firstVoteButton.then {
-                $0.layer.borderColor = UIColor.black.cgColor
-                $0.isEnabled = false
-                $0.backgroundColor = .black
-            }
+//            firstVoteButton.layer.borderColor = UIColor.black.cgColor
+//            firstVoteButton.isEnabled = false
+            firstVoteButton.backgroundColor = .black
             
-            secondVoteButton = secondVoteButton.then {
-                $0.layer.borderColor = UIColor.clear.cgColor
-                $0.isEnabled = true
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
+//            secondVoteButton.layer.borderColor = UIColor.clear.cgColor
+//            secondVoteButton.isEnabled = true
+            secondVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
         case 2:
-            firstVoteButton = firstVoteButton.then {
-                $0.layer.borderColor = UIColor.clear.cgColor
-                $0.isEnabled = true
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
+//            firstVoteButton.layer.borderColor = UIColor.clear.cgColor
+//            firstVoteButton.isEnabled = true
+            firstVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
             
-            secondVoteButton = secondVoteButton.then {
-                $0.layer.borderColor = UIColor.black.cgColor
-                $0.isEnabled = false
-                $0.backgroundColor = .black
-            }
+//            secondVoteButton.layer.borderColor = UIColor.black.cgColor
+//            secondVoteButton.isEnabled = false
+            secondVoteButton.backgroundColor = .black
         default:
             firstVoteButton.setTitle("0%(0명)", for: .normal)
             secondVoteButton.setTitle("0%(0명)", for: .normal)

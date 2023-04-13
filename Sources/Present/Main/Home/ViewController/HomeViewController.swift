@@ -4,11 +4,8 @@ import RxCocoa
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVoteButtonDidTapDelegate {
     private let disposeBag = DisposeBag()
-    
     var postItemsData = BehaviorRelay<[PostModel]>(value: [])
-    
-    var choice = 0
-    
+    private var choice = 0
     private let leftLogoImageView = UIImageView().then {
         $0.image = ChoiceAsset.Images.homeLogo.image
     }
@@ -66,6 +63,15 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         postTableView.rx.modelSelected(PostModel.self)
             .bind(onNext: { [weak self] post in
                 post.votingState = self!.choice
+                if self!.choice == 1 {
+                    post.firstVotingCount += 1
+                    post.secondVotingCount -= 1
+                } else if self!.choice == 2 {
+                    post.secondVotingCount += 1
+                    post.firstVotingCount -= 1
+                }
+//                print(post.firstVotingCount)
+//                print(post.secondVotingCount)
                 self?.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)
     }
