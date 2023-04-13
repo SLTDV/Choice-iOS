@@ -21,8 +21,6 @@ final class PostCell: UITableViewCell {
     var model: PostModel?
     var delegate: PostTableViewCellButtonDelegate?
     var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
-    var row = 0
-    var isVoting = false
     
     private let disposeBag = DisposeBag()
     
@@ -111,7 +109,6 @@ final class PostCell: UITableViewCell {
     // MARK: - Function
     
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
-        isVoting = true
         switch sender.tag {
         case 0:
             model?.votingState = 1

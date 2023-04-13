@@ -56,7 +56,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                                                       cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: data, type: .home)
             cell.postVoteButtonDelegate = self
-            cell.row = row
         }.disposed(by: disposeBag)
         
         postTableView.rx.modelSelected(PostModel.self)
