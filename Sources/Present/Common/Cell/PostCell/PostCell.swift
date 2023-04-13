@@ -261,35 +261,23 @@ final class PostCell: UITableViewCell {
         
         switch voting {
         case 1:
-            firstPostVoteButton = firstPostVoteButton.then {
-                $0.layer.borderColor = UIColor.black.cgColor
-                $0.backgroundColor = .black
-            }
+            firstPostVoteButton.layer.borderColor = UIColor.black.cgColor
+            firstPostVoteButton.backgroundColor = .black
             
-            secondPostVoteButton = secondPostVoteButton.then {
-                $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
+            secondPostVoteButton.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
+            secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
         case 2:
-            firstPostVoteButton = firstPostVoteButton.then {
-                $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
+            firstPostVoteButton.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
+            firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
             
-            secondPostVoteButton = secondPostVoteButton.then {
-                $0.layer.borderColor = UIColor.black.cgColor
-                $0.backgroundColor = .black
-            }
+            secondPostVoteButton.layer.borderColor = UIColor.black.cgColor
+            secondPostVoteButton.backgroundColor = .black
         default:
-            firstPostVoteButton = firstPostVoteButton.then {
-                $0.layer.borderColor = UIColor.clear.cgColor
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
+            firstPostVoteButton.layer.borderColor = UIColor.clear.cgColor
+            firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
             
-            secondPostVoteButton = secondPostVoteButton.then {
-                $0.layer.borderColor = UIColor.clear.cgColor
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
+            secondPostVoteButton.layer.borderColor = UIColor.clear.cgColor
+            secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
             
             firstPostVoteButton.setTitle("0%(0명)", for: .normal)
             secondPostVoteButton.setTitle("0%(0명)", for: .normal)
