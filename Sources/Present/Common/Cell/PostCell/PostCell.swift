@@ -12,7 +12,7 @@ protocol PostTableViewCellButtonDelegate: AnyObject {
 }
 
 protocol PostVoteButtonDidTapDelegate: AnyObject {
-    func postVoteButtonDidTap(idx: Int, choice: Int, row: Int)
+    func postVoteButtonDidTap(idx: Int, choice: Int)
 }
 
 final class PostCell: UITableViewCell {
@@ -22,6 +22,7 @@ final class PostCell: UITableViewCell {
     var delegate: PostTableViewCellButtonDelegate?
     var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
     var row = 0
+    var isVoting = false
     
     private let disposeBag = DisposeBag()
     
@@ -110,19 +111,26 @@ final class PostCell: UITableViewCell {
     // MARK: - Function
     
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
+        isVoting = true
         switch sender.tag {
         case 0:
-            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 1, row: row)
+            model?.votingState = 1
+            model?.firstVotingCount += 1
+            model?.secondVotingCount -= 1
+            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 1)
             DispatchQueue.main.async {
                 self.setHomeVotePostLayout(voting: 1)
             }
-//            startAnimation(button: firstPostVoteButton)
+            startAnimation(button: firstPostVoteButton)
         case 1:
-            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 2, row: row)
+            model?.votingState = 2
+            model?.firstVotingCount -= 1
+            model?.secondVotingCount += 1
+            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 2)
             DispatchQueue.main.async {
                 self.setHomeVotePostLayout(voting: 2)
             }
-//            startAnimation(button: secondPostVoteButton)
+            startAnimation(button: secondPostVoteButton)
         default:
             return
         }

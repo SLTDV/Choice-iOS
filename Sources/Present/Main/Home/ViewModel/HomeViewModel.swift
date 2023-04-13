@@ -51,7 +51,9 @@ final class HomeViewModel: BaseViewModel {
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
-            case .success:
+            case .success(let data):
+                let decodeResponse = try! JSONDecoder().decode(VoteModel.self, from: data)
+                print(decodeResponse)
                 print("success")
             case .failure(let error):
                 print("vote error = \(error.localizedDescription)")
