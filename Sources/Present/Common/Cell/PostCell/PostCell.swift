@@ -12,7 +12,7 @@ protocol PostTableViewCellButtonDelegate: AnyObject {
 }
 
 protocol PostVoteButtonDidTapDelegate: AnyObject {
-    func postVoteButtonDidTap(idx: Int, choice: Int)
+    func postVoteButtonDidTap(idx: Int, choice: Int, row: Int)
 }
 
 final class PostCell: UITableViewCell {
@@ -21,6 +21,7 @@ final class PostCell: UITableViewCell {
     var model: PostModel?
     var delegate: PostTableViewCellButtonDelegate?
     var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
+    var row = 0
     
     private let disposeBag = DisposeBag()
     
@@ -111,15 +112,17 @@ final class PostCell: UITableViewCell {
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
         switch sender.tag {
         case 0:
-            setHomeVotePostLayout(voting: 1)
-            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 1)
-            
-            startAnimation(button: firstPostVoteButton)
+            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 1, row: row)
+            DispatchQueue.main.async {
+                self.setHomeVotePostLayout(voting: 1)
+            }
+//            startAnimation(button: firstPostVoteButton)
         case 1:
-            setHomeVotePostLayout(voting: 2)
-            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 2)
-            
-            startAnimation(button: secondPostVoteButton)
+            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 2, row: row)
+            DispatchQueue.main.async {
+                self.setHomeVotePostLayout(voting: 2)
+            }
+//            startAnimation(button: secondPostVoteButton)
         default:
             return
         }
@@ -207,31 +210,31 @@ final class PostCell: UITableViewCell {
     }
     
     private func setHomeVotePostLayout(voting: Int) {
-        DispatchQueue.main.async { [weak self] in
-            switch voting {
-            case 1:
-                self?.firstPostVoteButton.isEnabled = false
-                self?.firstPostVoteButton.backgroundColor = .black
-                self?.firstPostVoteButton.setTitleColor(.white, for: .normal)
-
-                self?.secondPostVoteButton.isEnabled = true
-                self?.secondPostVoteButton.backgroundColor = .clear
-                self?.secondPostVoteButton.setTitleColor(.gray, for: .normal)
-            case 2:
-                self?.firstPostVoteButton.isEnabled = true
-                self?.firstPostVoteButton.backgroundColor = .clear
-                self?.firstPostVoteButton.setTitleColor(.gray, for: .normal)
-                
-                self?.secondPostVoteButton.isEnabled = false
-                self?.secondPostVoteButton.backgroundColor = .black
-                self?.secondPostVoteButton.setTitleColor(.white, for: .normal)
-            default:
-                self?.firstPostVoteButton.backgroundColor = .clear
-                self?.firstPostVoteButton.setTitleColor(.gray, for: .normal)
-
-                self?.secondPostVoteButton.backgroundColor = .clear
-                self?.secondPostVoteButton.setTitleColor(.gray, for: .normal)
-            }
+        switch voting {
+        case 1:
+            firstPostVoteButton.isEnabled = false
+            firstPostVoteButton.backgroundColor = .black
+            firstPostVoteButton.setTitleColor(.white, for: .normal)
+            
+            secondPostVoteButton.isEnabled = true
+            secondPostVoteButton.backgroundColor = .clear
+            secondPostVoteButton.setTitleColor(.gray, for: .normal)
+        case 2:
+            firstPostVoteButton.isEnabled = true
+            firstPostVoteButton.backgroundColor = .clear
+            firstPostVoteButton.setTitleColor(.gray, for: .normal)
+            
+            secondPostVoteButton.isEnabled = false
+            secondPostVoteButton.backgroundColor = .black
+            secondPostVoteButton.setTitleColor(.white, for: .normal)
+        default:
+            firstPostVoteButton.isEnabled = true
+            firstPostVoteButton.setTitleColor(.gray, for: .normal)
+            firstPostVoteButton.backgroundColor = .clear
+            
+            secondPostVoteButton.isEnabled = true
+            secondPostVoteButton.setTitleColor(.gray, for: .normal)
+            secondPostVoteButton.backgroundColor = .clear
         }
     }
     
@@ -293,21 +296,19 @@ final class PostCell: UITableViewCell {
         self.model = model
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-        DispatchQueue.main.async {
-            self.titleLabel.text = model.title
-            self.contentLabel.text = model.content
-            self.firstVoteOptionBackgroundView.setVoteOptionLabel(model.firstVotingOption)
-            self.secondVoteOptionBackgroundView.setVoteOptionLabel(model.secondVotingOption)
-            self.firstPostImageView.kf.setImage(with: firstImageUrl)
-            self.secondPostImageView.kf.setImage(with: secondImageUrl)
-            switch type {
-            case .home:
-                self.setHomeVotePostLayout(voting: model.votingState)
-            case .profile:
-                self.setProfileVoteButtonLayout(with: model)
-            }
-            self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
-            self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
+        titleLabel.text = model.title
+        contentLabel.text = model.content
+        firstVoteOptionBackgroundView.setVoteOptionLabel(model.firstVotingOption)
+        secondVoteOptionBackgroundView.setVoteOptionLabel(model.secondVotingOption)
+        firstPostImageView.kf.setImage(with: firstImageUrl)
+        secondPostImageView.kf.setImage(with: secondImageUrl)
+        switch type {
+        case .home:
+            setHomeVotePostLayout(voting: model.votingState)
+        case .profile:
+            setProfileVoteButtonLayout(with: model)
         }
+        participantsCountLabel.text = "👻 참여자 \(model.participants)명"
+        commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
     }
 }

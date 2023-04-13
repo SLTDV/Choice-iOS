@@ -6,7 +6,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     private let disposeBag = DisposeBag()
     
     var postItemsData = BehaviorRelay<[PostModel]>(value: [])
-
+    
     private let leftLogoImageView = UIImageView().then {
         $0.image = ChoiceAsset.Images.homeLogo.image
     }
@@ -39,7 +39,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     private let postTableView = UITableView().then {
-        $0.rowHeight = 372
+        $0.rowHeight = UITableView.automaticDimension
+        $0.estimatedRowHeight = 400
         $0.showsVerticalScrollIndicator = false
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
@@ -53,12 +54,11 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     private func bindTableView() {
-        postItemsData
-            .subscribe(on: MainScheduler.asyncInstance)
-            .bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
-                                             cellType: PostCell.self)) { (row, data, cell) in
+        postItemsData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
+                                                      cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: data, type: .home)
             cell.postVoteButtonDelegate = self
+            cell.row = row
         }.disposed(by: disposeBag)
         
         postTableView.rx.modelSelected(PostModel.self)
@@ -67,18 +67,14 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             }).disposed(by: disposeBag)
     }
     
-    func postVoteButtonDidTap(idx: Int, choice: Int) {
+    func postVoteButtonDidTap(idx: Int, choice: Int, row: Int) {
         viewModel.callToAddVoteNumber(idx: idx, choice: choice) { [weak self] result in
             switch result {
             case .success(()):
-                DispatchQueue.main.async {
-                    self?.postTableView.reloadRows(
-                        at: [IndexPath(row: idx, section: 0)],
-                        with: .none
-                    )
-                }
+                print("success")
+                self?.viewModel.callToFindData(type: .findNewestPostData)
             case .failure(let error):
-                print("error = \(error)")
+                print("Vote error = \(error)")
             }
         }
     }
