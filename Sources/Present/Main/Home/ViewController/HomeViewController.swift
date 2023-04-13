@@ -53,8 +53,10 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     private func bindTableView() {
-        postItemsData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
-                                                      cellType: PostCell.self)) { (row, data, cell) in
+        postItemsData
+            .subscribe(on: MainScheduler.asyncInstance)
+            .bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
+                                             cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: data, type: .home)
             cell.postVoteButtonDelegate = self
         }.disposed(by: disposeBag)
@@ -73,16 +75,13 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         viewModel.callToAddVoteNumber(idx: idx, choice: choice) { [weak self] result in
             switch result {
             case .success(()):
-                LoadingIndicator.showLoading(text: "투표 중")
-                self?.viewModel.callToFindData(type: .findNewestPostData)
                 DispatchQueue.main.async {
-//                    self?.postTableView.reloadRows(
-//                        at: [IndexPath(row: idx, section: 0)],
-//                        with: .automatic
-//                    )
-                    self?.postTableView.reloadData()
+                    self?.postTableView.reloadRows(
+                        at: [IndexPath(row: idx, section: 0)],
+                        with: .none
+                    )
+                    self?.viewModel.callToFindData(type: .findNewestPostData)
                 }
-                LoadingIndicator.hideLoading()
             case .failure(let error):
                 print("error = \(error)")
             }
