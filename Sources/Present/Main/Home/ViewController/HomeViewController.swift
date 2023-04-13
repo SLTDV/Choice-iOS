@@ -7,6 +7,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     
     var postItemsData = BehaviorRelay<[PostModel]>(value: [])
     
+    var choice = 0
+    
     private let leftLogoImageView = UIImageView().then {
         $0.image = ChoiceAsset.Images.homeLogo.image
     }
@@ -63,20 +65,14 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         
         postTableView.rx.modelSelected(PostModel.self)
             .bind(onNext: { [weak self] post in
+                post.votingState = self!.choice
                 self?.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)
     }
     
     func postVoteButtonDidTap(idx: Int, choice: Int, row: Int) {
-        viewModel.callToAddVoteNumber(idx: idx, choice: choice) { [weak self] result in
-            switch result {
-            case .success(()):
-                print("success")
-                self?.viewModel.callToFindData(type: .findNewestPostData)
-            case .failure(let error):
-                print("Vote error = \(error)")
-            }
-        }
+        self.choice = choice
+        viewModel.callToAddVoteNumber(idx: idx, choice: choice)
     }
     
     override func configureVC() {

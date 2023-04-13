@@ -37,7 +37,7 @@ final class HomeViewModel: BaseViewModel {
         }
     }
     
-    func callToAddVoteNumber(idx: Int, choice: Int, completion: @escaping (Result<Void, Error>) -> ()) {
+    func callToAddVoteNumber(idx: Int, choice: Int) {
         let url = APIConstants.addVoteNumberURL + "\(idx)"
         let params = [
             "choice" : choice
@@ -52,9 +52,9 @@ final class HomeViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
-                completion(.success(()))
+                print("success")
             case .failure(let error):
-                completion(.failure(error))
+                print("vote error = \(error.localizedDescription)")
             }
         }
     }
