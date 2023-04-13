@@ -273,23 +273,13 @@ final class PostCell: UITableViewCell {
         switch voting {
         case 1:
             firstPostVoteButton.backgroundColor = .black
-            firstPostVoteButton.setTitleColor(.white, for: .normal)
-            
             secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            secondPostVoteButton.setTitleColor(.white, for: .normal)
         case 2:
             firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            firstPostVoteButton.setTitleColor(.white, for: .normal)
-            
             secondPostVoteButton.backgroundColor = .black
-            secondPostVoteButton.setTitleColor(.white, for: .normal)
         default:
             firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            firstPostVoteButton.setTitleColor(.white, for: .normal)
-            
             secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            secondPostVoteButton.setTitleColor(.white, for: .normal)
-            
             firstPostVoteButton.setTitle("0%(0명)", for: .normal)
             secondPostVoteButton.setTitle("0%(0명)", for: .normal)
         }
