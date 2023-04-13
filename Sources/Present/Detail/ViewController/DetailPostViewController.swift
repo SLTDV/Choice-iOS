@@ -248,22 +248,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func votePostLayout(voting: Int) {
         switch voting {
         case 1:
-//            firstVoteButton.layer.borderColor = UIColor.black.cgColor
-//            firstVoteButton.isEnabled = false
             firstVoteButton.backgroundColor = .black
-            
-//            secondVoteButton.layer.borderColor = UIColor.clear.cgColor
-//            secondVoteButton.isEnabled = true
             secondVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
         case 2:
-//            firstVoteButton.layer.borderColor = UIColor.clear.cgColor
-//            firstVoteButton.isEnabled = true
             firstVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            
-//            secondVoteButton.layer.borderColor = UIColor.black.cgColor
-//            secondVoteButton.isEnabled = false
             secondVoteButton.backgroundColor = .black
         default:
+            firstVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            secondVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
             firstVoteButton.setTitle("0%(0명)", for: .normal)
             secondVoteButton.setTitle("0%(0명)", for: .normal)
         }
