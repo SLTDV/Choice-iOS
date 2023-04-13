@@ -130,7 +130,7 @@ final class PostCell: UITableViewCell {
     private func addView() {
         contentView.addSubviews(titleLabel, contentLabel, removePostButton, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
-                                participantsCountLabel, commentCountLabel)
+                                 participantsCountLabel, commentCountLabel)
     }
     
     private func setLayout() {
