@@ -101,30 +101,31 @@ final class PostCell: UITableViewCell {
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
         switch sender.tag {
         case 1:
-            model?.votingState = 1
-            
             model?.firstVotingCount += 1
             model?.secondVotingCount -= 1
-            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 1)
-            DispatchQueue.main.async {
-                self.setHomeVotePostLayout(voting: 1)
-            }
+            //inf 방지
+            model?.secondVotingCount = (model!.secondVotingCount < 0) ? 0 : model!.secondVotingCount
             startAnimation(button: firstPostVoteButton)
         case 2:
-            model?.votingState = 2
             model?.firstVotingCount -= 1
             model?.secondVotingCount += 1
-            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 2)
-            DispatchQueue.main.async {
-                self.setHomeVotePostLayout(voting: 2)
-            }
+            //inf 방지
+            model?.firstVotingCount = (model!.firstVotingCount < 0) ? 0 : model!.firstVotingCount
             startAnimation(button: secondPostVoteButton)
         default:
             return
         }
         
-        print("firstCount = \(model?.firstVotingCount)")
-        print("secondCount = \(model?.secondVotingCount)")
+        //투표 수 증가
+        if model?.votingState == 0 {
+            self.participantsCountLabel.text = "👻 참여자 \(self.model!.participants + 1)명"
+        }
+        
+        model?.votingState = sender.tag
+        postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: sender.tag)
+        DispatchQueue.main.async {
+            self.setHomeVotePostLayout(voting: sender.tag)
+        }
     }
     
     func removePostButtonDidTap(postIdx: Int) {
