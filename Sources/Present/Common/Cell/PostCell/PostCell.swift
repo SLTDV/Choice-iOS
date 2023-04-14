@@ -103,20 +103,17 @@ final class PostCell: UITableViewCell {
         case 1:
             model?.firstVotingCount += 1
             model?.secondVotingCount -= 1
-            //inf 방지
             model?.secondVotingCount = (model!.secondVotingCount < 0) ? 0 : model!.secondVotingCount
             startAnimation(button: firstPostVoteButton)
         case 2:
             model?.firstVotingCount -= 1
             model?.secondVotingCount += 1
-            //inf 방지
             model?.firstVotingCount = (model!.firstVotingCount < 0) ? 0 : model!.firstVotingCount
             startAnimation(button: secondPostVoteButton)
         default:
             return
         }
         
-        //투표 수 증가
         if model?.votingState == 0 {
             self.participantsCountLabel.text = "👻 참여자 \(self.model!.participants + 1)명"
         }
