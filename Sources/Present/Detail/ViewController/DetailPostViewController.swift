@@ -235,7 +235,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     func setVoteButtonLayout(with model: PostModel) {
-        votePostLayout(voting: model.voting)
+        votePostLayout(voting: model.votingState)
         
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
             firstVotingCount: Double(model.firstVotingCount),

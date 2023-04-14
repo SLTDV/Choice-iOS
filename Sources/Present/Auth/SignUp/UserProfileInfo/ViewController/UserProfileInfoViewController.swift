@@ -87,7 +87,11 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     
         let profileImage = isImageChanged ? profileImageView.image : nil
         
+        LoadingIndicator.showLoading(text: "")
+        
         viewModel.callToSignUp(email: email, password: password, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
+            LoadingIndicator.hideLoading()
+            
             if isDuplicate {
                 self.viewModel.navigateRootVC()
             } else {

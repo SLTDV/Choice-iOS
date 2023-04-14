@@ -104,12 +104,12 @@ final class PostCell: UITableViewCell {
         switch sender.tag {
         case 0:
             postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 1)
-            setHomeVotePostLayout(voting: model!.voting)
+            setHomeVotePostLayout(voting: model!.votingState)
             
             startAnimation(button: firstPostVoteButton)
         case 1:
             postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 2)
-            setHomeVotePostLayout(voting: model!.voting)
+            setHomeVotePostLayout(voting: model!.votingState)
             
             startAnimation(button: secondPostVoteButton)
         default:
@@ -228,7 +228,7 @@ final class PostCell: UITableViewCell {
     func setProfileVoteButtonLayout(with model: PostModel) {
         firstPostVoteButton.isEnabled = false
         secondPostVoteButton.isEnabled = false
-        votePostButtonLayout(voting: model.voting)
+        votePostButtonLayout(voting: model.votingState)
         
         let data = CalculateToVoteCountPercentage
             .calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
@@ -290,7 +290,7 @@ final class PostCell: UITableViewCell {
             self.secondPostImageView.kf.setImage(with: secondImageUrl)
             switch type {
             case .home:
-                self.setHomeVotePostLayout(voting: model.voting)
+                self.setHomeVotePostLayout(voting: model.votingState)
             case .profile:
                 self.setProfileVoteButtonLayout(with: model)
             }

@@ -69,7 +69,10 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
                         self?.inputPasswordTextField.shake()
                     }
                 }).disposed(by: self?.disposeBag ?? .init())
-                self?.viewModel.callToSignInAPI(email: email, password: password)
+                LoadingIndicator.showLoading(text: "")
+                DispatchQueue.main.async {
+                    self?.viewModel.callToSignInAPI(email: email, password: password)
+                }
             }).disposed(by: disposeBag)
         
         pushSignUpButton.rx.tap

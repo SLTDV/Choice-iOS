@@ -37,6 +37,7 @@ final class SignInViewModel: BaseViewModel {
                 tk.create(key: "accessToken", token: decodeResult?.accessToken ?? "")
                 tk.create(key: "refreshToken", token: decodeResult?.refreshToken ?? "")
                 self?.pushMainVC()
+                LoadingIndicator.hideLoading()
             case .failure:
                 self?.delegate?.statusCodeData.onNext(response.response?.statusCode ?? 0)
             }
