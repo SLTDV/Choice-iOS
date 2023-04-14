@@ -58,7 +58,7 @@ final class PostCell: UITableViewCell {
     }
     
     private lazy var firstPostVoteButton = UIButton().then {
-        $0.tag = 0
+        $0.tag = 1
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 10
         $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
@@ -66,7 +66,7 @@ final class PostCell: UITableViewCell {
     }
     
     private lazy var secondPostVoteButton = UIButton().then {
-        $0.tag = 1
+        $0.tag = 2
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 10
         $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
@@ -100,8 +100,9 @@ final class PostCell: UITableViewCell {
     
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
         switch sender.tag {
-        case 0:
+        case 1:
             model?.votingState = 1
+            
             model?.firstVotingCount += 1
             model?.secondVotingCount -= 1
             postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 1)
@@ -109,7 +110,7 @@ final class PostCell: UITableViewCell {
                 self.setHomeVotePostLayout(voting: 1)
             }
             startAnimation(button: firstPostVoteButton)
-        case 1:
+        case 2:
             model?.votingState = 2
             model?.firstVotingCount -= 1
             model?.secondVotingCount += 1
@@ -121,6 +122,9 @@ final class PostCell: UITableViewCell {
         default:
             return
         }
+        
+        print("firstCount = \(model?.firstVotingCount)")
+        print("secondCount = \(model?.secondVotingCount)")
     }
     
     func removePostButtonDidTap(postIdx: Int) {
