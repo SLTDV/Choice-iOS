@@ -239,7 +239,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
             firstVotingCount: Double(model.firstVotingCount),
-            secondVotingCount: Double(model.secondVotingCount))
+            secondVotingCount: Double(model.secondVotingCount)
+        )
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
@@ -247,30 +248,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func votePostLayout(voting: Int) {
         switch voting {
         case 1:
-            firstVoteButton = firstVoteButton.then {
-                $0.layer.borderColor = UIColor.black.cgColor
-                $0.isEnabled = false
-                $0.backgroundColor = .black
-            }
-            
-            secondVoteButton = secondVoteButton.then {
-                $0.layer.borderColor = UIColor.clear.cgColor
-                $0.isEnabled = true
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
+            firstVoteButton.backgroundColor = .black
+            secondVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
         case 2:
-            firstVoteButton = firstVoteButton.then {
-                $0.layer.borderColor = UIColor.clear.cgColor
-                $0.isEnabled = true
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
-            
-            secondVoteButton = secondVoteButton.then {
-                $0.layer.borderColor = UIColor.black.cgColor
-                $0.isEnabled = false
-                $0.backgroundColor = .black
-            }
+            firstVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            secondVoteButton.backgroundColor = .black
         default:
+            firstVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            secondVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
             firstVoteButton.setTitle("0%(0명)", for: .normal)
             secondVoteButton.setTitle("0%(0명)", for: .normal)
         }
@@ -281,7 +266,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardUp), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDown), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
         
         viewModel.callToCommentData(idx: model!.idx)
     }
@@ -444,8 +428,10 @@ extension DetailPostViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         var config: UISwipeActionsConfiguration? = nil
         let commentModel = commentData.value[indexPath.row]
-        lazy var contextual = UIContextualAction(style: .destructive, title: nil, handler: { [weak self] _, _, _ in
-            self?.viewModel.deleteComment(postIdx: self!.model!.idx, commentIdx: commentModel.idx, completion: { result in
+        lazy var contextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
+            self.viewModel.deleteComment(postIdx: self.model!.idx,
+                                         commentIdx: commentModel.idx,
+                                         completion: { [weak self] result in
                 switch result {
                 case .success(()):
                     self?.viewModel.callToCommentData(idx: self!.model!.idx)

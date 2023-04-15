@@ -6,9 +6,9 @@ extension UIView {
     }
     
     func startAnimation(button: UIButton) {
-        let scale = CGAffineTransform(scaleX: 1.2, y: 1.2)
+        let scale = CGAffineTransform(scaleX: 1.05, y: 1.05)
         DispatchQueue.main.async {
-            UIView.animate(withDuration: 1.2) {
+            UIView.animate(withDuration: 0.2) {
                 button.transform = scale
             } completion: { finished in
                 UIView.animate(withDuration: 0.2) {

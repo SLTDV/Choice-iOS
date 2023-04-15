@@ -22,7 +22,6 @@ final class DetailPostViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
-                print("success")
                 completion(.success(()))
             case .failure(let error):
                 completion(.failure(error))

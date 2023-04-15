@@ -1,6 +1,6 @@
 import Foundation
 
-struct PostModel: Codable {
+class PostModel: Codable {
     var idx: Int
     var firstImageUrl: String
     var secondImageUrl: String
@@ -14,3 +14,5 @@ struct PostModel: Codable {
     var participants: Int
     var commentCount: Int
 }
+
+
