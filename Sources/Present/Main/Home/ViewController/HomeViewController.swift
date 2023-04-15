@@ -6,7 +6,9 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     private let disposeBag = DisposeBag()
     
     var postItemsData = PublishSubject<[PostModel]>()
-
+    
+    private var sortType: MenuOptionType = .findNewestPostData
+    
     private let leftLogoImageView = UIImageView().then {
         $0.image = ChoiceAsset.Images.homeLogo.image
     }
@@ -87,10 +89,20 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftLogoImageView)
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
         
-        let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"),
-                                  handler: { [weak self] _ in self?.callToFindAllData(type: .findNewestPostData)})
-        let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"),
-                                   handler: { [weak self] _ in self?.callToFindAllData(type: .findBestPostData)})
+        let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
+            self?.callToFindAllData(type: .findNewestPostData)
+            self?.sortType = .findNewestPostData
+            DispatchQueue.main.async {
+                self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
+            }
+        })
+        let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { [weak self] _ in
+            self?.callToFindAllData(type: .findBestPostData)
+            self?.sortType = .findBestPostData
+            DispatchQueue.main.async {
+                self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
+            }
+        })
         
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
         
@@ -99,7 +111,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        callToFindAllData(type: .findNewestPostData)
+        callToFindAllData(type: sortType)
     }
     
     override func addView() {
