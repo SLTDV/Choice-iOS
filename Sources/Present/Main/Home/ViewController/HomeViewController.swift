@@ -4,8 +4,7 @@ import RxCocoa
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVoteButtonDidTapDelegate {
     private let disposeBag = DisposeBag()
-    
-    var postItemsData = PublishSubject<[PostModel]>()
+    var postItemsData = BehaviorRelay<[PostModel]>(value: [])
     
     private var sortType: MenuOptionType = .findNewestPostData
     
@@ -41,7 +40,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     private let postTableView = UITableView().then {
-        $0.rowHeight = 372
+        $0.rowHeight = UITableView.automaticDimension
+        $0.estimatedRowHeight = 400
         $0.showsVerticalScrollIndicator = false
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
@@ -63,8 +63,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         }.disposed(by: disposeBag)
         
         postTableView.rx.modelSelected(PostModel.self)
-            .bind(onNext: { [weak self] post in
-                self?.viewModel.pushDetailPostVC(model: post)
+            .bind(with: self, onNext: { owner, post in
+                owner.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)
     }
     
