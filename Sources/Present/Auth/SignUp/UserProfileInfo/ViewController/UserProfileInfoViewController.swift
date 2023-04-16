@@ -90,8 +90,6 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         LoadingIndicator.showLoading(text: "")
         
         viewModel.callToSignUp(email: email, password: password, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
-            LoadingIndicator.hideLoading()
-            
             if isDuplicate {
                 self.viewModel.navigateRootVC()
             } else {

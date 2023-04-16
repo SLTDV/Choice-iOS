@@ -59,7 +59,11 @@ final class UserProfileInfoViewModel: BaseViewModel {
                        encoding: JSONEncoding.default).responseData { response in
                 switch response.response?.statusCode {
                 case 201:
+                    LoadingIndicator.hideLoading()
                     completion(true)
+                case 409:
+                    LoadingIndicator.hideLoading()
+                    completion(false)
                 default:
                     completion(false)
                 }
