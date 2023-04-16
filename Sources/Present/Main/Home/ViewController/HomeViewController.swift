@@ -32,7 +32,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     
     private let dropdownButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.setTitle("정렬 ↓", for: .normal)
+        $0.setTitle("최신순 ↓", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
         $0.backgroundColor = .init(red: 0.94, green: 0.94, blue: 0.94, alpha: 1)
