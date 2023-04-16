@@ -5,6 +5,9 @@ import RxCocoa
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVoteButtonDidTapDelegate {
     private let disposeBag = DisposeBag()
     var postItemsData = BehaviorRelay<[PostModel]>(value: [])
+    
+    private var sortType: MenuOptionType = .findNewestPostData
+    
     private let leftLogoImageView = UIImageView().then {
         $0.image = ChoiceAsset.Images.homeLogo.image
     }
@@ -29,7 +32,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     
     private let dropdownButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.setTitle("정렬 ↓", for: .normal)
+        $0.setTitle("최신순 ↓", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
         $0.backgroundColor = .init(red: 0.94, green: 0.94, blue: 0.94, alpha: 1)
@@ -64,7 +67,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                 owner.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)
     }
-
+    
     func postVoteButtonDidTap(idx: Int, choice: Int) {
         viewModel.callToAddVoteNumber(idx: idx, choice: choice)
     }
@@ -82,10 +85,20 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftLogoImageView)
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
         
-        let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"),
-                                  handler: { [weak self] _ in self?.viewModel.callToFindData(type: .findNewestPostData)})
-        let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"),
-                                   handler: { [weak self] _ in self?.viewModel.callToFindData(type: .findBestPostData)})
+        let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
+            self?.viewModel.callToFindData(type: .findNewestPostData)
+            self?.sortType = .findNewestPostData
+            DispatchQueue.main.async {
+                self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
+            }
+        })
+        let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { [weak self] _ in
+            self?.viewModel.callToFindData(type: .findBestPostData)
+            self?.sortType = .findBestPostData
+            DispatchQueue.main.async {
+                self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
+            }
+        })
         
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
         
@@ -94,7 +107,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        viewModel.callToFindData(type: .findNewestPostData)
+        viewModel.callToFindData(type: sortType)
     }
     
     override func addView() {
