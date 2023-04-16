@@ -68,10 +68,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             }).disposed(by: disposeBag)
     }
     
-    private func callToFindAllData(type: MenuOptionType) {
-        viewModel.callToFindData(type: type)
-    }
-    
     func postVoteButtonDidTap(idx: Int, choice: Int) {
         viewModel.callToAddVoteNumber(idx: idx, choice: choice)
     }
@@ -90,14 +86,14 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
         
         let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
-            self?.callToFindAllData(type: .findNewestPostData)
+            self?.viewModel.callToFindData(type: .findNewestPostData)
             self?.sortType = .findNewestPostData
             DispatchQueue.main.async {
                 self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
             }
         })
         let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { [weak self] _ in
-            self?.callToFindAllData(type: .findBestPostData)
+            self?.viewModel.callToFindData(type: .findBestPostData)
             self?.sortType = .findBestPostData
             DispatchQueue.main.async {
                 self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
@@ -111,7 +107,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        callToFindAllData(type: sortType)
+        viewModel.callToFindData(type: sortType)
     }
     
     override func addView() {
