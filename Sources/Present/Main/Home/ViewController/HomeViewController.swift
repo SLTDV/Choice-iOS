@@ -14,15 +14,15 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     
     private lazy var addPostButton = UIBarButtonItem(image: UIImage(systemName: "plus.app"),
                                                      style: .plain,
-                                                     target: self,
-                                                     action: #selector(addPostButtonDidTap(_:))).then {
+                                                     target: nil,
+                                                     action: nil).then {
         $0.tintColor = .black
     }
     
     private lazy var profileButton = UIBarButtonItem(image: UIImage(systemName: "person.crop.circle.fill"),
                                                      style: .plain,
-                                                     target: self,
-                                                     action: #selector(profileButtonDidTap(_:))).then {
+                                                     target: nil,
+                                                     action: nil).then {
         $0.tintColor = .black
     }
     
@@ -46,12 +46,17 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
     
-    @objc private func addPostButtonDidTap(_ sender: UIBarButtonItem) {
-        viewModel.pushAddPostVC()
-    }
-    
-    @objc private func profileButtonDidTap(_ sender: UIBarButtonItem) {
-        viewModel.pushProfileVC()
+    private func navigationBarButtonDidTap() {
+        profileButton.rx.tap
+            .throttle(.seconds(2), latest: false, scheduler: MainScheduler.instance)
+            .bind(with: self) { owner, arg in
+                owner.viewModel.pushProfileVC()
+            }.disposed(by: disposeBag)
+        
+        addPostButton.rx.tap
+            .bind(with: self) { owner, arg in
+                owner.viewModel.pushProfileVC()
+            }.disposed(by: disposeBag)
     }
     
     private func bindTableView() {
@@ -86,6 +91,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
         
         let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
+            LoadingIndicator.showLoading(text: "")
             self?.viewModel.callToFindData(type: .findNewestPostData)
             self?.sortType = .findNewestPostData
             DispatchQueue.main.async {
@@ -93,6 +99,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             }
         })
         let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { [weak self] _ in
+            LoadingIndicator.showLoading(text: "")
             self?.viewModel.callToFindData(type: .findBestPostData)
             self?.sortType = .findBestPostData
             DispatchQueue.main.async {
@@ -104,6 +111,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         
         viewModel.delegate = self
         bindTableView()
+        navigationBarButtonDidTap()
     }
     
     override func viewWillAppear(_ animated: Bool) {

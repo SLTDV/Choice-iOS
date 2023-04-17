@@ -37,6 +37,7 @@ final class SignInViewModel: BaseViewModel {
                 LoadingIndicator.hideLoading()
                 completion(false)
             default:
+                LoadingIndicator.hideLoading()
                 completion(false)
             }
         }

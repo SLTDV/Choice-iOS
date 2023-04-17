@@ -29,6 +29,7 @@ final class HomeViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success(let data):
+                LoadingIndicator.hideLoading()
                 let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: data)
                 self?.delegate?.postItemsData.accept(decodeResponse ?? .init())
             case .failure(let error):
