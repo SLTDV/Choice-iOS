@@ -49,12 +49,13 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     private func navigationBarButtonDidTap() {
         profileButton.rx.tap
             .throttle(.seconds(2), latest: false, scheduler: MainScheduler.instance)
-            .bind(with: self) { owner, arg in
+            .bind(with: self) { owner, _ in
                 owner.viewModel.pushProfileVC()
             }.disposed(by: disposeBag)
         
         addPostButton.rx.tap
-            .bind(with: self) { owner, arg in
+            .throttle(.seconds(2), latest: false, scheduler: MainScheduler.instance)
+            .bind(with: self) { owner, _ in
                 owner.viewModel.pushAddPostVC()
             }.disposed(by: disposeBag)
     }

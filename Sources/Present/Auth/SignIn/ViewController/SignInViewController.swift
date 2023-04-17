@@ -63,12 +63,14 @@ final class SignInViewController: BaseVC<SignInViewModel> {
                 LoadingIndicator.showLoading(text: "")
                 DispatchQueue.main.async {
                     self?.viewModel.callToSignInAPI(email: email, password: password){ [weak self] isComplete in
-                        if isComplete == false {
+                        guard isComplete else {
                             self?.showWarningLabel(warning: "아이디 또는 비밀번호가 잘못되었습니다.")
+                           
                             DispatchQueue.main.async {
                                 self?.inputIdTextField.shake()
                                 self?.inputPasswordTextField.shake()
                             }
+                            return
                         }
                     }
                 }
