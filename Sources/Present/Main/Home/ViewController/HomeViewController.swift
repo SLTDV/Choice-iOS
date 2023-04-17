@@ -55,7 +55,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         
         addPostButton.rx.tap
             .bind(with: self) { owner, arg in
-                owner.viewModel.pushProfileVC()
+                owner.viewModel.pushAddPostVC()
             }.disposed(by: disposeBag)
     }
     
