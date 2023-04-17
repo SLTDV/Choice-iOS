@@ -2,9 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
-    var statusCodeData = PublishSubject<Int>()
-    
+final class SignInViewController: BaseVC<SignInViewModel> {    
     private let disposeBag = DisposeBag()
     
     private let titleImageView = UIImageView().then {
@@ -62,16 +60,17 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
                 guard let email = self?.inputIdTextField.text else { return }
                 guard let password = self?.inputPasswordTextField.text else { return }
                 
-                self?.statusCodeData.bind(onNext: { [weak self] _ in
-                    self?.showWarningLabel(warning: "아이디 또는 비밀번호가 잘못되었습니다.")
-                    DispatchQueue.main.async {
-                        self?.inputIdTextField.shake()
-                        self?.inputPasswordTextField.shake()
-                    }
-                }).disposed(by: self?.disposeBag ?? .init())
                 LoadingIndicator.showLoading(text: "")
                 DispatchQueue.main.async {
-                    self?.viewModel.callToSignInAPI(email: email, password: password)
+                    self?.viewModel.callToSignInAPI(email: email, password: password){ [weak self] isComplete in
+                        if !isComplete {
+                            self?.showWarningLabel(warning: "아이디 또는 비밀번호가 잘못되었습니다.")
+                            DispatchQueue.main.async {
+                                self?.inputIdTextField.shake()
+                                self?.inputPasswordTextField.shake()
+                            }
+                        }
+                    }
                 }
             }).disposed(by: disposeBag)
         
@@ -82,7 +81,6 @@ final class SignInViewController: BaseVC<SignInViewModel>, SignInErrorProtocol {
     }
     
     override func configureVC() {
-        viewModel.delegate = self
         bind()
     }
     
