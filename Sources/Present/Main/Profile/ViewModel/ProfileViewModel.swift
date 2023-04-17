@@ -48,6 +48,7 @@ final class ProfileViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success:
+                LoadingIndicator.hideLoading()
                 self?.delegate?.nicknameData.onNext(nickname)
             case .failure(let error):
                 print("error = \(error.localizedDescription)")
@@ -112,6 +113,7 @@ final class ProfileViewModel: BaseViewModel {
                     .responseData(emptyResponseCodes: [200, 201, 204]) { response in
                         switch response.result {
                         case .success:
+                            LoadingIndicator.hideLoading()
                             observer.onNext(decodeResponse ?? .init(profileImageUrl: ""))
                             observer.onCompleted()
                         case .failure(let error):
