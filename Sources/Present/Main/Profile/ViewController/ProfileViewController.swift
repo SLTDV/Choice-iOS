@@ -95,6 +95,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
                                       preferredStyle: .alert)
         
         let okayAction = UIAlertAction(title: "변경", style: .default) { [weak self] data in
+            LoadingIndicator.showLoading(text: "")
             self?.viewModel.callToChangeNickname(nickname: alert.textFields?[0].text ?? "")
         }
         let cancelAction = UIAlertAction(title: "취소", style: .destructive)
@@ -200,6 +201,8 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         } else if let possibleImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             newImage = possibleImage
         }
+        
+        LoadingIndicator.showLoading(text: "")
         viewModel.callToProfileImageUpload(profileImage: newImage)
             .subscribe(with: self, onNext: { owner, response in
                 DispatchQueue.main.async {

@@ -100,6 +100,8 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
         viewModel.email = email
         viewModel.password = password
         
+        LoadingIndicator.showLoading(text: "")
+        
         viewModel.checkDuplicateEmail(email: email) { isDuplicate in
             if isDuplicate {
                 if password.elementsEqual(checkPassword){
