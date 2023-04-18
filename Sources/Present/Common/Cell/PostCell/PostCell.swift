@@ -2,8 +2,6 @@ import UIKit
 import SnapKit
 import Then
 import Kingfisher
-import RxSwift
-import RxCocoa
 
 // MARK: - Protocol
 
@@ -21,8 +19,6 @@ final class PostCell: UITableViewCell {
     var model: PostModel?
     var delegate: PostTableViewCellButtonDelegate?
     var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
-    
-    private let disposeBag = DisposeBag()
     
     static let identifier = "PostCellIdentifier"
     
