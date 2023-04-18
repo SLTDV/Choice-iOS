@@ -4,7 +4,9 @@ import Alamofire
 import RxCocoa
 
 protocol PostItemsProtocol: AnyObject {
-    var postItemsData: BehaviorRelay<[PostModel]> { get set }
+    var postItemsData: BehaviorRelay<[Posts]> { get set }
+    var pageData: PublishSubject<[Posts]> { get set }
+    var sizeData: PublishSubject<[Posts]> { get set }
 }
 
 final class HomeViewModel: BaseViewModel {
@@ -12,15 +14,21 @@ final class HomeViewModel: BaseViewModel {
     private let tk = KeyChain()
     private var disposeBag = DisposeBag()
     
-    func callToFindData(type: MenuOptionType) {
+    func callToFindData(type: MenuOptionType, page: Int, size: Int) {
         lazy var url = ""
-        
         switch type {
         case .findNewestPostData:
             url = APIConstants.findNewestPostURL
         case .findBestPostData:
             url = APIConstants.findAllBestPostURL
         }
+        var components = URLComponents(string: url)
+        let page = URLQueryItem(name: "page", value: String(page))
+        let size = URLQueryItem(name: "size", value: String(size))
+        
+        components?.queryItems = [page, size]
+        
+        
         AF.request(url,
                    method: .get,
                    encoding: URLEncoding.queryString,
@@ -30,8 +38,9 @@ final class HomeViewModel: BaseViewModel {
             switch response.result {
             case .success(let data):
                 LoadingIndicator.hideLoading()
-                let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: data)
-                self?.delegate?.postItemsData.accept(decodeResponse ?? .init())
+                let decodePosts = try? JSONDecoder().decode([Posts].self, from: data)
+                let decodePostModel = try? JSONDecoder().decode(PostModel.self, from: data)
+                self?.delegate?.postItemsData.accept(decodePosts ?? .init())
             case .failure(let error):
                 print("main error = \(error.localizedDescription)")
             }

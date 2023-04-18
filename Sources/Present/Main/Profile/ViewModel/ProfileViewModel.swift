@@ -5,7 +5,7 @@ import RxSwift
 protocol ProfileDataProtocol: AnyObject {
     var nicknameData: PublishSubject<String> { get set }
     var imageData: PublishSubject<String?> { get set }
-    var postListData: PublishSubject<[PostModel]> { get set }
+    var postListData: PublishSubject<[Posts]> { get set }
 }
 
 final class ProfileViewModel: BaseViewModel {

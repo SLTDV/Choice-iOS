@@ -197,7 +197,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func submitComment() {
-        guard let idx = model?.idx else { return }
+        guard let idx = model?.posts[0].idx else { return }
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         LoadingIndicator.showLoading(text: "게시 중")
@@ -220,13 +220,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func changePostData(model: PostModel) {
-        guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
-        guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
+        guard let firstImageUrl = URL(string: model.posts[0].firstImageUrl) else { return }
+        guard let secondImageUrl = URL(string: model.posts[0].secondImageUrl) else { return }
         DispatchQueue.main.async {
-            self.titleLabel.text = model.title
-            self.contentLabel.text = model.content
-            self.firstVoteOptionBackgroundView.setVoteOptionLabel(model.firstVotingOption)
-            self.secondVoteOptionBackgroundView.setVoteOptionLabel(model.secondVotingOption)
+            self.titleLabel.text = model.posts[0].title
+            self.contentLabel.text = model.posts[0].content
+            self.firstVoteOptionBackgroundView.setVoteOptionLabel(model.posts[0].firstVotingOption)
+            self.secondVoteOptionBackgroundView.setVoteOptionLabel(model.posts[0].secondVotingOption)
             self.firstPostImageView.kf.setImage(with: firstImageUrl)
             self.secondPostImageView.kf.setImage(with: secondImageUrl)
             self.setVoteButtonLayout(with: model)
@@ -234,11 +234,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     func setVoteButtonLayout(with model: PostModel) {
-        votePostLayout(voting: model.votingState)
+        votePostLayout(voting: model.posts[0].votingState)
         
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
-            firstVotingCount: Double(model.firstVotingCount),
-            secondVotingCount: Double(model.secondVotingCount)
+            firstVotingCount: Double(model.posts[0].firstVotingCount),
+            secondVotingCount: Double(model.posts[0].secondVotingCount)
         )
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
@@ -266,7 +266,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardUp), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDown), name: UIResponder.keyboardWillHideNotification, object: nil)
         
-        viewModel.callToCommentData(idx: model!.idx)
+        viewModel.callToCommentData(idx: model!.posts[0].idx)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -428,12 +428,12 @@ extension DetailPostViewController: UITableViewDelegate {
         var config: UISwipeActionsConfiguration? = nil
         let commentModel = commentData.value[indexPath.row]
         lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
-            self.viewModel.deleteComment(postIdx: self.model!.idx,
+            self.viewModel.deleteComment(postIdx: self.model!.posts[0].idx,
                                          commentIdx: commentModel.idx,
                                          completion: { [weak self] result in
                 switch result {
                 case .success(()):
-                    self?.viewModel.callToCommentData(idx: self!.model!.idx)
+                    self?.viewModel.callToCommentData(idx: self!.model!.posts[0].idx)
                     DispatchQueue.main.async {
                         self?.commentTableView.reloadRows(
                             at: [indexPath],

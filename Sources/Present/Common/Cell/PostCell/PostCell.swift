@@ -16,7 +16,7 @@ protocol PostVoteButtonDidTapDelegate: AnyObject {
 final class PostCell: UITableViewCell {
     // MARK: - Properties
     
-    var model: PostModel?
+    var model: Posts?
     var delegate: PostTableViewCellButtonDelegate?
     var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
     
@@ -215,7 +215,7 @@ final class PostCell: UITableViewCell {
         }
     }
     
-    func setProfileVoteButtonLayout(with model: PostModel) {
+    func setProfileVoteButtonLayout(with model: Posts) {
         let data = CalculateToVoteCountPercentage
             .calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
                                             secondVotingCount: Double(model.secondVotingCount))
@@ -259,7 +259,7 @@ final class PostCell: UITableViewCell {
         }
     }
     
-    func changeCellData(with model: PostModel, type: ViewControllerType) {
+    func changeCellData(with model: Posts, type: ViewControllerType) {
         self.model = model
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
