@@ -350,12 +350,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
         
         firstVoteOptionLabel.snp.makeConstraints {
-            $0.top.equalTo(contentLabel.snp.bottom).offset(45)
+            $0.top.equalTo(contentLabel.snp.bottom).offset(40)
             $0.centerX.equalTo(firstPostImageView)
         }
         
         secondVoteOptionLabel.snp.makeConstraints {
-            $0.top.equalTo(contentLabel.snp.bottom).offset(45)
+            $0.top.equalTo(contentLabel.snp.bottom).offset(40)
             $0.centerX.equalTo(secondPostImageView)
         }
         
