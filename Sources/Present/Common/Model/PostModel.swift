@@ -1,6 +1,6 @@
 import Foundation
 
-class PostModel: Codable {
+struct PostModel: Codable {
     var page: Int
     var size: Int
     var posts: [Posts]
