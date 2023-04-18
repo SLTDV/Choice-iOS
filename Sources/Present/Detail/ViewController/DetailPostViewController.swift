@@ -33,7 +33,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let divideVotePostImageLineView = UIView().then {
-        $0.backgroundColor = .black
+        $0.backgroundColor = ChoiceAsset.Colors.grayMedium.color
     }
     
     private let contentLabel = UILabel().then {
@@ -74,7 +74,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let divideCommentLineView = UIView().then {
-        $0.backgroundColor = .black
+        $0.backgroundColor = ChoiceAsset.Colors.grayMedium.color
     }
     
     private let whiteBackgroundView = UIView().then {
