@@ -433,11 +433,13 @@ extension DetailPostViewController: UITableViewDelegate {
                                          completion: { [weak self] result in
                 switch result {
                 case .success(()):
-//                    self?.viewModel.callToCommentData(idx: self!.model!.idx)
-                    self?.commentTableView.deleteRows(
-                        at: [indexPath],
-                        with: .fade
-                    )
+                    self?.viewModel.callToCommentData(idx: self!.model!.idx)
+                    DispatchQueue.main.async {
+                        self?.commentTableView.reloadRows(
+                            at: [indexPath],
+                            with: .automatic
+                        )
+                    }
                 case .failure(let error):
                     print("Delete Faield = \(error.localizedDescription)")
                 }

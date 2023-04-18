@@ -227,6 +227,7 @@ final class PostCell: UITableViewCell {
         DispatchQueue.main.async { [weak self] in
             self?.firstPostVoteButton.isEnabled = false
             self?.secondPostVoteButton.isEnabled = false
+            self?.removePostButton.isHidden = false
 
             self?.firstPostVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
             self?.secondPostVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
