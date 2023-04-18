@@ -17,6 +17,7 @@ final class AppCoordinator: Coordinator {
         let tk = KeyChain()
         let url = APIConstants.reissueURL
         let headers: HTTPHeaders = ["RefreshToken" : tk.read(key: "refreshToken") ?? .init()]
+        print("accesssToken = \(tk.read(key: "accessToken"))")
         
         let signInController = SignInCoordinator(navigationController: navigationController)
         let homeController = HomeCoordinator(navigationController: navigationController)

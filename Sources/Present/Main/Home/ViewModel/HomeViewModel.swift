@@ -5,8 +5,8 @@ import RxCocoa
 
 protocol PostItemsProtocol: AnyObject {
     var postItemsData: BehaviorRelay<[Posts]> { get set }
-    var pageData: PublishSubject<[Posts]> { get set }
-    var sizeData: PublishSubject<[Posts]> { get set }
+    var pageData: PublishSubject<Int> { get set }
+    var sizeData: PublishSubject<Int> { get set }
 }
 
 final class HomeViewModel: BaseViewModel {
@@ -27,9 +27,7 @@ final class HomeViewModel: BaseViewModel {
         let size = URLQueryItem(name: "size", value: String(size))
         
         components?.queryItems = [page, size]
-        
-        
-        AF.request(url,
+        AF.request(components!,
                    method: .get,
                    encoding: URLEncoding.queryString,
                    interceptor: JwtRequestInterceptor())
@@ -38,9 +36,10 @@ final class HomeViewModel: BaseViewModel {
             switch response.result {
             case .success(let data):
                 LoadingIndicator.hideLoading()
-                let decodePosts = try? JSONDecoder().decode([Posts].self, from: data)
                 let decodePostModel = try? JSONDecoder().decode(PostModel.self, from: data)
-                self?.delegate?.postItemsData.accept(decodePosts ?? .init())
+                self?.delegate?.postItemsData.accept(decodePostModel?.posts ?? .init())
+                self?.delegate?.pageData.onNext(decodePostModel?.page ?? .zero)
+                self?.delegate?.sizeData.onNext(decodePostModel?.size ?? .zero)
             case .failure(let error):
                 print("main error = \(error.localizedDescription)")
             }
