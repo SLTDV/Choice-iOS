@@ -212,11 +212,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
     }
     
-    private func submitcommentButtonDidTap() {
+    private func submitCommentButtonDidTap() {
         submitCommentButton.rx.tap
             .bind(with: self, onNext: { owner, _ in
                 owner.submitComment()
-                owner.viewModel.callToCommentData(idx: owner.model!.idx)
             }).disposed(by: disposeBag)
     }
     
@@ -294,7 +293,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         bindTableView()
         bindUI()
-        submitcommentButtonDidTap()
+        submitCommentButtonDidTap()
         changePostData(model: model!)
     }
     
@@ -434,10 +433,10 @@ extension DetailPostViewController: UITableViewDelegate {
                                          completion: { [weak self] result in
                 switch result {
                 case .success(()):
-                    self?.viewModel.callToCommentData(idx: self!.model!.idx)
-                    self?.commentTableView.reloadRows(
+//                    self?.viewModel.callToCommentData(idx: self!.model!.idx)
+                    self?.commentTableView.deleteRows(
                         at: [indexPath],
-                        with: .automatic
+                        with: .fade
                     )
                 case .failure(let error):
                     print("Delete Faield = \(error.localizedDescription)")
@@ -446,26 +445,8 @@ extension DetailPostViewController: UITableViewDelegate {
         })
         deleteContextual.image = UIImage(systemName: "trash")
         
-        lazy var editContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
-            self.viewModel.deleteComment(postIdx: self.model!.idx,
-                                         commentIdx: commentModel.idx,
-                                         completion: { [weak self] result in
-                switch result {
-                case .success(()):
-                    self?.viewModel.callToCommentData(idx: self!.model!.idx)
-                    self?.commentTableView.reloadRows(
-                        at: [indexPath],
-                        with: .automatic
-                    )
-                case .failure(let error):
-                    print("Delete Faield = \(error.localizedDescription)")
-                }
-            })
-        })
-        editContextual.image = UIImage(systemName: "pencil")
-        
         if commentModel.isMine {
-            config = UISwipeActionsConfiguration(actions: [deleteContextual, editContextual])
+            config = UISwipeActionsConfiguration(actions: [deleteContextual])
         }
         return config
     }
