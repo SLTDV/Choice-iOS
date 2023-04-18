@@ -428,7 +428,7 @@ extension DetailPostViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         var config: UISwipeActionsConfiguration? = nil
         let commentModel = commentData.value[indexPath.row]
-        lazy var contextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
+        lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
             self.viewModel.deleteComment(postIdx: self.model!.idx,
                                          commentIdx: commentModel.idx,
                                          completion: { [weak self] result in
@@ -444,10 +444,28 @@ extension DetailPostViewController: UITableViewDelegate {
                 }
             })
         })
-        contextual.image = UIImage(systemName: "trash")
+        deleteContextual.image = UIImage(systemName: "trash")
+        
+        lazy var editContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
+            self.viewModel.deleteComment(postIdx: self.model!.idx,
+                                         commentIdx: commentModel.idx,
+                                         completion: { [weak self] result in
+                switch result {
+                case .success(()):
+                    self?.viewModel.callToCommentData(idx: self!.model!.idx)
+                    self?.commentTableView.reloadRows(
+                        at: [indexPath],
+                        with: .automatic
+                    )
+                case .failure(let error):
+                    print("Delete Faield = \(error.localizedDescription)")
+                }
+            })
+        })
+        editContextual.image = UIImage(systemName: "pencil")
         
         if commentModel.isMine {
-            config = UISwipeActionsConfiguration(actions: [contextual])
+            config = UISwipeActionsConfiguration(actions: [deleteContextual, editContextual])
         }
         return config
     }
