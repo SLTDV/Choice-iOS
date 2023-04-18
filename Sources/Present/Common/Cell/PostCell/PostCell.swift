@@ -99,12 +99,12 @@ final class PostCell: UITableViewCell {
         case 1:
             model?.firstVotingCount += 1
             model?.secondVotingCount -= 1
-            model?.secondVotingCount = (model!.secondVotingCount < 0) ? 0 : model!.secondVotingCount
+//            model?.secondVotingCount = (model!.secondVotingCount < 0) ? 0 : model!.secondVotingCount
             startAnimation(button: firstPostVoteButton)
         case 2:
             model?.firstVotingCount -= 1
             model?.secondVotingCount += 1
-            model?.firstVotingCount = (model!.firstVotingCount < 0) ? 0 : model!.firstVotingCount
+//            model?.firstVotingCount = (model!.firstVotingCount < 0) ? 0 : model!.firstVotingCount
             startAnimation(button: secondPostVoteButton)
         default:
             return

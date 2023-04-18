@@ -7,7 +7,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     var writerNameData = PublishSubject<String>()
     var writerImageStringData = PublishSubject<String?>()
     var commentData = BehaviorRelay<[CommentData]>(value: [])
-    private var model: PostModel?
+    private var model: Posts?
     
     private let disposeBag = DisposeBag()
     
@@ -112,7 +112,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
     
-    init(viewModel: DetailPostViewModel, model: PostModel) {
+    init(viewModel: DetailPostViewModel, model: Posts) {
         super.init(viewModel: viewModel)
         self.model = model
         
@@ -201,7 +201,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func submitComment() {
-        guard let idx = model?.posts[0].idx else { return }
+        guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         LoadingIndicator.showLoading(text: "게시 중")
@@ -223,9 +223,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }).disposed(by: disposeBag)
     }
     
-    private func changePostData(model: PostModel) {
-        guard let firstImageUrl = URL(string: model.posts[0].firstImageUrl) else { return }
-        guard let secondImageUrl = URL(string: model.posts[0].secondImageUrl) else { return }
+    private func changePostData(model: Posts) {
+        guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
+        guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
             self.contentLabel.text = model.content
@@ -237,12 +237,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
     }
     
-    func setVoteButtonLayout(with model: PostModel) {
-        votePostLayout(voting: model.posts[0].votingState)
+    func setVoteButtonLayout(with model: Posts) {
+        votePostLayout(voting: model.votingState)
         
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
-            firstVotingCount: Double(model.posts[0].firstVotingCount),
-            secondVotingCount: Double(model.posts[0].secondVotingCount)
+            firstVotingCount: Double(model.firstVotingCount),
+            secondVotingCount: Double(model.secondVotingCount)
         )
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
@@ -270,7 +270,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardUp), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDown), name: UIResponder.keyboardWillHideNotification, object: nil)
         
-        viewModel.callToCommentData(idx: model!.posts[0].idx)
+        viewModel.callToCommentData(idx: model!.idx)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -431,12 +431,12 @@ extension DetailPostViewController: UITableViewDelegate {
         var config: UISwipeActionsConfiguration? = nil
         let commentModel = commentData.value[indexPath.row]
         lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
-            self.viewModel.deleteComment(postIdx: self.model!.posts[0].idx,
+            self.viewModel.deleteComment(postIdx: self.model!.idx,
                                          commentIdx: commentModel.idx,
                                          completion: { [weak self] result in
                 switch result {
                 case .success(()):
-                    self?.viewModel.callToCommentData(idx: self!.model!.posts[0].idx)
+                    self?.viewModel.callToCommentData(idx: self!.model!.idx)
                     DispatchQueue.main.async {
                         self?.commentTableView.reloadRows(
                             at: [indexPath],

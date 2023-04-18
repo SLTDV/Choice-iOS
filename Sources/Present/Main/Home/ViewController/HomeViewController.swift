@@ -71,7 +71,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             cell.separatorInset = UIEdgeInsets.zero
         }.disposed(by: disposeBag)
         
-        postTableView.rx.modelSelected(PostModel.self)
+        postTableView.rx.modelSelected(Posts.self)
             .bind(with: self, onNext: { owner, post in
                 owner.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)

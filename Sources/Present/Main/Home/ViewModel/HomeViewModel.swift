@@ -73,7 +73,7 @@ final class HomeViewModel: BaseViewModel {
         coordinator.navigate(to: .addPostIsRequired)
     }
     
-    func pushDetailPostVC(model: PostModel) {
+    func pushDetailPostVC(model: Posts) {
         coordinator.navigate(to: .detailPostIsRequired(model: model))
     }
     
