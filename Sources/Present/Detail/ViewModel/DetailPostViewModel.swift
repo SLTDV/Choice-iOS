@@ -70,28 +70,4 @@ final class DetailPostViewModel: BaseViewModel {
             }
         }
     }
-    
-    func editComment(commentIdx: Int, content: String, completion: @escaping (Result<Void, Error>) -> ()) {
-        let url = APIConstants.editCommentURL + "\(commentIdx)"
-        let param = [
-            "content" : content
-        ] as Dictionary
-        
-        AF.request(url,
-                   method: .patch,
-                   parameters: param,
-                   encoding: JSONEncoding.default,
-                   interceptor: JwtRequestInterceptor())
-        .validate()
-        .responseData() { response in
-            switch response.result {
-            case .success:
-                print("success")
-                completion(.success(()))
-            case .failure(let error):
-                print("editComment error = \(error.localizedDescription)")
-                completion(.failure(error))
-            }
-        }
-    }
 }
