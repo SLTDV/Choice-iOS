@@ -2,8 +2,6 @@ import UIKit
 import SnapKit
 import Then
 import Kingfisher
-import RxSwift
-import RxCocoa
 
 // MARK: - Protocol
 
@@ -21,8 +19,6 @@ final class PostCell: UITableViewCell {
     var model: PostModel?
     var delegate: PostTableViewCellButtonDelegate?
     var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
-    
-    private let disposeBag = DisposeBag()
     
     static let identifier = "PostCellIdentifier"
     
@@ -58,8 +54,7 @@ final class PostCell: UITableViewCell {
     }
     
     private lazy var firstPostVoteButton = UIButton().then {
-        $0.tag = 0
-        $0.setTitle("✓", for: .normal)
+        $0.tag = 1
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 10
         $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
@@ -67,8 +62,7 @@ final class PostCell: UITableViewCell {
     }
     
     private lazy var secondPostVoteButton = UIButton().then {
-        $0.tag = 1
-        $0.setTitle("✓", for: .normal)
+        $0.tag = 2
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 10
         $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
@@ -87,7 +81,7 @@ final class PostCell: UITableViewCell {
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-
+        
         addView()
         setLayout()
         
@@ -102,25 +96,35 @@ final class PostCell: UITableViewCell {
     
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
         switch sender.tag {
-        case 0:
-            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 1)
-            setHomeVotePostLayout(voting: model!.votingState)
-            
-            startAnimation(button: firstPostVoteButton)
         case 1:
-            postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: 2)
-            setHomeVotePostLayout(voting: model!.votingState)
-            
+            model?.firstVotingCount += 1
+            model?.secondVotingCount -= 1
+            model?.secondVotingCount = (model!.secondVotingCount < 0) ? 0 : model!.secondVotingCount
+            startAnimation(button: firstPostVoteButton)
+        case 2:
+            model?.firstVotingCount -= 1
+            model?.secondVotingCount += 1
+            model?.firstVotingCount = (model!.firstVotingCount < 0) ? 0 : model!.firstVotingCount
             startAnimation(button: secondPostVoteButton)
         default:
             return
+        }
+        
+        if model?.votingState == 0 {
+            self.participantsCountLabel.text = "👻 참여자 \(self.model!.participants + 1)명"
+        }
+        
+        model?.votingState = sender.tag
+        postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: sender.tag)
+        DispatchQueue.main.async {
+            self.setHomeVotePostLayout(voting: sender.tag)
         }
     }
     
     func removePostButtonDidTap(postIdx: Int) {
         delegate?.removePostButtonDidTap(postIdx: postIdx)
     }
-
+    
     private func addView() {
         contentView.addSubviews(titleLabel, contentLabel, removePostButton, firstPostImageView,
                                 secondPostImageView, firstPostVoteButton, secondPostVoteButton,
@@ -172,7 +176,7 @@ final class PostCell: UITableViewCell {
             $0.trailing.equalTo(secondPostImageView.snp.trailing)
             $0.height.equalTo(56)
         }
-
+        
         participantsCountLabel.snp.makeConstraints {
             $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(20)
             $0.leading.equalToSuperview().inset(33)
@@ -186,55 +190,46 @@ final class PostCell: UITableViewCell {
         }
     }
     
-    private func setHomeVotePostLayout(voting: Int?) {
+    private func setHomeVotePostLayout(voting: Int) {
+        firstPostVoteButton.setTitleColor(.white, for: .normal)
+        secondPostVoteButton.setTitleColor(.white, for: .normal)
         switch voting {
         case 1:
-            firstPostVoteButton = firstPostVoteButton.then {
-                $0.isEnabled = false
-                $0.backgroundColor = .black
-                $0.setTitleColor(.white, for: .normal)
-            }
+            firstPostVoteButton.isEnabled = false
+            firstPostVoteButton.backgroundColor = .black
             
-            secondPostVoteButton = secondPostVoteButton.then {
-                $0.isEnabled = true
-                $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
-                $0.setTitleColor(.white, for: .normal)
-            }
+            secondPostVoteButton.isEnabled = true
+            secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
         case 2:
-            firstPostVoteButton = firstPostVoteButton.then {
-                $0.isEnabled = true
-                $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
-                $0.setTitleColor(.white, for: .normal)
-            }
+            firstPostVoteButton.isEnabled = true
+            firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
             
-            secondPostVoteButton = secondPostVoteButton.then {
-                $0.isEnabled = false
-                $0.backgroundColor = .black
-                $0.setTitleColor(.white, for: .normal)
-            }
+            secondPostVoteButton.isEnabled = false
+            secondPostVoteButton.backgroundColor = .black
         default:
-            firstPostVoteButton = firstPostVoteButton.then {
-                $0.backgroundColor = .clear
-                $0.setTitleColor(.gray, for: .normal)
-            }
+            firstPostVoteButton.isEnabled = true
+            firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
             
-            secondPostVoteButton = secondPostVoteButton.then {
-                $0.backgroundColor = .clear
-                $0.setTitleColor(.gray, for: .normal)
-            }
+            secondPostVoteButton.isEnabled = true
+            secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
         }
     }
     
     func setProfileVoteButtonLayout(with model: PostModel) {
-        firstPostVoteButton.isEnabled = false
-        secondPostVoteButton.isEnabled = false
-        votePostButtonLayout(voting: model.votingState)
-        
         let data = CalculateToVoteCountPercentage
             .calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
                                             secondVotingCount: Double(model.secondVotingCount))
-        firstPostVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
-        secondPostVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
+        
+        DispatchQueue.main.async { [weak self] in
+            self?.firstPostVoteButton.isEnabled = false
+            self?.secondPostVoteButton.isEnabled = false
+            self?.removePostButton.isHidden = false
+
+            self?.firstPostVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
+            self?.secondPostVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
+        }
+        
+        votePostButtonLayout(voting: model.votingState)
     }
     
     private func votePostButtonLayout(voting: Int) {
@@ -246,32 +241,19 @@ final class PostCell: UITableViewCell {
             $0.height.equalTo(52)
         }
         
+        firstPostVoteButton.setTitleColor(.white, for: .normal)
+        secondPostVoteButton.setTitleColor(.white, for: .normal)
+        
         switch voting {
         case 1:
-            firstPostVoteButton = firstPostVoteButton.then {
-                $0.backgroundColor = .black
-            }
-            
-            secondPostVoteButton = secondPostVoteButton.then {
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
+            firstPostVoteButton.backgroundColor = .black
+            secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
         case 2:
-            firstPostVoteButton = firstPostVoteButton.then {
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
-            
-            secondPostVoteButton = secondPostVoteButton.then {
-                $0.backgroundColor = .black
-            }
+            firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            secondPostVoteButton.backgroundColor = .black
         default:
-            firstPostVoteButton = firstPostVoteButton.then {
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
-            
-            secondPostVoteButton = secondPostVoteButton.then {
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
-
+            firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
             firstPostVoteButton.setTitle("0%(0명)", for: .normal)
             secondPostVoteButton.setTitle("0%(0명)", for: .normal)
         }
@@ -281,21 +263,19 @@ final class PostCell: UITableViewCell {
         self.model = model
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-        DispatchQueue.main.async {
-            self.titleLabel.text = model.title
-            self.firstPostVoteButton.setTitle(model.firstVotingOption, for: .normal)
-            self.secondPostVoteButton.setTitle(model.secondVotingOption, for: .normal)
-            self.contentLabel.text = model.content
-            self.firstPostImageView.kf.setImage(with: firstImageUrl)
-            self.secondPostImageView.kf.setImage(with: secondImageUrl)
-            switch type {
-            case .home:
-                self.setHomeVotePostLayout(voting: model.votingState)
-            case .profile:
-                self.setProfileVoteButtonLayout(with: model)
-            }
-            self.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
-            self.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
+        titleLabel.text = model.title
+        contentLabel.text = model.content
+        firstPostImageView.kf.setImage(with: firstImageUrl)
+        secondPostImageView.kf.setImage(with: secondImageUrl)
+        firstPostVoteButton.setTitle(model.firstVotingOption, for: .normal)
+        secondPostVoteButton.setTitle(model.secondVotingOption, for: .normal)
+        switch type {
+        case .home:
+            setHomeVotePostLayout(voting: model.votingState)
+        case .profile:
+            setProfileVoteButtonLayout(with: model)
         }
+        participantsCountLabel.text = "👻 참여자 \(model.participants)명"
+        commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
     }
 }

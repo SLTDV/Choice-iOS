@@ -26,7 +26,6 @@ struct APIConstants {
     
     //Comment
     static let createCommentURL = baseURL + "comment/"
-    static let editCommentURL = baseURL + "comment"
     static let deleteCommentURL = baseURL + "comment/"
     
     //Profile

@@ -17,8 +17,10 @@ final class UserSecurityInfoViewModel: BaseViewModel {
                    encoding: JSONEncoding.default).responseData { response in
             switch response.response?.statusCode {
             case 200:
+                LoadingIndicator.hideLoading()
                 completion(true)
             case 409:
+                LoadingIndicator.hideLoading()
                 completion(false)
             default:
                 print(response.response?.statusCode ?? 0)

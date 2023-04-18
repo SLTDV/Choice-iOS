@@ -4,19 +4,19 @@ import Alamofire
 final class UserProfileInfoViewModel: BaseViewModel {
     func callToSignUp(email: String, password: String, nickname: String, profileImage: UIImage?, completion: @escaping (Bool) -> Void) {
         var url = ""
-        var headers: HTTPHeaders?
         
         if let profileImage = profileImage {
+            url = APIConstants.profileImageUploadURL
+            var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
             AF.upload(multipartFormData: { multipartFormData in
                 if let image = profileImage.pngData() {
                     multipartFormData.append(image, withName: "profileImage", fileName: "\(image).png", mimeType: "image/png")
                 }
-                url = APIConstants.profileImageUploadURL
-                headers = ["Content-Type" : "multipart/form-data"]
             }, to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor())
             .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
                 switch response.result {
                 case .success(let data):
+                    print("successt")
                     let decodeResponse = try? JSONDecoder().decode(SignUpModel.self, from: data)
                     let profileImageUrl = decodeResponse?.profileImageUrl
 
@@ -35,7 +35,11 @@ final class UserProfileInfoViewModel: BaseViewModel {
                                encoding: JSONEncoding.default).responseData { response in
                         switch response.response?.statusCode {
                         case 201:
+                            LoadingIndicator.hideLoading()
                             completion(true)
+                        case 409:
+                            LoadingIndicator.hideLoading()
+                            completion(false)
                         default:
                             completion(false)
                         }
@@ -46,6 +50,7 @@ final class UserProfileInfoViewModel: BaseViewModel {
             }
         } else {
             url = APIConstants.signUpURL
+
             let body : Parameters = [
                 "email" : email,
                 "password" : password,
@@ -59,7 +64,11 @@ final class UserProfileInfoViewModel: BaseViewModel {
                        encoding: JSONEncoding.default).responseData { response in
                 switch response.response?.statusCode {
                 case 201:
+                    LoadingIndicator.hideLoading()
                     completion(true)
+                case 409:
+                    LoadingIndicator.hideLoading()
+                    completion(false)
                 default:
                     completion(false)
                 }

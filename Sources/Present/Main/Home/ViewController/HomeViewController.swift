@@ -4,24 +4,25 @@ import RxCocoa
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVoteButtonDidTapDelegate {
     private let disposeBag = DisposeBag()
+    var postItemsData = BehaviorRelay<[PostModel]>(value: [])
     
-    var postItemsData = PublishSubject<[PostModel]>()
-
+    private var sortType: MenuOptionType = .findNewestPostData
+    
     private let leftLogoImageView = UIImageView().then {
         $0.image = ChoiceAsset.Images.homeLogo.image
     }
     
     private lazy var addPostButton = UIBarButtonItem(image: UIImage(systemName: "plus.app"),
                                                      style: .plain,
-                                                     target: self,
-                                                     action: #selector(addPostButtonDidTap(_:))).then {
+                                                     target: nil,
+                                                     action: nil).then {
         $0.tintColor = .black
     }
     
     private lazy var profileButton = UIBarButtonItem(image: UIImage(systemName: "person.crop.circle.fill"),
                                                      style: .plain,
-                                                     target: self,
-                                                     action: #selector(profileButtonDidTap(_:))).then {
+                                                     target: nil,
+                                                     action: nil).then {
         $0.tintColor = .black
     }
     
@@ -31,7 +32,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     
     private let dropdownButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.setTitle("정렬 ↓", for: .normal)
+        $0.setTitle("최신순 ↓", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
         $0.backgroundColor = .init(red: 0.94, green: 0.94, blue: 0.94, alpha: 1)
@@ -39,17 +40,24 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     private let postTableView = UITableView().then {
-        $0.rowHeight = 372
+        $0.rowHeight = UITableView.automaticDimension
+        $0.estimatedRowHeight = 400
         $0.showsVerticalScrollIndicator = false
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
     
-    @objc private func addPostButtonDidTap(_ sender: UIBarButtonItem) {
-        viewModel.pushAddPostVC()
-    }
-    
-    @objc private func profileButtonDidTap(_ sender: UIBarButtonItem) {
-        viewModel.pushProfileVC()
+    private func navigationBarButtonDidTap() {
+        profileButton.rx.tap
+            .throttle(.seconds(2), latest: false, scheduler: MainScheduler.instance)
+            .bind(with: self) { owner, _ in
+                owner.viewModel.pushProfileVC()
+            }.disposed(by: disposeBag)
+        
+        addPostButton.rx.tap
+            .throttle(.seconds(2), latest: false, scheduler: MainScheduler.instance)
+            .bind(with: self) { owner, _ in
+                owner.viewModel.pushAddPostVC()
+            }.disposed(by: disposeBag)
     }
     
     private func bindTableView() {
@@ -61,13 +69,9 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         }.disposed(by: disposeBag)
         
         postTableView.rx.modelSelected(PostModel.self)
-            .bind(onNext: { [weak self] post in
-                self?.viewModel.pushDetailPostVC(model: post)
+            .bind(with: self, onNext: { owner, post in
+                owner.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)
-    }
-    
-    private func callToFindAllData(type: MenuOptionType) {
-        viewModel.callToFindData(type: type)
     }
     
     func postVoteButtonDidTap(idx: Int, choice: Int) {
@@ -87,19 +91,32 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftLogoImageView)
         navigationItem.rightBarButtonItems = [profileButton, addPostButton]
         
-        let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"),
-                                  handler: { [weak self] _ in self?.callToFindAllData(type: .findNewestPostData)})
-        let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"),
-                                   handler: { [weak self] _ in self?.callToFindAllData(type: .findBestPostData)})
+        let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
+            LoadingIndicator.showLoading(text: "")
+            self?.viewModel.callToFindData(type: .findNewestPostData)
+            self?.sortType = .findNewestPostData
+            DispatchQueue.main.async {
+                self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
+            }
+        })
+        let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { [weak self] _ in
+            LoadingIndicator.showLoading(text: "")
+            self?.viewModel.callToFindData(type: .findBestPostData)
+            self?.sortType = .findBestPostData
+            DispatchQueue.main.async {
+                self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
+            }
+        })
         
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
         
         viewModel.delegate = self
         bindTableView()
+        navigationBarButtonDidTap()
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        callToFindAllData(type: .findNewestPostData)
+        viewModel.callToFindData(type: sortType)
     }
     
     override func addView() {

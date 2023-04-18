@@ -23,10 +23,10 @@ final class ProfileViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success(let data):
-                let decodeResponse = try! JSONDecoder().decode(ProfileModel.self, from: data)
-                self?.delegate?.postListData.onNext(decodeResponse.postList ?? .init())
-                self?.delegate?.nicknameData.onNext(decodeResponse.nickname)
-                self?.delegate?.imageData.onNext(decodeResponse.image)
+                let decodeResponse = try? JSONDecoder().decode(ProfileModel.self, from: data)
+                self?.delegate?.postListData.onNext(decodeResponse?.postList ?? .init())
+                self?.delegate?.nicknameData.onNext(decodeResponse?.nickname ?? "")
+                self?.delegate?.imageData.onNext(decodeResponse?.image)
             case .failure(let error):
                 print("error = \(error.localizedDescription)")
             }
@@ -48,6 +48,7 @@ final class ProfileViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success:
+                LoadingIndicator.hideLoading()
                 self?.delegate?.nicknameData.onNext(nickname)
             case .failure(let error):
                 print("error = \(error.localizedDescription)")
@@ -112,6 +113,7 @@ final class ProfileViewModel: BaseViewModel {
                     .responseData(emptyResponseCodes: [200, 201, 204]) { response in
                         switch response.result {
                         case .success:
+                            LoadingIndicator.hideLoading()
                             observer.onNext(decodeResponse ?? .init(profileImageUrl: ""))
                             observer.onCompleted()
                         case .failure(let error):
