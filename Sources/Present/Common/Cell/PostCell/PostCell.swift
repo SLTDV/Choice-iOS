@@ -4,7 +4,6 @@ import Then
 import Kingfisher
 
 // MARK: - Protocol
-
 protocol PostTableViewCellButtonDelegate: AnyObject {
     func removePostButtonDidTap(postIdx: Int)
 }
@@ -95,6 +94,7 @@ final class PostCell: UITableViewCell {
     // MARK: - Function
     
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
+        print(sender.tag)
         switch sender.tag {
         case 1:
             model?.firstVotingCount += 1
@@ -109,8 +109,6 @@ final class PostCell: UITableViewCell {
         default:
             return
         }
-        
-        print("idx - \(sender.tag)")
         
         if model?.votingState == 0 {
             self.participantsCountLabel.text = "👻 참여자 \(self.model!.participants + 1)명"
@@ -195,26 +193,11 @@ final class PostCell: UITableViewCell {
     private func setHomeVotePostLayout(voting: Int) {
         firstPostVoteButton.setTitleColor(.white, for: .normal)
         secondPostVoteButton.setTitleColor(.white, for: .normal)
-        switch voting {
-        case 1:
-            firstPostVoteButton.isEnabled = false
-            firstPostVoteButton.backgroundColor = .black
-            
-            secondPostVoteButton.isEnabled = true
-            secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
-        case 2:
-            firstPostVoteButton.isEnabled = true
-            firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
-            
-            secondPostVoteButton.isEnabled = false
-            secondPostVoteButton.backgroundColor = .black
-        default:
-            firstPostVoteButton.isEnabled = true
-            firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
-            
-            secondPostVoteButton.isEnabled = true
-            secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
-        }
+        
+        firstPostVoteButton.isEnabled = (voting == 1) ? false : true
+        firstPostVoteButton.backgroundColor = (voting == 1) ? .black : ChoiceAsset.Colors.grayVoteButton.color
+        secondPostVoteButton.isEnabled = (voting == 2) ? false : true
+        secondPostVoteButton.backgroundColor = (voting == 2) ? .black : ChoiceAsset.Colors.grayVoteButton.color
     }
     
     func setProfileVoteButtonLayout(with model: Posts) {

@@ -226,7 +226,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func changePostData(model: Posts) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-        DispatchQueue.main.async {
+//        DispatchQueue.main.async {
             self.titleLabel.text = model.title
             self.contentLabel.text = model.content
             self.firstVoteOptionLabel.text = model.firstVotingOption
@@ -234,7 +234,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             self.firstPostImageView.kf.setImage(with: firstImageUrl)
             self.secondPostImageView.kf.setImage(with: secondImageUrl)
             self.setVoteButtonLayout(with: model)
-        }
+//        }
     }
     
     func setVoteButtonLayout(with model: Posts) {

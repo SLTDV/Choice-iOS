@@ -67,7 +67,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         postItemsData
             .asDriver()
             .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
-                                                      cellType: PostCell.self)) { (row, data, cell) in
+                                          cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: data, type: .home)
             cell.postVoteButtonDelegate = self
             cell.separatorInset = UIEdgeInsets.zero
@@ -76,9 +76,11 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         postTableView.rx.modelSelected(Posts.self)
             .asDriver()
             .drive(with: self, onNext: { owner, post in
+                print("selected = \(post.firstVotingCount)")
+                print("selected = \(post.secondVotingCount)")
                 owner.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)
-        
+
 //        postTableView.rx.didScroll
 //            .bind(with: self, onNext: { owner, arg in
 //                let contentHeight = owner.postTableView.contentSize.height

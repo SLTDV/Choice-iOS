@@ -38,8 +38,6 @@ final class HomeViewModel: BaseViewModel {
         ).responseDecodable(of: PostModel.self) { [weak self] response in
             switch response.result {
             case .success(let postData):
-                print(postData
-                )
                 LoadingIndicator.hideLoading()
                 self?.delegate?.postItemsData.accept(postData.posts)
                 self?.delegate?.pageData.onNext(postData.page)
@@ -48,9 +46,6 @@ final class HomeViewModel: BaseViewModel {
                 print("main error = \(error.localizedDescription)")
             }
         }
-        
-        
-        
         //        .validate()
         //        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
         //            switch response.result {
