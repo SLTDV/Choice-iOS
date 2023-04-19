@@ -13,9 +13,12 @@ final class HomeViewModel: BaseViewModel {
     weak var delegate: PostItemsProtocol?
     private let tk = KeyChain()
     private var disposeBag = DisposeBag()
+    private var currentPage = -1
     
-    func callToFindData(type: MenuOptionType, page: Int, size: Int) {
+    func callToFindData(type: MenuOptionType, size: Int) {
         lazy var url = ""
+        currentPage += 1
+        let postRequest = PostRequest(page: currentPage)
         switch type {
         case .findNewestPostData:
             url = APIConstants.findNewestPostURL
@@ -23,12 +26,13 @@ final class HomeViewModel: BaseViewModel {
             url = APIConstants.findAllBestPostURL
         }
         var components = URLComponents(string: url)
-        let page = URLQueryItem(name: "page", value: String(page))
+        let page = URLQueryItem(name: "page", value: String(currentPage))
         let size = URLQueryItem(name: "size", value: String(size))
         
         components?.queryItems = [page, size]
         AF.request(components!,
                    method: .get,
+                   parameters: postRequest.todictionary
                    encoding: URLEncoding.queryString,
                    interceptor: JwtRequestInterceptor())
         .validate()

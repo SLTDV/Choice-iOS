@@ -96,7 +96,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         
         let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
-            self?.viewModel.callToFindData(type: .findNewestPostData, page: 1, size: 10)
+            self?.viewModel.callToFindData(type: .findNewestPostData, size: 10)
             self?.sortType = .findNewestPostData
             DispatchQueue.main.async {
                 self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
@@ -104,7 +104,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         })
         let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
-            self?.viewModel.callToFindData(type: .findBestPostData, page: 1, size: 10)
+            self?.viewModel.callToFindData(type: .findBestPostData, size: 10)
             self?.sortType = .findBestPostData
             DispatchQueue.main.async {
                 self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
@@ -119,7 +119,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        viewModel.callToFindData(type: sortType, page: 1, size: 4)
+        viewModel.callToFindData(type: sortType, size: 4)
     }
     
     override func addView() {
