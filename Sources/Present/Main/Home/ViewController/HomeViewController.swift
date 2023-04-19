@@ -63,7 +63,9 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     private func bindTableView() {
-        postItemsData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
+        postItemsData
+            .asDriver()
+            .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                           cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: data, type: .home)
             cell.postVoteButtonDelegate = self
@@ -71,8 +73,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         }.disposed(by: disposeBag)
         
         postTableView.rx.modelSelected(Posts.self)
-            .bind(with: self, onNext: { owner, post in
-                print("selected = \(post)")
+            .asDriver()
+            .drive(with: self, onNext: { owner, post in
                 owner.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)
 

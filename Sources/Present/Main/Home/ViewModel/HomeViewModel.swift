@@ -46,19 +46,6 @@ final class HomeViewModel: BaseViewModel {
                 print("main error = \(error.localizedDescription)")
             }
         }
-        //        .validate()
-        //        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
-        //            switch response.result {
-        //            case .success(let data):
-        //                LoadingIndicator.hideLoading()
-        //                let decodePostModel = try? JSONDecoder().decode(PostModel.self, from: data)
-        //                self?.delegate?.postItemsData.accept(decodePostModel?.posts ?? .init())
-        //                self?.delegate?.pageData.onNext(decodePostModel?.page ?? .zero)
-        //                self?.delegate?.sizeData.onNext(decodePostModel?.size ?? .zero)
-        //            case .failure(let error):
-        //                print("main error = \(error.localizedDescription)")
-        //            }
-        //        }
     }
     
     func callToAddVoteNumber(idx: Int, choice: Int) {

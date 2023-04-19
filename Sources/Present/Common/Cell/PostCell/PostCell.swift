@@ -120,7 +120,6 @@ final class PostCell: UITableViewCell {
         DispatchQueue.main.async {
             self.setHomeVotePostLayout(voting: sender.tag)
         }
-        print("model = \(model)")
     }
     
     func removePostButtonDidTap(postIdx: Int) {
