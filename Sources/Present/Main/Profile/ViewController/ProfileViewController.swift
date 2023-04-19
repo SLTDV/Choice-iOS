@@ -58,7 +58,8 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     }
     
     private let postTableView = UITableView().then {
-        $0.rowHeight = 500
+        $0.rowHeight = UITableView.automaticDimension
+        $0.estimatedRowHeight = 400
         $0.separatorStyle = .none
         $0.backgroundColor = .white
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
