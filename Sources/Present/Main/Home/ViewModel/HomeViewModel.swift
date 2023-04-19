@@ -32,7 +32,7 @@ final class HomeViewModel: BaseViewModel {
         components?.queryItems = [page, size]
         AF.request(components!,
                    method: .get,
-                   parameters: postRequest.todictionary
+                   parameters: postRequest.toDictionary(),
                    encoding: URLEncoding.queryString,
                    interceptor: JwtRequestInterceptor())
         .validate()
