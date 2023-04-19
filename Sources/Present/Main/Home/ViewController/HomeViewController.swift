@@ -76,8 +76,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         postTableView.rx.modelSelected(Posts.self)
             .asDriver()
             .drive(with: self, onNext: { owner, post in
-                print("selected = \(post.firstVotingCount)")
-                print("selected = \(post.secondVotingCount)")
+                print("selected = \(post)")
                 owner.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)
 

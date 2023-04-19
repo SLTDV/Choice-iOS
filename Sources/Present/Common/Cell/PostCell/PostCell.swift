@@ -14,7 +14,6 @@ protocol PostVoteButtonDidTapDelegate: AnyObject {
 
 final class PostCell: UITableViewCell {
     // MARK: - Properties
-    
     var model: Posts?
     var delegate: PostTableViewCellButtonDelegate?
     var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
@@ -32,7 +31,11 @@ final class PostCell: UITableViewCell {
     
     private lazy var removePostButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.menu = UIMenu(title: "", children: [UIAction(title: "게시물 삭제", attributes: .destructive, handler: { _ in self.removePostButtonDidTap(postIdx: self.model!.idx) })])
+        $0.menu = UIMenu(title: "", children: [UIAction(
+            title: "게시물 삭제",
+            attributes: .destructive,
+            handler: { _ in self.removePostButtonDidTap(postIdx: self.model!.idx)
+        })])
         $0.isHidden = true
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
@@ -92,33 +95,39 @@ final class PostCell: UITableViewCell {
     }
     
     // MARK: - Function
-    
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
-        print(sender.tag)
         switch sender.tag {
         case 1:
             model?.firstVotingCount += 1
             model?.secondVotingCount -= 1
+            if model!.secondVotingCount < 0 {
+                model!.secondVotingCount = 0
+            }
 //            model?.secondVotingCount = (model!.secondVotingCount < 0) ? 0 : model!.secondVotingCount
             startAnimation(button: firstPostVoteButton)
         case 2:
             model?.firstVotingCount -= 1
             model?.secondVotingCount += 1
+            if model!.firstVotingCount < 0 {
+                model!.firstVotingCount = 0
+            }
 //            model?.firstVotingCount = (model!.firstVotingCount < 0) ? 0 : model!.firstVotingCount
             startAnimation(button: secondPostVoteButton)
         default:
             return
         }
-        
+
         if model?.votingState == 0 {
             self.participantsCountLabel.text = "👻 참여자 \(self.model!.participants + 1)명"
         }
         
+
         model?.votingState = sender.tag
         postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: sender.tag)
         DispatchQueue.main.async {
             self.setHomeVotePostLayout(voting: sender.tag)
         }
+        print("model = \(model)")
     }
     
     func removePostButtonDidTap(postIdx: Int) {
@@ -190,6 +199,7 @@ final class PostCell: UITableViewCell {
         }
     }
     
+    // MARK: - Main
     private func setHomeVotePostLayout(voting: Int) {
         firstPostVoteButton.setTitleColor(.white, for: .normal)
         secondPostVoteButton.setTitleColor(.white, for: .normal)
@@ -200,6 +210,7 @@ final class PostCell: UITableViewCell {
         secondPostVoteButton.backgroundColor = (voting == 2) ? .black : ChoiceAsset.Colors.grayVoteButton.color
     }
     
+    // MARK: - Profile
     func setProfileVoteButtonLayout(with model: Posts) {
         let data = CalculateToVoteCountPercentage
             .calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
@@ -244,6 +255,7 @@ final class PostCell: UITableViewCell {
         }
     }
     
+    // MARK: - prepare
     func changeCellData(with model: Posts, type: ViewControllerType) {
         self.model = model
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }

@@ -145,8 +145,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func bindTableView() {
-        commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
-                                                       cellType: CommentCell.self)) { (row, data, cell) in
+        commentData
+            .asDriver()
+            .drive(commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
+                                             cellType: CommentCell.self)) { (row, data, cell) in
             cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
     }
@@ -226,7 +228,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func changePostData(model: Posts) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-//        DispatchQueue.main.async {
+        DispatchQueue.main.async {
             self.titleLabel.text = model.title
             self.contentLabel.text = model.content
             self.firstVoteOptionLabel.text = model.firstVotingOption
@@ -234,18 +236,17 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             self.firstPostImageView.kf.setImage(with: firstImageUrl)
             self.secondPostImageView.kf.setImage(with: secondImageUrl)
             self.setVoteButtonLayout(with: model)
-//        }
+        }
     }
     
     func setVoteButtonLayout(with model: Posts) {
-        votePostLayout(voting: model.votingState)
-        
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
             firstVotingCount: Double(model.firstVotingCount),
             secondVotingCount: Double(model.secondVotingCount)
         )
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
+        votePostLayout(voting: model.votingState)
     }
     
     private func votePostLayout(voting: Int) {
