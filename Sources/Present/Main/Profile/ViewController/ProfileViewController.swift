@@ -60,7 +60,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     private let postTableView = UITableView().then {
         $0.rowHeight = UITableView.automaticDimension
         $0.estimatedRowHeight = 400
-        $0.separatorStyle = .none
+        $0.showsVerticalScrollIndicator = false
         $0.backgroundColor = .white
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
@@ -70,6 +70,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
                                                      cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: data, type: .profile)
             cell.delegate = self
+            cell.separatorInset = UIEdgeInsets.zero
         }.disposed(by: disposeBag)
         
         nicknameData.bind(with: self, onNext: { owner, arg in
