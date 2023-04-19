@@ -64,7 +64,9 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     private func bindTableView() {
-        postItemsData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
+        postItemsData
+            .asDriver()
+            .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                                       cellType: PostCell.self)) { (row, data, cell) in
             cell.changeCellData(with: data, type: .home)
             cell.postVoteButtonDelegate = self
@@ -72,9 +74,23 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         }.disposed(by: disposeBag)
         
         postTableView.rx.modelSelected(Posts.self)
-            .bind(with: self, onNext: { owner, post in
+            .asDriver()
+            .drive(with: self, onNext: { owner, post in
                 owner.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)
+        
+//        postTableView.rx.didScroll
+//            .bind(with: self, onNext: { owner, arg in
+//                let contentHeight = owner.postTableView.contentSize.height
+//                let yOffset = owner.postTableView.contentOffset.y
+//                let heightRemainBottomHeight = contentHeight - yOffset
+//                let frameHeight = owner.postTableView.frame.size.height
+//
+//                if heightRemainBottomHeight < frameHeight {
+//                    owner.viewModel.callToFindData(type: owner.sortType)
+//                }
+//
+//            }).disposed(by: disposeBag)
     }
     
     func postVoteButtonDidTap(idx: Int, choice: Int) {
@@ -96,7 +112,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         
         let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
-            self?.viewModel.callToFindData(type: .findNewestPostData, size: 10)
+            self?.viewModel.callToFindData(type: .findNewestPostData)
             self?.sortType = .findNewestPostData
             DispatchQueue.main.async {
                 self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
@@ -104,7 +120,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         })
         let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
-            self?.viewModel.callToFindData(type: .findBestPostData, size: 10)
+            self?.viewModel.callToFindData(type: .findBestPostData)
             self?.sortType = .findBestPostData
             DispatchQueue.main.async {
                 self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
@@ -119,7 +135,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        viewModel.callToFindData(type: sortType, size: 4)
+        viewModel.callToFindData(type: sortType)
     }
     
     override func addView() {

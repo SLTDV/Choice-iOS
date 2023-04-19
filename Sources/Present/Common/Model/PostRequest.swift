@@ -1,6 +1,6 @@
 import Foundation
 
-struct PostRequest: Codable {
+struct PostRequest {
     var page: Int
     var size: Int = 10
 }

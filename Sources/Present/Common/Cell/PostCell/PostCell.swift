@@ -110,6 +110,8 @@ final class PostCell: UITableViewCell {
             return
         }
         
+        print("idx - \(sender.tag)")
+        
         if model?.votingState == 0 {
             self.participantsCountLabel.text = "👻 참여자 \(self.model!.participants + 1)명"
         }

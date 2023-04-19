@@ -6,7 +6,7 @@ import Kingfisher
 final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
     var nicknameData = PublishSubject<String>()
     var imageData = PublishSubject<String?>()
-    var postListData = PublishSubject<[Posts]>()
+    var postListData = BehaviorRelay<[Posts]>(value: [])
     
     private let disposeBag = DisposeBag()
     
