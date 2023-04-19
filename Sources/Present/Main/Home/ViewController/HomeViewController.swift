@@ -3,6 +3,7 @@ import RxSwift
 import RxCocoa
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVoteButtonDidTapDelegate {
+    // MARK: - Properties
     var pageData = PublishSubject<Int>()
     var sizeData = PublishSubject<Int>()
     var postItemsData = BehaviorRelay<[Posts]>(value: [])
@@ -62,6 +63,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             }.disposed(by: disposeBag)
     }
     
+    // MARK: - Function
     private func bindTableView() {
         postItemsData
             .asDriver()
@@ -84,16 +86,42 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                 let yOffset = owner.postTableView.contentOffset.y
                 let heightRemainBottomHeight = contentHeight - yOffset
                 let frameHeight = owner.postTableView.frame.size.height
-
-                if heightRemainBottomHeight < frameHeight {
-                    owner.viewModel.callToFindData(type: owner.sortType)
-                    print("count = \(self.postItemsData.value.count)")
+                
+                
+                if yOffset > (contentHeight-frameHeight) {
+                    
+                    
+                    owner.postTableView.tableFooterView = owner.createSpinnerFooter()
+                    owner.viewModel.requestPostData(type: owner.sortType)
+                    print("reload..")
+                    owner.postTableView.reloadData()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+//                        owner.postTableView.performBatchUpdates(nil)
+                    }
                 }
+            }).disposed(by: disposeBag)
+        
+        postTableView.rx.prefetchRows
+            .compactMap(\.last?.row)
+            .bind(with: self, onNext: { owner, arg in
+                print("prefetchRows")
+                guard arg == owner.postItemsData.value.count - 1 else { return}
+                owner.viewModel.requestPostData(type: owner.sortType)
             }).disposed(by: disposeBag)
     }
     
     func postVoteButtonDidTap(idx: Int, choice: Int) {
-        viewModel.callToAddVoteNumber(idx: idx, choice: choice)
+        viewModel.requestVote(idx: idx, choice: choice)
+    }
+    
+    private func createSpinnerFooter() -> UIView {
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 100))
+        let spinner = UIActivityIndicatorView()
+        spinner.center = footerView.center
+        footerView.addSubview(spinner)
+        spinner.startAnimating()
+        
+        return footerView
     }
     
     override func configureVC() {
@@ -111,7 +139,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         
         let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
-            self?.viewModel.callToFindData(type: .findNewestPostData)
+            self?.viewModel.requestPostData(type: .findNewestPostData)
             self?.sortType = .findNewestPostData
             DispatchQueue.main.async {
                 self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
@@ -119,7 +147,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         })
         let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
-            self?.viewModel.callToFindData(type: .findBestPostData)
+            self?.viewModel.requestPostData(type: .findBestPostData)
             self?.sortType = .findBestPostData
             DispatchQueue.main.async {
                 self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
@@ -131,10 +159,10 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         viewModel.delegate = self
         bindTableView()
         navigationBarButtonDidTap()
+        viewModel.requestPostData(type: sortType)
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        viewModel.callToFindData(type: sortType)
     }
     
     override func addView() {

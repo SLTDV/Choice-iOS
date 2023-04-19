@@ -15,12 +15,15 @@ final class HomeViewModel: BaseViewModel {
     private var disposeBag = DisposeBag()
     private var currentPage = -1
     
-    func callToFindData(type: MenuOptionType) {
+    func requestPostData(type: MenuOptionType) {
         lazy var url = ""
         currentPage += 1
         let postRequest = PostRequest(page: currentPage)
         let page = URLQueryItem(name: "page", value: String(postRequest.page))
         let size = URLQueryItem(name: "size", value: String(postRequest.size))
+        var relay = delegate?.postItemsData.value
+        
+        print(page, size)
         
         switch type {
         case .findNewestPostData:
@@ -31,7 +34,6 @@ final class HomeViewModel: BaseViewModel {
         
         var components = URLComponents(string: url)
         components?.queryItems = [page, size]
-        print(components)
         AF.request(components!,
                    method: .get,
                    encoding: URLEncoding.queryString,
@@ -40,7 +42,8 @@ final class HomeViewModel: BaseViewModel {
             switch response.result {
             case .success(let postData):
                 LoadingIndicator.hideLoading()
-                self?.delegate?.postItemsData.accept(postData.posts)
+                relay?.append(contentsOf: postData.posts)
+                self?.delegate?.postItemsData.accept(relay!)
                 self?.delegate?.pageData.onNext(postData.page)
                 self?.delegate?.sizeData.onNext(postData.size)
             case .failure(let error):
@@ -49,7 +52,7 @@ final class HomeViewModel: BaseViewModel {
         }
     }
     
-    func callToAddVoteNumber(idx: Int, choice: Int) {
+    func requestVote(idx: Int, choice: Int) {
         let url = APIConstants.addVoteNumberURL + "\(idx)"
         let params = [
             "choice" : choice
