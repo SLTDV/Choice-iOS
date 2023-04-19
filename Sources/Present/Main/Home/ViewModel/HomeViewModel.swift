@@ -13,11 +13,11 @@ final class HomeViewModel: BaseViewModel {
     weak var delegate: PostItemsProtocol?
     private let tk = KeyChain()
     private var disposeBag = DisposeBag()
-    private var currentPage = 0
+    private var currentPage = -1
     
     func callToFindData(type: MenuOptionType) {
         lazy var url = ""
-//        currentPage += 1
+        currentPage += 1
         let postRequest = PostRequest(page: currentPage)
         let page = URLQueryItem(name: "page", value: String(postRequest.page))
         let size = URLQueryItem(name: "size", value: String(postRequest.size))
@@ -31,6 +31,7 @@ final class HomeViewModel: BaseViewModel {
         
         var components = URLComponents(string: url)
         components?.queryItems = [page, size]
+        print(components)
         AF.request(components!,
                    method: .get,
                    encoding: URLEncoding.queryString,

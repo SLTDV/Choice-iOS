@@ -78,18 +78,18 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                 owner.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)
 
-//        postTableView.rx.didScroll
-//            .bind(with: self, onNext: { owner, arg in
-//                let contentHeight = owner.postTableView.contentSize.height
-//                let yOffset = owner.postTableView.contentOffset.y
-//                let heightRemainBottomHeight = contentHeight - yOffset
-//                let frameHeight = owner.postTableView.frame.size.height
-//
-//                if heightRemainBottomHeight < frameHeight {
-//                    owner.viewModel.callToFindData(type: owner.sortType)
-//                }
-//
-//            }).disposed(by: disposeBag)
+        postTableView.rx.didScroll
+            .bind(with: self, onNext: { owner, arg in
+                let contentHeight = owner.postTableView.contentSize.height
+                let yOffset = owner.postTableView.contentOffset.y
+                let heightRemainBottomHeight = contentHeight - yOffset
+                let frameHeight = owner.postTableView.frame.size.height
+
+                if heightRemainBottomHeight < frameHeight {
+                    owner.viewModel.callToFindData(type: owner.sortType)
+                    print("count = \(self.postItemsData.value.count)")
+                }
+            }).disposed(by: disposeBag)
     }
     
     func postVoteButtonDidTap(idx: Int, choice: Int) {
