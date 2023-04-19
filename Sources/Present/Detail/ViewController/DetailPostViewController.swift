@@ -145,9 +145,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func bindTableView() {
-        commentData
-            .asDriver()
-            .drive(commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
+        commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
                                              cellType: CommentCell.self)) { (row, data, cell) in
             cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
@@ -431,6 +429,7 @@ extension DetailPostViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         var config: UISwipeActionsConfiguration? = nil
         let commentModel = commentData.value[indexPath.row]
+        
         lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
             self.viewModel.deleteComment(postIdx: self.model!.idx,
                                          commentIdx: commentModel.idx,

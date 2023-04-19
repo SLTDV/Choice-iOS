@@ -6,7 +6,7 @@ struct PostModel: Codable {
     var posts: [Posts]
 }
 
-struct Posts: Codable {
+class Posts: Codable {
     var idx: Int
     var firstImageUrl: String
     var secondImageUrl: String
