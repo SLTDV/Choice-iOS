@@ -19,19 +19,20 @@ final class HomeViewModel: BaseViewModel {
     
     func requestPostData(type: MenuOptionType, completion: @escaping (Result<Int, Error>) -> Void = { _ in }) {
         var url = ""
-        newestPostCurrentPage += 1
+        var postRequest = PostRequest(page: newestPostCurrentPage)
         
         switch type {
         case .findNewestPostData:
             url = APIConstants.findNewestPostURL
+            newestPostCurrentPage += 1
         case .findBestPostData:
             url = APIConstants.findAllBestPostURL
+            bestPostCurrentPage += 1
+            postRequest = PostRequest(page: bestPostCurrentPage)
         }
         
-        let postRequest = PostRequest(page: newestPostCurrentPage)
         let page = URLQueryItem(name: "page", value: String(postRequest.page))
         let size = URLQueryItem(name: "size", value: String(postRequest.size))
-        var relay = delegate?.newestPostData.value
         
         var components = URLComponents(string: url)
         components?.queryItems = [page, size]
@@ -46,8 +47,16 @@ final class HomeViewModel: BaseViewModel {
                 completion(.success(postData.size))
                 
                 LoadingIndicator.hideLoading()
-                relay?.append(contentsOf: postData.posts)
-                self?.delegate?.newestPostData.accept(relay!)
+                
+                if type == .findNewestPostData {
+                    var relay = self?.delegate?.newestPostData.value
+                    relay?.append(contentsOf: postData.posts)
+                    self?.delegate?.newestPostData.accept(relay!)
+                } else {
+                    var relay = self?.delegate?.bestPostData.value
+                    relay?.append(contentsOf: postData.posts)
+                    self?.delegate?.bestPostData.accept(relay!)
+                }
                 self?.delegate?.pageData.onNext(postData.page)
                 self?.delegate?.sizeData.onNext(postData.size)
             case .failure(let error):
