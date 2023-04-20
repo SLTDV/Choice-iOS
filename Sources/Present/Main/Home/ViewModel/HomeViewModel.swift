@@ -19,23 +19,26 @@ final class HomeViewModel: BaseViewModel {
     
     func requestPostData(type: MenuOptionType, completion: @escaping (Result<Int, Error>) -> Void = { _ in }) {
         var url = ""
-        var postRequest = PostRequest(page: newestPostCurrentPage)
+        var postRequest: PostRequest?
         
         switch type {
         case .findNewestPostData:
             url = APIConstants.findNewestPostURL
             newestPostCurrentPage += 1
+            postRequest = PostRequest(page: newestPostCurrentPage)
         case .findBestPostData:
             url = APIConstants.findAllBestPostURL
             bestPostCurrentPage += 1
             postRequest = PostRequest(page: bestPostCurrentPage)
         }
         
-        let page = URLQueryItem(name: "page", value: String(postRequest.page))
-        let size = URLQueryItem(name: "size", value: String(postRequest.size))
+        let page = URLQueryItem(name: "page", value: String(postRequest!.page))
+        let size = URLQueryItem(name: "size", value: String(postRequest!.size))
         
         var components = URLComponents(string: url)
         components?.queryItems = [page, size]
+        
+        print("compoents = \(components)")
         
         AF.request(components!,
                    method: .get,
@@ -59,6 +62,8 @@ final class HomeViewModel: BaseViewModel {
                 }
                 self?.delegate?.pageData.onNext(postData.page)
                 self?.delegate?.sizeData.onNext(postData.size)
+                
+                print("page = \(postData.page), size = \(postData.size)")
             case .failure(let error):
                 completion(.failure(error))
                 print("main error = \(error.localizedDescription)")

@@ -84,7 +84,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             }).disposed(by: disposeBag)
         
         postTableView.rx.contentOffset
-            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .throttle(.seconds(2), scheduler: MainScheduler.instance)
             .bind(with: self, onNext: { owner, arg in
                 let contentHeight = owner.postTableView.contentSize.height
                 let yOffset = owner.postTableView.contentOffset.y
@@ -95,21 +95,22 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                 }
                 if yOffset > (contentHeight-frameHeight) {
                     owner.postTableView.tableFooterView = owner.createSpinnerFooter()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                         owner.viewModel.requestPostData(type: owner.sortType) { result in
                             owner.postTableView.tableFooterView = nil
+                            print("count = \(owner.newestPostData.value.count)")
+                            owner.postTableView.reloadData()
                             switch result {
                             case .success(let size):
                                 if size != 3 {
                                     owner.isLastPage = true
                                 }
-                                owner.postTableView.reloadData()
                             case .failure(let error):
                                 print("pagination Error = \(error.localizedDescription)")
                                 break
                             }
                         }
-                    }
+//                    }
                 }
             }).disposed(by: disposeBag)
     }
