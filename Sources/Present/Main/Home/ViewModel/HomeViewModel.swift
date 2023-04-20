@@ -4,7 +4,8 @@ import Alamofire
 import RxCocoa
 
 protocol PostItemsProtocol: AnyObject {
-    var postItemsData: BehaviorRelay<[Posts]> { get set }
+    var newestPostData: BehaviorRelay<[Posts]> { get set }
+    var bestPostData: BehaviorRelay<[Posts]> { get set }
     var pageData: PublishSubject<Int> { get set }
     var sizeData: PublishSubject<Int> { get set }
 }
@@ -13,17 +14,12 @@ final class HomeViewModel: BaseViewModel {
     weak var delegate: PostItemsProtocol?
     private let tk = KeyChain()
     private var disposeBag = DisposeBag()
-    private var currentPage = -1
+    private var newestPostCurrentPage = -1
+    private var bestPostCurrentPage = -1
     
-    func requestPostData(type: MenuOptionType) {
-        lazy var url = ""
-        currentPage += 1
-        let postRequest = PostRequest(page: currentPage)
-        let page = URLQueryItem(name: "page", value: String(postRequest.page))
-        let size = URLQueryItem(name: "size", value: String(postRequest.size))
-        var relay = delegate?.postItemsData.value
-        
-        print(page, size)
+    func requestPostData(type: MenuOptionType, completion: @escaping (Result<Int, Error>) -> Void = { _ in }) {
+        var url = ""
+        newestPostCurrentPage += 1
         
         switch type {
         case .findNewestPostData:
@@ -32,8 +28,14 @@ final class HomeViewModel: BaseViewModel {
             url = APIConstants.findAllBestPostURL
         }
         
+        let postRequest = PostRequest(page: newestPostCurrentPage)
+        let page = URLQueryItem(name: "page", value: String(postRequest.page))
+        let size = URLQueryItem(name: "size", value: String(postRequest.size))
+        var relay = delegate?.newestPostData.value
+        
         var components = URLComponents(string: url)
         components?.queryItems = [page, size]
+        
         AF.request(components!,
                    method: .get,
                    encoding: URLEncoding.queryString,
@@ -41,12 +43,15 @@ final class HomeViewModel: BaseViewModel {
         ).responseDecodable(of: PostModel.self) { [weak self] response in
             switch response.result {
             case .success(let postData):
+                completion(.success(postData.size))
+                
                 LoadingIndicator.hideLoading()
                 relay?.append(contentsOf: postData.posts)
-                self?.delegate?.postItemsData.accept(relay!)
+                self?.delegate?.newestPostData.accept(relay!)
                 self?.delegate?.pageData.onNext(postData.page)
                 self?.delegate?.sizeData.onNext(postData.size)
             case .failure(let error):
+                completion(.failure(error))
                 print("main error = \(error.localizedDescription)")
             }
         }

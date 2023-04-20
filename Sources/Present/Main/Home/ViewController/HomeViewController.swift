@@ -6,8 +6,11 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     // MARK: - Properties
     var pageData = PublishSubject<Int>()
     var sizeData = PublishSubject<Int>()
-    var postItemsData = BehaviorRelay<[Posts]>(value: [])
+    var newestPostData = BehaviorRelay<[Posts]>(value: [])
+    var bestPostData = BehaviorRelay<[Posts]>(value: [])
+    
     private let disposeBag = DisposeBag()
+    var isLastPage = false
     
     private var sortType: MenuOptionType = .findNewestPostData
     
@@ -49,6 +52,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
     
+    // MARK: - Function
     private func navigationBarButtonDidTap() {
         profileButton.rx.tap
             .throttle(.seconds(2), latest: false, scheduler: MainScheduler.instance)
@@ -63,50 +67,50 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             }.disposed(by: disposeBag)
     }
     
-    // MARK: - Function
     private func bindTableView() {
-        postItemsData
+        newestPostData
             .asDriver()
             .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                           cellType: PostCell.self)) { (row, data, cell) in
-            cell.changeCellData(with: data, type: .home)
-            cell.postVoteButtonDelegate = self
-            cell.separatorInset = UIEdgeInsets.zero
-        }.disposed(by: disposeBag)
+                cell.changeCellData(with: data, type: .home)
+                cell.postVoteButtonDelegate = self
+                cell.separatorInset = UIEdgeInsets.zero
+            }.disposed(by: disposeBag)
         
         postTableView.rx.modelSelected(Posts.self)
             .asDriver()
             .drive(with: self, onNext: { owner, post in
                 owner.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)
-
-        postTableView.rx.didScroll
+        
+        postTableView.rx.contentOffset
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .bind(with: self, onNext: { owner, arg in
                 let contentHeight = owner.postTableView.contentSize.height
                 let yOffset = owner.postTableView.contentOffset.y
-                let heightRemainBottomHeight = contentHeight - yOffset
                 let frameHeight = owner.postTableView.frame.size.height
                 
-                
+                if owner.isLastPage {
+                    return
+                }
                 if yOffset > (contentHeight-frameHeight) {
-                    
-                    
                     owner.postTableView.tableFooterView = owner.createSpinnerFooter()
-                    owner.viewModel.requestPostData(type: owner.sortType)
-                    print("reload..")
-                    owner.postTableView.reloadData()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-//                        owner.postTableView.performBatchUpdates(nil)
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        owner.viewModel.requestPostData(type: owner.sortType) { result in
+                            owner.postTableView.tableFooterView = nil
+                            switch result {
+                            case .success(let size):
+                                if size != 3 {
+                                    owner.isLastPage = true
+                                }
+                                owner.postTableView.reloadData()
+                            case .failure(let error):
+                                print("pagination Error = \(error.localizedDescription)")
+                                break
+                            }
+                        }
                     }
                 }
-            }).disposed(by: disposeBag)
-        
-        postTableView.rx.prefetchRows
-            .compactMap(\.last?.row)
-            .bind(with: self, onNext: { owner, arg in
-                print("prefetchRows")
-                guard arg == owner.postItemsData.value.count - 1 else { return}
-                owner.viewModel.requestPostData(type: owner.sortType)
             }).disposed(by: disposeBag)
     }
     
@@ -124,6 +128,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         return footerView
     }
     
+    // MARK: - Override
     override func configureVC() {
         let navBarAppearance = UINavigationBarAppearance()
         navBarAppearance.backgroundColor = .white
