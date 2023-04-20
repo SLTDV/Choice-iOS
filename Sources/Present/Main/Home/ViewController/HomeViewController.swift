@@ -68,8 +68,29 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     private func bindTableView() {
-        newestPostData
-            .asDriver()
+//        newestPostData
+//            .asDriver()
+//            .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
+//                                          cellType: PostCell.self)) { (row, data, cell) in
+//                cell.changeCellData(with: data, type: .home)
+//                cell.postVoteButtonDelegate = self
+//                cell.separatorInset = UIEdgeInsets.zero
+//            }.disposed(by: disposeBag)
+//
+//        bestPostData
+//            .asDriver()
+//            .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
+//                                          cellType: PostCell.self)) { (row, data, cell) in
+//                cell.changeCellData(with: data, type: .home)
+//                cell.postVoteButtonDelegate = self
+//                cell.separatorInset = UIEdgeInsets.zero
+//            }.disposed(by: disposeBag)
+        
+        Observable.combineLatest(newestPostData, bestPostData)
+            .map { (newestPostData, bestPostData) in
+                return newestPostData + bestPostData
+            }
+            .asDriver(onErrorJustReturn: [])
             .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                           cellType: PostCell.self)) { (row, data, cell) in
                 cell.changeCellData(with: data, type: .home)
@@ -93,15 +114,14 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                 if owner.isLastPage {
                     return
                 }
-                if yOffset > (contentHeight-frameHeight) {
+                if yOffset > (contentHeight-frameHeight) - 150 {
                     owner.postTableView.tableFooterView = owner.createSpinnerFooter()
-//                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
                         owner.viewModel.requestPostData(type: owner.sortType) { result in
                             owner.postTableView.tableFooterView = nil
-                            print("count = \(owner.newestPostData.value.count)")
-                            owner.postTableView.reloadData()
                             switch result {
                             case .success(let size):
+                                owner.postTableView.reloadData()
                                 if size != 3 {
                                     owner.isLastPage = true
                                 }
@@ -110,7 +130,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                                 break
                             }
                         }
-//                    }
+                    }
                 }
             }).disposed(by: disposeBag)
     }
@@ -148,6 +168,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             self?.viewModel.requestPostData(type: .findNewestPostData)
             self?.sortType = .findNewestPostData
             DispatchQueue.main.async {
+                self?.postTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
+                self?.postTableView.reloadData()
                 self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
             }
         })
@@ -156,6 +178,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             self?.viewModel.requestPostData(type: .findBestPostData)
             self?.sortType = .findBestPostData
             DispatchQueue.main.async {
+                self?.postTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
+                self?.postTableView.reloadData()
                 self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
             }
         })
@@ -165,10 +189,10 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         viewModel.delegate = self
         bindTableView()
         navigationBarButtonDidTap()
-        viewModel.requestPostData(type: sortType)
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        viewModel.requestPostData(type: sortType)
     }
     
     override func addView() {
