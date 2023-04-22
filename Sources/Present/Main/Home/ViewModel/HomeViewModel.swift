@@ -4,23 +4,20 @@ import Alamofire
 import RxCocoa
 
 protocol PostItemsProtocol: AnyObject {
-    var newestPostData: BehaviorRelay<[Posts]> { get set }
+    var postData: BehaviorRelay<[Posts]> { get set }
     var bestPostData: BehaviorRelay<[Posts]> { get set }
-    var pageData: PublishSubject<Int> { get set }
-    var sizeData: PublishSubject<Int> { get set }
 }
 
 final class HomeViewModel: BaseViewModel {
     weak var delegate: PostItemsProtocol?
     private let tk = KeyChain()
     private var disposeBag = DisposeBag()
-    private var newestPostCurrentPage = -1
-    private var bestPostCurrentPage = -1
+    var newestPostCurrentPage = -1
+    var bestPostCurrentPage = -1
     
     func requestPostData(type: MenuOptionType, completion: @escaping (Result<Int, Error>) -> Void = { _ in }) {
         var url = ""
         var postRequest: PostRequest?
-        
         switch type {
         case .findNewestPostData:
             url = APIConstants.findNewestPostURL
@@ -38,8 +35,6 @@ final class HomeViewModel: BaseViewModel {
         var components = URLComponents(string: url)
         components?.queryItems = [page, size]
         
-        print("compoents = \(components)")
-        
         AF.request(components!,
                    method: .get,
                    encoding: URLEncoding.queryString,
@@ -51,17 +46,9 @@ final class HomeViewModel: BaseViewModel {
                 
                 LoadingIndicator.hideLoading()
                 
-                if type == .findNewestPostData {
-                    var relay = self?.delegate?.newestPostData.value
-                    relay?.append(contentsOf: postData.posts)
-                    self?.delegate?.newestPostData.accept(relay!)
-                } else {
-                    var relay = self?.delegate?.bestPostData.value
-                    relay?.append(contentsOf: postData.posts)
-                    self?.delegate?.bestPostData.accept(relay!)
-                }
-                self?.delegate?.pageData.onNext(postData.page)
-                self?.delegate?.sizeData.onNext(postData.size)
+                var relay = self?.delegate?.postData.value
+                relay?.append(contentsOf: postData.posts)
+                self?.delegate?.postData.accept(relay!)
                 
                 print("page = \(postData.page), size = \(postData.size)")
             case .failure(let error):

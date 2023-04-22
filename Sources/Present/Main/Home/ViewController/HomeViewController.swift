@@ -4,9 +4,7 @@ import RxCocoa
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVoteButtonDidTapDelegate {
     // MARK: - Properties
-    var pageData = PublishSubject<Int>()
-    var sizeData = PublishSubject<Int>()
-    var newestPostData = BehaviorRelay<[Posts]>(value: [])
+    var postData = BehaviorRelay<[Posts]>(value: [])
     var bestPostData = BehaviorRelay<[Posts]>(value: [])
     
     private let disposeBag = DisposeBag()
@@ -68,29 +66,21 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     private func bindTableView() {
-//        newestPostData
-//            .asDriver()
+//        Observable.combineLatest(newestPostData, bestPostData)
+//            .map { (newestPostData, bestPostData) in
+//                return newestPostData + bestPostData
+//            }
+//            .asDriver(onErrorJustReturn: [])
 //            .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
 //                                          cellType: PostCell.self)) { (row, data, cell) in
-//                cell.changeCellData(with: data, type: .home)
-//                cell.postVoteButtonDelegate = self
-//                cell.separatorInset = UIEdgeInsets.zero
-//            }.disposed(by: disposeBag)
-//
-//        bestPostData
-//            .asDriver()
-//            .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
-//                                          cellType: PostCell.self)) { (row, data, cell) in
+//                print("find = \(self.sortType), data = \(data.idx)")
 //                cell.changeCellData(with: data, type: .home)
 //                cell.postVoteButtonDelegate = self
 //                cell.separatorInset = UIEdgeInsets.zero
 //            }.disposed(by: disposeBag)
         
-        Observable.combineLatest(newestPostData, bestPostData)
-            .map { (newestPostData, bestPostData) in
-                return newestPostData + bestPostData
-            }
-            .asDriver(onErrorJustReturn: [])
+        postData
+            .asDriver()
             .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                           cellType: PostCell.self)) { (row, data, cell) in
                 cell.changeCellData(with: data, type: .home)
@@ -114,16 +104,18 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                 if owner.isLastPage {
                     return
                 }
-                if yOffset > (contentHeight-frameHeight) - 150 {
+                if yOffset > (contentHeight-frameHeight) {
                     owner.postTableView.tableFooterView = owner.createSpinnerFooter()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                        owner.postTableView.performBatchUpdates(nil, completion: nil)
                         owner.viewModel.requestPostData(type: owner.sortType) { result in
                             owner.postTableView.tableFooterView = nil
                             switch result {
                             case .success(let size):
                                 owner.postTableView.reloadData()
-                                if size != 3 {
+                                if size != 10 {
                                     owner.isLastPage = true
+                                    print("owner.newestPostData.value.count = \(owner.postData.value.count)")
                                 }
                             case .failure(let error):
                                 print("pagination Error = \(error.localizedDescription)")
@@ -165,21 +157,27 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         
         let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
+            self?.isLastPage = false
+            self?.viewModel.newestPostCurrentPage = -1
             self?.viewModel.requestPostData(type: .findNewestPostData)
             self?.sortType = .findNewestPostData
             DispatchQueue.main.async {
-                self?.postTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
                 self?.postTableView.reloadData()
+                self?.postTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
+                self?.postData.accept([])
                 self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
             }
         })
         let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
+            self?.isLastPage = false
+            self?.viewModel.bestPostCurrentPage = -1
             self?.viewModel.requestPostData(type: .findBestPostData)
             self?.sortType = .findBestPostData
             DispatchQueue.main.async {
-                self?.postTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
                 self?.postTableView.reloadData()
+                self?.postTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
+                self?.postData.accept([])
                 self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
             }
         })
@@ -189,10 +187,10 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         viewModel.delegate = self
         bindTableView()
         navigationBarButtonDidTap()
+        viewModel.requestPostData(type: sortType)
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        viewModel.requestPostData(type: sortType)
     }
     
     override func addView() {

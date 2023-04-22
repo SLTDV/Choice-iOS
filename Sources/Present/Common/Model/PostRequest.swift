@@ -2,5 +2,5 @@ import Foundation
 
 struct PostRequest {
     var page: Int
-    var size: Int = 3
+    var size: Int = 10
 }
