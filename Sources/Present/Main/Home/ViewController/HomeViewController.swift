@@ -141,6 +141,18 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         return footerView
     }
     
+    private func sortTableViewData(type: MenuOptionType) {
+        switch type {
+        case .findNewestPostData:
+            viewModel.newestPostCurrentPage = -1
+        case .findBestPostData:
+            viewModel.bestPostCurrentPage = -1
+        }
+        sortType = type
+        viewModel.requestPostData(type: type)
+        isLastPage = false
+    }
+    
     // MARK: - Override
     override func configureVC() {
         let navBarAppearance = UINavigationBarAppearance()
@@ -157,10 +169,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         
         let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
-            self?.isLastPage = false
-            self?.viewModel.newestPostCurrentPage = -1
-            self?.viewModel.requestPostData(type: .findNewestPostData)
-            self?.sortType = .findNewestPostData
+            self?.sortTableViewData(type: .findNewestPostData)
             DispatchQueue.main.async {
                 self?.postTableView.reloadData()
                 self?.postTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
@@ -170,10 +179,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         })
         let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
-            self?.isLastPage = false
-            self?.viewModel.bestPostCurrentPage = -1
-            self?.viewModel.requestPostData(type: .findBestPostData)
-            self?.sortType = .findBestPostData
+            self?.sortTableViewData(type: .findBestPostData)
             DispatchQueue.main.async {
                 self?.postTableView.reloadData()
                 self?.postTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
