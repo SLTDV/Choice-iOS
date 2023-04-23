@@ -38,7 +38,7 @@ extension HomeCoordinator {
         vc.start()
     }
     
-    private func detailPostIsRequired(model: PostModel) {
+    private func detailPostIsRequired(model: Posts) {
         let vc = DetailPostCoordiantor(navigationController: navigationController)
         vc.parentCoordinator = self
         childCoordinators.append(vc)

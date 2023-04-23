@@ -10,7 +10,7 @@ enum ChoiceStep {
     
     //Main
     case addPostIsRequired
-    case detailPostIsRequired(model: PostModel)
+    case detailPostIsRequired(model: Posts)
     case profileIsRequired
     
     //AddPost
