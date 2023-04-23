@@ -179,15 +179,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         navigationBarButtonDidTap()
         viewModel.requestPostData(type: sortType)
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        self.sortTableViewData(type: sortType)
-        DispatchQueue.main.async {
-            self.postTableView.reloadData()
-            self.postData.accept([])
-        }
-    }
-    
+
     override func addView() {
         view.addSubviews(whiteView, postTableView)
         whiteView.addSubview(dropdownButton)
