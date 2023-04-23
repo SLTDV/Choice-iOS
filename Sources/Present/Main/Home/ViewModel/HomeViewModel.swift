@@ -5,7 +5,6 @@ import RxCocoa
 
 protocol PostItemsProtocol: AnyObject {
     var postData: BehaviorRelay<[Posts]> { get set }
-    var bestPostData: BehaviorRelay<[Posts]> { get set }
 }
 
 final class HomeViewModel: BaseViewModel {

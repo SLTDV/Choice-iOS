@@ -5,8 +5,6 @@ import RxCocoa
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVoteButtonDidTapDelegate {
     // MARK: - Properties
     var postData = BehaviorRelay<[Posts]>(value: [])
-    var bestPostData = BehaviorRelay<[Posts]>(value: [])
-    
     private let disposeBag = DisposeBag()
     var isLastPage = false
     
@@ -66,19 +64,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     private func bindTableView() {
-//        Observable.combineLatest(newestPostData, bestPostData)
-//            .map { (newestPostData, bestPostData) in
-//                return newestPostData + bestPostData
-//            }
-//            .asDriver(onErrorJustReturn: [])
-//            .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
-//                                          cellType: PostCell.self)) { (row, data, cell) in
-//                print("find = \(self.sortType), data = \(data.idx)")
-//                cell.changeCellData(with: data, type: .home)
-//                cell.postVoteButtonDelegate = self
-//                cell.separatorInset = UIEdgeInsets.zero
-//            }.disposed(by: disposeBag)
-        
         postData
             .asDriver()
             .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
@@ -115,7 +100,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                                 owner.postTableView.reloadData()
                                 if size != 10 {
                                     owner.isLastPage = true
-                                    print("owner.newestPostData.value.count = \(owner.postData.value.count)")
                                 }
                             case .failure(let error):
                                 print("pagination Error = \(error.localizedDescription)")
