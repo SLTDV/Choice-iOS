@@ -8,29 +8,22 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     private lazy var restoreFrameYValue = 0.0
     
     private let emailLabel = UILabel().then {
-        $0.text = "이메일"
+        $0.text = "전화번호"
         $0.font = .systemFont(ofSize: 16, weight: .semibold)
     }
     
-    private let inputEmailTextfield = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "이메일 입력")
+    private let inputEmailTextfield = UITextField().then {
+        $0.placeholder = "010-"
+        $0.backgroundColor = .red
+        $0.layer.borderWidth = 1
     }
     
-    private let passwordLabel = UILabel().then {
-        $0.text = "비밀번호"
-        $0.font = .systemFont(ofSize: 16, weight: .semibold)
+    private let CertificationRequestButton = UIButton().then {
+        $0.backgroundColor = .black
     }
     
-    private let inputPasswordTextfield = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "8~16자리 영문, 숫자, 특수문자 조합")
-        $0.textContentType = .newPassword
-        $0.isSecureTextEntry = true
-    }
-    
-    private let inputCheckPasswordTextfield = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "비밀번호 재입력")
-        $0.textContentType = .newPassword
-        $0.isSecureTextEntry = true
+    private let CertificationNumberTextfield = UITextField().then {
+        $0.placeholder = "010-"
     }
     
     private lazy var signUpButton = UIButton().then {
@@ -46,30 +39,6 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
         $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
     }
     
-    private func bindUI() {
-        let titleTextObservable = inputEmailTextfield.rx.text.orEmpty
-        let descriptionTextObservable = inputPasswordTextfield.rx.text.orEmpty
-        let checkPasswordTestObservable = inputCheckPasswordTextfield.rx.text.orEmpty
-
-        Observable.combineLatest(
-            titleTextObservable,
-            descriptionTextObservable,
-            checkPasswordTestObservable,
-            resultSelector: { s1, s2, s3 in (s1.count > 0) && (s2.count > 0) && (s3.count > 0) }
-        )
-        .bind(with: self, onNext: { owner, isValid in
-            owner.signUpButton.isEnabled = isValid
-            owner.signUpButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayDark.color
-        })
-        .disposed(by: disposeBag)
-    }
-    
-    private func shakeAllTextField() {
-        inputEmailTextfield.shake()
-        inputPasswordTextfield.shake()
-        inputCheckPasswordTextfield.shake()
-    }
-    
     private func showWarningLabel(warning: String) {
         DispatchQueue.main.async {
             self.warningLabel.isHidden = false
@@ -78,10 +47,6 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     }
     
     private func signUpButtonDidTap() {
-        signUpButton.rx.tap
-            .bind(onNext: {
-                self.checkAvailabilitySignUp()
-            }).disposed(by: disposeBag)
     }
     
     func testEmail(email: String) -> Bool {
@@ -92,46 +57,16 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
         return viewModel.isValidPassword(password: password)
     }
     
-    private func checkAvailabilitySignUp() {
-        guard let email = inputEmailTextfield.text else { return }
-        guard let password = inputPasswordTextfield.text else { return }
-        guard let checkPassword = inputCheckPasswordTextfield.text else { return }
-        
-        viewModel.email = email
-        viewModel.password = password
-        
-        viewModel.checkDuplicateEmail(email: email) { isDuplicate in
-            if isDuplicate {
-                if password.elementsEqual(checkPassword){
-                    if self.testEmail(email: email) && self.testPassword(password: password){
-                        self.viewModel.pushUserProfileInfoVC()
-                    } else {
-                        self.shakeAllTextField()
-                        self.showWarningLabel(warning: "*이메일 또는 비밀번호 형식이 올바르지 않아요.")
-                    }
-                } else {
-                    self.shakeAllTextField()
-                    self.showWarningLabel(warning: "*비밀번호가 일치하지 않아요.")
-                }
-            } else {
-                self.shakeAllTextField()
-                self.showWarningLabel(warning: "*이미 가입된 이메일 입니다.")
-            }
-        }
-    }
-    
     override func configureVC() {
         restoreFrameYValue = self.view.frame.origin.y
         signUpButtonDidTap()
-        
-        bindUI()
         
         navigationItem.title = "회원가입"
     }
     
     override func addView() {
-        view.addSubviews(emailLabel,inputEmailTextfield, passwordLabel,
-                         inputPasswordTextfield, inputCheckPasswordTextfield,  warningLabel, signUpButton)
+        view.addSubviews(emailLabel,inputEmailTextfield, CertificationRequestButton,
+                         CertificationNumberTextfield, warningLabel, signUpButton)
     }
     
     override func setLayout() {
@@ -142,21 +77,19 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
         
         inputEmailTextfield.snp.makeConstraints {
             $0.top.equalTo(emailLabel.snp.bottom).offset(30)
-            $0.leading.trailing.equalToSuperview().inset(26)
-        }
-        
-        passwordLabel.snp.makeConstraints {
-            $0.top.equalTo(inputEmailTextfield.snp.bottom).offset(60)
             $0.leading.equalToSuperview().inset(26)
+            $0.trailing.equalTo(CertificationRequestButton.snp.leading).offset(-10)
         }
         
-        inputPasswordTextfield.snp.makeConstraints {
-            $0.top.equalTo(passwordLabel.snp.bottom).offset(30)
-            $0.leading.trailing.equalToSuperview().inset(26)
+        CertificationRequestButton.snp.makeConstraints {
+            $0.top.equalTo(inputEmailTextfield.snp.top)
+            $0.trailing.equalToSuperview().inset(26)
+            $0.width.equalTo(inputEmailTextfield.snp.width).multipliedBy(0.3)
+            $0.height.equalTo(40)
         }
         
-        inputCheckPasswordTextfield.snp.makeConstraints {
-            $0.top.equalTo(inputPasswordTextfield.snp.bottom).offset(50)
+        CertificationNumberTextfield.snp.makeConstraints {
+            $0.top.equalTo(inputEmailTextfield.snp.bottom).offset(10)
             $0.leading.trailing.equalToSuperview().inset(26)
         }
         
