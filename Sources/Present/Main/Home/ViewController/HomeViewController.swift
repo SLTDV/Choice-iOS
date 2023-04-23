@@ -181,6 +181,11 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     override func viewWillAppear(_ animated: Bool) {
+        self.sortTableViewData(type: sortType)
+        DispatchQueue.main.async {
+            self.postTableView.reloadData()
+            self.postData.accept([])
+        }
     }
     
     override func addView() {
