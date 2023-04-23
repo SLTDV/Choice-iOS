@@ -5,9 +5,9 @@ import Kingfisher
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
     var writerNameData = PublishSubject<String>()
-    var writerImageStringData = PublishSubject<String>()
-    var commentData = PublishSubject<[CommentData]>()
-    var model: PostModel?
+    var writerImageStringData = PublishSubject<String?>()
+    var commentData = BehaviorRelay<[CommentData]>(value: [])
+    private var model: PostModel?
     
     private let disposeBag = DisposeBag()
     
@@ -18,8 +18,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private let contentView = UIView()
     
     private let userImageView = UIImageView().then {
+        $0.image = UIImage(systemName: "person.crop.circle.fill")
+        $0.tintColor = .black
         $0.clipsToBounds = true
-        $0.backgroundColor = .gray
         $0.layer.cornerRadius = 12
     }
     
@@ -32,11 +33,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let divideVotePostImageLineView = UIView().then {
-        $0.backgroundColor = .black
+        $0.backgroundColor = ChoiceAsset.Colors.grayMedium.color
     }
     
-    private let descriptionLabel = UILabel().then {
+    private let contentLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.numberOfLines = 0
     }
     
     private let firstPostImageView = UIImageView().then {
@@ -53,9 +55,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.contentMode = .scaleToFill
     }
     
-    private let firstVoteOptionBackgroundView = VoteOptionView()
+    private let firstVoteOptionLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 16, weight: .semibold)
+    }
     
-    private let secondVoteOptionBackgroundView = VoteOptionView()
+    private let secondVoteOptionLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 16, weight: .semibold)
+    }
     
     private lazy var firstVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
@@ -72,29 +78,30 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let divideCommentLineView = UIView().then {
-        $0.backgroundColor = .black
+        $0.backgroundColor = ChoiceAsset.Colors.grayMedium.color
     }
     
-    private let commentCountLabel = UILabel().then {
-        $0.text = "댓글"
-        $0.font = .systemFont(ofSize: 14, weight: .medium)
+    private let whiteBackgroundView = UIView().then {
+        $0.autoresizingMask = .flexibleHeight
+        $0.backgroundColor = .white
     }
     
     private let enterCommentTextView = UITextView().then {
-        $0.text = "댓글을 입력해주세요"
+        $0.textContainerInset = UIEdgeInsets(top: 13, left: 14, bottom: 14, right: 14)
+        $0.text = "댓글을 입력해주세요."
+        $0.isScrollEnabled = false
         $0.font = .systemFont(ofSize: 14)
         $0.textColor = .lightGray
-        $0.layer.cornerRadius = 10
+        $0.layer.cornerRadius = 22
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = .init(red: 0.629, green: 0.629, blue: 0.629, alpha: 1)
+        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
     }
     
-    private let enterCommentButton = UIButton().then {
+    private let submitCommentButton = UIButton().then {
+        $0.isEnabled = false
         $0.setTitle("게시", for: .normal)
+        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
-        $0.layer.cornerRadius = 10
-        $0.backgroundColor = .black
-        $0.isHidden = false
     }
     
     private let commentTableView = UITableView().then {
@@ -120,10 +127,27 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.endEditing(true)
     }
     
+    @objc func keyboardUp(_ notification: NSNotification) {
+        if let keyboardFrame:NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardRectangle = keyboardFrame.cgRectValue
+            
+            UIView.animate(
+                withDuration: 0.3
+                , animations: {
+                    self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardRectangle.height)
+                }
+            )
+        }
+    }
+    
+    @objc func keyboardDown(_ notification: NSNotification) {
+        self.view.transform = .identity
+    }
+    
     private func bindTableView() {
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
                                                        cellType: CommentCell.self)) { (row, data, cell) in
-                cell.changeCommentData(model: data)
+            cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
     }
     
@@ -133,35 +157,70 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }).disposed(by: disposeBag)
         
         writerImageStringData.bind(with: self, onNext: { owner, arg in
-            owner.userImageView.kf.setImage(with: URL(string: arg))
+            guard arg == nil else {
+                owner.userImageView.kf.setImage(with: URL(string: arg!))
+                return
+            }
         }).disposed(by: disposeBag)
+        
+        enterCommentTextView.rx.didBeginEditing
+            .bind(with: self, onNext: { owner, _ in
+                if owner.enterCommentTextView.text == "댓글을 입력해주세요." {
+                    owner.enterCommentTextView.text = ""
+                    owner.enterCommentTextView.textColor = UIColor.black
+                }
+            }).disposed(by: disposeBag)
+        
+        enterCommentTextView.rx.didEndEditing
+            .bind(with: self, onNext: { owner, _ in
+                if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+                    owner.enterCommentTextView.text = "댓글을 입력해주세요."
+                    owner.enterCommentTextView.textColor = UIColor.lightGray
+                    owner.setDefaultSubmitButton()
+                }
+            }).disposed(by: disposeBag)
+        
+        enterCommentTextView.rx.didChange
+            .bind(with: self, onNext: { owner, _ in
+                let maxHeight = 94.0
+                let fixedWidth = owner.enterCommentTextView.frame.size.width
+                let size = owner.enterCommentTextView.sizeThatFits(CGSize(width: fixedWidth, height: .infinity))
+
+                owner.enterCommentTextView.isScrollEnabled = size.height > maxHeight
+                owner.enterCommentTextView.snp.updateConstraints {
+                    $0.height.equalTo(min(maxHeight, size.height))
+                }
+
+                if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 1 {
+                    owner.submitCommentButton.isEnabled = true
+                    owner.submitCommentButton.setTitleColor(.blue, for: .normal)
+                } else {
+                    owner.setDefaultSubmitButton()
+                }
+            }).disposed(by: disposeBag)
     }
     
-    private func enterComment() {
+    private func submitComment() {
         guard let idx = model?.idx else { return }
-        guard let content = enterCommentTextView.text else { return }
+        guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
-        LoadingIndicator.showLoading()
+        LoadingIndicator.showLoading(text: "게시 중")
         viewModel.createComment(idx: idx, content: content) {
             DispatchQueue.main.async {
+                self.viewModel.callToCommentData(idx: idx)
                 self.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                self.enterCommentTextView.text = ""
+                self.setDefaultSubmitButton()
             }
             LoadingIndicator.hideLoading()
         }
     }
     
-    private func commentButtonDidTap() {
-        enterCommentButton.rx.tap
+    private func submitCommentButtonDidTap() {
+        submitCommentButton.rx.tap
             .bind(with: self, onNext: { owner, _ in
-                owner.enterComment()
-                owner.callToCommentData()
+                owner.submitComment()
             }).disposed(by: disposeBag)
-    }
-    
-    private func callToCommentData() {
-        guard let idx = model?.idx else { return }
-        
-        viewModel.callToCommentData(idx: idx)
     }
     
     private func changePostData(model: PostModel) {
@@ -169,9 +228,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async {
             self.titleLabel.text = model.title
-            self.descriptionLabel.text = model.content
-            self.firstVoteOptionBackgroundView.setVoteOptionLabel(model.firstVotingOption)
-            self.secondVoteOptionBackgroundView.setVoteOptionLabel(model.secondVotingOption)
+            self.contentLabel.text = model.content
+            self.firstVoteOptionLabel.text = model.firstVotingOption
+            self.secondVoteOptionLabel.text = model.secondVotingOption
             self.firstPostImageView.kf.setImage(with: firstImageUrl)
             self.secondPostImageView.kf.setImage(with: secondImageUrl)
             self.setVoteButtonLayout(with: model)
@@ -179,11 +238,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     func setVoteButtonLayout(with model: PostModel) {
-        votePostLayout(voting: model.voting)
+        votePostLayout(voting: model.votingState)
         
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
             firstVotingCount: Double(model.firstVotingCount),
-            secondVotingCount: Double(model.secondVotingCount))
+            secondVotingCount: Double(model.secondVotingCount)
+        )
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
     }
@@ -191,30 +251,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func votePostLayout(voting: Int) {
         switch voting {
         case 1:
-            firstVoteButton = firstVoteButton.then {
-                $0.layer.borderColor = UIColor.black.cgColor
-                $0.isEnabled = false
-                $0.backgroundColor = .black
-            }
-            
-            secondVoteButton = secondVoteButton.then {
-                $0.layer.borderColor = UIColor.clear.cgColor
-                $0.isEnabled = true
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
+            firstVoteButton.backgroundColor = .black
+            secondVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
         case 2:
-            firstVoteButton = firstVoteButton.then {
-                $0.layer.borderColor = UIColor.clear.cgColor
-                $0.isEnabled = true
-                $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            }
-            
-            secondVoteButton = secondVoteButton.then {
-                $0.layer.borderColor = UIColor.black.cgColor
-                $0.isEnabled = false
-                $0.backgroundColor = .black
-            }
+            firstVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            secondVoteButton.backgroundColor = .black
         default:
+            firstVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            secondVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
             firstVoteButton.setTitle("0%(0명)", for: .normal)
             secondVoteButton.setTitle("0%(0명)", for: .normal)
         }
@@ -223,11 +267,16 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
-        callToCommentData()
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardUp), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDown), name: UIResponder.keyboardWillHideNotification, object: nil)
+        
+        viewModel.callToCommentData(idx: model!.idx)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         self.commentTableView.removeObserver(self, forKeyPath: "contentSize")
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -243,26 +292,25 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     override func configureVC() {
-        enterCommentTextView.delegate = self
         viewModel.delegate = self
+        commentTableView.delegate = self
         
         bindTableView()
         bindUI()
-        commentButtonDidTap()
+        submitCommentButtonDidTap()
         changePostData(model: model!)
     }
     
     override func addView() {
-        view.addSubview(scrollView)
+        view.addSubviews(scrollView, whiteBackgroundView)
         scrollView.addSubview(contentView)
         contentView.addSubviews(userImageView, userNameLabel,titleLabel,
-                                divideVotePostImageLineView, descriptionLabel,
+                                divideVotePostImageLineView, contentLabel,
+                                firstVoteOptionLabel, secondVoteOptionLabel,
                                 firstPostImageView, secondPostImageView,
                                 firstVoteButton, secondVoteButton,
-                                divideCommentLineView, commentCountLabel,
-                                enterCommentTextView, enterCommentButton, commentTableView)
-        firstPostImageView.addSubview(firstVoteOptionBackgroundView)
-        secondPostImageView.addSubview(secondVoteOptionBackgroundView)
+                                divideCommentLineView, commentTableView)
+        whiteBackgroundView.addSubviews(enterCommentTextView, submitCommentButton)
     }
     
     override func setLayout() {
@@ -296,47 +344,47 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.height.equalTo(1)
         }
         
-        descriptionLabel.snp.makeConstraints {
+        contentLabel.snp.makeConstraints {
             $0.top.equalTo(divideVotePostImageLineView.snp.bottom).offset(22)
-            $0.leading.trailing.equalToSuperview().offset(43)
+            $0.leading.trailing.equalToSuperview().inset(43)
+        }
+        
+        firstVoteOptionLabel.snp.makeConstraints {
+            $0.top.equalTo(contentLabel.snp.bottom).offset(40)
+            $0.centerX.equalTo(firstPostImageView)
+        }
+        
+        secondVoteOptionLabel.snp.makeConstraints {
+            $0.top.equalTo(contentLabel.snp.bottom).offset(40)
+            $0.centerX.equalTo(secondPostImageView)
         }
         
         firstPostImageView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(64)
+            $0.top.equalTo(firstVoteOptionLabel.snp.bottom).offset(10)
             $0.leading.equalToSuperview().inset(37)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
         }
         
         secondPostImageView.snp.makeConstraints {
-            $0.top.equalTo(descriptionLabel.snp.bottom).offset(64)
+            $0.top.equalTo(secondVoteOptionLabel.snp.bottom).offset(10)
             $0.trailing.equalToSuperview().inset(37)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
         }
         
-        firstVoteOptionBackgroundView.snp.makeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview()
-            $0.height.equalTo(52)
-        }
-        
-        secondVoteOptionBackgroundView.snp.makeConstraints {
-            $0.leading.trailing.bottom.equalToSuperview()
-            $0.height.equalTo(52)
-        }
-        
         firstVoteButton.snp.makeConstraints {
-            $0.top.equalTo(firstPostImageView.snp.bottom).offset(38)
-            $0.leading.equalToSuperview().inset(30)
-            $0.width.equalTo(144)
-            $0.height.equalTo(52)
+            $0.top.equalTo(firstPostImageView.snp.bottom).offset(26)
+            $0.leading.equalTo(firstPostImageView.snp.leading)
+            $0.trailing.equalTo(firstPostImageView.snp.trailing)
+            $0.height.equalTo(56)
         }
         
         secondVoteButton.snp.makeConstraints {
-            $0.top.equalTo(secondPostImageView.snp.bottom).offset(38)
-            $0.trailing.equalToSuperview().inset(30)
-            $0.width.equalTo(144)
-            $0.height.equalTo(52)
+            $0.top.equalTo(secondPostImageView.snp.bottom).offset(26)
+            $0.leading.equalTo(secondPostImageView.snp.leading)
+            $0.trailing.equalTo(secondPostImageView.snp.trailing)
+            $0.height.equalTo(56)
         }
         
         divideCommentLineView.snp.makeConstraints {
@@ -345,51 +393,66 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.height.equalTo(1)
         }
         
-        commentCountLabel.snp.makeConstraints {
-            $0.top.equalTo(divideCommentLineView.snp.bottom).offset(18)
-            $0.leading.equalToSuperview().offset(30)
-        }
-        
-        enterCommentTextView.snp.makeConstraints {
-            $0.top.equalTo(commentCountLabel.snp.bottom).offset(10)
-            $0.leading.trailing.equalToSuperview().inset(30)
-            $0.height.equalTo(83)
-        }
-        
-        enterCommentButton.snp.makeConstraints {
-            $0.top.equalTo(enterCommentTextView.snp.bottom).offset(10)
-            $0.trailing.equalTo(enterCommentTextView.snp.trailing)
-            $0.leading.equalTo(enterCommentTextView.snp.leading).inset(250)
-            $0.height.equalTo(30)
-        }
-        
         commentTableView.snp.makeConstraints {
-            $0.top.equalTo(enterCommentButton.snp.bottom).offset(30)
+            $0.top.equalTo(divideCommentLineView).offset(32)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
             $0.height.equalTo(1)
         }
+        
+        whiteBackgroundView.snp.makeConstraints {
+            $0.bottom.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+        }
+        
+        enterCommentTextView.snp.makeConstraints {
+            $0.top.equalToSuperview().inset(5)
+            $0.height.equalTo(47)
+            $0.leading.trailing.equalToSuperview().inset(20)
+            $0.bottom.equalToSuperview().inset(33)
+        }
+        
+        submitCommentButton.snp.makeConstraints {
+            $0.centerY.equalTo(enterCommentTextView)
+            $0.trailing.equalTo(enterCommentTextView).inset(17)
+        }
     }
 }
 
-extension DetailPostViewController: UITextViewDelegate {
-    private func setTextViewPlaceholder() {
-        if enterCommentTextView.text.isEmpty {
-            enterCommentTextView.text = "댓글을 입력해주세요"
-            enterCommentTextView.textColor = UIColor.lightGray
-        } else if enterCommentTextView.text == "댓글을 입력해주세요"{
-            enterCommentTextView.text = ""
-            enterCommentTextView.textColor = UIColor.black
-        }
+extension DetailPostViewController {
+    private func setDefaultSubmitButton() {
+        submitCommentButton.isEnabled = false
+        submitCommentButton.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
     }
-    
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        setTextViewPlaceholder()
-    }
-    
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text == "" {
-            setTextViewPlaceholder()
+}
+
+extension DetailPostViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        var config: UISwipeActionsConfiguration? = nil
+        let commentModel = commentData.value[indexPath.row]
+        lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
+            self.viewModel.deleteComment(postIdx: self.model!.idx,
+                                         commentIdx: commentModel.idx,
+                                         completion: { [weak self] result in
+                switch result {
+                case .success(()):
+                    self?.viewModel.callToCommentData(idx: self!.model!.idx)
+                    DispatchQueue.main.async {
+                        self?.commentTableView.reloadRows(
+                            at: [indexPath],
+                            with: .automatic
+                        )
+                    }
+                case .failure(let error):
+                    print("Delete Faield = \(error.localizedDescription)")
+                }
+            })
+        })
+        deleteContextual.image = UIImage(systemName: "trash")
+        
+        if commentModel.isMine {
+            config = UISwipeActionsConfiguration(actions: [deleteContextual])
         }
+        return config
     }
 }

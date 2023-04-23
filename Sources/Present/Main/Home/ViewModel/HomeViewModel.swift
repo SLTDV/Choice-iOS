@@ -4,7 +4,7 @@ import Alamofire
 import RxCocoa
 
 protocol PostItemsProtocol: AnyObject {
-    var postItemsData: PublishSubject<[PostModel]> { get set }
+    var postItemsData: BehaviorRelay<[PostModel]> { get set }
 }
 
 final class HomeViewModel: BaseViewModel {
@@ -29,8 +29,9 @@ final class HomeViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success(let data):
+                LoadingIndicator.hideLoading()
                 let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: data)
-                self?.delegate?.postItemsData.onNext(decodeResponse ?? .init())
+                self?.delegate?.postItemsData.accept(decodeResponse ?? .init())
             case .failure(let error):
                 print("main error = \(error.localizedDescription)")
             }
@@ -49,12 +50,12 @@ final class HomeViewModel: BaseViewModel {
                    encoding: JSONEncoding.default,
                    interceptor: JwtRequestInterceptor())
         .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
+        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
-                self?.callToFindData(type: .findNewestPostData)
+                print("success")
             case .failure(let error):
-                print("error = \(error.localizedDescription)")
+                print("vote error = \(error.localizedDescription)")
             }
         }
     }

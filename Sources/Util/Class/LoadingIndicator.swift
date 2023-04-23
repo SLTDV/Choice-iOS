@@ -2,7 +2,7 @@ import UIKit
 
 final class LoadingIndicator {
     private init() {}
-    static func showLoading() {
+    static func showLoading(text: String) {
         DispatchQueue.main.async {
             guard let window = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.last else { return }
             let loadingIndicatorView: UIActivityIndicatorView
@@ -14,7 +14,7 @@ final class LoadingIndicator {
                 loadingIndicatorView.color = .black
                 loadingIndicatorView.frame = window.frame
                 loadingLabel.frame = window.frame.offsetBy(dx: window.center.x - 23, dy: 40)
-                loadingLabel.text = "게시 중"
+                loadingLabel.text = text
                 window.addSubviews(loadingIndicatorView, loadingLabel)
             }
             loadingIndicatorView.startAnimating()

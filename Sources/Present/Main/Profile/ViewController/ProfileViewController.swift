@@ -5,7 +5,7 @@ import Kingfisher
 
 final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
     var nicknameData = PublishSubject<String>()
-    var imageData = PublishSubject<String>()
+    var imageData = PublishSubject<String?>()
     var postListData = PublishSubject<[PostModel]>()
     
     private let disposeBag = DisposeBag()
@@ -25,10 +25,10 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     }
     
     private let profileImageView = UIImageView().then {
-        $0.clipsToBounds = true
-        $0.layer.cornerRadius = 50
         $0.image = UIImage(systemName: "person.crop.circle.fill")
         $0.tintColor = .black
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 50
     }
     
     private lazy var editProfileImageButton = UIButton().then {
@@ -76,7 +76,10 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         }).disposed(by: disposeBag)
         
         imageData.bind(with: self, onNext: { owner, arg in
-            owner.profileImageView.kf.setImage(with: URL(string: arg))
+            guard arg == nil else {
+                owner.profileImageView.kf.setImage(with: URL(string: arg!))
+                return
+            }
         }).disposed(by: disposeBag)
     }
     
@@ -92,6 +95,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
                                       preferredStyle: .alert)
         
         let okayAction = UIAlertAction(title: "변경", style: .default) { [weak self] data in
+            LoadingIndicator.showLoading(text: "")
             self?.viewModel.callToChangeNickname(nickname: alert.textFields?[0].text ?? "")
         }
         let cancelAction = UIAlertAction(title: "취소", style: .destructive)
@@ -197,6 +201,8 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         } else if let possibleImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
             newImage = possibleImage
         }
+        
+        LoadingIndicator.showLoading(text: "")
         viewModel.callToProfileImageUpload(profileImage: newImage)
             .subscribe(with: self, onNext: { owner, response in
                 DispatchQueue.main.async {
