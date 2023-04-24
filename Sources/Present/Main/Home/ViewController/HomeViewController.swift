@@ -137,7 +137,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         isLastPage = false
     }
     
-    func configureRefreshControl() {
+    private func configureRefreshControl() {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self,
                                   action: #selector(handleRefreshControl(_:)),
@@ -145,7 +145,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         postTableView.refreshControl = refreshControl
     }
     
-    func configureDropDown() {
+    private func configureDropDown() {
         let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
             self?.sortTableViewData(type: .findNewestPostData)
