@@ -3,8 +3,10 @@ import RxSwift
 import RxCocoa
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVoteButtonDidTapDelegate {
+    // MARK: - Properties
+    var postData = BehaviorRelay<[Posts]>(value: [])
     private let disposeBag = DisposeBag()
-    var postItemsData = BehaviorRelay<[PostModel]>(value: [])
+    var isLastPage = false
     
     private var sortType: MenuOptionType = .findNewestPostData
     
@@ -46,6 +48,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
     
+    // MARK: - Function
     private func navigationBarButtonDidTap() {
         profileButton.rx.tap
             .throttle(.seconds(2), latest: false, scheduler: MainScheduler.instance)
@@ -61,64 +64,139 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     private func bindTableView() {
-        postItemsData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
-                                                      cellType: PostCell.self)) { (row, data, cell) in
-            cell.changeCellData(with: data, type: .home)
-            cell.postVoteButtonDelegate = self
-            cell.separatorInset = UIEdgeInsets.zero
-        }.disposed(by: disposeBag)
+        postData
+            .asDriver()
+            .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
+                                          cellType: PostCell.self)) { (row, data, cell) in
+                cell.changeCellData(with: data, type: .home)
+                cell.postVoteButtonDelegate = self
+                cell.separatorInset = UIEdgeInsets.zero
+            }.disposed(by: disposeBag)
         
-        postTableView.rx.modelSelected(PostModel.self)
-            .bind(with: self, onNext: { owner, post in
+        postTableView.rx.modelSelected(Posts.self)
+            .asDriver()
+            .drive(with: self, onNext: { owner, post in
                 owner.viewModel.pushDetailPostVC(model: post)
+            }).disposed(by: disposeBag)
+        
+        postTableView.rx.contentOffset
+            .throttle(.seconds(2), scheduler: MainScheduler.instance)
+            .bind(with: self, onNext: { owner, arg in
+                let contentHeight = owner.postTableView.contentSize.height
+                let yOffset = owner.postTableView.contentOffset.y
+                let frameHeight = owner.postTableView.frame.size.height
+                
+                if owner.isLastPage {
+                    return
+                }
+                if yOffset > (contentHeight-frameHeight) {
+                    owner.postTableView.tableFooterView = owner.createSpinnerFooter()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                        owner.postTableView.performBatchUpdates(nil, completion: nil)
+                        owner.viewModel.requestPostData(type: owner.sortType) { result in
+                            owner.postTableView.tableFooterView = nil
+                            switch result {
+                            case .success(let size):
+                                owner.postTableView.reloadData()
+                                if size != 10 {
+                                    owner.isLastPage = true
+                                }
+                            case .failure(let error):
+                                print("pagination Error = \(error.localizedDescription)")
+                                break
+                            }
+                        }
+                    }
+                }
             }).disposed(by: disposeBag)
     }
     
     func postVoteButtonDidTap(idx: Int, choice: Int) {
-        viewModel.callToAddVoteNumber(idx: idx, choice: choice)
+        viewModel.requestVote(idx: idx, choice: choice)
     }
     
-    override func configureVC() {
-        let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.backgroundColor = .white
-        navBarAppearance.shadowColor = .clear
+    private func createSpinnerFooter() -> UIView {
+        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 100))
+        let spinner = UIActivityIndicatorView()
+        spinner.center = footerView.center
+        footerView.addSubview(spinner)
+        spinner.startAnimating()
         
-        navigationController?.navigationBar.standardAppearance = navBarAppearance
-        navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
-        
-        view.backgroundColor = .white
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftLogoImageView)
-        navigationItem.rightBarButtonItems = [profileButton, addPostButton]
-        
+        return footerView
+    }
+    
+    private func sortTableViewData(type: MenuOptionType) {
+        switch type {
+        case .findNewestPostData:
+            viewModel.newestPostCurrentPage = -1
+        case .findBestPostData:
+            viewModel.bestPostCurrentPage = -1
+        }
+        sortType = type
+        viewModel.requestPostData(type: type)
+        isLastPage = false
+    }
+    
+    private func configureRefreshControl() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self,
+                                  action: #selector(handleRefreshControl(_:)),
+                                  for: .valueChanged)
+        postTableView.refreshControl = refreshControl
+    }
+    
+    private func configureDropDown() {
         let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
-            self?.viewModel.callToFindData(type: .findNewestPostData)
-            self?.sortType = .findNewestPostData
+            self?.sortTableViewData(type: .findNewestPostData)
             DispatchQueue.main.async {
+                self?.postTableView.reloadData()
+                self?.postData.accept([])
                 self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
             }
         })
         let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
-            self?.viewModel.callToFindData(type: .findBestPostData)
-            self?.sortType = .findBestPostData
+            self?.sortTableViewData(type: .findBestPostData)
             DispatchQueue.main.async {
+                self?.postTableView.reloadData()
+                self?.postData.accept([])
                 self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
             }
         })
         
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
+    }
+    
+    @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
+        sortTableViewData(type: .findNewestPostData)
+        DispatchQueue.main.async {
+            self.postTableView.reloadData()
+            self.postData.accept([])
+            self.postTableView.refreshControl?.endRefreshing()
+        }
+    }
+    
+    // MARK: - Override
+    override func configureVC() {
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.backgroundColor = .white
+        navBarAppearance.shadowColor = .clear
+        navigationController?.navigationBar.standardAppearance = navBarAppearance
+        navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
+        view.backgroundColor = .white
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftLogoImageView)
+        navigationItem.rightBarButtonItems = [profileButton, addPostButton]
+        
+        configureDropDown()
         
         viewModel.delegate = self
         bindTableView()
         navigationBarButtonDidTap()
+        viewModel.requestPostData(type: sortType)
+        configureRefreshControl()
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        viewModel.callToFindData(type: sortType)
-    }
-    
+
     override func addView() {
         view.addSubviews(whiteView, postTableView)
         whiteView.addSubview(dropdownButton)

@@ -1,11 +1,12 @@
 import UIKit
 import Alamofire
 import RxSwift
+import RxRelay
 
 protocol ProfileDataProtocol: AnyObject {
     var nicknameData: PublishSubject<String> { get set }
     var imageData: PublishSubject<String?> { get set }
-    var postListData: PublishSubject<[PostModel]> { get set }
+    var postListData: BehaviorRelay<[Posts]> { get set }
 }
 
 final class ProfileViewModel: BaseViewModel {
@@ -24,7 +25,7 @@ final class ProfileViewModel: BaseViewModel {
             switch response.result {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode(ProfileModel.self, from: data)
-                self?.delegate?.postListData.onNext(decodeResponse?.postList ?? .init())
+                self?.delegate?.postListData.accept(decodeResponse?.postList ?? .init())
                 self?.delegate?.nicknameData.onNext(decodeResponse?.nickname ?? "")
                 self?.delegate?.imageData.onNext(decodeResponse?.image)
             case .failure(let error):

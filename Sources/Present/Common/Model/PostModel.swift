@@ -1,6 +1,12 @@
 import Foundation
 
-class PostModel: Codable {
+struct PostModel: Codable {
+    var page: Int
+    var size: Int
+    var posts: [Posts]
+}
+
+class Posts: Codable {
     var idx: Int
     var firstImageUrl: String
     var secondImageUrl: String

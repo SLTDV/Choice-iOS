@@ -7,7 +7,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     var writerNameData = PublishSubject<String>()
     var writerImageStringData = PublishSubject<String?>()
     var commentData = BehaviorRelay<[CommentData]>(value: [])
-    private var model: PostModel?
+    private var model: Posts?
     
     private let disposeBag = DisposeBag()
     
@@ -112,7 +112,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
     
-    init(viewModel: DetailPostViewModel, model: PostModel) {
+    init(viewModel: DetailPostViewModel, model: Posts) {
         super.init(viewModel: viewModel)
         self.model = model
         
@@ -146,7 +146,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func bindTableView() {
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
-                                                       cellType: CommentCell.self)) { (row, data, cell) in
+                                             cellType: CommentCell.self)) { (row, data, cell) in
             cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
     }
@@ -223,7 +223,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }).disposed(by: disposeBag)
     }
     
-    private func changePostData(model: PostModel) {
+    private func changePostData(model: Posts) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async {
@@ -237,15 +237,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
     }
     
-    func setVoteButtonLayout(with model: PostModel) {
-        votePostLayout(voting: model.votingState)
-        
+    func setVoteButtonLayout(with model: Posts) {
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
             firstVotingCount: Double(model.firstVotingCount),
             secondVotingCount: Double(model.secondVotingCount)
         )
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
+        votePostLayout(voting: model.votingState)
     }
     
     private func votePostLayout(voting: Int) {
@@ -430,6 +429,7 @@ extension DetailPostViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         var config: UISwipeActionsConfiguration? = nil
         let commentModel = commentData.value[indexPath.row]
+        
         lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
             self.viewModel.deleteComment(postIdx: self.model!.idx,
                                          commentIdx: commentModel.idx,
