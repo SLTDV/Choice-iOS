@@ -6,7 +6,7 @@ final class JwtRequestInterceptor: RequestInterceptor {
     
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         guard urlRequest.url?.absoluteString.hasPrefix(APIConstants.baseURL) == true,
-              let accessToken = tk.read(key: "accessToken") else {
+            let accessToken = tk.read(key: "accessToken") else {
             completion(.success(urlRequest))
             return
         }

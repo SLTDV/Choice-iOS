@@ -4,41 +4,57 @@ import Alamofire
 import RxCocoa
 
 protocol PostItemsProtocol: AnyObject {
-    var postItemsData: BehaviorRelay<[PostModel]> { get set }
+    var postData: BehaviorRelay<[Posts]> { get set }
 }
 
 final class HomeViewModel: BaseViewModel {
     weak var delegate: PostItemsProtocol?
     private let tk = KeyChain()
     private var disposeBag = DisposeBag()
+    var newestPostCurrentPage = -1
+    var bestPostCurrentPage = -1
     
-    func callToFindData(type: MenuOptionType) {
-        lazy var url = ""
-        
+    func requestPostData(type: MenuOptionType, completion: @escaping (Result<Int, Error>) -> Void = { _ in }) {
+        var url = ""
+        var postRequest: PostRequest?
         switch type {
         case .findNewestPostData:
             url = APIConstants.findNewestPostURL
+            newestPostCurrentPage += 1
+            postRequest = PostRequest(page: newestPostCurrentPage)
         case .findBestPostData:
             url = APIConstants.findAllBestPostURL
+            bestPostCurrentPage += 1
+            postRequest = PostRequest(page: bestPostCurrentPage)
         }
-        AF.request(url,
+        
+        let page = URLQueryItem(name: "page", value: String(postRequest!.page))
+        let size = URLQueryItem(name: "size", value: String(postRequest!.size))
+        
+        var components = URLComponents(string: url)
+        components?.queryItems = [page, size]
+        
+        AF.request(components!,
                    method: .get,
                    encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor())
-        .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
+                   interceptor: JwtRequestInterceptor()
+        ).responseDecodable(of: PostModel.self) { [weak self] response in
             switch response.result {
-            case .success(let data):
+            case .success(let postData):
                 LoadingIndicator.hideLoading()
-                let decodeResponse = try? JSONDecoder().decode([PostModel].self, from: data)
-                self?.delegate?.postItemsData.accept(decodeResponse ?? .init())
+                completion(.success(postData.size))
+                
+                var relay = self?.delegate?.postData.value
+                relay?.append(contentsOf: postData.posts)
+                self?.delegate?.postData.accept(relay!)
             case .failure(let error):
+                completion(.failure(error))
                 print("main error = \(error.localizedDescription)")
             }
         }
     }
     
-    func callToAddVoteNumber(idx: Int, choice: Int) {
+    func requestVote(idx: Int, choice: Int) {
         let url = APIConstants.addVoteNumberURL + "\(idx)"
         let params = [
             "choice" : choice
@@ -64,7 +80,7 @@ final class HomeViewModel: BaseViewModel {
         coordinator.navigate(to: .addPostIsRequired)
     }
     
-    func pushDetailPostVC(model: PostModel) {
+    func pushDetailPostVC(model: Posts) {
         coordinator.navigate(to: .detailPostIsRequired(model: model))
     }
     

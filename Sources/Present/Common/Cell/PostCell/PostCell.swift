@@ -4,7 +4,6 @@ import Then
 import Kingfisher
 
 // MARK: - Protocol
-
 protocol PostTableViewCellButtonDelegate: AnyObject {
     func removePostButtonDidTap(postIdx: Int)
 }
@@ -15,8 +14,7 @@ protocol PostVoteButtonDidTapDelegate: AnyObject {
 
 final class PostCell: UITableViewCell {
     // MARK: - Properties
-    
-    var model: PostModel?
+    var model: Posts?
     var delegate: PostTableViewCellButtonDelegate?
     var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
     
@@ -33,7 +31,11 @@ final class PostCell: UITableViewCell {
     
     private lazy var removePostButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.menu = UIMenu(title: "", children: [UIAction(title: "게시물 삭제", attributes: .destructive, handler: { _ in self.removePostButtonDidTap(postIdx: self.model!.idx) })])
+        $0.menu = UIMenu(title: "", children: [UIAction(
+            title: "게시물 삭제",
+            attributes: .destructive,
+            handler: { _ in self.removePostButtonDidTap(postIdx: self.model!.idx)
+        })])
         $0.isHidden = true
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
@@ -101,7 +103,6 @@ final class PostCell: UITableViewCell {
     }
     
     // MARK: - Function
-    
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
         switch sender.tag {
         case 1:
@@ -198,58 +199,19 @@ final class PostCell: UITableViewCell {
         }
     }
     
+    // MARK: - Main
     private func setHomeVotePostLayout(voting: Int) {
         firstPostVoteButton.setTitleColor(.white, for: .normal)
         secondPostVoteButton.setTitleColor(.white, for: .normal)
-        switch voting {
-        case 1:
-            firstPostVoteButton.isEnabled = false
-            firstPostVoteButton.backgroundColor = .black
-            
-            secondPostVoteButton.isEnabled = true
-            secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
-        case 2:
-            firstPostVoteButton.isEnabled = true
-            firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
-            
-            secondPostVoteButton.isEnabled = false
-            secondPostVoteButton.backgroundColor = .black
-        default:
-            firstPostVoteButton.isEnabled = true
-            firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
-            
-            secondPostVoteButton.isEnabled = true
-            secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
-        }
+        
+        firstPostVoteButton.isEnabled = (voting == 1) ? false : true
+        firstPostVoteButton.backgroundColor = (voting == 1) ? .black : ChoiceAsset.Colors.grayVoteButton.color
+        secondPostVoteButton.isEnabled = (voting == 2) ? false : true
+        secondPostVoteButton.backgroundColor = (voting == 2) ? .black : ChoiceAsset.Colors.grayVoteButton.color
     }
     
-    func setProfileVoteButtonLayout(with model: PostModel) {
-        
-        firstVoteOptionLabel.snp.makeConstraints {
-            $0.top.equalTo(contentLabel.snp.bottom).offset(30)
-            $0.centerX.equalTo(firstPostImageView)
-        }
-        
-        secondVoteOptionLabel.snp.makeConstraints {
-            $0.top.equalTo(contentLabel.snp.bottom).offset(30)
-            $0.centerX.equalTo(secondPostImageView)
-        }
-        
-        firstPostImageView.snp.remakeConstraints {
-            $0.top.equalTo(firstVoteOptionLabel.snp.bottom).offset(10)
-            $0.leading.equalToSuperview().inset(31)
-            $0.width.equalTo(134)
-            $0.height.equalTo(145)
-        }
-        
-        secondPostImageView.snp.remakeConstraints {
-            $0.top.equalTo(secondVoteOptionLabel.snp.bottom).offset(10)
-            $0.trailing.equalToSuperview().inset(31)
-            $0.width.equalTo(134)
-            $0.height.equalTo(145)
-            
-        }
-        
+    // MARK: - Profile
+    func setProfileVoteButtonLayout(with model: Posts) {
         let data = CalculateToVoteCountPercentage
             .calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
                                             secondVotingCount: Double(model.secondVotingCount))
@@ -293,7 +255,8 @@ final class PostCell: UITableViewCell {
         }
     }
     
-    func changeCellData(with model: PostModel, type: ViewControllerType) {
+    // MARK: - prepare
+    func changeCellData(with model: Posts, type: ViewControllerType) {
         self.model = model
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
