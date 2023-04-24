@@ -137,6 +137,23 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         isLastPage = false
     }
     
+    func configureRefreshControl() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self,
+                                  action: #selector(handleRefreshControl(_:)),
+                                  for: .valueChanged)
+        postTableView.refreshControl = refreshControl
+    }
+    
+    @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
+        sortTableViewData(type: .findNewestPostData)
+        DispatchQueue.main.async {
+            self.postTableView.reloadData()
+            self.postData.accept([])
+            self.postTableView.refreshControl?.endRefreshing()
+        }
+    }
+    
     // MARK: - Override
     override func configureVC() {
         let navBarAppearance = UINavigationBarAppearance()
@@ -156,7 +173,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             self?.sortTableViewData(type: .findNewestPostData)
             DispatchQueue.main.async {
                 self?.postTableView.reloadData()
-                self?.postTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
                 self?.postData.accept([])
                 self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
             }
@@ -166,7 +182,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             self?.sortTableViewData(type: .findBestPostData)
             DispatchQueue.main.async {
                 self?.postTableView.reloadData()
-                self?.postTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
                 self?.postData.accept([])
                 self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
             }
@@ -178,6 +193,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         bindTableView()
         navigationBarButtonDidTap()
         viewModel.requestPostData(type: sortType)
+        configureRefreshControl()
     }
 
     override func addView() {
