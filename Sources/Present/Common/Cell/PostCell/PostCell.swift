@@ -25,7 +25,7 @@ final class PostCell: UITableViewCell {
     }
     
     private let contentLabel = UILabel().then {
-        $0.numberOfLines = 0
+        $0.numberOfLines = 5
         $0.font = .systemFont(ofSize: 14)
     }
     
@@ -187,13 +187,13 @@ final class PostCell: UITableViewCell {
         }
         
         participantsCountLabel.snp.makeConstraints {
-            $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(20)
+            $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(25)
             $0.leading.equalToSuperview().inset(33)
             $0.bottom.equalToSuperview().inset(16)
         }
         
         commentCountLabel.snp.makeConstraints {
-            $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(20)
+            $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(25)
             $0.leading.equalTo(participantsCountLabel.snp.trailing).offset(13)
             $0.bottom.equalToSuperview().inset(16)
         }
