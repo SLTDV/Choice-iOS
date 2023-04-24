@@ -25,7 +25,7 @@ final class PostCell: UITableViewCell {
     }
     
     private let contentLabel = UILabel().then {
-        $0.numberOfLines = 0
+        $0.numberOfLines = 5
         $0.font = .systemFont(ofSize: 14)
     }
     
@@ -39,6 +39,14 @@ final class PostCell: UITableViewCell {
         $0.isHidden = true
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+    }
+    
+    private let firstVoteOptionLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 16, weight: .semibold)
+    }
+    
+    private let secondVoteOptionLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 16, weight: .semibold)
     }
     
     private let firstPostImageView = UIImageView().then {
@@ -58,6 +66,7 @@ final class PostCell: UITableViewCell {
     private lazy var firstPostVoteButton = UIButton().then {
         $0.tag = 1
         $0.setTitleColor(.white, for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         $0.layer.cornerRadius = 10
         $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
         $0.addTarget(self, action: #selector(PostVoteButtonDidTap(_:)), for: .touchUpInside)
@@ -66,6 +75,7 @@ final class PostCell: UITableViewCell {
     private lazy var secondPostVoteButton = UIButton().then {
         $0.tag = 2
         $0.setTitleColor(.white, for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         $0.layer.cornerRadius = 10
         $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
         $0.addTarget(self, action: #selector(PostVoteButtonDidTap(_:)), for: .touchUpInside)
@@ -127,8 +137,8 @@ final class PostCell: UITableViewCell {
     }
     
     private func addView() {
-        contentView.addSubviews(titleLabel, contentLabel, removePostButton, firstPostImageView,
-                                secondPostImageView, firstPostVoteButton, secondPostVoteButton,
+        contentView.addSubviews(titleLabel, contentLabel, removePostButton, firstVoteOptionLabel, secondVoteOptionLabel,
+                                firstPostImageView, secondPostImageView, firstPostVoteButton, secondPostVoteButton,
                                  participantsCountLabel, commentCountLabel)
     }
     
@@ -179,13 +189,13 @@ final class PostCell: UITableViewCell {
         }
         
         participantsCountLabel.snp.makeConstraints {
-            $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(20)
+            $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(25)
             $0.leading.equalToSuperview().inset(33)
             $0.bottom.equalToSuperview().inset(16)
         }
         
         commentCountLabel.snp.makeConstraints {
-            $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(20)
+            $0.top.equalTo(firstPostVoteButton.snp.bottom).offset(25)
             $0.leading.equalTo(participantsCountLabel.snp.trailing).offset(13)
             $0.bottom.equalToSuperview().inset(16)
         }
@@ -203,7 +213,7 @@ final class PostCell: UITableViewCell {
     }
     
     // MARK: - Profile
-    func setProfileVoteButtonLayout(with model: Posts) {
+    private func setProfileVoteButtonLayout(with model: Posts) {
         let data = CalculateToVoteCountPercentage
             .calculateToVoteCountPercentage(firstVotingCount: Double(model.firstVotingCount),
                                             secondVotingCount: Double(model.secondVotingCount))
@@ -218,6 +228,32 @@ final class PostCell: UITableViewCell {
         }
         
         votePostButtonLayout(voting: model.votingState)
+    }
+    
+    private func setVoteOptionLabelLayout() {
+        firstVoteOptionLabel.snp.makeConstraints {
+            $0.top.equalTo(contentLabel.snp.bottom).offset(30)
+            $0.centerX.equalTo(firstPostImageView)
+        }
+        
+        secondVoteOptionLabel.snp.makeConstraints {
+            $0.top.equalTo(contentLabel.snp.bottom).offset(30)
+            $0.centerX.equalTo(secondPostImageView)
+        }
+        
+        firstPostImageView.snp.remakeConstraints {
+            $0.top.equalTo(firstVoteOptionLabel.snp.bottom).offset(10)
+            $0.leading.equalToSuperview().inset(31)
+            $0.width.equalTo(134)
+            $0.height.equalTo(145)
+        }
+        
+        secondPostImageView.snp.remakeConstraints {
+            $0.top.equalTo(secondVoteOptionLabel.snp.bottom).offset(10)
+            $0.trailing.equalToSuperview().inset(31)
+            $0.width.equalTo(134)
+            $0.height.equalTo(145)
+        }
     }
     
     private func votePostButtonLayout(voting: Int) {
@@ -256,13 +292,16 @@ final class PostCell: UITableViewCell {
         contentLabel.text = model.content
         firstPostImageView.kf.setImage(with: firstImageUrl)
         secondPostImageView.kf.setImage(with: secondImageUrl)
-        firstPostVoteButton.setTitle(model.firstVotingOption, for: .normal)
-        secondPostVoteButton.setTitle(model.secondVotingOption, for: .normal)
         switch type {
         case .home:
+            firstPostVoteButton.setTitle(model.firstVotingOption, for: .normal)
+            secondPostVoteButton.setTitle(model.secondVotingOption, for: .normal)
             setHomeVotePostLayout(voting: model.votingState)
         case .profile:
+            firstVoteOptionLabel.text = model.firstVotingOption
+            secondVoteOptionLabel.text = model.secondVotingOption
             setProfileVoteButtonLayout(with: model)
+            setVoteOptionLabelLayout()
         }
         participantsCountLabel.text = "👻 참여자 \(model.participants)명"
         commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
