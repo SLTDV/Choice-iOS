@@ -145,29 +145,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         postTableView.refreshControl = refreshControl
     }
     
-    @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
-        sortTableViewData(type: .findNewestPostData)
-        DispatchQueue.main.async {
-            self.postTableView.reloadData()
-            self.postData.accept([])
-            self.postTableView.refreshControl?.endRefreshing()
-        }
-    }
-    
-    // MARK: - Override
-    override func configureVC() {
-        let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.backgroundColor = .white
-        navBarAppearance.shadowColor = .clear
-        
-        navigationController?.navigationBar.standardAppearance = navBarAppearance
-        navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
-        
-        view.backgroundColor = .white
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftLogoImageView)
-        navigationItem.rightBarButtonItems = [profileButton, addPostButton]
-        
+    func configureDropDown() {
         let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
             self?.sortTableViewData(type: .findNewestPostData)
@@ -188,6 +166,29 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         })
         
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
+    }
+    
+    @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
+        sortTableViewData(type: .findNewestPostData)
+        DispatchQueue.main.async {
+            self.postTableView.reloadData()
+            self.postData.accept([])
+            self.postTableView.refreshControl?.endRefreshing()
+        }
+    }
+    
+    // MARK: - Override
+    override func configureVC() {
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.backgroundColor = .white
+        navBarAppearance.shadowColor = .clear
+        navigationController?.navigationBar.standardAppearance = navBarAppearance
+        navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
+        view.backgroundColor = .white
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftLogoImageView)
+        navigationItem.rightBarButtonItems = [profileButton, addPostButton]
+        
+        configureDropDown()
         
         viewModel.delegate = self
         bindTableView()
