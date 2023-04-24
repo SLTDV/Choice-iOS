@@ -137,26 +137,20 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         isLastPage = false
     }
     
-    // MARK: - Override
-    override func configureVC() {
-        let navBarAppearance = UINavigationBarAppearance()
-        navBarAppearance.backgroundColor = .white
-        navBarAppearance.shadowColor = .clear
-        
-        navigationController?.navigationBar.standardAppearance = navBarAppearance
-        navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
-        
-        view.backgroundColor = .white
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftLogoImageView)
-        navigationItem.rightBarButtonItems = [profileButton, addPostButton]
-        
+    private func configureRefreshControl() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self,
+                                  action: #selector(handleRefreshControl(_:)),
+                                  for: .valueChanged)
+        postTableView.refreshControl = refreshControl
+    }
+    
+    private func configureDropDown() {
         let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
             self?.sortTableViewData(type: .findNewestPostData)
             DispatchQueue.main.async {
                 self?.postTableView.reloadData()
-                self?.postTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
                 self?.postData.accept([])
                 self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
             }
@@ -166,18 +160,41 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             self?.sortTableViewData(type: .findBestPostData)
             DispatchQueue.main.async {
                 self?.postTableView.reloadData()
-                self?.postTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
                 self?.postData.accept([])
                 self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
             }
         })
         
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
+    }
+    
+    @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
+        sortTableViewData(type: .findNewestPostData)
+        DispatchQueue.main.async {
+            self.postTableView.reloadData()
+            self.postData.accept([])
+            self.postTableView.refreshControl?.endRefreshing()
+        }
+    }
+    
+    // MARK: - Override
+    override func configureVC() {
+        let navBarAppearance = UINavigationBarAppearance()
+        navBarAppearance.backgroundColor = .white
+        navBarAppearance.shadowColor = .clear
+        navigationController?.navigationBar.standardAppearance = navBarAppearance
+        navigationController?.navigationBar.scrollEdgeAppearance = navBarAppearance
+        view.backgroundColor = .white
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: leftLogoImageView)
+        navigationItem.rightBarButtonItems = [profileButton, addPostButton]
+        
+        configureDropDown()
         
         viewModel.delegate = self
         bindTableView()
         navigationBarButtonDidTap()
         viewModel.requestPostData(type: sortType)
+        configureRefreshControl()
     }
 
     override func addView() {
