@@ -82,6 +82,9 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
         signUpButtonDidTap()
         CertificationRequestButtonDidTap()
         
+        inputPhoneNumberTextfield.delegate = self
+        CertificationNumberTextfield.delegate = self
+        
         navigationItem.title = "회원가입"
     }
     
@@ -126,5 +129,15 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(49)
         }
+    }
+}
+
+extension UserSecurityInfoViewController: UITextFieldDelegate {
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        textField.layer.borderColor = UIColor.black.cgColor
+    }
+    
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        textField.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
     }
 }
