@@ -206,11 +206,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         LoadingIndicator.showLoading(text: "게시 중")
         viewModel.requestToCreateComment(idx: idx, content: content) {
-            DispatchQueue.main.async {
-                self.viewModel.requestCommentData(idx: idx)
-                self.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-                self.enterCommentTextView.text = ""
-                self.setDefaultSubmitButton()
+            DispatchQueue.main.async { [weak self] in
+                self?.viewModel.requestCommentData(idx: idx)
+                self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                self?.commentTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
+                self?.viewModel.commentCurrentPage = -1
+                self?.enterCommentTextView.text = ""
+                self?.setDefaultSubmitButton()
             }
             LoadingIndicator.hideLoading()
         }
@@ -226,14 +228,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func changePostData(model: Posts) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-        DispatchQueue.main.async {
-            self.titleLabel.text = model.title
-            self.contentLabel.text = model.content
-            self.firstVoteOptionLabel.text = model.firstVotingOption
-            self.secondVoteOptionLabel.text = model.secondVotingOption
-            self.firstPostImageView.kf.setImage(with: firstImageUrl)
-            self.secondPostImageView.kf.setImage(with: secondImageUrl)
-            self.setVoteButtonLayout(with: model)
+        DispatchQueue.main.async { [weak self] in
+            self?.titleLabel.text = model.title
+            self?.contentLabel.text = model.content
+            self?.firstVoteOptionLabel.text = model.firstVotingOption
+            self?.secondVoteOptionLabel.text = model.secondVotingOption
+            self?.firstPostImageView.kf.setImage(with: firstImageUrl)
+            self?.secondPostImageView.kf.setImage(with: secondImageUrl)
+            self?.setVoteButtonLayout(with: model)
         }
     }
     
