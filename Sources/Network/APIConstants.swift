@@ -1,7 +1,7 @@
 import Foundation
 
 struct APIConstants {
-    static let baseURL = "https://www.choice-time.com/"
+    static let baseURL = "http://10.82.17.76:81/"
     
     //SignIn
     static let signInURL = baseURL + "auth/signin"
@@ -11,6 +11,7 @@ struct APIConstants {
     //SignUp
     static let signUpURL = baseURL + "auth/signup"
     static let emailDuplicationURL = baseURL + "auth/duplication"
+    static let certificationRequestURL = baseURL + "auth/phone"
     
     //Post
     static let findNewestPostURL = baseURL + "post"

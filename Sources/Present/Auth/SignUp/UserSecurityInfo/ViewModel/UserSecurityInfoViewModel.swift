@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 import Alamofire
 
 final class UserSecurityInfoViewModel: BaseViewModel {
@@ -27,6 +27,29 @@ final class UserSecurityInfoViewModel: BaseViewModel {
                 completion(false)
             }
         }
+    }
+    
+    func certificationRequest(phoneNumber: String) {
+        let url = APIConstants.certificationRequestURL
+        
+        let phoneNumber = URLQueryItem(name: "phoneNumber", value: phoneNumber)
+        
+        var components = URLComponents(string: url)
+        components?.queryItems = [phoneNumber]
+        
+        AF.request(components!,
+                   method: .post,
+                   encoding: URLEncoding.queryString)
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { response in 
+                switch response.result {
+                case .success(let data):
+                    print("success")
+                case .failure(let error):
+                    print(components!)
+                    print("comment = \(error.localizedDescription)")
+                }
+            }
     }
     
     func isValidEmail(email: String) -> Bool {

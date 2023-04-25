@@ -9,21 +9,32 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     
     private let emailLabel = UILabel().then {
         $0.text = "전화번호"
-        $0.font = .systemFont(ofSize: 16, weight: .semibold)
+        $0.font = .systemFont(ofSize: 16, weight: .bold)
     }
     
-    private let inputEmailTextfield = UITextField().then {
-        $0.placeholder = "010-"
-        $0.backgroundColor = .red
+    private let inputPhoneNumberTextfield = UITextField().then {
+        $0.addLeftPadding()
+        $0.placeholder = "전화번호 입력"
+        $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
         $0.layer.borderWidth = 1
+        $0.layer.cornerRadius = 8
+        $0.keyboardType = .numberPad
     }
     
     private let CertificationRequestButton = UIButton().then {
+        $0.setTitle("인증 요청", for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
         $0.backgroundColor = .black
+        $0.layer.cornerRadius = 8
     }
     
     private let CertificationNumberTextfield = UITextField().then {
-        $0.placeholder = "010-"
+        $0.addLeftPadding()
+        $0.placeholder = "인증번호 입력"
+        $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
+        $0.layer.borderWidth = 1
+        $0.layer.cornerRadius = 8
+        $0.keyboardType = .numberPad
     }
     
     private lazy var signUpButton = UIButton().then {
@@ -48,6 +59,15 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     
     private func signUpButtonDidTap() {
     }
+  
+    private func CertificationRequestButtonDidTap() {
+        guard let phoneNumber = inputPhoneNumberTextfield.text else { return }
+        
+        CertificationRequestButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.viewModel.certificationRequest(phoneNumber: phoneNumber)
+            }.disposed(by: disposeBag)
+    }
     
     func testEmail(email: String) -> Bool {
         return viewModel.isValidEmail(email: email)
@@ -57,45 +77,16 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
         return viewModel.isValidPassword(password: password)
     }
     
-    private func checkAvailabilitySignUp() {
-        guard let email = inputEmailTextfield.text else { return }
-        guard let password = inputPasswordTextfield.text else { return }
-        guard let checkPassword = inputCheckPasswordTextfield.text else { return }
-        
-        viewModel.email = email
-        viewModel.password = password
-        
-        LoadingIndicator.showLoading(text: "")
-        
-        viewModel.checkDuplicateEmail(email: email) { isDuplicate in
-            if isDuplicate {
-                if password.elementsEqual(checkPassword){
-                    if self.testEmail(email: email) && self.testPassword(password: password){
-                        self.viewModel.pushUserProfileInfoVC()
-                    } else {
-                        self.shakeAllTextField()
-                        self.showWarningLabel(warning: "*이메일 또는 비밀번호 형식이 올바르지 않아요.")
-                    }
-                } else {
-                    self.shakeAllTextField()
-                    self.showWarningLabel(warning: "*비밀번호가 일치하지 않아요.")
-                }
-            } else {
-                self.shakeAllTextField()
-                self.showWarningLabel(warning: "*이미 가입된 이메일 입니다.")
-            }
-        }
-    }
-    
     override func configureVC() {
         restoreFrameYValue = self.view.frame.origin.y
         signUpButtonDidTap()
+        CertificationRequestButtonDidTap()
         
         navigationItem.title = "회원가입"
     }
     
     override func addView() {
-        view.addSubviews(emailLabel,inputEmailTextfield, CertificationRequestButton,
+        view.addSubviews(emailLabel,inputPhoneNumberTextfield, CertificationRequestButton,
                          CertificationNumberTextfield, warningLabel, signUpButton)
     }
     
@@ -105,22 +96,24 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
             $0.leading.equalToSuperview().inset(26)
         }
         
-        inputEmailTextfield.snp.makeConstraints {
-            $0.top.equalTo(emailLabel.snp.bottom).offset(30)
+        inputPhoneNumberTextfield.snp.makeConstraints {
+            $0.top.equalTo(emailLabel.snp.bottom).offset(25)
             $0.leading.equalToSuperview().inset(26)
             $0.trailing.equalTo(CertificationRequestButton.snp.leading).offset(-10)
+            $0.height.equalTo(51)
         }
         
         CertificationRequestButton.snp.makeConstraints {
-            $0.top.equalTo(inputEmailTextfield.snp.top)
+            $0.top.equalTo(inputPhoneNumberTextfield.snp.top)
             $0.trailing.equalToSuperview().inset(26)
-            $0.width.equalTo(inputEmailTextfield.snp.width).multipliedBy(0.3)
-            $0.height.equalTo(40)
+            $0.width.equalTo(inputPhoneNumberTextfield.snp.width).multipliedBy(0.4)
+            $0.height.equalTo(51)
         }
         
         CertificationNumberTextfield.snp.makeConstraints {
-            $0.top.equalTo(inputEmailTextfield.snp.bottom).offset(10)
+            $0.top.equalTo(inputPhoneNumberTextfield.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(26)
+            $0.height.equalTo(51)
         }
         
         warningLabel.snp.makeConstraints {
@@ -129,7 +122,7 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
         }
         
         signUpButton.snp.makeConstraints {
-            $0.bottom.equalToSuperview().inset(64)
+            $0.bottom.equalTo(view.safeAreaInsets.bottom).inset(40)
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(49)
         }
