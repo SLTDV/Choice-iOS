@@ -431,7 +431,7 @@ extension DetailPostViewController: UITableViewDelegate {
         let commentModel = commentData.value[indexPath.row]
         
         lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
-            self.viewModel.RequestToDeleteComment(postIdx: self.model!.idx,
+            self.viewModel.requestToDeleteComment(postIdx: self.model!.idx,
                                          commentIdx: commentModel.idx,
                                          completion: { [weak self] result in
                 switch result {
