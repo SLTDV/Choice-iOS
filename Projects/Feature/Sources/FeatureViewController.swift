@@ -1,5 +1,6 @@
 import UIKit
-class Feature: UIViewController {
+
+class FeatureViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .red
     }
