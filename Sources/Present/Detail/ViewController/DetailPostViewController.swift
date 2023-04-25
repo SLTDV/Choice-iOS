@@ -205,9 +205,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         LoadingIndicator.showLoading(text: "게시 중")
-        viewModel.createComment(idx: idx, content: content) {
+        viewModel.requestToCreateComment(idx: idx, content: content) {
             DispatchQueue.main.async {
-                self.viewModel.callToCommentData(idx: idx)
+                self.viewModel.requestCommentData(idx: idx)
                 self.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
                 self.enterCommentTextView.text = ""
                 self.setDefaultSubmitButton()
@@ -269,7 +269,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardUp), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDown), name: UIResponder.keyboardWillHideNotification, object: nil)
         
-        viewModel.callToCommentData(idx: model!.idx)
+        viewModel.requestCommentData(idx: model!.idx)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -436,7 +436,7 @@ extension DetailPostViewController: UITableViewDelegate {
                                          completion: { [weak self] result in
                 switch result {
                 case .success(()):
-                    self?.viewModel.callToCommentData(idx: self!.model!.idx)
+                    self?.viewModel.requestCommentData(idx: self!.model!.idx)
                     DispatchQueue.main.async {
                         self?.commentTableView.reloadRows(
                             at: [indexPath],

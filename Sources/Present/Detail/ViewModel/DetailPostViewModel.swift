@@ -29,7 +29,7 @@ final class DetailPostViewModel: BaseViewModel {
         }
     }
     
-    func callToCommentData(idx: Int) {
+    func requestCommentData(idx: Int) {
         let url = APIConstants.detailPostURL + "\(idx)"
         AF.request(url,
                    method: .get,
@@ -49,7 +49,7 @@ final class DetailPostViewModel: BaseViewModel {
         }
     }
     
-    func createComment(idx: Int, content: String, completion: @escaping () -> ()) {
+    func requestToCreateComment(idx: Int, content: String, completion: @escaping () -> ()) {
         let url = APIConstants.createCommentURL + "\(idx)"
         let params = [
             "content" : content
