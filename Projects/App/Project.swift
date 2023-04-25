@@ -6,7 +6,9 @@ let project = Project.makeModule(
     platform: .iOS,
     product: .app,
     dependencies: [
-        .Projcet.Feature
+        TargetDependency.project(
+            target: "Feature",
+            path: .relativeToRoot("Projects/Feature"))
     ],
     resources: ["Resources/**"],
     infoPlist: .file(path: "Support/Info.plist")

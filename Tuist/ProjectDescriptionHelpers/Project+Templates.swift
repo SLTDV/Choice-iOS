@@ -29,7 +29,6 @@ public extension Project {
             infoPlist: infoPlist,
             sources: sources,
             resources: resources,
-            scripts: [.SwiftLintShell],
             dependencies: dependencies
         )
         
