@@ -4,7 +4,14 @@ import ProjectDescriptionHelpers
 let project = Project.makeModule(
     name: "Shared",
     product: .staticFramework,
-    packages: [],
+    packages: [
+        .SnapKit,
+        .Then,
+        .Kingfisher,
+        .RxSwift,
+        .RxCocoa,
+        .Alamofire
+    ],
     dependencies: [
         .SPM.SnapKit,
         .SPM.Then,
