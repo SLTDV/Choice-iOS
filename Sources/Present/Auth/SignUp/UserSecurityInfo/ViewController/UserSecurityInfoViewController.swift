@@ -23,8 +23,9 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     
     private let CertificationRequestButton = UIButton().then {
         $0.setTitle("인증 요청", for: .normal)
+        $0.isEnabled = false
         $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
-        $0.backgroundColor = .black
+        $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
         $0.layer.cornerRadius = 8
     }
     
@@ -40,7 +41,7 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     private lazy var signUpButton = UIButton().then {
         $0.setTitle("다음", for: .normal)
         $0.isEnabled = false
-        $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+        $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
         $0.layer.cornerRadius = 8
     }
     
