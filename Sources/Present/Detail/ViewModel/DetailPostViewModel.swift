@@ -36,7 +36,9 @@ final class DetailPostViewModel: BaseViewModel {
                 print(postData.page, postData.size)
                 self?.delegate?.writerImageStringData.onNext(postData.image)
                 self?.delegate?.writerNameData.onNext(postData.writer)
-                self?.delegate?.commentData.accept(postData.comment)
+                var relay = self?.delegate?.commentData.value
+                relay?.append(contentsOf: postData.comment)
+                self?.delegate?.commentData.accept(relay!)
             case .failure(let error):
                 print("comment = \(error.localizedDescription)")
             }
