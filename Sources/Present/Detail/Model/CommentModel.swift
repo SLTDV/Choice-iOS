@@ -1,10 +1,10 @@
 import Foundation
 
 struct CommentModel: Codable {
-    var writer: String
-    var image: String?
     var page: Int
     var size: Int
+    var writer: String
+    var image: String?
     var comment : [CommentData]
 }
 
