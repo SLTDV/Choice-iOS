@@ -115,16 +115,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         viewModel.requestVote(idx: idx, choice: choice)
     }
     
-    private func createSpinnerFooter() -> UIView {
-        let footerView = UIView(frame: CGRect(x: 0, y: 0, width: view.frame.width, height: 100))
-        let spinner = UIActivityIndicatorView()
-        spinner.center = footerView.center
-        footerView.addSubview(spinner)
-        spinner.startAnimating()
-        
-        return footerView
-    }
-    
     private func sortTableViewData(type: MenuOptionType) {
         switch type {
         case .findNewestPostData:
@@ -140,8 +130,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     private func configureRefreshControl() {
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self,
-                                  action: #selector(handleRefreshControl(_:)),
-                                  for: .valueChanged)
+                                 action: #selector(handleRefreshControl(_:)),
+                                 for: .valueChanged)
         postTableView.refreshControl = refreshControl
     }
     
@@ -164,7 +154,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                 self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
             }
         })
-        
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
     }
     

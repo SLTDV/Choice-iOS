@@ -8,6 +8,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     var writerImageStringData = PublishSubject<String?>()
     var commentData = BehaviorRelay<[CommentData]>(value: [])
     private var model: Posts?
+    var isLastPage = false
     
     private let disposeBag = DisposeBag()
     
@@ -149,6 +150,37 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                                              cellType: CommentCell.self)) { (row, data, cell) in
             cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
+        
+        scrollView.rx.contentOffset
+            .throttle(.seconds(2), scheduler: MainScheduler.instance)
+            .bind(with: self, onNext: { owner, arg in
+                let contentHeight = owner.scrollView.contentSize.height
+                let yOffset = owner.scrollView.contentOffset.y
+                let frameHeight = owner.scrollView.frame.size.height
+
+                if owner.isLastPage {
+                    return
+                }
+                
+                if yOffset > (contentHeight-frameHeight) - 100 {
+                    owner.commentTableView.tableFooterView = owner.createSpinnerFooter()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                        owner.commentTableView.performBatchUpdates(nil, completion: nil)
+                        owner.viewModel.requestCommentData(idx: owner.model!.idx) { result in
+                            owner.commentTableView.tableFooterView = nil
+                            switch result {
+                            case .success(let size):
+                                owner.commentTableView.reloadData()
+                                if size != 10 {
+                                    owner.isLastPage = true
+                                }
+                            case .failure(let error):
+                                print("comment pagination error = \(error.localizedDescription)")
+                            }
+                        }
+                    }
+                }
+            }).disposed(by: disposeBag)
     }
     
     private func bindUI() {
@@ -205,12 +237,15 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         LoadingIndicator.showLoading(text: "게시 중")
-        viewModel.createComment(idx: idx, content: content) {
-            DispatchQueue.main.async {
-                self.viewModel.callToCommentData(idx: idx)
-                self.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-                self.enterCommentTextView.text = ""
-                self.setDefaultSubmitButton()
+        viewModel.commentCurrentPage = -1
+        viewModel.requestToCreateComment(idx: idx, content: content) {
+            DispatchQueue.main.async { [weak self] in
+                self?.viewModel.requestCommentData(idx: idx)
+                self?.commentTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
+                self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                self?.commentData.accept([])
+                self?.enterCommentTextView.text = ""
+                self?.setDefaultSubmitButton()
             }
             LoadingIndicator.hideLoading()
         }
@@ -226,14 +261,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func changePostData(model: Posts) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-        DispatchQueue.main.async {
-            self.titleLabel.text = model.title
-            self.contentLabel.text = model.content
-            self.firstVoteOptionLabel.text = model.firstVotingOption
-            self.secondVoteOptionLabel.text = model.secondVotingOption
-            self.firstPostImageView.kf.setImage(with: firstImageUrl)
-            self.secondPostImageView.kf.setImage(with: secondImageUrl)
-            self.setVoteButtonLayout(with: model)
+        DispatchQueue.main.async { [weak self] in
+            self?.titleLabel.text = model.title
+            self?.contentLabel.text = model.content
+            self?.firstVoteOptionLabel.text = model.firstVotingOption
+            self?.secondVoteOptionLabel.text = model.secondVotingOption
+            self?.firstPostImageView.kf.setImage(with: firstImageUrl)
+            self?.secondPostImageView.kf.setImage(with: secondImageUrl)
+            self?.setVoteButtonLayout(with: model)
         }
     }
     
@@ -268,8 +303,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardUp), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDown), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
-        viewModel.callToCommentData(idx: model!.idx)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -283,7 +316,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             if object is UITableView {
                 if let newValue = change?[.newKey] as? CGSize {
                     commentTableView.snp.updateConstraints {
-                        $0.height.equalTo(newValue.height + 100)
+                        $0.height.equalTo(newValue.height + 50)
                     }
                 }
             }
@@ -431,12 +464,12 @@ extension DetailPostViewController: UITableViewDelegate {
         let commentModel = commentData.value[indexPath.row]
         
         lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
-            self.viewModel.deleteComment(postIdx: self.model!.idx,
+            self.viewModel.requestToDeleteComment(postIdx: self.model!.idx,
                                          commentIdx: commentModel.idx,
                                          completion: { [weak self] result in
                 switch result {
                 case .success(()):
-                    self?.viewModel.callToCommentData(idx: self!.model!.idx)
+                    self?.viewModel.requestCommentData(idx: self!.model!.idx)
                     DispatchQueue.main.async {
                         self?.commentTableView.reloadRows(
                             at: [indexPath],
