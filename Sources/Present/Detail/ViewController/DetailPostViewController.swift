@@ -157,7 +157,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 let contentHeight = owner.scrollView.contentSize.height
                 let yOffset = owner.scrollView.contentOffset.y
                 let frameHeight = owner.scrollView.frame.size.height
-                print("contentOffset")
+
                 if owner.isLastPage {
                     return
                 }
@@ -172,7 +172,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                             case .success(let size):
                                 owner.commentTableView.reloadData()
                                 if size != 10 {
-                                    print("up 10")
                                     owner.isLastPage = true
                                 }
                             case .failure(let error):
