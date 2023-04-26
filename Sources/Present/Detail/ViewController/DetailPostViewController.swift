@@ -8,6 +8,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     var writerImageStringData = PublishSubject<String?>()
     var commentData = BehaviorRelay<[CommentData]>(value: [])
     private var model: Posts?
+    var isLastPage = false
     
     private let disposeBag = DisposeBag()
     
@@ -149,6 +150,38 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                                              cellType: CommentCell.self)) { (row, data, cell) in
             cell.changeCommentData(model: data)
         }.disposed(by: disposeBag)
+        
+        scrollView.rx.contentOffset
+            .throttle(.seconds(2), scheduler: MainScheduler.instance)
+            .bind(with: self, onNext: { owner, arg in
+                let contentHeight = owner.scrollView.contentSize.height
+                let yOffset = owner.scrollView.contentOffset.y
+                let frameHeight = owner.scrollView.frame.size.height
+                print("contentOffset")
+                if owner.isLastPage {
+                    return
+                }
+                
+                if yOffset > (contentHeight-frameHeight) - 100 {
+                    owner.commentTableView.tableFooterView = owner.createSpinnerFooter()
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                        owner.commentTableView.performBatchUpdates(nil, completion: nil)
+                        owner.viewModel.requestCommentData(idx: owner.model!.idx) { result in
+                            owner.commentTableView.tableFooterView = nil
+                            switch result {
+                            case .success(let size):
+                                owner.commentTableView.reloadData()
+                                if size != 10 {
+                                    print("up 10")
+                                    owner.isLastPage = true
+                                }
+                            case .failure(let error):
+                                print("comment pagination error = \(error.localizedDescription)")
+                            }
+                        }
+                    }
+                }
+            }).disposed(by: disposeBag)
     }
     
     private func bindUI() {
@@ -205,12 +238,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         LoadingIndicator.showLoading(text: "게시 중")
+        viewModel.commentCurrentPage = -1
         viewModel.requestToCreateComment(idx: idx, content: content) {
             DispatchQueue.main.async { [weak self] in
                 self?.viewModel.requestCommentData(idx: idx)
-                self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
                 self?.commentTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
-                self?.viewModel.commentCurrentPage = -1
+                self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                self?.commentData.accept([])
                 self?.enterCommentTextView.text = ""
                 self?.setDefaultSubmitButton()
             }
@@ -271,7 +305,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardUp), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDown), name: UIResponder.keyboardWillHideNotification, object: nil)
         
-        viewModel.requestCommentData(idx: model!.idx)
+//        viewModel.requestCommentData(idx: model!.idx)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -285,7 +319,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             if object is UITableView {
                 if let newValue = change?[.newKey] as? CGSize {
                     commentTableView.snp.updateConstraints {
-                        $0.height.equalTo(newValue.height + 100)
+                        $0.height.equalTo(newValue.height + 50)
                     }
                 }
             }

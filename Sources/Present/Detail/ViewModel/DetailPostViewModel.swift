@@ -13,7 +13,7 @@ final class DetailPostViewModel: BaseViewModel {
     weak var delegate: CommentDataProtocol?
     var commentCurrentPage = -1
     
-    func requestCommentData(idx: Int) {
+    func requestCommentData(idx: Int, completion: @escaping (Result<Int, Error>) -> Void = { _ in }) {
         let url = APIConstants.detailPostURL + "\(idx)"
         
         commentCurrentPage += 1
@@ -32,6 +32,8 @@ final class DetailPostViewModel: BaseViewModel {
         .responseDecodable(of: CommentModel.self) { [weak self] response in
             switch response.result {
             case .success(let postData):
+                completion(.success(postData.size))
+                print(postData.page, postData.size)
                 self?.delegate?.writerImageStringData.onNext(postData.image)
                 self?.delegate?.writerNameData.onNext(postData.writer)
                 self?.delegate?.commentData.accept(postData.comment)
