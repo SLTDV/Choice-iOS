@@ -303,8 +303,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardUp), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDown), name: UIResponder.keyboardWillHideNotification, object: nil)
-        
-//        viewModel.requestCommentData(idx: model!.idx)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
