@@ -26,10 +26,9 @@ final class SignInViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.response?.statusCode {
             case 200:
-                let tk = KeyChain()
                 let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: response.data ?? .init())
-                tk.create(key: "accessToken", token: decodeResult?.accessToken ?? "")
-                tk.create(key: "refreshToken", token: decodeResult?.refreshToken ?? "")
+                KeyChain.shared.create(key: "accessToken", token: decodeResult?.accessToken ?? "")
+                KeyChain.shared.create(key: "refreshToken", token: decodeResult?.refreshToken ?? "")
                 self?.pushMainVC()
                 LoadingIndicator.hideLoading()
                 completion(true)

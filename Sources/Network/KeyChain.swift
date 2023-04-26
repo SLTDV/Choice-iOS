@@ -2,6 +2,8 @@ import Foundation
 import Security
 
 final class KeyChain {
+    static let shared = KeyChain()
+    
     func create(key: String, token: String) {
         let query: NSDictionary = [
             kSecClass: kSecClassGenericPassword,
