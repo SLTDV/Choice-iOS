@@ -241,7 +241,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         viewModel.requestToCreateComment(idx: idx, content: content) {
             DispatchQueue.main.async { [weak self] in
                 self?.viewModel.requestCommentData(idx: idx)
-//                self?.commentTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
                 self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
                 self?.commentData.accept([])
                 self?.enterCommentTextView.text = ""
