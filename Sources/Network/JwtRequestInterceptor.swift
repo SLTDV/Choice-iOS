@@ -20,7 +20,8 @@ final class JwtRequestInterceptor: RequestInterceptor {
     }
     
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
-        guard let response = request.task?.response as? HTTPURLResponse, response.statusCode == 401 else {
+        let refreshExpriedTime = tkService.getToken(type: .refreshExpriedTime).getStringToDate()
+        if refreshExpriedTime.compare(Date()) == .orderedAscending {
             completion(.doNotRetryWithError(error))
             return
         }
