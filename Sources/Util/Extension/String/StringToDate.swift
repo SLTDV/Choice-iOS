@@ -3,10 +3,11 @@ import Foundation
 extension String {
     func getStringToDate() -> Date {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSS"
-        formatter.locale = Locale(identifier: "kr")
+        formatter.dateFormat = "yyyy-MM-dd 'T' HH:mm:ss"
+        formatter.locale = .current
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        
+        print(self)
+
         return formatter.date(from: self)!
     }
 }

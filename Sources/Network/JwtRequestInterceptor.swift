@@ -21,7 +21,7 @@ final class JwtRequestInterceptor: RequestInterceptor {
     
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         let accessExpiredTime = keyChainService.getToken(type: .accessExpriedTime).getStringToDate()
-        if accessExpiredTime.compare(Date()) == .orderedDescending {
+        if accessExpiredTime.compare(Date().addingTimeInterval(-10800)) == .orderedDescending {
             completion(.doNotRetryWithError(error))
             return
         }
