@@ -2,7 +2,7 @@ import Foundation
 import Alamofire
 
 final class JwtRequestInterceptor: RequestInterceptor {
-    let tkService = KeyChainService(keychain: KeyChain.shared)
+    let keyChainService = KeyChainService(keychain: KeyChain.shared)
     
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         guard urlRequest.url?.absoluteString.hasPrefix(APIConstants.baseURL) == true else {
@@ -11,7 +11,7 @@ final class JwtRequestInterceptor: RequestInterceptor {
         }
         var urlRequest = urlRequest
         do {
-            let accessToken = tkService.getToken(type: .accessToken)
+            let accessToken = keyChainService.getToken(type: .accessToken)
             urlRequest.addValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
             completion(.success(urlRequest))
         } catch {
@@ -20,21 +20,23 @@ final class JwtRequestInterceptor: RequestInterceptor {
     }
     
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
-        guard let response = request.task?.response as? HTTPURLResponse, response.statusCode == 401 else {
+        let accessExpiredTime = keyChainService.getToken(type: .accessExpriedTime).getStringToDate()
+        if accessExpiredTime.compare(Date().addingTimeInterval(-10800)) == .orderedDescending {
             completion(.doNotRetryWithError(error))
             return
         }
         
         let url = APIConstants.reissueURL
-        let headers: HTTPHeaders = ["RefreshToken" : tkService.getToken(type: .refreshToken) ?? .init()]
+        let headers: HTTPHeaders = ["RefreshToken" : keyChainService.getToken(type: .refreshToken)]
         
-        AF.request(url, method: .patch, encoding: JSONEncoding.default, headers: headers).responseData { [weak self] response in
+        AF.request(url, method: .patch,
+                   encoding: JSONEncoding.default,
+                   headers: headers).responseDecodable(of: ManageTokenModel.self) { [weak self] response in
             print("retry status code = \(response.response?.statusCode)")
             switch response.result {
             case .success(let data):
-                self?.tkService.deleteAll()
-                let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: data)
-                self?.tkService.saveToken(type: .accessToken, token: decodeResult?.accessToken ?? "")
+                self?.keyChainService.deleteAll()
+                self?.keyChainService.setToken(data: data)
                 completion(.retry)
             case .failure(let error):
                 completion(.doNotRetryWithError(error))

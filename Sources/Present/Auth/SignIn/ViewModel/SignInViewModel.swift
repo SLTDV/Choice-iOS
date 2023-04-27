@@ -12,7 +12,7 @@ final class SignInViewModel: BaseViewModel {
         coordinator.navigate(to: .signUpIsRequired)
     }
     
-    func callToSignInAPI(email: String, password: String, completion: @escaping (Bool) -> Void) {
+    func requestSignIn(email: String, password: String, completion: @escaping (Bool) -> Void) {
         let url = APIConstants.signInURL
         let params = [
             "email" : email,
@@ -24,25 +24,22 @@ final class SignInViewModel: BaseViewModel {
                    parameters: params,
                    encoding: JSONEncoding.default)
         .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
-            switch response.response?.statusCode {
-            case 200:
-                let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: response.data ?? .init())
+        .responseDecodable(of: ManageTokenModel.self) { [weak self] response in
+            switch response.result {
+            case .success(let data):
                 self?.keyChainService.saveToken(type: .accessToken,
-                                       token: decodeResult?.accessToken ?? "")
+                                                token: data.accessToken)
                 self?.keyChainService.saveToken(type: .refreshToken,
-                                       token: decodeResult?.refreshToken ?? "")
+                                                token: data.refreshToken)
                 self?.keyChainService.saveToken(type: .accessExpriedTime,
-                                       token: decodeResult?.accessExpiredTime ?? "")
+                                                token: data.accessExpiredTime)
                 self?.keyChainService.saveToken(type: .refreshExpriedTime,
-                                       token: decodeResult?.refreshExpiredTime ?? "")
+                                                token: data.refreshExpiredTime)
                 self?.pushMainVC()
                 LoadingIndicator.hideLoading()
                 completion(true)
-            case 400:
-                LoadingIndicator.hideLoading()
-                completion(false)
-            default:
+            case .failure(let error):
+                print("signIn Error = \(error.localizedDescription)")
                 LoadingIndicator.hideLoading()
                 completion(false)
             }
