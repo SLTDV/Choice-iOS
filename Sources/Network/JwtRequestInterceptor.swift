@@ -20,8 +20,8 @@ final class JwtRequestInterceptor: RequestInterceptor {
     }
     
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
-        let refreshExpriedTime = tkService.getToken(type: .accessExpriedTime).getStringToDate()
-        if refreshExpriedTime.compare(Date()) == .orderedAscending {
+        let refreshExpiredTime = tkService.getToken(type: .accessExpriedTime).getStringToDate()
+        if refreshExpiredTime.compare(Date()) == .orderedDescending {
             completion(.doNotRetryWithError(error))
             return
         }
@@ -29,13 +29,14 @@ final class JwtRequestInterceptor: RequestInterceptor {
         let url = APIConstants.reissueURL
         let headers: HTTPHeaders = ["RefreshToken" : tkService.getToken(type: .refreshToken)]
         
-        AF.request(url, method: .patch, encoding: JSONEncoding.default, headers: headers).responseData { [weak self] response in
+        AF.request(url, method: .patch,
+                   encoding: JSONEncoding.default,
+                   headers: headers).responseDecodable(of: ManageTokenModel.self) { [weak self] response in
             print("retry status code = \(response.response?.statusCode)")
             switch response.result {
             case .success(let data):
                 self?.tkService.deleteAll()
-                let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: data)
-                self?.tkService.saveToken(type: .accessToken, token: decodeResult?.accessToken ?? "")
+                self?.tkService.saveToken(type: .accessToken, token: data.accessToken)
                 completion(.retry)
             case .failure(let error):
                 completion(.doNotRetryWithError(error))
