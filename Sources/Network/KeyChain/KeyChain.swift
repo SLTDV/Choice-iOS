@@ -1,5 +1,4 @@
 import Foundation
-//import Security
 
 enum KeyChainAccountType: String {
     case accessToken = "accessToken"
@@ -8,10 +7,13 @@ enum KeyChainAccountType: String {
     case refreshExpriedTime = "refreshExpriedTime"
 }
 
+enum KeyChainError: Error {
+    case noData
+}
+
 final class KeyChain {
     static let shared = KeyChain()
-    
-    func create(type: KeyChainAccountType, token: String) {
+    func save(type: KeyChainAccountType, token: String) {
         let query: NSDictionary = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: type.rawValue,   // 저장할 Account
@@ -22,7 +24,7 @@ final class KeyChain {
         assert(status == noErr, "failed to save Token")
     }
     
-    func read(type: KeyChainAccountType) -> String? {
+    func read(type: KeyChainAccountType) throws -> String {
         let query: NSDictionary = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: type.rawValue,
@@ -37,10 +39,10 @@ final class KeyChain {
         if status == errSecSuccess {
             let retrievedData = dataTypeRef as! Data
             let value = String(data: retrievedData, encoding: String.Encoding.utf8)
-            return value
+            return value!
         } else {
             print("failed to loading, status code = \(status)")
-            return nil
+            throw KeyChainError.noData
         }
     }
     
