@@ -48,7 +48,6 @@ final class CommentCell: UITableViewCell {
         }
 
         nicknameLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(14)
             $0.centerY.equalTo(profileImageView)
             $0.leading.equalTo(profileImageView.snp.trailing).offset(8)
         }
