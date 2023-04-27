@@ -6,8 +6,8 @@ extension String {
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS"
         formatter.locale = Locale(identifier: "Ko_Kr")
         
-        print(self)
-        print(formatter.date(from: self))
+        print("self = \(Date())")
+        print("return \(formatter.date(from: self))")
         return formatter.date(from: self)!
     }
 }

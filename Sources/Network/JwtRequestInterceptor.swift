@@ -20,8 +20,8 @@ final class JwtRequestInterceptor: RequestInterceptor {
     }
     
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
-        let refreshExpiredTime = tkService.getToken(type: .accessExpriedTime).getStringToDate()
-        if refreshExpiredTime.compare(Date()) == .orderedDescending {
+        let accessExpiredTime = tkService.getToken(type: .accessExpriedTime).getStringToDate()
+        if accessExpiredTime.compare(Date()) == .orderedDescending {
             completion(.doNotRetryWithError(error))
             return
         }
@@ -37,6 +37,9 @@ final class JwtRequestInterceptor: RequestInterceptor {
             case .success(let data):
                 self?.tkService.deleteAll()
                 self?.tkService.saveToken(type: .accessToken, token: data.accessToken)
+                self?.tkService.saveToken(type: .refreshToken, token: data.refreshToken)
+                self?.tkService.saveToken(type: .accessExpriedTime, token: data.accessExpiredTime)
+                self?.tkService.saveToken(type: .refreshExpriedTime, token: data.refreshExpiredTime)
                 completion(.retry)
             case .failure(let error):
                 completion(.doNotRetryWithError(error))
