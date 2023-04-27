@@ -30,6 +30,7 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     }
     
     private let CertificationNumberTextfield = UITextField().then {
+        $0.isHidden = true
         $0.addLeftPadding()
         $0.placeholder = "인증번호 입력"
         $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
@@ -60,13 +61,24 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     
     private func signUpButtonDidTap() {
     }
+    
+    private func bindUI() {
+        inputPhoneNumberTextfield.rx.text.orEmpty
+            .map { $0.count == 11 }
+            .bind(with: self) { owner, isValid in
+                owner.CertificationRequestButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayVoteButton.color
+                owner.CertificationRequestButton.isEnabled = isValid
+            }.disposed(by: disposeBag)
+    }
   
     private func CertificationRequestButtonDidTap() {
         guard let phoneNumber = inputPhoneNumberTextfield.text else { return }
         
         CertificationRequestButton.rx.tap
+            .take(1)
             .bind(with: self) { owner, _ in
                 owner.viewModel.certificationRequest(phoneNumber: phoneNumber)
+                owner.CertificationNumberTextfield.isHidden = false
             }.disposed(by: disposeBag)
     }
     
@@ -82,6 +94,8 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
         restoreFrameYValue = self.view.frame.origin.y
         signUpButtonDidTap()
         CertificationRequestButtonDidTap()
+        
+        bindUI()
         
         inputPhoneNumberTextfield.delegate = self
         CertificationNumberTextfield.delegate = self
