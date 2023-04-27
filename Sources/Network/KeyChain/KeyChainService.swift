@@ -4,6 +4,7 @@ protocol KeychainServiceProtocol {
     func saveToken(type: KeyChainAccountType, token: String)
     func getToken(type: KeyChainAccountType) -> String
     func deleteAll()
+    func setToken(data: ManageTokenModel)
 }
 
 class KeyChainService: KeychainServiceProtocol {
@@ -28,5 +29,12 @@ class KeyChainService: KeychainServiceProtocol {
     
     func deleteAll() {
         keychain.deleteAll()
+    }
+    
+    func setToken(data: ManageTokenModel) {
+        keychain.save(type: .accessToken, token: data.accessToken)
+        keychain.save(type: .refreshToken, token: data.refreshToken)
+        keychain.save(type: .accessExpriedTime, token: data.accessExpiredTime)
+        keychain.save(type: .refreshExpriedTime, token: data.refreshExpiredTime)
     }
 }

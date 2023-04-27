@@ -36,10 +36,7 @@ final class JwtRequestInterceptor: RequestInterceptor {
             switch response.result {
             case .success(let data):
                 self?.keyChainService.deleteAll()
-                self?.keyChainService.saveToken(type: .accessToken, token: data.accessToken)
-                self?.keyChainService.saveToken(type: .refreshToken, token: data.refreshToken)
-                self?.keyChainService.saveToken(type: .accessExpriedTime, token: data.accessExpiredTime)
-                self?.keyChainService.saveToken(type: .refreshExpriedTime, token: data.refreshExpiredTime)
+                self?.keyChainService.setToken(data: data)
                 completion(.retry)
             case .failure(let error):
                 completion(.doNotRetryWithError(error))
