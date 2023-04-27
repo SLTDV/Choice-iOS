@@ -2,7 +2,7 @@ import Foundation
 import Alamofire
 
 final class JwtRequestInterceptor: RequestInterceptor {
-    let tkService = KeyChainService(keychain: KeyChain.shared)
+    let keyChainService = KeyChainService(keychain: KeyChain.shared)
     
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         guard urlRequest.url?.absoluteString.hasPrefix(APIConstants.baseURL) == true else {
@@ -11,7 +11,7 @@ final class JwtRequestInterceptor: RequestInterceptor {
         }
         var urlRequest = urlRequest
         do {
-            let accessToken = tkService.getToken(type: .accessToken)
+            let accessToken = keyChainService.getToken(type: .accessToken)
             urlRequest.addValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
             completion(.success(urlRequest))
         } catch {
@@ -20,14 +20,14 @@ final class JwtRequestInterceptor: RequestInterceptor {
     }
     
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
-        let accessExpiredTime = tkService.getToken(type: .accessExpriedTime).getStringToDate()
+        let accessExpiredTime = keyChainService.getToken(type: .accessExpriedTime).getStringToDate()
         if accessExpiredTime.compare(Date()) == .orderedDescending {
             completion(.doNotRetryWithError(error))
             return
         }
         
         let url = APIConstants.reissueURL
-        let headers: HTTPHeaders = ["RefreshToken" : tkService.getToken(type: .refreshToken)]
+        let headers: HTTPHeaders = ["RefreshToken" : keyChainService.getToken(type: .refreshToken)]
         
         AF.request(url, method: .patch,
                    encoding: JSONEncoding.default,
@@ -35,11 +35,11 @@ final class JwtRequestInterceptor: RequestInterceptor {
             print("retry status code = \(response.response?.statusCode)")
             switch response.result {
             case .success(let data):
-                self?.tkService.deleteAll()
-                self?.tkService.saveToken(type: .accessToken, token: data.accessToken)
-                self?.tkService.saveToken(type: .refreshToken, token: data.refreshToken)
-                self?.tkService.saveToken(type: .accessExpriedTime, token: data.accessExpiredTime)
-                self?.tkService.saveToken(type: .refreshExpriedTime, token: data.refreshExpiredTime)
+                self?.keyChainService.deleteAll()
+                self?.keyChainService.saveToken(type: .accessToken, token: data.accessToken)
+                self?.keyChainService.saveToken(type: .refreshToken, token: data.refreshToken)
+                self?.keyChainService.saveToken(type: .accessExpriedTime, token: data.accessExpiredTime)
+                self?.keyChainService.saveToken(type: .refreshExpriedTime, token: data.refreshExpiredTime)
                 completion(.retry)
             case .failure(let error):
                 completion(.doNotRetryWithError(error))
