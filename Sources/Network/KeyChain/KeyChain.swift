@@ -17,9 +17,9 @@ final class KeyChain {
         let query: NSDictionary = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: type.rawValue,   // 저장할 Account
-            kSecValueData: token.data(using: .utf8, allowLossyConversion: false) as Any   // 저장할 Token
+            kSecValueData: token.data(using: .utf8, allowLossyConversion: false) as Any// 저장할 Token
         ]
-        SecItemDelete(query)    // Keychain은 Key값에 중복이 생기면, 저장할 수 없기 때문에 먼저 Delete해줌
+        SecItemDelete(query)// Keychain은 Key값에 중복이 생기면, 저장할 수 없기 때문에 먼저 Delete해줌
         let status = SecItemAdd(query, nil)
         assert(status == noErr, "failed to save Token")
     }
@@ -28,11 +28,10 @@ final class KeyChain {
         let query: NSDictionary = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: type.rawValue,
-            kSecReturnData: kCFBooleanTrue as Any,  // CFData 타입으로 불러오라는 의미
-            kSecMatchLimit: kSecMatchLimitOne       // 중복되는 경우, 하나의 값만 불러오라는 의미
+            kSecReturnData: kCFBooleanTrue as Any,// CFData 타입으로 불러오라는 의미
+            kSecMatchLimit: kSecMatchLimitOne // 중복되는 경우, 하나의 값만 불러오라는 의미
         ]
         
-        // READ
         var dataTypeRef: AnyObject?
         let status = SecItemCopyMatching(query, &dataTypeRef)
         

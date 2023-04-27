@@ -26,7 +26,7 @@ final class JwtRequestInterceptor: RequestInterceptor {
         }
         
         let url = APIConstants.reissueURL
-        let headers: HTTPHeaders = ["RefreshToken" : tkService.getToken(type: .refreshToken) ?? .init()]
+        let headers: HTTPHeaders = ["RefreshToken" : tkService.getToken(type: .refreshToken)]
         
         AF.request(url, method: .patch, encoding: JSONEncoding.default, headers: headers).responseData { [weak self] response in
             print("retry status code = \(response.response?.statusCode)")
