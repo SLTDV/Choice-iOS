@@ -2,7 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
+final class CheckUserPhonNumberViewController: BaseVC<CheckUserPhonNumberViewModel> {
     private let disposeBag = DisposeBag()
     
     private lazy var restoreFrameYValue = 0.0
@@ -60,6 +60,24 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     }
     
     private func signUpButtonDidTap() {
+        CertificationNumberTextfield.rx.text.orEmpty
+            .map { $0.count == 4 }
+            .bind(with: self) { owner, isValid in
+                owner.signUpButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayVoteButton.color
+                owner.signUpButton.isEnabled = isValid
+            }.disposed(by: disposeBag)
+        
+        signUpButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.checkAuthCode()
+            }.disposed(by: disposeBag)
+    }
+    
+    private func checkAuthCode() {
+        guard let phoneNumber = inputPhoneNumberTextfield.text else { return }
+        guard let authCode = CertificationNumberTextfield.text else { return }
+        
+        self.viewModel.requestCheckAuthCode(phoneNumber: phoneNumber, authCode: authCode)
     }
     
     private func bindUI() {
@@ -72,12 +90,13 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     }
   
     private func CertificationRequestButtonDidTap() {
-        guard let phoneNumber = inputPhoneNumberTextfield.text else { return }
+        let phoneNumberObservable = inputPhoneNumberTextfield.rx.text.orEmpty
         
         CertificationRequestButton.rx.tap
+            .withLatestFrom(phoneNumberObservable)
             .take(1)
-            .bind(with: self) { owner, _ in
-                owner.viewModel.certificationRequest(phoneNumber: phoneNumber)
+            .bind(with: self) { owner, inputPhoneNumber in
+                owner.viewModel.requestCertification(inputPhoneNumber: inputPhoneNumber)
                 owner.CertificationNumberTextfield.isHidden = false
             }.disposed(by: disposeBag)
     }
@@ -147,7 +166,7 @@ final class UserSecurityInfoViewController: BaseVC<UserSecurityInfoViewModel> {
     }
 }
 
-extension UserSecurityInfoViewController: UITextFieldDelegate {
+extension CheckUserPhonNumberViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.layer.borderColor = UIColor.black.cgColor
     }

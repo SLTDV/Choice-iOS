@@ -2,8 +2,8 @@ import Foundation
 
 final class UserSecurityInfoCoordinator: BaseCoordinator {
     override func start() {
-        let vm = UserSecurityInfoViewModel(coordinator: self)
-        let vc = UserSecurityInfoViewController(viewModel: vm)
+        let vm = CheckUserPhonNumberViewModel(coordinator: self)
+        let vc = CheckUserPhonNumberViewController(viewModel: vm)
         
         navigationController.pushViewController(vc, animated: true)
     }

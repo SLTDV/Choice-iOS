@@ -1,7 +1,7 @@
 import UIKit
 import Alamofire
 
-final class UserSecurityInfoViewModel: BaseViewModel {
+final class CheckUserPhonNumberViewModel: BaseViewModel {
     var email = ""
     var password = ""
     
@@ -29,14 +29,17 @@ final class UserSecurityInfoViewModel: BaseViewModel {
         }
     }
     
-    func certificationRequest(phoneNumber: String) {
+    func requestCertification(inputPhoneNumber: String) {
         let url = APIConstants.certificationRequestURL
         
-        let phoneNumber = URLQueryItem(name: "phoneNumber", value: phoneNumber)
+        let phoneNumberItem = URLQueryItem(name: "phoneNumber", value: inputPhoneNumber)
+        
+        print(inputPhoneNumber)
         
         var components = URLComponents(string: url)
-        components?.queryItems = [phoneNumber]
+        components?.queryItems = [phoneNumberItem]
         
+        print(components!)
         AF.request(components!,
                    method: .post,
                    encoding: URLEncoding.queryString)
@@ -45,11 +48,37 @@ final class UserSecurityInfoViewModel: BaseViewModel {
                 switch response.result {
                 case .success(let data):
                     print("success")
+                    print(components!)
                 case .failure(let error):
                     print(components!)
                     print("comment = \(error.localizedDescription)")
                 }
             }
+    }
+    
+    func requestCheckAuthCode(phoneNumber: String, authCode: String) {
+        let url = APIConstants.checkAuthCodeURL
+        
+        let phoneNumber = URLQueryItem(name: "phoneNumber", value: phoneNumber)
+        let authCode = URLQueryItem(name: "authCode", value: authCode)
+        
+        var components = URLComponents(string: url)
+        components?.queryItems = [phoneNumber, authCode]
+        
+        AF.request(components!,
+                   method: .post,
+                   encoding: URLEncoding.queryString)
+        .responseData { response in
+            switch response.response?.statusCode {
+            case 200:
+                print(components!)
+                self.pushUserProfileInfoVC()
+            case 201:
+                print("201")
+            default:
+                print("error")
+            }
+        }
     }
     
     func isValidEmail(email: String) -> Bool {
