@@ -37,6 +37,32 @@ final class KeyChain {
         }
     }
     
+    func updateItem(value: Any, key: String) -> Bool {
+        let prevQuery: [CFString: Any] = [kSecClass: kSecClassGenericPassword,
+                                              kSecAttrAccount: key]
+        let updateQuery: [CFString: Any] = [kSecValueData: (value as AnyObject).data(using: String.Encoding.utf8.rawValue) as Any]
+        
+        let result: Bool = {
+            let status = SecItemUpdate(prevQuery as CFDictionary, updateQuery as CFDictionary)
+            if status == errSecSuccess { return true }
+            
+            print("updateItem Error : \(status.description)")
+            return false
+        }()
+        
+        return result
+    }
+    
+    func deleteItem(key: String) -> Bool {
+        let deleteQuery: [CFString: Any] = [kSecClass: kSecClassGenericPassword,
+                                            kSecAttrAccount: key]
+        let status = SecItemDelete(deleteQuery as CFDictionary)
+        if status == errSecSuccess { return true }
+        
+        print("deleteItem Error : \(status.description)")
+        return false
+    }
+    
     func deleteAll()  {
       let secItemClasses =  [
         kSecClassGenericPassword,
