@@ -2,7 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-final class CheckUserPhonNumberViewController: BaseVC<CheckUserPhonNumberViewModel> {
+final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumberViewModel> {
     private let disposeBag = DisposeBag()
     
     private lazy var restoreFrameYValue = 0.0
@@ -166,7 +166,7 @@ final class CheckUserPhonNumberViewController: BaseVC<CheckUserPhonNumberViewMod
     }
 }
 
-extension CheckUserPhonNumberViewController: UITextFieldDelegate {
+extension RegistrationPhoneNumberViewController: UITextFieldDelegate {
     func textFieldDidBeginEditing(_ textField: UITextField) {
         textField.layer.borderColor = UIColor.black.cgColor
     }

@@ -1,7 +1,7 @@
 import UIKit
 import Alamofire
 
-final class CheckUserPhonNumberViewModel: BaseViewModel {
+final class RegistrationPhoneNumberViewModel: BaseViewModel {
     var email = ""
     var password = ""
     
@@ -66,7 +66,7 @@ final class CheckUserPhonNumberViewModel: BaseViewModel {
         components?.queryItems = [phoneNumber, authCode]
         
         AF.request(components!,
-                   method: .post,
+                   method: .get,
                    encoding: URLEncoding.queryString)
         .responseData { response in
             switch response.response?.statusCode {
