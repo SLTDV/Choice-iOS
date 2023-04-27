@@ -241,7 +241,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         viewModel.requestToCreateComment(idx: idx, content: content) {
             DispatchQueue.main.async { [weak self] in
                 self?.viewModel.requestCommentData(idx: idx)
-                self?.commentTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .none, animated: true)
                 self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
                 self?.commentData.accept([])
                 self?.enterCommentTextView.text = ""
@@ -469,7 +468,6 @@ extension DetailPostViewController: UITableViewDelegate {
                                          completion: { [weak self] result in
                 switch result {
                 case .success(()):
-                    self?.viewModel.requestCommentData(idx: self!.model!.idx)
                     DispatchQueue.main.async {
                         self?.commentTableView.reloadRows(
                             at: [indexPath],
