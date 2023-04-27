@@ -27,13 +27,13 @@ final class SignInViewModel: BaseViewModel {
             switch response.response?.statusCode {
             case 200:
                 let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: response.data ?? .init())
-                KeyChain.shared.create(key: "accessToken",
+                KeyChain.shared.create(type: .accessToken,
                                        token: decodeResult?.accessToken ?? "")
-                KeyChain.shared.create(key: "refreshToken",
+                KeyChain.shared.create(type: .refreshToken,
                                        token: decodeResult?.refreshToken ?? "")
-                KeyChain.shared.create(key: "accessExpiredTime",
+                KeyChain.shared.create(type: .accessExpriedTime,
                                        token: decodeResult?.accessExpiredTime ?? "")
-                KeyChain.shared.create(key: "refreshExpiredTime",
+                KeyChain.shared.create(type: .refreshExpriedTime,
                                        token: decodeResult?.refreshExpiredTime ?? "")
                 self?.pushMainVC()
                 LoadingIndicator.hideLoading()

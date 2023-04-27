@@ -16,7 +16,7 @@ final class AppCoordinator: Coordinator {
     func start() {
         let tk = KeyChain()
         let url = APIConstants.reissueURL
-        let headers: HTTPHeaders = ["RefreshToken" : tk.read(key: "refreshToken") ?? .init()]
+        let headers: HTTPHeaders = ["RefreshToken" : tk.read(type: .refreshToken) ?? .init()]
         
         let signInController = SignInCoordinator(navigationController: navigationController)
         let homeController = HomeCoordinator(navigationController: navigationController)
@@ -27,7 +27,7 @@ final class AppCoordinator: Coordinator {
             switch response.result {
             case .success(let data):
                 let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: data)
-                tk.create(key: "refreshToken", token: decodeResult?.refreshToken ?? "")
+                tk.create(type: .refreshToken, token: decodeResult?.refreshToken ?? "")
                 self?.start(coordinator: homeController)
             case .failure:
                 self?.start(coordinator: signInController)

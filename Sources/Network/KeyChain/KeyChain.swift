@@ -1,13 +1,20 @@
 import Foundation
-import Security
+//import Security
+
+enum KeyChainAccountType: String {
+    case accessToken = "accessToken"
+    case refreshToken = "refreshToken"
+    case accessExpriedTime = "accessExpriedTime"
+    case refreshExpriedTime = "refreshExpriedTime"
+}
 
 final class KeyChain {
     static let shared = KeyChain()
     
-    func create(key: String, token: String) {
+    func create(type: KeyChainAccountType, token: String) {
         let query: NSDictionary = [
             kSecClass: kSecClassGenericPassword,
-            kSecAttrAccount: key,   // 저장할 Account
+            kSecAttrAccount: type.rawValue,   // 저장할 Account
             kSecValueData: token.data(using: .utf8, allowLossyConversion: false) as Any   // 저장할 Token
         ]
         SecItemDelete(query)    // Keychain은 Key값에 중복이 생기면, 저장할 수 없기 때문에 먼저 Delete해줌
@@ -15,10 +22,10 @@ final class KeyChain {
         assert(status == noErr, "failed to save Token")
     }
     
-    func read(key: String) -> String? {
+    func read(type: KeyChainAccountType) -> String? {
         let query: NSDictionary = [
             kSecClass: kSecClassGenericPassword,
-            kSecAttrAccount: key,
+            kSecAttrAccount: type.rawValue,
             kSecReturnData: kCFBooleanTrue as Any,  // CFData 타입으로 불러오라는 의미
             kSecMatchLimit: kSecMatchLimitOne       // 중복되는 경우, 하나의 값만 불러오라는 의미
         ]
@@ -37,9 +44,9 @@ final class KeyChain {
         }
     }
     
-    func updateItem(value: Any, key: String) -> Bool {
+    func updateItem(value: Any, type: KeyChainAccountType) -> Bool {
         let prevQuery: [CFString: Any] = [kSecClass: kSecClassGenericPassword,
-                                              kSecAttrAccount: key]
+                                          kSecAttrAccount: type.rawValue]
         let updateQuery: [CFString: Any] = [kSecValueData: (value as AnyObject).data(using: String.Encoding.utf8.rawValue) as Any]
         
         let result: Bool = {
@@ -53,9 +60,9 @@ final class KeyChain {
         return result
     }
     
-    func deleteItem(key: String) -> Bool {
+    func deleteItem(type: KeyChainAccountType) -> Bool {
         let deleteQuery: [CFString: Any] = [kSecClass: kSecClassGenericPassword,
-                                            kSecAttrAccount: key]
+                                                       kSecAttrAccount: type.rawValue]
         let status = SecItemDelete(deleteQuery as CFDictionary)
         if status == errSecSuccess { return true }
         

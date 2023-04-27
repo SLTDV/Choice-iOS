@@ -6,7 +6,7 @@ final class JwtRequestInterceptor: RequestInterceptor {
     
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         guard urlRequest.url?.absoluteString.hasPrefix(APIConstants.baseURL) == true,
-            let accessToken = tk.read(key: "accessToken") else {
+              let accessToken = tk.read(type: .accessToken) else {
             completion(.success(urlRequest))
             return
         }
@@ -22,7 +22,7 @@ final class JwtRequestInterceptor: RequestInterceptor {
         }
         
         let url = APIConstants.reissueURL
-        let headers: HTTPHeaders = ["RefreshToken" : tk.read(key: "refreshToken") ?? .init()]
+        let headers: HTTPHeaders = ["RefreshToken" : tk.read(type: .refreshToken) ?? .init()]
         
         AF.request(url, method: .patch, encoding: JSONEncoding.default, headers: headers).responseData { [weak self] response in
             print("retry status code = \(response.response?.statusCode)")
@@ -30,8 +30,7 @@ final class JwtRequestInterceptor: RequestInterceptor {
             case .success(let data):
                 self?.tk.deleteAll()
                 let decodeResult = try? JSONDecoder().decode(ManageTokenModel.self, from: data)
-                self?.tk.create(key: "accessToken", token: decodeResult?.accessToken ?? "")
-                self?.tk.create(key: "refreshToken", token: decodeResult?.refreshToken ?? "")
+                self?.tk.create(type: .accessToken, token: decodeResult?.accessToken ?? "")
                 completion(.retry)
             case .failure(let error):
                 completion(.doNotRetryWithError(error))
