@@ -9,7 +9,6 @@ protocol PostItemsProtocol: AnyObject {
 
 final class HomeViewModel: BaseViewModel {
     weak var delegate: PostItemsProtocol?
-    private let tk = KeyChain()
     private var disposeBag = DisposeBag()
     var newestPostCurrentPage = -1
     var bestPostCurrentPage = -1
