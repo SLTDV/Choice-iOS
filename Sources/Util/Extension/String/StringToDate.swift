@@ -6,7 +6,6 @@ extension String {
         formatter.dateFormat = "yyyy-MM-dd 'T' HH:mm:ss"
         formatter.locale = .current
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        print(self)
 
         return formatter.date(from: self)!
     }
