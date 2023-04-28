@@ -8,19 +8,14 @@ on:
 
 jobs:
   build:
+    name: Build
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
-      with:
-        xcode-version: latest
-    - name: install tuist
-      run: curl -Ls https://install.tuist.io | bash
-    - name: Project Generate
-      run: |
-        rm -rf .package.resolved
-        tuist clean
-        tuist fetch
-        tuist generate
+        - uses: tuist/tuist-actions@0.13.0
+        with:
+            command: 'fetch'
+            arguments: ''
     - uses: tuist/tuist-actions@0.13.0
         with:
             command: 'build'
