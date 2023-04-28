@@ -79,7 +79,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     }
     
     @objc private func signUpButtonDidTap(_ sender: UIButton) {
-        guard let email = phoneNumber else { return  }
+        guard let phoneNumber = phoneNumber else { return  }
         guard let password = password else { return  }
         guard let nickName = userNameTextField.text else { return }
         
@@ -89,7 +89,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         
         LoadingIndicator.showLoading(text: "")
         
-        viewModel.callToSignUp(email: email, password: password, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
+        viewModel.callToSignUp(phoneNumber: phoneNumber, password: password, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
             if isDuplicate {
                 self.viewModel.navigateRootVC()
             } else {

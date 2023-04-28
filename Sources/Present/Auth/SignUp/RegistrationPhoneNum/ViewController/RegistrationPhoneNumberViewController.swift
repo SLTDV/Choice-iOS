@@ -77,7 +77,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         guard let phoneNumber = inputPhoneNumberTextfield.text else { return }
         guard let authCode = CertificationNumberTextfield.text else { return }
         
-        self.viewModel.requestCheckAuthCode(phoneNumber: phoneNumber, authCode: authCode)
+        self.viewModel.requestCheckAuthCode(inputphoneNumber: phoneNumber, authCode: authCode)
     }
     
     private func bindUI() {

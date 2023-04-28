@@ -1,7 +1,7 @@
 import Foundation
 
 final class RegistrationPhoneNumberCoordinator: BaseCoordinator {
-    func startRegistrationPasswordVC(phoneNumber: String) {
+    override func start() {
         let vm = RegistrationPhoneNumberViewModel(coordinator: self)
         let vc = RegistrationPhoneNumberViewController(viewModel: vm)
         

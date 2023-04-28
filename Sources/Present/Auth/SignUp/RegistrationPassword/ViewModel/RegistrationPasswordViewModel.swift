@@ -2,7 +2,6 @@ import UIKit
 
 final class RegistrationPasswordViewModel: BaseViewModel {
     var phoneNumber = ""
-    var password = ""
     
     init(coordinator: RegistrationPasswordCoordinator, phoneNumber: String) {
         super.init(coordinator: coordinator)
@@ -15,7 +14,8 @@ final class RegistrationPasswordViewModel: BaseViewModel {
         return passwordTest.evaluate(with: password)
     }
     
-    func pushUserProfileInfoVC() {
+    func pushUserProfileInfoVC(password: String) {
         coordinator.navigate(to: .userProfileInfoIsRequired(phoneNumber: phoneNumber, password: password))
+        print(phoneNumber)
     }
 }

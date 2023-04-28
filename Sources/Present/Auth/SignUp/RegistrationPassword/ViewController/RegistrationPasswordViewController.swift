@@ -71,7 +71,7 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         
         if password.elementsEqual(checkPassword) {
             if self.testPassword(password: password){
-                self.viewModel.pushUserProfileInfoVC()
+                self.viewModel.pushUserProfileInfoVC(password: password)
             } else {
                 self.showWarningLabel(warning: "*비밀번호 형식이 올바르지 않아요.")
             }

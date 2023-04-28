@@ -22,7 +22,6 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
                 case .success(let data):
                     print("success")
                     print(components!)
-                    self.pushRegistrationPasswordVC(phoneNumber: inputPhoneNumber)
                 case .failure(let error):
                     print(components!)
                     print("comment = \(error.localizedDescription)")
@@ -30,10 +29,10 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
             }
     }
     
-    func requestCheckAuthCode(phoneNumber: String, authCode: String) {
+    func requestCheckAuthCode(inputphoneNumber: String, authCode: String) {
         let url = APIConstants.checkAuthCodeURL
         
-        let phoneNumber = URLQueryItem(name: "phoneNumber", value: phoneNumber)
+        let phoneNumber = URLQueryItem(name: "phoneNumber", value: inputphoneNumber)
         let authCode = URLQueryItem(name: "authCode", value: authCode)
         
         var components = URLComponents(string: url)
@@ -45,6 +44,7 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
         .responseData { response in
             switch response.response?.statusCode {
             case 200:
+                self.pushRegistrationPasswordVC(phoneNumber: inputphoneNumber)
                 print(components!)
             case 201:
                 print("201")
