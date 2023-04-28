@@ -20,6 +20,8 @@ jobs:
     - name: project Generate
       run: |
         rm -rf .package.resolved
+        tuist clean
+        tuist fetch
         tuist generate
     - name: Build
       run: |
