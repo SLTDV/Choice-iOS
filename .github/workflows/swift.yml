@@ -12,11 +12,11 @@ jobs:
     runs-on: macos-latest
     steps:
         - uses: actions/checkout@v3
-        - uses: tuist/tuist-actions@0.13.0
+        - uses: tuist/tuist-action@0.13.0
           with:
             command: 'fetch'
             arguments: ''
-        - uses: tuist/tuist-actions@0.13.0
+        - uses: tuist/tuist-action@0.13.0
           with:
             command: 'build'
             arguments: ''
