@@ -22,7 +22,7 @@ final class SignInCoordinator: BaseCoordinator {
 
 extension SignInCoordinator {
     private func signUpIsRequired() {
-        let vc = UserSecurityInfoCoordinator(navigationController: navigationController)
+        let vc = RegistrationPasswordCoordinator(navigationController: navigationController)
         vc.parentCoordinator = self
         childCoordinators.append(vc)
         vc.start()

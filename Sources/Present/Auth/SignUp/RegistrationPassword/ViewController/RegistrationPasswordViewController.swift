@@ -33,6 +33,19 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         $0.layer.cornerRadius = 8
     }
     
+    private let warningLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 14, weight: .semibold)
+        $0.isHidden = true
+        $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
+    }
+    
+    private func showWarningLabel(warning: String) {
+        DispatchQueue.main.async {
+            self.warningLabel.isHidden = false
+            self.warningLabel.text = warning
+        }
+    }
+    
     private func bindUI() {
         let passwordObservable = inputPasswordTextfield.rx.text.orEmpty
         let checkPasswordObservable = checkPasswordTextfield.rx.text.orEmpty
@@ -48,8 +61,37 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         }.disposed(by: disposeBag)
     }
     
+    private func testPassword(password: String) -> Bool {
+        return viewModel.isValidPassword(password: password)
+    }
+    
+    private func checkPassword() {
+        guard let password = inputPasswordTextfield.text else { return }
+        guard let checkPassword = checkPasswordTextfield.text else { return }
+        
+        if password.elementsEqual(checkPassword) {
+            if self.testPassword(password: password){
+                self.viewModel.pushUserProfileInfoVC()
+            } else {
+                self.showWarningLabel(warning: "*비밀번호 형식이 올바르지 않아요.")
+            }
+        } else {
+            self.showWarningLabel(warning: "*비밀번호가 일치하지 않아요.")
+        }
+    }
+    
+    private func nextButtonDidTap() {
+        nextButton.rx.tap
+            .bind(onNext: {
+                self.checkPassword()
+            }).disposed(by: disposeBag)
+    }
+    
     override func configureVC() {
         bindUI()
+        nextButtonDidTap()
+        
+        navigationItem.title = "회원가입"
         
         inputPasswordTextfield.delegate = self
         checkPasswordTextfield.delegate = self
@@ -57,7 +99,7 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
     
     override func addView() {
         view.addSubviews(passwordLabel, inputPasswordTextfield,
-                         checkPasswordTextfield, nextButton)
+                         checkPasswordTextfield, warningLabel, nextButton)
     }
     
     override func setLayout() {
@@ -76,6 +118,11 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
             $0.top.equalTo(inputPasswordTextfield.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(51)
+        }
+        
+        warningLabel.snp.makeConstraints {
+            $0.leading.equalTo(nextButton.snp.leading)
+            $0.bottom.equalTo(nextButton.snp.top).offset(-12)
         }
         
         nextButton.snp.makeConstraints {

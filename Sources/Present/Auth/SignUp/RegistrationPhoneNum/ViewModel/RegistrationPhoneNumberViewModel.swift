@@ -3,7 +3,6 @@ import Alamofire
 
 final class RegistrationPhoneNumberViewModel: BaseViewModel {
     var email = ""
-    var password = ""
     
     func checkDuplicateEmail(email: String, completion: @escaping (Bool) -> Void){
         let url = APIConstants.emailDuplicationURL
@@ -72,7 +71,6 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
             switch response.response?.statusCode {
             case 200:
                 print(components!)
-                self.pushUserProfileInfoVC()
             case 201:
                 print("201")
             default:
@@ -91,9 +89,5 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
         let passwordRegEx = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,16}$"
         let passwordTest = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
         return passwordTest.evaluate(with: password)
-    }
-    
-    func pushUserProfileInfoVC() {
-        coordinator.navigate(to: .userProfileInfoIsRequired(email: email, password: password))
     }
 }

@@ -3,7 +3,7 @@ import RxSwift
 import RxCocoa
 
 final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
-    var email: String?
+    var phoneNumber: String?
     var password: String?
 
     var isImageChanged = false
@@ -79,7 +79,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     }
     
     @objc private func signUpButtonDidTap(_ sender: UIButton) {
-        guard let email = email else { return  }
+        guard let email = phoneNumber else { return  }
         guard let password = password else { return  }
         guard let nickName = userNameTextField.text else { return }
         
@@ -116,9 +116,9 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         bindUI()
     }
     
-    init(viewModel: UserProfileInfoViewModel, email: String, password: String) {
+    init(viewModel: UserProfileInfoViewModel, phoneNumber: String, password: String) {
         super.init(viewModel: viewModel)
-        self.email = email
+        self.phoneNumber = phoneNumber
         self.password = password
     }
     
