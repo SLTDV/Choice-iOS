@@ -13,10 +13,10 @@ jobs:
     steps:
         - uses: actions/checkout@v3
         - uses: tuist/tuist-actions@0.13.0
-            with:
-                command: 'fetch'
-                arguments: ''
+          with:
+            command: 'fetch'
+            arguments: ''
         - uses: tuist/tuist-actions@0.13.0
-            with:
-                command: 'build'
-                arguments: ''
+          with:
+            command: 'build'
+            arguments: ''
