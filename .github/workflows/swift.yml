@@ -21,3 +21,7 @@ jobs:
         tuist clean
         tuist fetch
         tuist generate
+    - uses: tuist/tuist-actions@0.13.0
+        with:
+            command: 'build'
+            arguments: ''
