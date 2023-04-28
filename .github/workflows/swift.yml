@@ -8,21 +8,20 @@ on:
 
 jobs:
   build:
-
     runs-on: macos-latest
-
     steps:
     - uses: actions/checkout@v3
       with:
         xcode-version: latest
     - name: install tuist
       run: curl -Ls https://install.tuist.io | bash
-    - name: project Generate
+    - name: Project Generate
       run: |
         rm -rf .package.resolved
         tuist clean
         tuist fetch
         tuist generate
-    - name: Build
-      run: |
-        xcodebuild -project Choice.xcodeproj -scheme Choice -destination 'platform=iOS Simulator,name=iPhone 11 Pro,OS=latest'
+    - uses: tuist/tuist-actions@0.13.0
+        with:
+            command: 'build'
+            arguments: ''
