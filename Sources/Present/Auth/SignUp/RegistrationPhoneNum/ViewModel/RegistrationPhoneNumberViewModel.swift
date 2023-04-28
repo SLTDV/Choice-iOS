@@ -2,8 +2,6 @@ import UIKit
 import Alamofire
 
 final class RegistrationPhoneNumberViewModel: BaseViewModel {
-    var phoneNumber = ""
-    
     func requestCertification(inputPhoneNumber: String) {
         let url = APIConstants.certificationRequestURL
         
@@ -24,6 +22,7 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
                 case .success(let data):
                     print("success")
                     print(components!)
+                    self.pushRegistrationPasswordVC(phoneNumber: inputPhoneNumber)
                 case .failure(let error):
                     print(components!)
                     print("comment = \(error.localizedDescription)")
@@ -65,5 +64,9 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
         let passwordRegEx = "^(?=.*[A-Za-z])(?=.*\\d)(?=.*[$@$!%*#?&])[A-Za-z\\d$@$!%*#?&]{8,16}$"
         let passwordTest = NSPredicate(format: "SELF MATCHES %@", passwordRegEx)
         return passwordTest.evaluate(with: password)
+    }
+    
+    func pushRegistrationPasswordVC(phoneNumber: String) {
+        coordinator.navigate(to: .registrationPasswordIsRequired(phoneNumber: phoneNumber))
     }
 }
