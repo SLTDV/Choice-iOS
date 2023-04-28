@@ -2,31 +2,7 @@ import UIKit
 import Alamofire
 
 final class RegistrationPhoneNumberViewModel: BaseViewModel {
-    var email = ""
-    
-    func checkDuplicateEmail(email: String, completion: @escaping (Bool) -> Void){
-        let url = APIConstants.emailDuplicationURL
-        let body : Parameters = [
-            "email": email
-        ]
-        
-        AF.request(url,
-                   method: .post,
-                   parameters: body,
-                   encoding: JSONEncoding.default).responseData { response in
-            switch response.response?.statusCode {
-            case 200:
-                LoadingIndicator.hideLoading()
-                completion(true)
-            case 409:
-                LoadingIndicator.hideLoading()
-                completion(false)
-            default:
-                print(response.response?.statusCode ?? 0)
-                completion(false)
-            }
-        }
-    }
+    var phoneNumber = ""
     
     func requestCertification(inputPhoneNumber: String) {
         let url = APIConstants.certificationRequestURL
