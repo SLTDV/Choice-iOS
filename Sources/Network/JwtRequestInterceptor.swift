@@ -10,13 +10,9 @@ final class JwtRequestInterceptor: RequestInterceptor {
             return
         }
         var urlRequest = urlRequest
-        do {
-            let accessToken = keyChainService.getToken(type: .accessToken)
-            urlRequest.addValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
-            completion(.success(urlRequest))
-        } catch {
-            completion(.failure(error))
-        }
+        let accessToken = keyChainService.getToken(type: .accessToken)
+        urlRequest.addValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
+        completion(.success(urlRequest))
     }
     
     func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
