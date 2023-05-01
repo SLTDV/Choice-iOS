@@ -94,18 +94,15 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         
         CertificationRequestButton.rx.tap
             .withLatestFrom(phoneNumberObservable)
-            .take(1)
+            .take(3)
             .bind(with: self) { owner, inputPhoneNumber in
+                owner.CertificationRequestButton.titleLabel?.text = "재전송"
                 owner.viewModel.requestCertification(inputPhoneNumber: inputPhoneNumber)
                 owner.CertificationNumberTextfield.isHidden = false
             }.disposed(by: disposeBag)
     }
     
-    func testEmail(email: String) -> Bool {
-        return viewModel.isValidEmail(email: email)
-    }
-    
-    func testPassword(password: String) -> Bool {
+    private func testPassword(password: String) -> Bool {
         return viewModel.isValidPassword(password: password)
     }
     

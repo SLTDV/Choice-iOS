@@ -29,7 +29,7 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
             }
     }
     
-    func requestCheckAuthCode(inputphoneNumber: String, authCode: String) {
+    func requestCheckAuthCode(inputphoneNumber: String, authCode: String, completion: @escaping (Bool) -> Void) {
         let url = APIConstants.checkAuthCodeURL
         
         let phoneNumber = URLQueryItem(name: "phoneNumber", value: inputphoneNumber)
@@ -45,9 +45,10 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
             switch response.response?.statusCode {
             case 200:
                 self.pushRegistrationPasswordVC(phoneNumber: inputphoneNumber)
-                print(components!)
-            case 201:
-                print("201")
+                LoadingIndicator.hideLoading()
+            case 409:
+                completion(false)
+                LoadingIndicator.hideLoading()
             default:
                 print("error")
             }
