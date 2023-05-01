@@ -2,11 +2,11 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
-    name: "Feature",
+    name: "JwtStore",
     product: .staticFramework,
     dependencies: [
         TargetDependency.project(
-            target: "Service",
-            path: .relativeToRoot("Projects/Service"))
+            target: "Shared",
+            path: .relativeToRoot("Projects/Shared"))
     ]
 )

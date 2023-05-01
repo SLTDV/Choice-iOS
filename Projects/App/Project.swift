@@ -8,7 +8,13 @@ let project = Project.makeModule(
     dependencies: [
         TargetDependency.project(
             target: "Shared",
-            path: .relativeToRoot("Projects/Shared"))
+            path: .relativeToRoot("Projects/Shared")),
+        TargetDependency.project(
+            target: "Interceptor",
+            path: .relativeToRoot("Projects/Core/Interceptor")),
+        TargetDependency.project(
+            target: "JwtStore",
+            path: .relativeToRoot("Projects/Core/JwtStore"))
     ],
     resources: ["Resources/**"],
     infoPlist: .file(path: "Support/Info.plist")

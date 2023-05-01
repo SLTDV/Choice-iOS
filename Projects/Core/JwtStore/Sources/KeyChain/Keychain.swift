@@ -1,7 +1,7 @@
 import Foundation
 
-public struct KeyChain {
-    public func save(type: KeyChainAccountType, token: String) {
+class KeyChain {
+    func save(type: KeyChainAccountType, token: String) {
         let query: NSDictionary = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: type.rawValue,   // 저장할 Account
@@ -12,7 +12,7 @@ public struct KeyChain {
         assert(status == noErr, "failed to save Token")
     }
     
-    public func read(type: KeyChainAccountType) throws -> String {
+    func read(type: KeyChainAccountType) throws -> String {
         let query: NSDictionary = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: type.rawValue,
@@ -33,7 +33,7 @@ public struct KeyChain {
         }
     }
     
-    public func deleteItem(type: KeyChainAccountType) -> Bool {
+    func deleteItem(type: KeyChainAccountType) -> Bool {
         let deleteQuery: [CFString: Any] = [kSecClass: kSecClassGenericPassword,
                                                        kSecAttrAccount: type.rawValue]
         let status = SecItemDelete(deleteQuery as CFDictionary)
@@ -43,7 +43,7 @@ public struct KeyChain {
         return false
     }
     
-    public func deleteAll()  {
+    func deleteAll()  {
       let secItemClasses =  [
         kSecClassGenericPassword,
         kSecClassInternetPassword,

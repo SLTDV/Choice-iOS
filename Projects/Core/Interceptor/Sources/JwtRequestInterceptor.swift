@@ -1,12 +1,13 @@
 import Foundation
 import Alamofire
+import Swinject
 import JwtStore
+import Shared
 
-struct JwtRequestInterceptor: RequestInterceptor {
-    let keychain = KeyChain()
-    let keyChainService = KeyChainService(keychain: keychain)
+public class JwtRequestInterceptor: RequestInterceptor {
+    let keyChainService = Container().resolve(KeyChainService.self)!
     
-    func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
+    public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         guard urlRequest.url?.absoluteString.hasPrefix(APIConstants.baseURL) == true else {
             completion(.success(urlRequest))
             return
@@ -17,7 +18,7 @@ struct JwtRequestInterceptor: RequestInterceptor {
         completion(.success(urlRequest))
     }
     
-    func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+    public func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         let accessExpiredTime = keyChainService.getToken(type: .accessExpriedTime).getStringToDate()
         if accessExpiredTime.compare(Date().addingTimeInterval(-10800)) == .orderedDescending {
             completion(.doNotRetryWithError(error))

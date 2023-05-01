@@ -2,7 +2,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
-    name: "Service",
+    name: "Interceptor",
     product: .staticFramework,
     dependencies: [
         TargetDependency.project(
