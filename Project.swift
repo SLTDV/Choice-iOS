@@ -6,14 +6,8 @@ let organizationName = "com.dohyeon"
 
 let project = Project(
     name: projectName,
-    organizationName: organizationName, packages: [
-        .SnapKit,
-        .Then,
-        .Kingfisher,
-        .RxSwift,
-        .RxCocoa,
-        .Alamofire
-    ],
+    organizationName: organizationName,
+    packages: [],
     targets: [
         Target(
             name: "\(projectName)",
