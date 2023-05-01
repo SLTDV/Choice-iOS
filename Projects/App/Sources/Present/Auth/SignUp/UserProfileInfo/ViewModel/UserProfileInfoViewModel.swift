@@ -1,5 +1,6 @@
 import UIKit
 import Alamofire
+import Shared
 
 final class UserProfileInfoViewModel: BaseViewModel {
     func callToSignUp(email: String, password: String, nickname: String, profileImage: UIImage?, completion: @escaping (Bool) -> Void) {

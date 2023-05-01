@@ -2,6 +2,7 @@ import UIKit
 import PhotosUI
 import RxSwift
 import RxCocoa
+import Shared
 
 final class AddPostViewController: BaseVC<AddPostViewModel> {
     private let disposeBag = DisposeBag()

@@ -2,6 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Kingfisher
+import Shared
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
     var writerNameData = PublishSubject<String>()

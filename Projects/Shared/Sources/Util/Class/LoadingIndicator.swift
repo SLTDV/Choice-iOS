@@ -2,7 +2,7 @@ import UIKit
 
 public final class LoadingIndicator {
     private init() {}
-    static func showLoading(text: String) {
+    public static func showLoading(text: String) {
         DispatchQueue.main.async {
             guard let window = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.last else { return }
             let loadingIndicatorView: UIActivityIndicatorView
@@ -21,7 +21,7 @@ public final class LoadingIndicator {
         }
     }
 
-    static func hideLoading() {
+    public static func hideLoading() {
         DispatchQueue.main.async {
             guard let window = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.last else { return }
             window.subviews.filter({ $0 is UIActivityIndicatorView }).forEach { $0.removeFromSuperview() }

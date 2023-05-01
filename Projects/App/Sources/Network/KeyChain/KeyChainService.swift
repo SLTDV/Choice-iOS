@@ -1,17 +1,17 @@
 import Foundation
 
-public struct KeyChainService: JwtStore {
+struct KeyChainService: JwtStore {
     private let keychain: KeyChain
     
     init(keychain: KeyChain) {
         self.keychain = keychain
     }
     
-    public func saveToken(type: KeyChainAccountType, token: String) {
+    func saveToken(type: KeyChainAccountType, token: String) {
         keychain.save(type: type, token: token)
     }
     
-    public func getToken(type: KeyChainAccountType) -> String {
+    func getToken(type: KeyChainAccountType) -> String {
         do {
             return try keychain.read(type: type)
         } catch {
@@ -20,11 +20,11 @@ public struct KeyChainService: JwtStore {
         }
     }
     
-    public func deleteAll() {
+    func deleteAll() {
         keychain.deleteAll()
     }
     
-    public func setToken(data: ManageTokenModel) {
+    func setToken(data: ManageTokenModel) {
         keychain.save(type: .accessToken, token: data.accessToken)
         keychain.save(type: .refreshToken, token: data.refreshToken)
         keychain.save(type: .accessExpriedTime, token: data.accessExpiredTime)

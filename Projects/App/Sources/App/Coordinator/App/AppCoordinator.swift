@@ -6,6 +6,7 @@ final class AppCoordinator: Coordinator {
     var childCoordinator: [Coordinator] = []
     var parentCoordinator: Coordinator?
     let window: UIWindow?
+    let keychain = KeyChain()
     
     init(navigationCotroller: UINavigationController, window: UIWindow?) {
         self.window = window
@@ -14,7 +15,7 @@ final class AppCoordinator: Coordinator {
     }
     
     func start() {
-        let keychainService = KeyChainService(keychain: KeyChain.shared)
+        let keychainService = KeyChainService(keychain: keychain)
         let url = APIConstants.reissueURL
         let headers: HTTPHeaders = ["RefreshToken" : keychainService.getToken(type: .refreshToken)]
         

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct APIConstants {
+struct APIConstants {
     public static let baseURL = "https://www.choice-time.com/"
     
     //SignIn

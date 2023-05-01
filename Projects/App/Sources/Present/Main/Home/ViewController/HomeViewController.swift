@@ -1,6 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Shared
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVoteButtonDidTapDelegate {
     // MARK: - Properties

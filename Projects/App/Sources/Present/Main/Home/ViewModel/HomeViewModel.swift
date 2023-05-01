@@ -2,6 +2,7 @@ import Foundation
 import RxSwift
 import Alamofire
 import RxCocoa
+import Shared
 
 protocol PostItemsProtocol: AnyObject {
     var postData: BehaviorRelay<[Posts]> { get set }

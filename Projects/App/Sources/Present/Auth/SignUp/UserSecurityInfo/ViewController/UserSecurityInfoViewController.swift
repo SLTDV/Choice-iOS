@@ -1,4 +1,5 @@
 import UIKit
+import Shared
 import RxSwift
 import RxCocoa
 

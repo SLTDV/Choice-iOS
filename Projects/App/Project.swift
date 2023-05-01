@@ -7,9 +7,6 @@ let project = Project.makeModule(
     product: .app,
     dependencies: [
         TargetDependency.project(
-            target: "JwtStore",
-            path: .relativeToRoot("Projects/Core/JwtStore")),
-        TargetDependency.project(
             target: "Shared",
             path: .relativeToRoot("Projects/Shared"))
     ],

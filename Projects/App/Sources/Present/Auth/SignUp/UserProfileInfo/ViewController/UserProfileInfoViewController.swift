@@ -1,6 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Shared
 
 final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     var email: String?

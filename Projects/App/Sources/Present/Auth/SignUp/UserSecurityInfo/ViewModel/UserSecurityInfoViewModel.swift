@@ -1,5 +1,6 @@
 import Foundation
 import Alamofire
+import Shared
 
 final class UserSecurityInfoViewModel: BaseViewModel {
     var email = ""

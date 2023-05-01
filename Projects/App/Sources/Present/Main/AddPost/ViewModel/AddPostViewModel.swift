@@ -1,5 +1,6 @@
 import UIKit
 import Alamofire
+import Shared
 
 final class AddPostViewModel: BaseViewModel {
     func createPost(title: String, content: String, firstImage: UIImage, secondImage: UIImage,

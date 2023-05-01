@@ -2,6 +2,7 @@ import UIKit
 import Alamofire
 import RxSwift
 import RxRelay
+import Shared
 
 protocol ProfileDataProtocol: AnyObject {
     var nicknameData: PublishSubject<String> { get set }

@@ -2,6 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Kingfisher
+import Shared
 
 final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
     var nicknameData = PublishSubject<String>()

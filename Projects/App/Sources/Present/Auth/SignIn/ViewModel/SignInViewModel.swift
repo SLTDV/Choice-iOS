@@ -1,9 +1,10 @@
 import Foundation
 import Alamofire
 import RxSwift
+import Shared
 
 final class SignInViewModel: BaseViewModel {
-    let keyChainService = KeyChainService(keychain: KeyChain.shared)
+    let keyChainService = KeyChainService(keychain: KeyChain())
     func pushMainVC() {
         coordinator.navigate(to: .mainVCIsRequried)
     }

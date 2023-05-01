@@ -1,8 +1,9 @@
 import Foundation
 import Alamofire
+import JwtStore
 
-final class JwtRequestInterceptor: RequestInterceptor {
-    let keyChainService = KeyChainService(keychain: KeyChain.shared)
+class JwtRequestInterceptor: RequestInterceptor {
+    let keyChainService = KeyChainService(keychain: KeyChain())
     
     func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         guard urlRequest.url?.absoluteString.hasPrefix(APIConstants.baseURL) == true else {

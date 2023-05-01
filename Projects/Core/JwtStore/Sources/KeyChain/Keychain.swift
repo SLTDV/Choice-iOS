@@ -1,19 +1,7 @@
 import Foundation
 
-enum KeyChainAccountType: String {
-    case accessToken = "accessToken"
-    case refreshToken = "refreshToken"
-    case accessExpriedTime = "accessExpriedTime"
-    case refreshExpriedTime = "refreshExpriedTime"
-}
-
-enum KeyChainError: Error {
-    case noData
-}
-
-final class KeyChain {
-    static let shared = KeyChain()
-    func save(type: KeyChainAccountType, token: String) {
+public struct KeyChain {
+    public func save(type: KeyChainAccountType, token: String) {
         let query: NSDictionary = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: type.rawValue,   // 저장할 Account
@@ -24,7 +12,7 @@ final class KeyChain {
         assert(status == noErr, "failed to save Token")
     }
     
-    func read(type: KeyChainAccountType) throws -> String {
+    public func read(type: KeyChainAccountType) throws -> String {
         let query: NSDictionary = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: type.rawValue,
@@ -45,7 +33,7 @@ final class KeyChain {
         }
     }
     
-    func deleteItem(type: KeyChainAccountType) -> Bool {
+    public func deleteItem(type: KeyChainAccountType) -> Bool {
         let deleteQuery: [CFString: Any] = [kSecClass: kSecClassGenericPassword,
                                                        kSecAttrAccount: type.rawValue]
         let status = SecItemDelete(deleteQuery as CFDictionary)
@@ -55,7 +43,7 @@ final class KeyChain {
         return false
     }
     
-    func deleteAll()  {
+    public func deleteAll()  {
       let secItemClasses =  [
         kSecClassGenericPassword,
         kSecClassInternetPassword,

@@ -21,7 +21,7 @@ public final class UnderLineTextField: UITextField {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setPlaceholder(placeholder: String) {
+    public func setPlaceholder(placeholder: String) {
         self.font = .systemFont(ofSize: 14)
         self.leftView = UIView(frame: CGRect(x: 0.0, y: 0.0, width: 2.0, height: 0.0))
         self.leftViewMode = .always

@@ -2,6 +2,7 @@ import UIKit
 import SnapKit
 import Then
 import Kingfisher
+import Shared
 
 // MARK: - Protocol
 protocol PostTableViewCellButtonDelegate: AnyObject {
