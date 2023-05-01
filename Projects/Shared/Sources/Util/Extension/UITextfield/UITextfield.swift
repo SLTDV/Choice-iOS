@@ -1,6 +1,6 @@
 import UIKit
 
-extension UITextField { // textField 흔들기
+public extension UITextField { // textField 흔들기
     func shake() {
         UIView.animate(withDuration: 0.6, animations: {
 

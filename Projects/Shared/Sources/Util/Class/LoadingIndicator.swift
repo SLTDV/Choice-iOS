@@ -1,6 +1,6 @@
 import UIKit
 
-final class LoadingIndicator {
+public final class LoadingIndicator {
     private init() {}
     static func showLoading(text: String) {
         DispatchQueue.main.async {
