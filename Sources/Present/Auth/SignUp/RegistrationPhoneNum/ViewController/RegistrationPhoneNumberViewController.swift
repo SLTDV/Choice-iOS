@@ -77,7 +77,13 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         guard let phoneNumber = inputPhoneNumberTextfield.text else { return }
         guard let authCode = CertificationNumberTextfield.text else { return }
         
-        self.viewModel.requestCheckAuthCode(inputphoneNumber: phoneNumber, authCode: authCode)
+        self.viewModel.requestCheckAuthCode(inputphoneNumber: phoneNumber, authCode: authCode) { isVaild in
+            if isVaild {
+                LoadingIndicator.showLoading(text: "")
+            } else {
+                self.showWarningLabel(warning: "*인증번호가 일치하지 않습니다")
+            }
+        }
     }
     
     private func bindUI() {
@@ -96,9 +102,13 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             .withLatestFrom(phoneNumberObservable)
             .take(3)
             .bind(with: self) { owner, inputPhoneNumber in
-                owner.CertificationRequestButton.titleLabel?.text = "재전송"
-                owner.viewModel.requestCertification(inputPhoneNumber: inputPhoneNumber)
-                owner.CertificationNumberTextfield.isHidden = false
+                owner.viewModel.requestCertification(inputPhoneNumber: inputPhoneNumber) { inVaild in
+                    if inVaild {
+                        owner.CertificationNumberTextfield.isHidden = false
+                    } else {
+                        self.showWarningLabel(warning: "*이미 인증된 전화번호입니다")
+                    }
+                }
             }.disposed(by: disposeBag)
     }
     

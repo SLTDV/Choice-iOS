@@ -2,29 +2,24 @@ import UIKit
 import Alamofire
 
 final class RegistrationPhoneNumberViewModel: BaseViewModel {
-    func requestCertification(inputPhoneNumber: String) {
+    func requestCertification(inputPhoneNumber: String, completion: @escaping (Bool) -> Void) {
         let url = APIConstants.certificationRequestURL
         
         let phoneNumberItem = URLQueryItem(name: "phoneNumber", value: inputPhoneNumber)
         
-        print(inputPhoneNumber)
-        
         var components = URLComponents(string: url)
         components?.queryItems = [phoneNumberItem]
         
-        print(components!)
         AF.request(components!,
                    method: .post,
                    encoding: URLEncoding.queryString)
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in 
                 switch response.result {
-                case .success(let data):
-                    print("success")
-                    print(components!)
-                case .failure(let error):
-                    print(components!)
-                    print("comment = \(error.localizedDescription)")
+                case .success:
+                    completion(true)
+                case .failure:
+                    completion(false)
                 }
             }
     }
@@ -44,11 +39,10 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
         .responseData { response in
             switch response.response?.statusCode {
             case 200:
+                LoadingIndicator.hideLoading()
                 self.pushRegistrationPasswordVC(phoneNumber: inputphoneNumber)
-                LoadingIndicator.hideLoading()
-            case 409:
+            case 400:
                 completion(false)
-                LoadingIndicator.hideLoading()
             default:
                 print("error")
             }
