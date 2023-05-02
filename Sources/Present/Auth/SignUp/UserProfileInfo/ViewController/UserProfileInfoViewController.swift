@@ -44,7 +44,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     private lazy var completeButton = UIButton().then {
         $0.setTitle("완료", for: .normal)
         $0.isEnabled = false
-        $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+        $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(signUpButtonDidTap(_ :)), for: .touchUpInside)
     }
