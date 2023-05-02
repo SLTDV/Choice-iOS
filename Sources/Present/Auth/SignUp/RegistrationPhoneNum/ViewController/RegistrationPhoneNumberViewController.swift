@@ -38,6 +38,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 8
         $0.keyboardType = .numberPad
+        $0.isHidden = true
     }
     
     private let countLabel = UILabel().then {
@@ -80,13 +81,6 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     }
     
     private func signUpButtonDidTap() {
-        certificationNumberTextfield.rx.text.orEmpty
-            .map { $0.count == 4 }
-            .bind(with: self) { owner, isValid in
-                owner.signUpButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayVoteButton.color
-                owner.signUpButton.isEnabled = isValid
-            }.disposed(by: disposeBag)
-        
         signUpButton.rx.tap
             .bind(with: self) { owner, _ in
                 owner.checkAuthCode()
@@ -99,7 +93,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         
         self.viewModel.requestCheckAuthCode(inputphoneNumber: phoneNumber, authCode: authCode) { isVaild in
             if isVaild {
-                LoadingIndicator.showLoading(text: "")
+                self.viewModel.pushRegistrationPasswordVC(phoneNumber: phoneNumber)
             } else {
                 self.showWarningLabel(warning: "*인증번호가 일치하지 않습니다")
             }
@@ -107,6 +101,13 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     }
     
     private func bindUI() {
+        certificationNumberTextfield.rx.text.orEmpty
+            .map { $0.count == 4 }
+            .bind(with: self) { owner, isValid in
+                owner.signUpButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayVoteButton.color
+                owner.signUpButton.isEnabled = isValid
+            }.disposed(by: disposeBag)
+        
         inputPhoneNumberTextfield.rx.text.orEmpty
             .map { $0.count == 11 }
             .bind(with: self) { owner, isValid in
@@ -123,7 +124,6 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             .bind(with: self) { owner, inputPhoneNumber in
                     owner.viewModel.requestCertification(inputPhoneNumber: inputPhoneNumber) { inVaild in
                         if inVaild {
-                            LoadingIndicator.showLoading(text: "")
                             owner.setupPossibleBackgroundTimer()
                             
                             owner.certificationNumberTextfield.isHidden = false

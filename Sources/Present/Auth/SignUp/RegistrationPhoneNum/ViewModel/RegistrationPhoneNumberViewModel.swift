@@ -39,8 +39,7 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
         .responseData { response in
             switch response.response?.statusCode {
             case 200:
-                LoadingIndicator.hideLoading()
-                self.pushRegistrationPasswordVC(phoneNumber: inputphoneNumber)
+                completion(true)
             case 400:
                 completion(false)
             default:
