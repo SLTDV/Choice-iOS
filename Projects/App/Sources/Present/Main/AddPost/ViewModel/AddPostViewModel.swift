@@ -1,8 +1,11 @@
 import UIKit
 import Alamofire
 import Shared
+import Interceptor
+import JwtStore
 
 final class AddPostViewModel: BaseViewModel {
+    let jwtStore = JwtStore()
     func createPost(title: String, content: String, firstImage: UIImage, secondImage: UIImage,
                     firstVotingOption: String, secondVotingOtion: String) {
         var url = APIConstants.postImageUploadURL
@@ -15,7 +18,7 @@ final class AddPostViewModel: BaseViewModel {
             if let image = secondImage.pngData() {
                 multipartFormData.append(image, withName: "secondImage", fileName: "\(image).png", mimeType: "image/png")
             }
-        }, to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor())
+        }, to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor(jwtStore: ))
         .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success(let data):

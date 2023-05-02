@@ -1,8 +1,8 @@
 import Foundation
 
 public struct ManageTokenModel: Codable {
-    var accessToken: String
-    var refreshToken: String
-    var accessExpiredTime: String
-    var refreshExpiredTime: String
+    public var accessToken: String
+    public var refreshToken: String
+    public var accessExpiredTime: String
+    public var refreshExpiredTime: String
 }

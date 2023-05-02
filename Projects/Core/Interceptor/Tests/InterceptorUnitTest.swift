@@ -12,10 +12,8 @@ final class InterceptorUnitTest: XCTestCase {
     }
     
     func testInterceptor_WhenExpriedToken_ReceiveReissueToken() {
-        let expiredTime = DateFormatter().date(from: "2023-05-02 02:18:27 +0000")
+        let expiredTime = DateFormatter().date(from: "2023-05-02 03:18:27 +0000")
         let date = Date().addingTimeInterval(32400)
-        print("Date = \(Date().addingTimeInterval(32400))")
         XCTAssertFalse(expiredTime?.compare(date) == .orderedAscending)
     }
-
 }

@@ -7,6 +7,12 @@ import Shared
 public class JwtRequestInterceptor: RequestInterceptor {
     let keyChainService = Container().resolve(KeyChainService.self)!
     
+    private let jwtStore: any JwtStore
+    
+    public init(jwtStore: any JwtStore) {
+        self.jwtStore = jwtStore
+    }
+    
     public func adapt(_ urlRequest: URLRequest, for session: Session, completion: @escaping (Result<URLRequest, Error>) -> Void) {
         guard urlRequest.url?.absoluteString.hasPrefix(APIConstants.baseURL) == true else {
             completion(.success(urlRequest))
@@ -20,7 +26,7 @@ public class JwtRequestInterceptor: RequestInterceptor {
     
     public func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         let accessExpiredTime = keyChainService.getToken(type: .accessExpriedTime).getStringToDate()
-        if accessExpiredTime.compare(Date().addingTimeInterval(-10800)) == .orderedAscending {
+        if accessExpiredTime.compare(Date().addingTimeInterval(32400)) == .orderedAscending {
             completion(.doNotRetryWithError(error))
             return
         }

@@ -2,6 +2,7 @@ import UIKit
 import Swinject
 import JwtStore
 import Interceptor
+import Shared
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -13,7 +14,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
         assembler = Assembler([
-            JwtStoreAssembly()
+            JwtStoreAssembly(),
+            InterceptorAssembly()
         ])
         
         
