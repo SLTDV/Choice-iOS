@@ -40,10 +40,8 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
             switch response.response?.statusCode {
             case 200:
                 completion(true)
-            case 400:
-                completion(false)
             default:
-                print("error")
+                completion(false)
             }
         }
     }

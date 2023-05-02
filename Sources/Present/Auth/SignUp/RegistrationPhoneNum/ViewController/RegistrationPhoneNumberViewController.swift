@@ -129,6 +129,9 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                             owner.certificationNumberTextfield.isHidden = false
                             owner.resendLabel.isHidden = false
                             owner.resendButton.isHidden = false
+                            
+                            owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
+                            owner.certificationRequestButton.isEnabled = false
                         } else {
                             self.showWarningLabel(warning: "*이미 인증된 전화번호입니다")
                         }
@@ -172,6 +175,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                 owner.countLabel.text = String(format: "%02d:%02d", minutes, seconds)
                 
                 if remainingSeconds == 0 {
+                    owner.countLabel.text = "00:00"
                     owner.isValidCertification = true
                 }
             }.disposed(by: disposeBag)
