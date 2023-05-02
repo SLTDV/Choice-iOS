@@ -16,7 +16,6 @@ final class UserProfileInfoViewModel: BaseViewModel {
             .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
                 switch response.result {
                 case .success(let data):
-                    print("success")
                     let decodeResponse = try? JSONDecoder().decode(SignUpModel.self, from: data)
                     let profileImageUrl = decodeResponse?.profileImageUrl
 

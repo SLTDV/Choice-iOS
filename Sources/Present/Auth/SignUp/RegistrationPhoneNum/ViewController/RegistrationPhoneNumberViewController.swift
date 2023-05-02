@@ -5,7 +5,7 @@ import RxCocoa
 final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumberViewModel> {
     private let disposeBag = DisposeBag()
     
-    private var isValidPhoneNumber = true
+    private var isValidCertification = true
     
     private lazy var restoreFrameYValue = 0.0
     
@@ -49,12 +49,14 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.text = "인증번호가 오지 않나요?"
         $0.font = .systemFont(ofSize: 12, weight: .medium)
         $0.textColor = .gray
+        $0.isHidden = true
     }
     
     private let resendButton = UIButton().then {
         $0.setTitle("재요청", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 13, weight: .semibold)
         $0.setTitleColor(.black, for: .normal)
+        $0.isHidden = true
     }
     
     private lazy var signUpButton = UIButton().then {
@@ -113,13 +115,34 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             }.disposed(by: disposeBag)
     }
   
-    private func CertificationRequestButtonDidTap() {
+    private func certificationRequestButtonDidTap() {
         let phoneNumberObservable = inputPhoneNumberTextfield.rx.text.orEmpty
         
         certificationRequestButton.rx.tap
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
-                if owner.isValidPhoneNumber {
+                    owner.viewModel.requestCertification(inputPhoneNumber: inputPhoneNumber) { inVaild in
+                        if inVaild {
+                            LoadingIndicator.showLoading(text: "")
+                            owner.setupPossibleBackgroundTimer()
+                            
+                            owner.certificationNumberTextfield.isHidden = false
+                            owner.resendLabel.isHidden = false
+                            owner.resendButton.isHidden = false
+                        } else {
+                            self.showWarningLabel(warning: "*이미 인증된 전화번호입니다")
+                        }
+                    }
+            }.disposed(by: disposeBag)
+    }
+    
+    private func resendButtonDidTap() {
+        let phoneNumberObservable = inputPhoneNumberTextfield.rx.text.orEmpty
+        
+        resendButton.rx.tap
+            .withLatestFrom(phoneNumberObservable)
+            .bind(with: self) { owner, inputPhoneNumber in
+                if owner.isValidCertification {
                     owner.viewModel.requestCertification(inputPhoneNumber: inputPhoneNumber) { inVaild in
                         if inVaild {
                             owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
@@ -129,6 +152,8 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                             self.showWarningLabel(warning: "*이미 인증된 전화번호입니다")
                         }
                     }
+                } else {
+                    owner.showWarningLabel(warning: "*3분 후에 다시 시도해주세요")
                 }
             }.disposed(by: disposeBag)
     }
@@ -136,7 +161,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     private func setupPossibleBackgroundTimer() {
         let count = 180
         
-        isValidPhoneNumber = false
+        isValidCertification = false
         
         Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
             .take(count)
@@ -147,7 +172,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                 owner.countLabel.text = String(format: "%02d:%02d", minutes, seconds)
                 
                 if remainingSeconds == 0 {
-                    owner.isValidPhoneNumber = true
+                    owner.isValidCertification = true
                 }
             }.disposed(by: disposeBag)
     }
@@ -159,7 +184,8 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     override func configureVC() {
         restoreFrameYValue = self.view.frame.origin.y
         signUpButtonDidTap()
-        CertificationRequestButtonDidTap()
+        resendButtonDidTap()
+        certificationRequestButtonDidTap()
         
         bindUI()
         
