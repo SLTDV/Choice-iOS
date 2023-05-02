@@ -23,7 +23,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.keyboardType = .numberPad
     }
     
-    private let CertificationRequestButton = UIButton().then {
+    private let certificationRequestButton = UIButton().then {
         $0.setTitle("인증 요청", for: .normal)
         $0.isEnabled = false
         $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
@@ -31,7 +31,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.layer.cornerRadius = 8
     }
     
-    private let CertificationNumberTextfield = UITextField().then {
+    private let certificationNumberTextfield = UITextField().then {
         $0.addLeftPadding()
         $0.placeholder = "인증번호 입력"
         $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
@@ -45,13 +45,13 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.textColor = .black
     }
     
-    private let againRequestLabel = UILabel().then {
+    private let resendLabel = UILabel().then {
         $0.text = "인증번호가 오지 않나요?"
         $0.font = .systemFont(ofSize: 12, weight: .medium)
         $0.textColor = .gray
     }
     
-    private let againRequestButton = UIButton().then {
+    private let resendButton = UIButton().then {
         $0.setTitle("재요청", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 13, weight: .semibold)
         $0.setTitleColor(.black, for: .normal)
@@ -78,7 +78,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     }
     
     private func signUpButtonDidTap() {
-        CertificationNumberTextfield.rx.text.orEmpty
+        certificationNumberTextfield.rx.text.orEmpty
             .map { $0.count == 4 }
             .bind(with: self) { owner, isValid in
                 owner.signUpButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayVoteButton.color
@@ -93,7 +93,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     
     private func checkAuthCode() {
         guard let phoneNumber = inputPhoneNumberTextfield.text else { return }
-        guard let authCode = CertificationNumberTextfield.text else { return }
+        guard let authCode = certificationNumberTextfield.text else { return }
         
         self.viewModel.requestCheckAuthCode(inputphoneNumber: phoneNumber, authCode: authCode) { isVaild in
             if isVaild {
@@ -108,23 +108,23 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         inputPhoneNumberTextfield.rx.text.orEmpty
             .map { $0.count == 11 }
             .bind(with: self) { owner, isValid in
-                owner.CertificationRequestButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayVoteButton.color
-                owner.CertificationRequestButton.isEnabled = isValid
+                owner.certificationRequestButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayVoteButton.color
+                owner.certificationRequestButton.isEnabled = isValid
             }.disposed(by: disposeBag)
     }
   
     private func CertificationRequestButtonDidTap() {
         let phoneNumberObservable = inputPhoneNumberTextfield.rx.text.orEmpty
         
-        CertificationRequestButton.rx.tap
+        certificationRequestButton.rx.tap
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
                 if owner.isValidPhoneNumber {
                     owner.viewModel.requestCertification(inputPhoneNumber: inputPhoneNumber) { inVaild in
                         if inVaild {
-                            owner.CertificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
+                            owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
                             owner.setupPossibleBackgroundTimer()
-                            owner.CertificationNumberTextfield.isHidden = false
+                            owner.certificationNumberTextfield.isHidden = false
                         } else {
                             self.showWarningLabel(warning: "*이미 인증된 전화번호입니다")
                         }
@@ -164,17 +164,17 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         bindUI()
         
         inputPhoneNumberTextfield.delegate = self
-        CertificationNumberTextfield.delegate = self
+        certificationNumberTextfield.delegate = self
         
         navigationItem.title = "회원가입"
     }
     
     override func addView() {
-        view.addSubviews(emailLabel,inputPhoneNumberTextfield, CertificationRequestButton,
-                         CertificationNumberTextfield, warningLabel, signUpButton,
-                         againRequestLabel, againRequestButton)
+        view.addSubviews(emailLabel,inputPhoneNumberTextfield, certificationRequestButton,
+                         certificationNumberTextfield, warningLabel, signUpButton,
+                         resendLabel, resendButton)
         
-        CertificationNumberTextfield.addSubview(countLabel)
+        certificationNumberTextfield.addSubview(countLabel)
     }
     
     override func setLayout() {
@@ -186,18 +186,18 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         inputPhoneNumberTextfield.snp.makeConstraints {
             $0.top.equalTo(emailLabel.snp.bottom).offset(25)
             $0.leading.equalToSuperview().inset(26)
-            $0.trailing.equalTo(CertificationRequestButton.snp.leading).offset(-10)
+            $0.trailing.equalTo(certificationRequestButton.snp.leading).offset(-10)
             $0.height.equalTo(51)
         }
         
-        CertificationRequestButton.snp.makeConstraints {
+        certificationRequestButton.snp.makeConstraints {
             $0.top.equalTo(inputPhoneNumberTextfield.snp.top)
             $0.trailing.equalToSuperview().inset(26)
             $0.width.equalTo(inputPhoneNumberTextfield.snp.width).multipliedBy(0.4)
             $0.height.equalTo(51)
         }
         
-        CertificationNumberTextfield.snp.makeConstraints {
+        certificationNumberTextfield.snp.makeConstraints {
             $0.top.equalTo(inputPhoneNumberTextfield.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(51)
@@ -208,14 +208,14 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             $0.trailing.equalToSuperview().inset(25)
         }
         
-        againRequestLabel.snp.makeConstraints {
-            $0.centerY.equalTo(againRequestButton)
+        resendLabel.snp.makeConstraints {
+            $0.centerY.equalTo(resendButton)
             $0.centerX.equalToSuperview().offset(-20)
         }
         
-        againRequestButton.snp.makeConstraints {
-            $0.top.equalTo(CertificationNumberTextfield.snp.bottom).offset(15)
-            $0.leading.equalTo(againRequestLabel.snp.trailing).offset(8)
+        resendButton.snp.makeConstraints {
+            $0.top.equalTo(certificationNumberTextfield.snp.bottom).offset(15)
+            $0.leading.equalTo(resendLabel.snp.trailing).offset(8)
         }
         
         warningLabel.snp.makeConstraints {
