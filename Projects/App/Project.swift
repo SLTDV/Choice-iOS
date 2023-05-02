@@ -2,7 +2,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
-    name: "Choice",
+    name: Environment.appName,
     platform: .iOS,
     product: .app,
     dependencies: [
