@@ -132,6 +132,8 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                             
                             owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
                             owner.certificationRequestButton.isEnabled = false
+                            
+                            self.showWarningLabel(warning: "")
                         } else {
                             self.showWarningLabel(warning: "*이미 인증된 전화번호입니다")
                         }
@@ -151,6 +153,8 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                             owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
                             owner.setupPossibleBackgroundTimer()
                             owner.certificationNumberTextfield.isHidden = false
+                            
+                            self.showWarningLabel(warning: "")
                         } else {
                             self.showWarningLabel(warning: "*이미 인증된 전화번호입니다")
                         }
