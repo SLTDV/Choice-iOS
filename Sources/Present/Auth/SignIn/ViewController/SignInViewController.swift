@@ -16,7 +16,8 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     }
     
     private let inputIdTextField = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "이메일")
+        $0.setPlaceholder(placeholder: "휴대폰 번호")
+        $0.keyboardType = .numberPad
     }
     
     private let inputPasswordTextField = UnderLineTextField().then {

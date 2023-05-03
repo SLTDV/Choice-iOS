@@ -15,7 +15,7 @@ final class SignInViewModel: BaseViewModel {
     func requestSignIn(email: String, password: String, completion: @escaping (Bool) -> Void) {
         let url = APIConstants.signInURL
         let params = [
-            "email" : email,
+            "phoneNumber" : email,
             "password" : password
         ] as Dictionary
         
