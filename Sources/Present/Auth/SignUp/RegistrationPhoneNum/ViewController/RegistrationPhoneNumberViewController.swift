@@ -60,7 +60,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.isHidden = true
     }
     
-    private lazy var signUpButton = UIButton().then {
+    private lazy var nextButton = UIButton().then {
         $0.setTitle("다음", for: .normal)
         $0.isEnabled = false
         $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
@@ -81,7 +81,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     }
     
     private func signUpButtonDidTap() {
-        signUpButton.rx.tap
+        nextButton.rx.tap
             .bind(with: self) { owner, _ in
                 owner.checkAuthCode()
             }.disposed(by: disposeBag)
@@ -104,8 +104,8 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         certificationNumberTextfield.rx.text.orEmpty
             .map { $0.count == 4 }
             .bind(with: self) { owner, isValid in
-                owner.signUpButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayVoteButton.color
-                owner.signUpButton.isEnabled = isValid
+                owner.nextButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayVoteButton.color
+                owner.nextButton.isEnabled = isValid
             }.disposed(by: disposeBag)
         
         inputPhoneNumberTextfield.rx.text.orEmpty
@@ -206,7 +206,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     
     override func addView() {
         view.addSubviews(emailLabel,inputPhoneNumberTextfield, certificationRequestButton,
-                         certificationNumberTextfield, warningLabel, signUpButton,
+                         certificationNumberTextfield, warningLabel, nextButton,
                          resendLabel, resendButton)
         
         certificationNumberTextfield.addSubview(countLabel)
@@ -254,11 +254,11 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         }
         
         warningLabel.snp.makeConstraints {
-            $0.leading.equalTo(signUpButton.snp.leading)
-            $0.bottom.equalTo(signUpButton.snp.top).offset(-12)
+            $0.leading.equalTo(nextButton.snp.leading)
+            $0.bottom.equalTo(nextButton.snp.top).offset(-12)
         }
         
-        signUpButton.snp.makeConstraints {
+        nextButton.snp.makeConstraints {
             $0.bottom.equalTo(view.safeAreaInsets.bottom).inset(40)
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(49)
