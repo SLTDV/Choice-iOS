@@ -1,4 +1,4 @@
-import UIKit
+import Foundation
 
 final class RegistrationPasswordViewModel: BaseViewModel {
     var phoneNumber = ""
