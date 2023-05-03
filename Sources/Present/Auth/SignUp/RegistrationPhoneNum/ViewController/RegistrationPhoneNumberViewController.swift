@@ -5,7 +5,7 @@ import RxCocoa
 final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumberViewModel> {
     private let disposeBag = DisposeBag()
     
-    private var isValidAuth = true
+    private var isVaildAuth = true
     
     private lazy var restoreFrameYValue = 0.0
     
@@ -67,17 +67,10 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.layer.cornerRadius = 8
     }
     
-    private let warningLabel = UILabel().then {
+    private let warningLabel = WarningLabel().then {
         $0.font = .systemFont(ofSize: 14)
         $0.isHidden = true
         $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
-    }
-    
-    private func showWarningLabel(warning: String) {
-        DispatchQueue.main.async {
-            self.warningLabel.isHidden = false
-            self.warningLabel.text = warning
-        }
     }
     
     private func signUpButtonDidTap() {
@@ -95,7 +88,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             if isVaild {
                 self.viewModel.pushRegistrationPasswordVC(phoneNumber: phoneNumber)
             } else {
-                self.showWarningLabel(warning: "*인증번호가 일치하지 않습니다")
+                self.warningLabel.show(warning: "*인증번호가 일치하지 않습니다")
             }
         }
     }
@@ -134,9 +127,9 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                             owner.certificationRequestButton.isEnabled = false
                             
                             owner.inputPhoneNumberTextfield.isUserInteractionEnabled = false
-                            self.showWarningLabel(warning: "")
+                            self.warningLabel.show(warning: "")
                         } else {
-                            self.showWarningLabel(warning: "*이미 인증된 전화번호입니다")
+                            self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
                         }
                     }
             }.disposed(by: disposeBag)
@@ -148,20 +141,20 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         resendButton.rx.tap
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
-                if owner.isValidAuth {
+                if owner.isVaildAuth {
                     owner.viewModel.requestAuthNumber(inputPhoneNumber: inputPhoneNumber) { inVaild in
                         if inVaild {
                             owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
                             owner.setupPossibleBackgroundTimer()
                             owner.certificationNumberTextfield.isHidden = false
                             
-                            self.showWarningLabel(warning: "")
+                            self.warningLabel.show(warning: "")
                         } else {
-                            self.showWarningLabel(warning: "*이미 인증된 전화번호입니다")
+                            self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
                         }
                     }
                 } else {
-                    owner.showWarningLabel(warning: "*3분 후에 다시 시도해주세요")
+                    owner.warningLabel.show(warning: "*3분 후에 다시 시도해주세요")
                 }
             }.disposed(by: disposeBag)
     }
@@ -169,7 +162,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     private func setupPossibleBackgroundTimer() {
         let count = 180
         
-        isValidAuth = false
+        isVaildAuth = false
         
         Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
             .take(count)
@@ -181,7 +174,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                 
                 if remainingSeconds == 0 {
                     owner.countLabel.text = "00:00"
-                    owner.isValidAuth = true
+                    owner.isVaildAuth = true
                 }
             }.disposed(by: disposeBag)
     }
