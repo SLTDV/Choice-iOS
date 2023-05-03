@@ -16,6 +16,5 @@ final class RegistrationPasswordViewModel: BaseViewModel {
     
     func pushUserProfileInfoVC(password: String) {
         coordinator.navigate(to: .userProfileInfoIsRequired(phoneNumber: phoneNumber, password: password))
-        print(phoneNumber)
     }
 }

@@ -2,7 +2,7 @@ import UIKit
 import Alamofire
 
 final class RegistrationPhoneNumberViewModel: BaseViewModel {
-    func requestCertification(inputPhoneNumber: String, completion: @escaping (Bool) -> Void) {
+    func requestAuthNumber(inputPhoneNumber: String, completion: @escaping (Bool) -> Void) {
         let url = APIConstants.certificationRequestURL
         
         let phoneNumberItem = URLQueryItem(name: "phoneNumber", value: inputPhoneNumber)
@@ -24,7 +24,7 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
             }
     }
     
-    func requestCheckAuthCode(inputphoneNumber: String, authCode: String, completion: @escaping (Bool) -> Void) {
+    func requestAuthNumberConfirmation(inputphoneNumber: String, authCode: String, completion: @escaping (Bool) -> Void) {
         let url = APIConstants.checkAuthCodeURL
         
         let phoneNumber = URLQueryItem(name: "phoneNumber", value: inputphoneNumber)

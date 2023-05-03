@@ -5,7 +5,7 @@ import RxCocoa
 final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumberViewModel> {
     private let disposeBag = DisposeBag()
     
-    private var isValidCertification = true
+    private var isValidAuth = true
     
     private lazy var restoreFrameYValue = 0.0
     
@@ -91,7 +91,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         guard let phoneNumber = inputPhoneNumberTextfield.text else { return }
         guard let authCode = certificationNumberTextfield.text else { return }
         
-        self.viewModel.requestCheckAuthCode(inputphoneNumber: phoneNumber, authCode: authCode) { isVaild in
+        self.viewModel.requestAuthNumberConfirmation(inputphoneNumber: phoneNumber, authCode: authCode) { isVaild in
             if isVaild {
                 self.viewModel.pushRegistrationPasswordVC(phoneNumber: phoneNumber)
             } else {
@@ -122,7 +122,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         certificationRequestButton.rx.tap
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
-                    owner.viewModel.requestCertification(inputPhoneNumber: inputPhoneNumber) { inVaild in
+                    owner.viewModel.requestAuthNumber(inputPhoneNumber: inputPhoneNumber) { inVaild in
                         if inVaild {
                             owner.setupPossibleBackgroundTimer()
                             
@@ -148,8 +148,8 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         resendButton.rx.tap
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
-                if owner.isValidCertification {
-                    owner.viewModel.requestCertification(inputPhoneNumber: inputPhoneNumber) { inVaild in
+                if owner.isValidAuth {
+                    owner.viewModel.requestAuthNumber(inputPhoneNumber: inputPhoneNumber) { inVaild in
                         if inVaild {
                             owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
                             owner.setupPossibleBackgroundTimer()
@@ -169,7 +169,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     private func setupPossibleBackgroundTimer() {
         let count = 180
         
-        isValidCertification = false
+        isValidAuth = false
         
         Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
             .take(count)
@@ -181,7 +181,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                 
                 if remainingSeconds == 0 {
                     owner.countLabel.text = "00:00"
-                    owner.isValidCertification = true
+                    owner.isValidAuth = true
                 }
             }.disposed(by: disposeBag)
     }
