@@ -4,7 +4,7 @@ public final class JwtStoreAssembly: Assembly {
     public init() {}
     public func assemble(container: Container) {
         container.register(JwtStore.self) { resolver in
-            KeyChainService(keychain: resolver.resolve(KeyChain.self)!)
+            JwtRequestInterceptor(jwtStore: resolver.resolve(JwtStore.self)!) as! any JwtStore
         }.inObjectScope(.container)
     }
 }

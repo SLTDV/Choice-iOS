@@ -10,9 +10,6 @@ let project = Project.makeModule(
             target: "Shared",
             path: .relativeToRoot("Projects/Shared")),
         TargetDependency.project(
-            target: "Interceptor",
-            path: .relativeToRoot("Projects/Core/Interceptor")),
-        TargetDependency.project(
             target: "JwtStore",
             path: .relativeToRoot("Projects/Core/JwtStore"))
     ],

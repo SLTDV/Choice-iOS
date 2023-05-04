@@ -3,6 +3,8 @@ import Alamofire
 import RxSwift
 import RxRelay
 import Shared
+import Swinject
+import JwtStore
 
 protocol ProfileDataProtocol: AnyObject {
     var nicknameData: PublishSubject<String> { get set }
@@ -20,7 +22,7 @@ final class ProfileViewModel: BaseViewModel {
         
         AF.request(url,
                    method: .get,
-                   interceptor: JwtRequestInterceptor())
+                   interceptor: JwtRequestInterceptor(jwtStore: Container().resolve(JwtStore.self)!))
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
@@ -45,7 +47,7 @@ final class ProfileViewModel: BaseViewModel {
                    method: .patch,
                    parameters: params,
                    encoding: JSONEncoding.default,
-                   interceptor: JwtRequestInterceptor())
+                   interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain())))
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
@@ -71,7 +73,7 @@ final class ProfileViewModel: BaseViewModel {
         AF.request(url,
                    method: .delete,
                    encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor())
+                   interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain())))
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
@@ -93,7 +95,7 @@ final class ProfileViewModel: BaseViewModel {
                 if let image = profileImage.pngData() {
                     multipartFormData.append(image, withName: "profileImage", fileName: "\(image).png", mimeType: "image/png")
                 }
-            },to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor())
+            },to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain())))
             .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
                 switch response.result {
                 case .success(let data):
@@ -110,7 +112,7 @@ final class ProfileViewModel: BaseViewModel {
                                parameters: params,
                                encoding: JSONEncoding.default,
                                headers: headers,
-                        interceptor: JwtRequestInterceptor())
+                               interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain())))
                     .validate()
                     .responseData(emptyResponseCodes: [200, 201, 204]) { response in
                         switch response.result {
@@ -136,7 +138,7 @@ final class ProfileViewModel: BaseViewModel {
         AF.request(url,
                    method: .delete,
                    encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor())
+                   interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain())))
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {

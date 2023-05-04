@@ -1,6 +1,7 @@
 import UIKit
 import Alamofire
 import Shared
+import JwtStore
 
 final class UserProfileInfoViewModel: BaseViewModel {
     func callToSignUp(email: String, password: String, nickname: String, profileImage: UIImage?, completion: @escaping (Bool) -> Void) {
@@ -13,7 +14,7 @@ final class UserProfileInfoViewModel: BaseViewModel {
                 if let image = profileImage.pngData() {
                     multipartFormData.append(image, withName: "profileImage", fileName: "\(image).png", mimeType: "image/png")
                 }
-            }, to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor())
+            }, to: url, method: .post, headers: headers)
             .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
                 switch response.result {
                 case .success(let data):

@@ -1,6 +1,7 @@
 import Foundation
 import Alamofire
 import Shared
+import JwtStore
 
 final class UserSecurityInfoViewModel: BaseViewModel {
     var email = ""

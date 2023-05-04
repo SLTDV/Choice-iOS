@@ -2,6 +2,7 @@ import Foundation
 import Alamofire
 import RxSwift
 import Shared
+import JwtStore
 
 final class SignInViewModel: BaseViewModel {
     let keyChainService = KeyChainService(keychain: KeyChain())

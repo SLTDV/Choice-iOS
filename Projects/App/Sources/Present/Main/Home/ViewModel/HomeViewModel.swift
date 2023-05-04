@@ -1,9 +1,10 @@
 import Foundation
-import RxSwift
 import Alamofire
+import RxSwift
 import RxCocoa
 import Shared
-import Interceptor
+import JwtStore
+import Swinject
 
 protocol PostItemsProtocol: AnyObject {
     var postData: BehaviorRelay<[Posts]> { get set }
@@ -38,7 +39,7 @@ final class HomeViewModel: BaseViewModel {
         AF.request(components!,
                    method: .get,
                    encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor()
+                   interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain()))
         ).responseDecodable(of: PostModel.self) { [weak self] response in
             switch response.result {
             case .success(let postData):
@@ -65,7 +66,7 @@ final class HomeViewModel: BaseViewModel {
                    method: .post,
                    parameters: params,
                    encoding: JSONEncoding.default,
-                   interceptor: JwtRequestInterceptor())
+                   interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain())))
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {

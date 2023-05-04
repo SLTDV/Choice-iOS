@@ -2,6 +2,8 @@ import Foundation
 import RxRelay
 import RxSwift
 import Alamofire
+import JwtStore
+import Swinject
 
 protocol CommentDataProtocol: AnyObject {
     var writerNameData: PublishSubject<String> { get set  }
@@ -27,7 +29,7 @@ final class DetailPostViewModel: BaseViewModel {
         AF.request(components!,
                    method: .get,
                    encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor())
+                   interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain())))
         .validate()
         .responseDecodable(of: CommentModel.self) { [weak self] response in
             switch response.result {
@@ -55,7 +57,7 @@ final class DetailPostViewModel: BaseViewModel {
                    method: .post,
                    parameters: params,
                    encoding: JSONEncoding.default,
-                   interceptor: JwtRequestInterceptor())
+                   interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain())))
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
@@ -72,7 +74,7 @@ final class DetailPostViewModel: BaseViewModel {
         AF.request(url,
                    method: .delete,
                    encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor())
+                   interceptor: JwtRequestInterceptor(jwtStore: Container().resolve(JwtStore.self)!))
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
