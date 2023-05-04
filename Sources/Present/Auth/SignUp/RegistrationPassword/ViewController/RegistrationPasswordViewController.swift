@@ -46,7 +46,7 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         Observable.combineLatest(
             passwordObservable,
             checkPasswordObservable,
-            resultSelector: { s1, s2 in (s1.count >= 8 && s1.count <= 16) && (s2.count >= 8 && s2.count <= 16) }
+            resultSelector: { s1, s2 in (8...16).contains(s1.count) && (8...16).contains(s2.count) }
         )
         .bind(with: self) { owner, isValid in
             owner.nextButton.isEnabled = isValid

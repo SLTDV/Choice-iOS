@@ -115,8 +115,8 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         certificationRequestButton.rx.tap
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
-                    owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { inVaild in
-                        if inVaild {
+                    owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isVaild in
+                        if isVaild {
                             owner.setupPossibleBackgroundTimer()
                             
                             owner.certificationNumberTextfield.isHidden = false
