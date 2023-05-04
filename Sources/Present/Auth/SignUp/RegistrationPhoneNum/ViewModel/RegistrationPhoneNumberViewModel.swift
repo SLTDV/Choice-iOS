@@ -2,10 +2,10 @@ import Foundation
 import Alamofire
 
 final class RegistrationPhoneNumberViewModel: BaseViewModel {
-    func requestAuthNumber(inputPhoneNumber: String, completion: @escaping (Bool) -> Void) {
+    func requestAuthNumber(phoneNumber: String, completion: @escaping (Bool) -> Void) {
         let url = APIConstants.certificationRequestURL
         
-        let phoneNumberItem = URLQueryItem(name: "phoneNumber", value: inputPhoneNumber)
+        let phoneNumberItem = URLQueryItem(name: "phoneNumber", value: phoneNumber)
         
         var components = URLComponents(string: url)
         components?.queryItems = [phoneNumberItem]
@@ -24,10 +24,10 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
             }
     }
     
-    func requestAuthNumberConfirmation(inputphoneNumber: String, authCode: String, completion: @escaping (Bool) -> Void) {
+    func requestAuthNumberConfirmation(phoneNumber: String, authCode: String, completion: @escaping (Bool) -> Void) {
         let url = APIConstants.checkAuthCodeURL
         
-        let phoneNumber = URLQueryItem(name: "phoneNumber", value: inputphoneNumber)
+        let phoneNumber = URLQueryItem(name: "phoneNumber", value: phoneNumber)
         let authCode = URLQueryItem(name: "authCode", value: authCode)
         
         var components = URLComponents(string: url)

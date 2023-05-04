@@ -84,7 +84,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         guard let phoneNumber = inputPhoneNumberTextfield.text else { return }
         guard let authCode = certificationNumberTextfield.text else { return }
         
-        self.viewModel.requestAuthNumberConfirmation(inputphoneNumber: phoneNumber, authCode: authCode) { isVaild in
+        self.viewModel.requestAuthNumberConfirmation(phoneNumber: phoneNumber, authCode: authCode) { isVaild in
             if isVaild {
                 self.viewModel.pushRegistrationPasswordVC(phoneNumber: phoneNumber)
             } else {
@@ -115,7 +115,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         certificationRequestButton.rx.tap
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
-                    owner.viewModel.requestAuthNumber(inputPhoneNumber: inputPhoneNumber) { inVaild in
+                    owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { inVaild in
                         if inVaild {
                             owner.setupPossibleBackgroundTimer()
                             
@@ -142,7 +142,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
                 if owner.isVaildAuth {
-                    owner.viewModel.requestAuthNumber(inputPhoneNumber: inputPhoneNumber) { inVaild in
+                    owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { inVaild in
                         if inVaild {
                             owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
                             owner.setupPossibleBackgroundTimer()
