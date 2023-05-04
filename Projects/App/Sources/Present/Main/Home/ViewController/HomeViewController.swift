@@ -185,8 +185,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         navigationBarButtonDidTap()
         viewModel.requestPostData(type: sortType)
         configureRefreshControl()
-//        print("accessExpried = \(KeyChainService(keychain: KeyChain()).getToken(type: .accessExpriedTime).getStringToDate())")
-//        print("date = \(Date().addingTimeInterval(32400))")
     }
 
     override func addView() {

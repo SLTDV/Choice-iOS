@@ -1,4 +1,4 @@
-import UIKit
+import Foundation
 
 struct AddPostModel: Codable {
     var firstUploadImageUrl: String
