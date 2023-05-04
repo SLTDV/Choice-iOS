@@ -44,6 +44,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     
     private lazy var completeButton = UIButton().then {
         $0.setTitle("완료", for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.isEnabled = false
         $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
         $0.layer.cornerRadius = 8
@@ -151,7 +152,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         completeButton.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(64)
             $0.leading.trailing.equalToSuperview().inset(26)
-            $0.height.equalTo(49)
+            $0.height.equalTo(58)
         }
     }
 }

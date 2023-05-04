@@ -61,6 +61,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     }
     
     private lazy var nextButton = UIButton().then {
+        $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.setTitle("다음", for: .normal)
         $0.isEnabled = false
         $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
@@ -215,20 +216,20 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             $0.top.equalTo(emailLabel.snp.bottom).offset(25)
             $0.leading.equalToSuperview().inset(26)
             $0.trailing.equalTo(certificationRequestButton.snp.leading).offset(-10)
-            $0.height.equalTo(51)
+            $0.height.equalTo(58)
         }
         
         certificationRequestButton.snp.makeConstraints {
             $0.top.equalTo(inputPhoneNumberTextfield.snp.top)
             $0.trailing.equalToSuperview().inset(26)
             $0.width.equalTo(inputPhoneNumberTextfield.snp.width).multipliedBy(0.4)
-            $0.height.equalTo(51)
+            $0.height.equalTo(58)
         }
         
         certificationNumberTextfield.snp.makeConstraints {
             $0.top.equalTo(inputPhoneNumberTextfield.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(26)
-            $0.height.equalTo(51)
+            $0.height.equalTo(58)
         }
         
         countLabel.snp.makeConstraints {
@@ -254,7 +255,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         nextButton.snp.makeConstraints {
             $0.bottom.equalTo(view.safeAreaInsets.bottom).inset(40)
             $0.leading.trailing.equalToSuperview().inset(26)
-            $0.height.equalTo(49)
+            $0.height.equalTo(58)
         }
     }
 }

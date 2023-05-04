@@ -28,6 +28,7 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
     
     private lazy var nextButton = UIButton().then {
         $0.setTitle("다음", for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.isEnabled = false
         $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
         $0.layer.cornerRadius = 8
@@ -100,13 +101,13 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         inputPasswordTextfield.snp.makeConstraints {
             $0.top.equalTo(passwordLabel.snp.bottom).offset(25)
             $0.leading.trailing.equalToSuperview().inset(26)
-            $0.height.equalTo(51)
+            $0.height.equalTo(58)
         }
         
         checkPasswordTextfield.snp.makeConstraints {
             $0.top.equalTo(inputPasswordTextfield.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(26)
-            $0.height.equalTo(51)
+            $0.height.equalTo(58)
         }
         
         warningLabel.snp.makeConstraints {
@@ -117,7 +118,7 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         nextButton.snp.makeConstraints {
             $0.bottom.equalTo(view.safeAreaInsets.bottom).inset(40)
             $0.leading.trailing.equalToSuperview().inset(26)
-            $0.height.equalTo(49)
+            $0.height.equalTo(58)
         }
     }
 }
