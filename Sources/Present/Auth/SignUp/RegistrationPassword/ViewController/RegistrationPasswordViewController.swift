@@ -54,16 +54,12 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         }.disposed(by: disposeBag)
     }
     
-    private func testPassword(password: String) -> Bool {
-        return viewModel.isValidPassword(password: password)
-    }
-    
     private func checkPassword() {
         guard let password = inputPasswordTextfield.text else { return }
         guard let checkPassword = checkPasswordTextfield.text else { return }
         
         if password.elementsEqual(checkPassword) {
-            if self.testPassword(password: password){
+            if self.viewModel.isValidPassword(password: password){
                 self.viewModel.pushUserProfileInfoVC(password: password)
             } else {
                 self.warningLabel.show(warning: "*비밀번호 형식이 올바르지 않아요.")
