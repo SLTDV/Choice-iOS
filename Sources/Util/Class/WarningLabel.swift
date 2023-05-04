@@ -7,4 +7,10 @@ final class WarningLabel: UILabel {
             self.text = warning
         }
     }
+    
+    func hide() {
+        DispatchQueue.main.async {
+            self.isHidden = true
+        }
+    }
 }
