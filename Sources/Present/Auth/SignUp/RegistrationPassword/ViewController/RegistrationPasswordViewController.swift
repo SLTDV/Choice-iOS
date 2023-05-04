@@ -33,17 +33,10 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         $0.layer.cornerRadius = 8
     }
     
-    private let warningLabel = UILabel().then {
+    private let warningLabel = WarningLabel().then {
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
         $0.isHidden = true
         $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
-    }
-    
-    private func showWarningLabel(warning: String) {
-        DispatchQueue.main.async {
-            self.warningLabel.isHidden = false
-            self.warningLabel.text = warning
-        }
     }
     
     private func bindUI() {
@@ -73,10 +66,10 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
             if self.testPassword(password: password){
                 self.viewModel.pushUserProfileInfoVC(password: password)
             } else {
-                self.showWarningLabel(warning: "*비밀번호 형식이 올바르지 않아요.")
+                self.warningLabel.show(warning: "*비밀번호 형식이 올바르지 않아요.")
             }
         } else {
-            self.showWarningLabel(warning: "*비밀번호가 일치하지 않아요.")
+            self.warningLabel.show(warning: "*비밀번호가 일치하지 않아요.")
         }
     }
     
