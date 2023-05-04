@@ -49,6 +49,16 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         $0.addTarget(self, action: #selector(signUpButtonDidTap(_ :)), for: .touchUpInside)
     }
     
+    init(viewModel: UserProfileInfoViewModel, phoneNumber: String, password: String) {
+        super.init(viewModel: viewModel)
+        self.phoneNumber = phoneNumber
+        self.password = password
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     @objc private func addImageButtonDidTap(_ sender: UIButton) {
         self.present(imagePickerController, animated: true)
     }
@@ -114,16 +124,6 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         imagePickerController.delegate = self
         
         bindUI()
-    }
-    
-    init(viewModel: UserProfileInfoViewModel, phoneNumber: String, password: String) {
-        super.init(viewModel: viewModel)
-        self.phoneNumber = phoneNumber
-        self.password = password
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func addView() {
