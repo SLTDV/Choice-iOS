@@ -17,7 +17,7 @@ final class AddPostViewModel: BaseViewModel {
             if let image = secondImage.pngData() {
                 multipartFormData.append(image, withName: "secondImage", fileName: "\(image).png", mimeType: "image/png")
             }
-        }, to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor(jwtStore: AppDelegate.container.resolve(JwtStore.self)!))
+        }, to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor(jwtStore: AppDelegate.container.resolve(KeyChainService.self)!))
         .validate().responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success(let data):

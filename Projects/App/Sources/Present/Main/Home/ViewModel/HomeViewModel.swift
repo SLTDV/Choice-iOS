@@ -40,7 +40,7 @@ final class HomeViewModel: BaseViewModel {
         AF.request(components!,
                    method: .get,
                    encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor(jwtStore: JwtRequestInterceptor(jwtStore: container))
+                   interceptor: JwtRequestInterceptor(jwtStore: container)
         ).responseDecodable(of: PostModel.self) { [weak self] response in
             switch response.result {
             case .success(let postData):

@@ -2,9 +2,8 @@ import Foundation
 import Alamofire
 import Shared
 
-public class JwtRequestInterceptor: RequestInterceptor, JwtStore {
+public class JwtRequestInterceptor: RequestInterceptor {
     private let jwtStore: JwtStore
-    private let keychain = KeyChain()
     
     public init(jwtStore: JwtStore) {
         self.jwtStore = jwtStore
@@ -16,20 +15,20 @@ public class JwtRequestInterceptor: RequestInterceptor, JwtStore {
             return
         }
         var urlRequest = urlRequest
-        let accessToken = getToken(type: .accessToken)
+        let accessToken = jwtStore.getToken(type: .accessToken)
         urlRequest.addValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
         completion(.success(urlRequest))
     }
     
     public func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
-        let accessExpiredTime = getToken(type: .accessExpriedTime).getStringToDate()
+        let accessExpiredTime = jwtStore.getToken(type: .accessExpriedTime).getStringToDate()
         if accessExpiredTime.compare(Date().addingTimeInterval(32400)) == .orderedAscending {
             completion(.doNotRetryWithError(error))
             return
         }
         
         let url = APIConstants.reissueURL
-        let headers: HTTPHeaders = ["RefreshToken" : getToken(type: .refreshToken)]
+        let headers: HTTPHeaders = ["RefreshToken" : jwtStore.getToken(type: .refreshToken)]
         
         AF.request(url, method: .patch,
                    encoding: JSONEncoding.default,
@@ -37,39 +36,12 @@ public class JwtRequestInterceptor: RequestInterceptor, JwtStore {
             print("retry status code = \(response.response?.statusCode)")
             switch response.result {
             case .success(let data):
-                self?.deleteAll()
-                self?.setToken(data: data)
+                self?.jwtStore.deleteAll()
+                self?.jwtStore.setToken(data: data)
                 completion(.retry)
             case .failure(let error):
                 completion(.doNotRetryWithError(error))
             }
         }
-    }
-}
-
-
-extension JwtRequestInterceptor {
-    public func saveToken(type: KeyChainAccountType, token: String) {
-        keychain.save(type: type, token: token)
-    }
-    
-    public func getToken(type: KeyChainAccountType) -> String {
-        do {
-            return try keychain.read(type: type)
-        } catch {
-            print("Failed to get token from Keychain: \(error)")
-            return ""
-        }
-    }
-    
-    public func deleteAll() {
-        jwtStore.deleteAll()
-    }
-    
-    public func setToken(data: ManageTokenModel) {
-        keychain.save(type: .accessToken, token: data.accessToken)
-        keychain.save(type: .refreshToken, token: data.refreshToken)
-        keychain.save(type: .accessExpriedTime, token: data.accessExpiredTime)
-        keychain.save(type: .refreshExpriedTime, token: data.refreshExpiredTime)
     }
 }
