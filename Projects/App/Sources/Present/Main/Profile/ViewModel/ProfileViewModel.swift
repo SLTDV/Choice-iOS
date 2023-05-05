@@ -91,12 +91,12 @@ final class ProfileViewModel: BaseViewModel {
         
         var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
         
-        return Observable.create { [self] (observer) -> Disposable in
+        return Observable.create { [weak self] (observer) -> Disposable in
             AF.upload(multipartFormData: { multipartFormData in
                 if let image = profileImage.pngData() {
                     multipartFormData.append(image, withName: "profileImage", fileName: "\(image).png", mimeType: "image/png")
                 }
-            },to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor(jwtStore: container))
+            },to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor(jwtStore: self!.container))
             .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
                 switch response.result {
                 case .success(let data):
@@ -113,7 +113,7 @@ final class ProfileViewModel: BaseViewModel {
                                parameters: params,
                                encoding: JSONEncoding.default,
                                headers: headers,
-                               interceptor: JwtRequestInterceptor(jwtStore: self.container))
+                               interceptor: JwtRequestInterceptor(jwtStore: self!.container))
                     .validate()
                     .responseData(emptyResponseCodes: [200, 201, 204]) { response in
                         switch response.result {
