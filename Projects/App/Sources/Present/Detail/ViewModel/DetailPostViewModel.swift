@@ -14,6 +14,7 @@ protocol CommentDataProtocol: AnyObject {
 final class DetailPostViewModel: BaseViewModel {
     weak var delegate: CommentDataProtocol?
     var commentCurrentPage = -1
+    private let container = AppDelegate.container.resolve(JwtStore.self)!
     
     func requestCommentData(idx: Int, completion: @escaping (Result<Int, Error>) -> Void = { _ in }) {
         let url = APIConstants.detailPostURL + "\(idx)"
@@ -29,7 +30,7 @@ final class DetailPostViewModel: BaseViewModel {
         AF.request(components!,
                    method: .get,
                    encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain())))
+                   interceptor: JwtRequestInterceptor(jwtStore: container))
         .validate()
         .responseDecodable(of: CommentModel.self) { [weak self] response in
             switch response.result {
@@ -57,7 +58,7 @@ final class DetailPostViewModel: BaseViewModel {
                    method: .post,
                    parameters: params,
                    encoding: JSONEncoding.default,
-                   interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain())))
+                   interceptor: JwtRequestInterceptor(jwtStore: container))
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
@@ -74,7 +75,7 @@ final class DetailPostViewModel: BaseViewModel {
         AF.request(url,
                    method: .delete,
                    encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor(jwtStore: Container().resolve(JwtStore.self)!))
+                   interceptor: JwtRequestInterceptor(jwtStore: container))
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {

@@ -3,9 +3,10 @@ import Alamofire
 import RxSwift
 import Shared
 import JwtStore
+import Swinject
 
 final class SignInViewModel: BaseViewModel {
-    let keyChainService = KeyChainService(keychain: KeyChain())
+    let container = AppDelegate.container.resolve(JwtStore.self)!
     func pushMainVC() {
         coordinator.navigate(to: .mainVCIsRequried)
     }
@@ -29,13 +30,14 @@ final class SignInViewModel: BaseViewModel {
         .responseDecodable(of: ManageTokenModel.self) { [weak self] response in
             switch response.result {
             case .success(let data):
-                self?.keyChainService.saveToken(type: .accessToken,
+                
+                self?.container.saveToken(type: .accessToken,
                                                 token: data.accessToken)
-                self?.keyChainService.saveToken(type: .refreshToken,
+                self?.container.saveToken(type: .refreshToken,
                                                 token: data.refreshToken)
-                self?.keyChainService.saveToken(type: .accessExpriedTime,
+                self?.container.saveToken(type: .accessExpriedTime,
                                                 token: data.accessExpiredTime)
-                self?.keyChainService.saveToken(type: .refreshExpriedTime,
+                self?.container.saveToken(type: .refreshExpriedTime,
                                                 token: data.refreshExpiredTime)
                 self?.pushMainVC()
                 LoadingIndicator.hideLoading()

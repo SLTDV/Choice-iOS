@@ -1,6 +1,6 @@
 import Foundation
 
-public class KeyChain {
+class KeyChain {
     public init() {}
     public func save(type: KeyChainAccountType, token: String) {
         let query: NSDictionary = [

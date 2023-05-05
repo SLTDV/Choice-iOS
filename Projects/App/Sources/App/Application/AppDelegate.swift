@@ -5,7 +5,7 @@ import Shared
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    let container = Container()
+    static let container = Container()
     var assembler: Assembler!
 
     func application(
@@ -14,7 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         assembler = Assembler([
             JwtStoreAssembly()
-        ])
+        ], container: AppDelegate.container)
         
         
         return true

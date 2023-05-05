@@ -15,6 +15,7 @@ final class HomeViewModel: BaseViewModel {
     private var disposeBag = DisposeBag()
     var newestPostCurrentPage = -1
     var bestPostCurrentPage = -1
+    private let container = AppDelegate.container.resolve(JwtStore.self)!
     
     func requestPostData(type: MenuOptionType, completion: @escaping (Result<Int, Error>) -> Void = { _ in }) {
         var url = ""
@@ -39,7 +40,7 @@ final class HomeViewModel: BaseViewModel {
         AF.request(components!,
                    method: .get,
                    encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain()))
+                   interceptor: JwtRequestInterceptor(jwtStore: JwtRequestInterceptor(jwtStore: container))
         ).responseDecodable(of: PostModel.self) { [weak self] response in
             switch response.result {
             case .success(let postData):
@@ -66,7 +67,7 @@ final class HomeViewModel: BaseViewModel {
                    method: .post,
                    parameters: params,
                    encoding: JSONEncoding.default,
-                   interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain())))
+                   interceptor: JwtRequestInterceptor(jwtStore: Container().resolve(JwtStore.self)!))
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {

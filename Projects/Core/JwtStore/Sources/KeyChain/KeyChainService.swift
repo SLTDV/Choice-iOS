@@ -3,7 +3,7 @@ import Foundation
 public struct KeyChainService: JwtStore {
     private let keychain: KeyChain
     
-    public init(keychain: KeyChain) {
+    init(keychain: KeyChain) {
         self.keychain = keychain
     }
     

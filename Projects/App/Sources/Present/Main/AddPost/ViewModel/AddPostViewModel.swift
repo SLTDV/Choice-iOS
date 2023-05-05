@@ -2,6 +2,7 @@ import UIKit
 import Alamofire
 import Shared
 import JwtStore
+import Swinject
 
 final class AddPostViewModel: BaseViewModel {
     func createPost(title: String, content: String, firstImage: UIImage, secondImage: UIImage,
@@ -16,8 +17,8 @@ final class AddPostViewModel: BaseViewModel {
             if let image = secondImage.pngData() {
                 multipartFormData.append(image, withName: "secondImage", fileName: "\(image).png", mimeType: "image/png")
             }
-        }, to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain())))
-        .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
+        }, to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor(jwtStore: AppDelegate.container.resolve(JwtStore.self)!))
+        .validate().responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode(AddPostModel.self, from: data)
@@ -40,7 +41,7 @@ final class AddPostViewModel: BaseViewModel {
                            parameters: params,
                            encoding: JSONEncoding.default,
                            headers: headers,
-                           interceptor: JwtRequestInterceptor(jwtStore: KeyChainService(keychain: KeyChain())))
+                           interceptor: JwtRequestInterceptor(jwtStore: AppDelegate.container.resolve(JwtStore.self)!))
                 .validate()
                 .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
                     switch response.result {
