@@ -67,7 +67,7 @@ final class HomeViewModel: BaseViewModel {
                    method: .post,
                    parameters: params,
                    encoding: JSONEncoding.default,
-                   interceptor: JwtRequestInterceptor(jwtStore: Container().resolve(JwtStore.self)!))
+                   interceptor: JwtRequestInterceptor(jwtStore: container))
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
