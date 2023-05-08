@@ -11,9 +11,11 @@ final class InterceptorUnitTest: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
     
-    func testInterceptor_WhenExpriedToken_ReceiveReissueToken() {
-        let expiredTime = DateFormatter().date(from: "2023-05-02 03:18:27 +0000")
+    func testDate_WhenExpriedToken_returnFalse() {
+        let expiredTime = DateFormatter().date(from: "2023-05-08 09:18:27 +0000")
         let date = Date().addingTimeInterval(32400)
+        print("expiredTime = \(expiredTime)")
+        print("date = \(date)")
         XCTAssertFalse(expiredTime?.compare(date) == .orderedAscending)
     }
 }
