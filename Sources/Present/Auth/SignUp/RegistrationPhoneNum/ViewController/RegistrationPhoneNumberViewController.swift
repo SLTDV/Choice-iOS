@@ -109,30 +109,34 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                 owner.certificationRequestButton.isEnabled = isValid
             }.disposed(by: disposeBag)
     }
-  
+    
     private func certificationRequestButtonDidTap() {
         let phoneNumberObservable = inputPhoneNumberTextfield.rx.text.orEmpty
         
         certificationRequestButton.rx.tap
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
-                    owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isVaild in
-                        if isVaild {
-                            owner.setupPossibleBackgroundTimer()
-                            
-                            owner.certificationNumberTextfield.isHidden = false
-                            owner.resendLabel.isHidden = false
-                            owner.resendButton.isHidden = false
-                            
-                            owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
-                            owner.certificationRequestButton.isEnabled = false
-                            
-                            owner.inputPhoneNumberTextfield.isUserInteractionEnabled = false
-                            self.warningLabel.show(warning: "")
-                        } else {
-                            self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
-                        }
+                owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isVaild in
+                    LoadingIndicator.showLoading(text: "")
+                    if isVaild {
+                        owner.setupPossibleBackgroundTimer()
+                        
+                        owner.certificationNumberTextfield.isHidden = false
+                        owner.resendLabel.isHidden = false
+                        owner.resendButton.isHidden = false
+                        
+                        owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
+                        owner.certificationRequestButton.isEnabled = false
+                        
+                        owner.inputPhoneNumberTextfield.isUserInteractionEnabled = false
+                        self.warningLabel.show(warning: "")
+                        LoadingIndicator.hideLoading()
+                    } else {
+                        self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
+                        LoadingIndicator.hideLoading()
                     }
+                }
+                owner.view.endEditing(true)
             }.disposed(by: disposeBag)
     }
     

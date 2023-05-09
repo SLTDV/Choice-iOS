@@ -14,14 +14,17 @@ final class RegistrationPhoneNumberViewModel: BaseViewModel {
                    method: .post,
                    encoding: URLEncoding.queryString)
         .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { response in 
-                switch response.result {
-                case .success:
-                    completion(true)
-                case .failure:
-                    completion(false)
-                }
+        .responseData { response in
+            switch response.response?.statusCode {
+            case 200:
+                completion(true)
+            case 409:
+                completion(false)
+            default :
+                print(response.response?.statusCode)
+                print(phoneNumberItem)
             }
+        }
     }
     
     func requestAuthNumberConfirmation(phoneNumber: String, authCode: String, completion: @escaping (Bool) -> Void) {
