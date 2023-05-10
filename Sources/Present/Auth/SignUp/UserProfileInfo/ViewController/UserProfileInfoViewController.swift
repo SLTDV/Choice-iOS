@@ -78,7 +78,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
                     owner.warningLabel.show(warning: "*2자 이상 6자 이하로 입력해 주세요.")
                     
                     owner.completeButton.isEnabled = false
-                    owner.completeButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+                    owner.completeButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
                 } else {
                     owner.warningLabel.hide()
                     

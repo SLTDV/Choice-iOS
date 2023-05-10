@@ -116,25 +116,32 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         certificationRequestButton.rx.tap
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
-                owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isVaild in
-                    LoadingIndicator.showLoading(text: "")
-                    if isVaild {
-                        owner.setupPossibleBackgroundTimer()
-                        
-                        owner.certificationNumberTextfield.isHidden = false
-                        owner.resendLabel.isHidden = false
-                        owner.resendButton.isHidden = false
-                        
-                        owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
-                        owner.certificationRequestButton.isEnabled = false
-                        
-                        owner.inputPhoneNumberTextfield.isUserInteractionEnabled = false
-                        self.warningLabel.show(warning: "")
-                        LoadingIndicator.hideLoading()
-                    } else {
-                        self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
-                        LoadingIndicator.hideLoading()
+                LoadingIndicator.showLoading(text: "")
+                
+                if inputPhoneNumber.hasPrefix("010"){
+                    owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isVaild in
+                        if isVaild {
+                            owner.setupPossibleBackgroundTimer()
+                            
+                            owner.certificationNumberTextfield.isHidden = false
+                            owner.resendLabel.isHidden = false
+                            owner.resendButton.isHidden = false
+                            
+                            owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
+                            owner.certificationRequestButton.isEnabled = false
+                            
+                            owner.inputPhoneNumberTextfield.isUserInteractionEnabled = false
+                            owner.inputPhoneNumberTextfield.textColor = .placeholderText
+                            self.warningLabel.show(warning: "")
+                            LoadingIndicator.hideLoading()
+                        } else {
+                            self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
+                            LoadingIndicator.hideLoading()
+                        }
                     }
+                } else {
+                    self.warningLabel.show(warning: "*전화번호 형식이 올바르지 않아요.")
+                    LoadingIndicator.hideLoading()
                 }
                 owner.view.endEditing(true)
             }.disposed(by: disposeBag)
@@ -146,37 +153,45 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         resendButton.rx.tap
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
+                LoadingIndicator.showLoading(text: "")
                 if owner.isVaildAuth {
-                    owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { inVaild in
-                        if inVaild {
-                            owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
-                            owner.setupPossibleBackgroundTimer()
-                            owner.certificationNumberTextfield.isHidden = false
-                            
-                            self.warningLabel.show(warning: "")
-                        } else {
-                            self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
+                    if inputPhoneNumber.hasPrefix("010") {
+                        owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { inVaild in
+                            if inVaild {
+                                owner.setupPossibleBackgroundTimer()
+                                
+                                self.warningLabel.show(warning: "")
+                                LoadingIndicator.hideLoading()
+                            } else {
+                                self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
+                                LoadingIndicator.hideLoading()
+                            }
                         }
+                    } else {
+                        self.warningLabel.show(warning: "*전화번호 형식이 올바르지 않아요.")
+                        LoadingIndicator.hideLoading()
                     }
                 } else {
                     owner.warningLabel.show(warning: "*3분 후에 다시 시도해주세요")
+                    LoadingIndicator.hideLoading()
                 }
             }.disposed(by: disposeBag)
     }
     
     private func setupPossibleBackgroundTimer() {
-        let count = 180
+        let count = 60
         
         isVaildAuth = false
         
         Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
-            .take(count)
+            .take(count+1)
             .map { count - $0 }
             .bind(with: self) { owner, remainingSeconds in
                 let minutes = remainingSeconds / 60
                 let seconds = remainingSeconds % 60
                 owner.countLabel.text = String(format: "%02d:%02d", minutes, seconds)
                 
+                print("Remaining seconds:", remainingSeconds)
                 if remainingSeconds == 0 {
                     owner.countLabel.text = "00:00"
                     owner.isVaildAuth = true
