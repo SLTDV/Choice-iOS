@@ -12,10 +12,10 @@ final class SignInViewModel: BaseViewModel {
         coordinator.navigate(to: .signUpIsRequired)
     }
     
-    func requestSignIn(email: String, password: String, completion: @escaping (Bool) -> Void) {
+    func requestSignIn(phoneNumber: String, password: String, completion: @escaping (Bool) -> Void) {
         let url = APIConstants.signInURL
         let params = [
-            "phoneNumber" : email,
+            "phoneNumber" : phoneNumber,
             "password" : password
         ] as Dictionary
         

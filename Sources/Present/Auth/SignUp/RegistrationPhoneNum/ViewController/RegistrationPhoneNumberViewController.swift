@@ -5,7 +5,7 @@ import RxCocoa
 final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumberViewModel> {
     private let disposeBag = DisposeBag()
     
-    private var isVaildAuth = true
+    private var isValidAuth = true
     
     private lazy var restoreFrameYValue = 0.0
     
@@ -119,8 +119,8 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                 LoadingIndicator.showLoading(text: "")
                 
                 if inputPhoneNumber.hasPrefix("010"){
-                    owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isVaild in
-                        if isVaild {
+                    owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isValid in
+                        if isValid {
                             owner.setupPossibleBackgroundTimer()
                             
                             owner.certificationNumberTextfield.isHidden = false
@@ -154,10 +154,10 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
                 LoadingIndicator.showLoading(text: "")
-                if owner.isVaildAuth {
+                if owner.isValidAuth {
                     if inputPhoneNumber.hasPrefix("010") {
-                        owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { inVaild in
-                            if inVaild {
+                        owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isValid in
+                            if isValid {
                                 owner.setupPossibleBackgroundTimer()
                                 
                                 self.warningLabel.show(warning: "")
@@ -181,7 +181,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     private func setupPossibleBackgroundTimer() {
         let count = 60
         
-        isVaildAuth = false
+        isValidAuth = false
         
         Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
             .take(count+1)
@@ -194,7 +194,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                 print("Remaining seconds:", remainingSeconds)
                 if remainingSeconds == 0 {
                     owner.countLabel.text = "00:00"
-                    owner.isVaildAuth = true
+                    owner.isValidAuth = true
                 }
             }.disposed(by: disposeBag)
     }

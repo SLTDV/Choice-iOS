@@ -15,7 +15,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
         $0.font = .systemFont(ofSize: 16, weight: .light)
     }
     
-    private let inputIdTextField = UnderLineTextField().then {
+    private let inputPhoneNumberTextField = UnderLineTextField().then {
         $0.setPlaceholder(placeholder: "휴대폰 번호")
         $0.keyboardType = .numberPad
     }
@@ -58,17 +58,17 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     private func bind() {
         signInButton.rx.tap
             .bind(onNext: { [weak self] _ in
-                guard let email = self?.inputIdTextField.text else { return }
+                guard let phoneNumber = self?.inputPhoneNumberTextField.text else { return }
                 guard let password = self?.inputPasswordTextField.text else { return }
                 
                 LoadingIndicator.showLoading(text: "")
                 DispatchQueue.main.async {
-                    self?.viewModel.requestSignIn(email: email, password: password){ [weak self] isComplete in
+                    self?.viewModel.requestSignIn(phoneNumber: phoneNumber, password: password){ [weak self] isComplete in
                         guard isComplete else {
                             self?.showWarningLabel(warning: "아이디 또는 비밀번호가 잘못되었습니다.")
                            
                             DispatchQueue.main.async {
-                                self?.inputIdTextField.shake()
+                                self?.inputPhoneNumberTextField.shake()
                                 self?.inputPasswordTextField.shake()
                             }
                             return
@@ -88,7 +88,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(titleImageView, subTitleLabel, inputIdTextField, inputPasswordTextField,
+        view.addSubviews(titleImageView, subTitleLabel, inputPhoneNumberTextField, inputPasswordTextField,
                          signInButton, divideLineButton, pushSignUpButton, warningLabel)
     }
     
@@ -103,13 +103,13 @@ final class SignInViewController: BaseVC<SignInViewModel> {
             $0.leading.equalTo(titleImageView.snp.leading)
         }
         
-        inputIdTextField.snp.makeConstraints {
+        inputPhoneNumberTextField.snp.makeConstraints {
             $0.top.equalTo(subTitleLabel.snp.bottom).offset(77)
             $0.leading.trailing.equalToSuperview().inset(26)
         }
         
         inputPasswordTextField.snp.makeConstraints {
-            $0.top.equalTo(inputIdTextField.snp.bottom).offset(40)
+            $0.top.equalTo(inputPhoneNumberTextField.snp.bottom).offset(40)
             $0.leading.trailing.equalToSuperview().inset(26)
         }
         
