@@ -34,11 +34,7 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         $0.layer.cornerRadius = 8
     }
     
-    private let warningLabel = WarningLabel().then {
-        $0.font = .systemFont(ofSize: 14, weight: .semibold)
-        $0.isHidden = true
-        $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
-    }
+    private let warningLabel = WarningLabel()
     
     private func bindUI() {
         let passwordObservable = inputPasswordTextfield.rx.text.orEmpty
@@ -68,11 +64,14 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         } else {
             self.warningLabel.show(warning: "*비밀번호가 일치하지 않아요.")
         }
+        
+        LoadingIndicator.hideLoading()
     }
     
     private func nextButtonDidTap() {
         nextButton.rx.tap
             .bind(onNext: {
+                LoadingIndicator.showLoading(text: "")
                 self.checkPassword()
             }).disposed(by: disposeBag)
     }

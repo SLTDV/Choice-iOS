@@ -42,11 +42,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
         $0.backgroundColor = .white
     }
     
-    private let warningLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 12)
-        $0.isHidden = true
-        $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
-    }
+    private let warningLabel = UILabel()
     
     private func showWarningLabel(warning: String) {
         DispatchQueue.main.async {

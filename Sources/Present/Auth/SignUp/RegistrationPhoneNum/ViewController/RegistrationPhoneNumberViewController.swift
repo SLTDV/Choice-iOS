@@ -68,15 +68,12 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.layer.cornerRadius = 8
     }
     
-    private let warningLabel = WarningLabel().then {
-        $0.font = .systemFont(ofSize: 14)
-        $0.isHidden = true
-        $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
-    }
+    private let warningLabel = WarningLabel()
     
-    private func signUpButtonDidTap() {
+    private func nextButtonDidTap() {
         nextButton.rx.tap
             .bind(with: self) { owner, _ in
+                LoadingIndicator.showLoading(text: "")
                 owner.checkAuthCode()
             }.disposed(by: disposeBag)
     }
@@ -89,8 +86,10 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             if isVaild {
                 self.viewModel.pushRegistrationPasswordVC(phoneNumber: phoneNumber)
             } else {
+                
                 self.warningLabel.show(warning: "*인증번호가 일치하지 않습니다")
             }
+            LoadingIndicator.hideLoading()
         }
     }
     
@@ -132,7 +131,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                             
                             owner.inputPhoneNumberTextfield.isUserInteractionEnabled = false
                             owner.inputPhoneNumberTextfield.textColor = .placeholderText
-                            self.warningLabel.show(warning: "")
+                            self.warningLabel.hide()
                             LoadingIndicator.hideLoading()
                         } else {
                             self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
@@ -179,7 +178,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     }
     
     private func setupPossibleBackgroundTimer() {
-        let count = 60
+        let count = 180
         
         isValidAuth = false
         
@@ -191,7 +190,6 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                 let seconds = remainingSeconds % 60
                 owner.countLabel.text = String(format: "%02d:%02d", minutes, seconds)
                 
-                print("Remaining seconds:", remainingSeconds)
                 if remainingSeconds == 0 {
                     owner.countLabel.text = "00:00"
                     owner.isValidAuth = true
@@ -205,7 +203,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     
     override func configureVC() {
         restoreFrameYValue = self.view.frame.origin.y
-        signUpButtonDidTap()
+        nextButtonDidTap()
         resendButtonDidTap()
         certificationRequestButtonDidTap()
         

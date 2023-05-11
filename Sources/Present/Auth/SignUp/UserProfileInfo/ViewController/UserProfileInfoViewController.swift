@@ -36,11 +36,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
-    private let warningLabel = WarningLabel().then {
-        $0.font = .systemFont(ofSize: 14)
-        $0.isHidden = true
-        $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
-    }
+    private let warningLabel = WarningLabel()
     
     private lazy var completeButton = UIButton().then {
         $0.setTitle("완료", for: .normal)
