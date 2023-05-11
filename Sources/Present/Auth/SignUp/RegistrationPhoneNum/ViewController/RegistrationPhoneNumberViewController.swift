@@ -159,7 +159,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                             if isValid {
                                 owner.setupPossibleBackgroundTimer()
                                 
-                                self.warningLabel.show(warning: "")
+                                self.warningLabel.hide()
                                 LoadingIndicator.hideLoading()
                             } else {
                                 self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
