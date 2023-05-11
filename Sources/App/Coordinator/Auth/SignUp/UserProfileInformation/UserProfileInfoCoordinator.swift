@@ -1,9 +1,9 @@
 import Foundation
 
 final class UserProfileInfoCoordinator: BaseCoordinator {
-    func startUserProfileInfoVC(email: String, password: String) {
+    func startUserProfileInfoVC(phoneNumber: String, password: String) {
         let vm = UserProfileInfoViewModel(coordinator: self)
-        let vc = UserProfileInfoViewController(viewModel: vm, email: email, password: password)
+        let vc = UserProfileInfoViewController(viewModel: vm, phoneNumber: phoneNumber, password: password)
         
         navigationController.pushViewController(vc, animated: true)
     }

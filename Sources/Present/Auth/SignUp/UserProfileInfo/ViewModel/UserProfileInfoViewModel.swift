@@ -2,7 +2,7 @@ import UIKit
 import Alamofire
 
 final class UserProfileInfoViewModel: BaseViewModel {
-    func callToSignUp(email: String, password: String, nickname: String, profileImage: UIImage?, completion: @escaping (Bool) -> Void) {
+    func callToSignUp(phoneNumber: String, password: String, nickname: String, profileImage: UIImage?, completion: @escaping (Bool) -> Void) {
         var url = ""
         
         if let profileImage = profileImage {
@@ -12,21 +12,20 @@ final class UserProfileInfoViewModel: BaseViewModel {
                 if let image = profileImage.pngData() {
                     multipartFormData.append(image, withName: "profileImage", fileName: "\(image).png", mimeType: "image/png")
                 }
-            }, to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor())
+            }, to: url, method: .post, headers: headers)
             .validate().responseData(emptyResponseCodes: [200, 201, 204]) { response in
                 switch response.result {
                 case .success(let data):
-                    print("successt")
                     let decodeResponse = try? JSONDecoder().decode(SignUpModel.self, from: data)
                     let profileImageUrl = decodeResponse?.profileImageUrl
 
                     headers = ["Content-Type": "application/json"]
                     url = APIConstants.signUpURL
                     let body : Parameters = [
-                        "email" : email,
+                        "phoneNumber" : phoneNumber,
                         "password" : password,
                         "nickname" : nickname,
-                        "profileImgUrl" : profileImageUrl
+                        "profileImgUrl" : profileImageUrl!
                     ]
                     
                     AF.request(url,
@@ -52,7 +51,7 @@ final class UserProfileInfoViewModel: BaseViewModel {
             url = APIConstants.signUpURL
 
             let body : Parameters = [
-                "email" : email,
+                "phoneNumber" : phoneNumber,
                 "password" : password,
                 "nickname" : nickname,
                 "profileImgUrl" : profileImage

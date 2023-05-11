@@ -3,7 +3,7 @@ import RxSwift
 import RxCocoa
 
 final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
-    var email: String?
+    var phoneNumber: String?
     var password: String?
 
     var isImageChanged = false
@@ -36,17 +36,25 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
-    private let warningLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 14)
-        $0.textColor = .init(red: 1, green: 0.363, blue: 0.363, alpha: 1)
-    }
+    private let warningLabel = WarningLabel()
     
     private lazy var completeButton = UIButton().then {
         $0.setTitle("완료", for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.isEnabled = false
-        $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+        $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(signUpButtonDidTap(_ :)), for: .touchUpInside)
+    }
+    
+    init(viewModel: UserProfileInfoViewModel, phoneNumber: String, password: String) {
+        super.init(viewModel: viewModel)
+        self.phoneNumber = phoneNumber
+        self.password = password
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     @objc private func addImageButtonDidTap(_ sender: UIButton) {
@@ -63,13 +71,12 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
             .map(checkNicknameValid(_:))
             .bind(with: self, onNext: { owner, isValid  in
                 if isValid {
-                    owner.warningLabel.textColor = .red
-                    owner.warningLabel.text = "*2자 이상 6자 이하로 입력해 주세요."
+                    owner.warningLabel.show(warning: "*2자 이상 6자 이하로 입력해 주세요.")
                     
                     owner.completeButton.isEnabled = false
-                    owner.completeButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+                    owner.completeButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
                 } else {
-                    owner.warningLabel.text = ""
+                    owner.warningLabel.hide()
                     
                     owner.completeButton.isEnabled = true
                     owner.completeButton.backgroundColor = .black
@@ -79,7 +86,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     }
     
     @objc private func signUpButtonDidTap(_ sender: UIButton) {
-        guard let email = email else { return  }
+        guard let phoneNumber = phoneNumber else { return  }
         guard let password = password else { return  }
         guard let nickName = userNameTextField.text else { return }
         
@@ -89,12 +96,13 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         
         LoadingIndicator.showLoading(text: "")
         
-        viewModel.callToSignUp(email: email, password: password, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
+        viewModel.callToSignUp(phoneNumber: phoneNumber, password: password, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
             if isDuplicate {
                 self.viewModel.navigateRootVC()
+                self.warningLabel.hide()
             } else {
                 self.shakeAllTextField()
-                self.showWarningLabel(warning: "*이미 존재하는 닉네임 입니다.")
+                self.warningLabel.show(warning: "*이미 존재하는 닉네임 입니다.")
             }
         }
     }
@@ -103,27 +111,10 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         userNameTextField.shake()
     }
     
-    private func showWarningLabel(warning: String) {
-        DispatchQueue.main.async {
-            self.warningLabel.textColor = .red
-            self.warningLabel.text = warning
-        }
-    }
-    
     override func configureVC() {
         imagePickerController.delegate = self
         
         bindUI()
-    }
-    
-    init(viewModel: UserProfileInfoViewModel, email: String, password: String) {
-        super.init(viewModel: viewModel)
-        self.email = email
-        self.password = password
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func addView() {
@@ -157,7 +148,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         completeButton.snp.makeConstraints {
             $0.bottom.equalToSuperview().inset(64)
             $0.leading.trailing.equalToSuperview().inset(26)
-            $0.height.equalTo(49)
+            $0.height.equalTo(58)
         }
     }
 }

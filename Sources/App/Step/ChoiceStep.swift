@@ -6,7 +6,8 @@ enum ChoiceStep {
     case mainVCIsRequried
     
     //SignUp
-    case userProfileInfoIsRequired(email: String, password: String)
+    case registrationPasswordIsRequired(phoneNumber: String)
+    case userProfileInfoIsRequired(phoneNumber: String, password: String)
     
     //Main
     case addPostIsRequired
