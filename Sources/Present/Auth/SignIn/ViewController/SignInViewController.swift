@@ -42,14 +42,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
         $0.backgroundColor = .white
     }
     
-    private let warningLabel = UILabel()
-    
-    private func showWarningLabel(warning: String) {
-        DispatchQueue.main.async {
-            self.warningLabel.isHidden = false
-            self.warningLabel.text = warning
-        }
-    }
+    private let warningLabel = WarningLabel()
     
     private func bind() {
         signInButton.rx.tap
@@ -61,7 +54,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
                 DispatchQueue.main.async {
                     self?.viewModel.requestSignIn(phoneNumber: phoneNumber, password: password){ [weak self] isComplete in
                         guard isComplete else {
-                            self?.showWarningLabel(warning: "아이디 또는 비밀번호가 잘못되었습니다.")
+                            self?.warningLabel.show(warning: "아이디 또는 비밀번호가 잘못되었습니다.")
                            
                             DispatchQueue.main.async {
                                 self?.inputPhoneNumberTextField.shake()
