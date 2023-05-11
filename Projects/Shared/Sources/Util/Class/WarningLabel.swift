@@ -1,6 +1,6 @@
 import UIKit
 
-final class WarningLabel: UILabel {
+public final class WarningLabel: UILabel {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -14,14 +14,14 @@ final class WarningLabel: UILabel {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func show(warning: String) {
+    public func show(warning: String) {
         DispatchQueue.main.async {
             self.isHidden = false
             self.text = warning
         }
     }
     
-    func hide() {
+    public func hide() {
         DispatchQueue.main.async {
             self.isHidden = true
         }

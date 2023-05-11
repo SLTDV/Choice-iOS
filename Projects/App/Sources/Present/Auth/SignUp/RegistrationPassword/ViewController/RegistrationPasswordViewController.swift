@@ -1,6 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Shared
 
 final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewModel> {
     private let disposeBag = DisposeBag()

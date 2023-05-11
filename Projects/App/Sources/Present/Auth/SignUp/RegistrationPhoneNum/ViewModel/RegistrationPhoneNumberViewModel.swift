@@ -1,5 +1,6 @@
 import Foundation
 import Alamofire
+import JwtStore
 
 final class RegistrationPhoneNumberViewModel: BaseViewModel {
     func requestAuthNumber(phoneNumber: String, completion: @escaping (Bool) -> Void) {

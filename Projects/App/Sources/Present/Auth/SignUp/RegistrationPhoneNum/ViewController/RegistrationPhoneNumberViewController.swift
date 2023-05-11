@@ -1,6 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Shared
 
 final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumberViewModel> {
     private let disposeBag = DisposeBag()
