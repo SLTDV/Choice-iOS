@@ -30,15 +30,9 @@ final class SignInViewModel: BaseViewModel {
         .responseDecodable(of: ManageTokenModel.self) { [weak self] response in
             switch response.result {
             case .success(let data):
-                self?.container.saveToken(type: .accessToken,
-                                                token: data.accessToken)
-                self?.container.saveToken(type: .refreshToken,
-                                                token: data.refreshToken)
-                self?.container.saveToken(type: .accessExpriedTime,
-                                                token: data.accessExpiredTime)
-                self?.container.saveToken(type: .refreshExpriedTime,
-                                                token: data.refreshExpiredTime)
+                self?.container.setToken(data: data)
                 self?.pushMainVC()
+                print("accessTokenExpiredTime = \(self?.container.getToken(type: .accessExpriedTime))")
                 LoadingIndicator.hideLoading()
                 completion(true)
             case .failure(let error):

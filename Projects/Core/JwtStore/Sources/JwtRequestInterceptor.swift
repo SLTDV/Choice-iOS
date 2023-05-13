@@ -14,6 +14,9 @@ public class JwtRequestInterceptor: RequestInterceptor {
             completion(.success(urlRequest))
             return
         }
+        
+        print("adapt!!")
+        print(Date().addingTimeInterval(32400))
         var urlRequest = urlRequest
         let accessToken = jwtStore.getToken(type: .accessToken)
         urlRequest.addValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
@@ -21,6 +24,7 @@ public class JwtRequestInterceptor: RequestInterceptor {
     }
     
     public func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
+        print("retry!")
         let accessExpiredTime = jwtStore.getToken(type: .accessExpriedTime).getStringToDate()
         if accessExpiredTime.compare(Date().addingTimeInterval(32400)) == .orderedAscending {
             completion(.doNotRetryWithError(error))
