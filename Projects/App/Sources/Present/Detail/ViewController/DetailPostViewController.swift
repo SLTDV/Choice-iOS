@@ -7,7 +7,7 @@ import Shared
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
     var writerNameData = PublishSubject<String>()
     var writerImageStringData = PublishSubject<String?>()
-    var commentData = BehaviorRelay<[CommentData]>(value: [])
+    var commentData = BehaviorRelay<[CommentList]>(value: [])
     private var model: PostList?
     var isLastPage = false
     

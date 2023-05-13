@@ -61,11 +61,11 @@ final class CommentCell: UITableViewCell {
 }
 
 extension CommentCell {
-    func changeCommentData(model: CommentData) {
+    func changeCommentData(model: CommentList) {
         self.nicknameLabel.text = model.nickname
         self.contentLabel.text = model.content
-        guard model.image == nil else {
-            self.profileImageView.kf.setImage(with: URL(string: model.image!))
+        guard model.profileImageUrl == nil else {
+            self.profileImageView.kf.setImage(with: URL(string: model.profileImageUrl!))
             return
         }
     }

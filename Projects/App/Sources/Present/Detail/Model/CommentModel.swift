@@ -5,13 +5,13 @@ struct CommentModel: Codable {
     var size: Int
     var writer: String
     var image: String?
-    var comment : [CommentData]
+    var commentList : [CommentList]
 }
 
-struct CommentData: Codable {
+struct CommentList: Codable {
     var idx: Int
     var nickname: String
     var content: String
-    var image: String?
+    var profileImageUrl: String?
     var isMine: Bool
 }
