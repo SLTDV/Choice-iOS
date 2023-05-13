@@ -8,7 +8,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     var writerNameData = PublishSubject<String>()
     var writerImageStringData = PublishSubject<String?>()
     var commentData = BehaviorRelay<[CommentData]>(value: [])
-    private var model: Posts?
+    private var model: PostList?
     var isLastPage = false
     
     private let disposeBag = DisposeBag()
@@ -114,7 +114,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
     
-    init(viewModel: DetailPostViewModel, model: Posts) {
+    init(viewModel: DetailPostViewModel, model: PostList) {
         super.init(viewModel: viewModel)
         self.model = model
         
@@ -258,7 +258,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }).disposed(by: disposeBag)
     }
     
-    private func changePostData(model: Posts) {
+    private func changePostData(model: PostList) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async { [weak self] in
@@ -272,7 +272,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
     }
     
-    func setVoteButtonLayout(with model: Posts) {
+    func setVoteButtonLayout(with model: PostList) {
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
             firstVotingCount: Double(model.firstVotingCount),
             secondVotingCount: Double(model.secondVotingCount)

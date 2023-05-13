@@ -9,7 +9,7 @@ import JwtStore
 protocol ProfileDataProtocol: AnyObject {
     var nicknameData: PublishSubject<String> { get set }
     var imageData: PublishSubject<String?> { get set }
-    var postListData: BehaviorRelay<[Posts]> { get set }
+    var postListData: BehaviorRelay<[PostList]> { get set }
 }
 
 final class ProfileViewModel: BaseViewModel {

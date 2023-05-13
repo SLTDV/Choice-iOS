@@ -7,7 +7,7 @@ import Shared
 final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
     var nicknameData = PublishSubject<String>()
     var imageData = PublishSubject<String?>()
-    var postListData = BehaviorRelay<[Posts]>(value: [])
+    var postListData = BehaviorRelay<[PostList]>(value: [])
     
     private let disposeBag = DisposeBag()
     

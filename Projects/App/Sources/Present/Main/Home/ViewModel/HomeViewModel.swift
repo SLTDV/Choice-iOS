@@ -7,7 +7,7 @@ import JwtStore
 import Swinject
 
 protocol PostItemsProtocol: AnyObject {
-    var postData: BehaviorRelay<[Posts]> { get set }
+    var postData: BehaviorRelay<[PostList]> { get set }
 }
 
 final class HomeViewModel: BaseViewModel {
@@ -48,7 +48,7 @@ final class HomeViewModel: BaseViewModel {
                 completion(.success(postData.size))
                 
                 var relay = self?.delegate?.postData.value
-                relay?.append(contentsOf: postData.posts)
+                relay?.append(contentsOf: postData.postList)
                 self?.delegate?.postData.accept(relay!)
             case .failure(let error):
                 completion(.failure(error))
@@ -83,7 +83,7 @@ final class HomeViewModel: BaseViewModel {
         coordinator.navigate(to: .addPostIsRequired)
     }
     
-    func pushDetailPostVC(model: Posts) {
+    func pushDetailPostVC(model: PostList) {
         coordinator.navigate(to: .detailPostIsRequired(model: model))
     }
     

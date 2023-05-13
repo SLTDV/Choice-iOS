@@ -30,7 +30,6 @@ final class SignInViewModel: BaseViewModel {
         .responseDecodable(of: ManageTokenModel.self) { [weak self] response in
             switch response.result {
             case .success(let data):
-                
                 self?.container.saveToken(type: .accessToken,
                                                 token: data.accessToken)
                 self?.container.saveToken(type: .refreshToken,

@@ -5,7 +5,7 @@ import Shared
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVoteButtonDidTapDelegate {
     // MARK: - Properties
-    var postData = BehaviorRelay<[Posts]>(value: [])
+    var postData = BehaviorRelay<[PostList]>(value: [])
     private let disposeBag = DisposeBag()
     var isLastPage = false
     
@@ -74,7 +74,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                 cell.separatorInset = UIEdgeInsets.zero
             }.disposed(by: disposeBag)
         
-        postTableView.rx.modelSelected(Posts.self)
+        postTableView.rx.modelSelected(PostList.self)
             .asDriver()
             .drive(with: self, onNext: { owner, post in
                 owner.viewModel.pushDetailPostVC(model: post)
