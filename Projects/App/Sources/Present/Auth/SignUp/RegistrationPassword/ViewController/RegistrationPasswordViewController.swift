@@ -11,7 +11,7 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         $0.font = .systemFont(ofSize: 16, weight: .bold)
     }
     
-    private let inputPasswordTextfield = UITextField().then {
+    private let inputPasswordTextField = UITextField().then {
         $0.addLeftPadding()
         $0.placeholder = "8~16자리 영문, 숫자, 특수문자 조합"
         $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
@@ -20,7 +20,7 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         $0.isSecureTextEntry = true
     }
     
-    private let checkPasswordTextfield = UITextField().then {
+    private let checkPasswordTextField = UITextField().then {
         $0.addLeftPadding()
         $0.placeholder = "비밀번호 재입력"
         $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
@@ -29,9 +29,17 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         $0.isSecureTextEntry = true
     }
     
-    private let passwordShowButton = UIButton()
+    private let passwordShowButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "eye"), for: .normal)
+        $0.tintColor = ChoiceAsset.Colors.grayVoteButton.color
+        $0.backgroundColor = .clear
+    }
     
-    private let checkPasswordShowButton = UIButton()
+    private let checkPasswordShowButton = UIButton().then {
+        $0.setImage(UIImage(systemName: "eye"), for: .normal)
+        $0.tintColor = ChoiceAsset.Colors.grayVoteButton.color
+        $0.backgroundColor = .clear
+    }
     
     private lazy var nextButton = UIButton().then {
         $0.setTitle("다음", for: .normal)
@@ -44,8 +52,8 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
     private let warningLabel = WarningLabel()
     
     private func bindUI() {
-        let passwordObservable = inputPasswordTextfield.rx.text.orEmpty
-        let checkPasswordObservable = checkPasswordTextfield.rx.text.orEmpty
+        let passwordObservable = inputPasswordTextField.rx.text.orEmpty
+        let checkPasswordObservable = checkPasswordTextField.rx.text.orEmpty
         
         Observable.combineLatest(
             passwordObservable,
@@ -59,8 +67,8 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
     }
     
     private func checkPassword() {
-        guard let password = inputPasswordTextfield.text else { return }
-        guard let checkPassword = checkPasswordTextfield.text else { return }
+        guard let password = inputPasswordTextField.text else { return }
+        guard let checkPassword = checkPasswordTextField.text else { return }
         
         if password.elementsEqual(checkPassword) {
             if self.viewModel.isValidPassword(password: password){
@@ -78,20 +86,20 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
     private func passwordShowButtonDidTap() {
         passwordShowButton.rx.tap
             .bind(with: self) { owner, _ in
-                owner.inputPasswordTextfield.isSecureTextEntry.toggle()
+                owner.inputPasswordTextField.isSecureTextEntry.toggle()
                 owner.passwordShowButton.isSelected.toggle()
                 
-                let buttonImage = owner.passwordShowButton.isSelected ? "eye" : "eye.slash"
-                owner.passwordShowButton.setImage(UIImage(named: buttonImage), for: .normal)
+                let buttonImage = owner.passwordShowButton.isSelected ? "eye.slash" : "eye"
+                owner.passwordShowButton.setImage(UIImage(systemName: buttonImage), for: .normal)
             }.disposed(by: disposeBag)
         
         checkPasswordShowButton.rx.tap
             .bind(with: self) { owner, _ in
-                owner.checkPasswordTextfield.isSecureTextEntry.toggle()
+                owner.checkPasswordTextField.isSecureTextEntry.toggle()
                 owner.checkPasswordShowButton.isSelected.toggle()
                 
-                let buttonImage = owner.checkPasswordShowButton.isSelected ? "eye" : "eye.slash"
-                owner.checkPasswordShowButton.setImage(UIImage(named: buttonImage), for: .normal)
+                let buttonImage = owner.checkPasswordShowButton.isSelected ? "eye.slash" : "eye"
+                owner.checkPasswordShowButton.setImage(UIImage(systemName: buttonImage), for: .normal)
             }.disposed(by: disposeBag)
     }
     
@@ -110,13 +118,16 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         
         navigationItem.title = "회원가입"
         
-        inputPasswordTextfield.delegate = self
-        checkPasswordTextfield.delegate = self
+        inputPasswordTextField.delegate = self
+        checkPasswordTextField.delegate = self
     }
     
     override func addView() {
-        view.addSubviews(passwordLabel, inputPasswordTextfield,
-                         checkPasswordTextfield, warningLabel, nextButton, checkPasswordShowButton, passwordShowButton, checkPasswordShowButton)
+        view.addSubviews(passwordLabel, inputPasswordTextField,
+                         checkPasswordTextField, warningLabel, nextButton)
+        
+        inputPasswordTextField.addSubview(passwordShowButton)
+        checkPasswordTextField.addSubview(checkPasswordShowButton)
     }
     
     override func setLayout() {
@@ -125,16 +136,30 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
             $0.leading.equalToSuperview().inset(26)
         }
         
-        inputPasswordTextfield.snp.makeConstraints {
+        inputPasswordTextField.snp.makeConstraints {
             $0.top.equalTo(passwordLabel.snp.bottom).offset(25)
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(58)
         }
         
-        checkPasswordTextfield.snp.makeConstraints {
-            $0.top.equalTo(inputPasswordTextfield.snp.bottom).offset(20)
+        checkPasswordTextField.snp.makeConstraints {
+            $0.top.equalTo(inputPasswordTextField.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(58)
+        }
+        
+        passwordShowButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalTo(inputPasswordTextField.snp.trailing).inset(21)
+            $0.height.equalTo(26)
+            $0.width.equalTo(26)
+        }
+        
+        checkPasswordShowButton.snp.makeConstraints {
+            $0.centerY.equalToSuperview()
+            $0.trailing.equalTo(checkPasswordTextField.snp.trailing).inset(21)
+            $0.height.equalTo(26)
+            $0.width.equalTo(26)
         }
         
         warningLabel.snp.makeConstraints {
