@@ -32,7 +32,7 @@ final class SignInViewModel: BaseViewModel {
             case .success(let data):
                 self?.container.setToken(data: data)
                 self?.pushMainVC()
-                print("accessTokenExpiredTime = \(self?.container.getToken(type: .accessExpriedTime))")
+                print("accessTokenExpiredTime = \(self?.container.getToken(type: .accessExpiredTime))")
                 LoadingIndicator.hideLoading()
                 completion(true)
             case .failure(let error):

@@ -25,7 +25,8 @@ final class AppCoordinator: Coordinator {
         
         window?.rootViewController = navigationController
         
-        AF.request(url, method: .patch,
+        AF.request(url,
+                   method: .patch,
                    encoding: JSONEncoding.default,
                    headers: headers)
         .validate()

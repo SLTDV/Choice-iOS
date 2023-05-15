@@ -8,8 +8,8 @@ public protocol JwtStore {
 public enum KeyChainAccountType: String {
     case accessToken = "accessToken"
     case refreshToken = "refreshToken"
-    case accessExpriedTime = "accessExpriedTime"
-    case refreshExpriedTime = "refreshExpriedTime"
+    case accessExpiredTime = "accessExpiredTime"
+    case refreshExpiredTime = "refreshExpiredTime"
 }
 
 public enum KeyChainError: Error {

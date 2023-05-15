@@ -16,27 +16,30 @@ public class JwtRequestInterceptor: RequestInterceptor {
         }
         
         print("adapt!!")
-        print(Date().addingTimeInterval(32400))
         var urlRequest = urlRequest
         let accessToken = jwtStore.getToken(type: .accessToken)
+        print("accessToken = \(jwtStore.getToken(type: .accessExpiredTime))")
         urlRequest.addValue("Bearer " + accessToken, forHTTPHeaderField: "Authorization")
         completion(.success(urlRequest))
     }
     
     public func retry(_ request: Request, for session: Session, dueTo error: Error, completion: @escaping (RetryResult) -> Void) {
         print("retry!")
-        let accessExpiredTime = jwtStore.getToken(type: .accessExpriedTime).getStringToDate()
+        let accessExpiredTime = jwtStore.getToken(type: .accessExpiredTime).getStringToDate()
         if accessExpiredTime.compare(Date().addingTimeInterval(32400)) == .orderedAscending {
             completion(.doNotRetryWithError(error))
             return
         }
-        
+
         let url = APIConstants.reissueURL
         let headers: HTTPHeaders = ["RefreshToken" : jwtStore.getToken(type: .refreshToken)]
-        
-        AF.request(url, method: .patch,
+
+        AF.request(url,
+                   method: .patch,
                    encoding: JSONEncoding.default,
-                   headers: headers).responseDecodable(of: ManageTokenModel.self) { [weak self] response in
+                   headers: headers)
+        .validate()
+        .responseDecodable(of: ManageTokenModel.self) { [weak self] response in
             print("retry status code = \(response.response?.statusCode)")
             switch response.result {
             case .success(let data):
@@ -44,6 +47,7 @@ public class JwtRequestInterceptor: RequestInterceptor {
                 self?.jwtStore.setToken(data: data)
                 completion(.retry)
             case .failure(let error):
+                print("retry error = \(error.localizedDescription)")
                 completion(.doNotRetryWithError(error))
             }
         }

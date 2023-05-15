@@ -27,7 +27,7 @@ public struct KeyChainService: JwtStore {
     public func setToken(data: ManageTokenModel) {
         keychain.save(type: .accessToken, token: data.accessToken)
         keychain.save(type: .refreshToken, token: data.refreshToken)
-        keychain.save(type: .accessExpriedTime, token: data.accessExpiredTime)
-        keychain.save(type: .refreshExpriedTime, token: data.refreshExpiredTime)
+        keychain.save(type: .accessExpiredTime, token: data.accessExpiredTime)
+        keychain.save(type: .refreshExpiredTime, token: data.refreshExpiredTime)
     }
 }
