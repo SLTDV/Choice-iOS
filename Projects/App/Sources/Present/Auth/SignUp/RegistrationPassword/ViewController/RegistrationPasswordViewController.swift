@@ -17,6 +17,7 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 8
+        $0.isSecureTextEntry = true
     }
     
     private let checkPasswordTextfield = UITextField().then {
@@ -25,7 +26,12 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 8
+        $0.isSecureTextEntry = true
     }
+    
+    private let passwordShowButton = UIButton()
+    
+    private let checkPasswordShowButton = UIButton()
     
     private lazy var nextButton = UIButton().then {
         $0.setTitle("다음", for: .normal)
@@ -69,6 +75,26 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         LoadingIndicator.hideLoading()
     }
     
+    private func passwordShowButtonDidTap() {
+        passwordShowButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.inputPasswordTextfield.isSecureTextEntry.toggle()
+                owner.passwordShowButton.isSelected.toggle()
+                
+                let buttonImage = owner.passwordShowButton.isSelected ? "eye" : "eye.slash"
+                owner.passwordShowButton.setImage(UIImage(named: buttonImage), for: .normal)
+            }.disposed(by: disposeBag)
+        
+        checkPasswordShowButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.checkPasswordTextfield.isSecureTextEntry.toggle()
+                owner.checkPasswordShowButton.isSelected.toggle()
+                
+                let buttonImage = owner.checkPasswordShowButton.isSelected ? "eye" : "eye.slash"
+                owner.checkPasswordShowButton.setImage(UIImage(named: buttonImage), for: .normal)
+            }.disposed(by: disposeBag)
+    }
+    
     private func nextButtonDidTap() {
         nextButton.rx.tap
             .bind(onNext: {
@@ -80,6 +106,7 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
     override func configureVC() {
         bindUI()
         nextButtonDidTap()
+        passwordShowButtonDidTap()
         
         navigationItem.title = "회원가입"
         
@@ -89,7 +116,7 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
     
     override func addView() {
         view.addSubviews(passwordLabel, inputPasswordTextfield,
-                         checkPasswordTextfield, warningLabel, nextButton)
+                         checkPasswordTextfield, warningLabel, nextButton, checkPasswordShowButton, passwordShowButton, checkPasswordShowButton)
     }
     
     override func setLayout() {
