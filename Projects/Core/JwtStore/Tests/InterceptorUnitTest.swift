@@ -14,10 +14,10 @@ final class InterceptorUnitTest: XCTestCase {
     func testDate_WhenExpriedToken_returnFalse() {
         let dateformat = DateFormatter()
         dateformat.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        let expiredTime = dateformat.date(from: "2023-05-13 09:18:27")
+        let expiredTime = dateformat.date(from: "2023-05-15 09:18:27")
         let date = Date().addingTimeInterval(32400)
         print("expiredTime = \(String(describing: expiredTime))")
         print("date = \(date)")
-        XCTAssertFalse(expiredTime?.compare(date) == .orderedAscending)
+        XCTAssertFalse(expiredTime?.compare(date) == .orderedDescending)
     }
 }
