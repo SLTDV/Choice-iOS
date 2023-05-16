@@ -65,14 +65,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.font = .systemFont(ofSize: 16, weight: .semibold)
     }
     
-    private lazy var firstVoteButton = UIButton().then {
+    private let firstVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.isEnabled = false
         $0.layer.cornerRadius = 10
         $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
     }
     
-    private lazy var secondVoteButton = UIButton().then {
+    private let secondVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.isEnabled = false
         $0.layer.cornerRadius = 10
