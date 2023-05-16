@@ -65,14 +65,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.font = .systemFont(ofSize: 16, weight: .semibold)
     }
     
-    private lazy var firstVoteButton = UIButton().then {
+    private let firstVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.isEnabled = false
         $0.layer.cornerRadius = 10
         $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
     }
     
-    private lazy var secondVoteButton = UIButton().then {
+    private let secondVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.isEnabled = false
         $0.layer.cornerRadius = 10
@@ -125,11 +125,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         fatalError("init(coder:) has not been implemented")
     }
     
-    @objc func tapMethod(_ sender: UITapGestureRecognizer) {
+    @objc private func tapMethod(_ sender: UITapGestureRecognizer) {
         self.view.endEditing(true)
     }
     
-    @objc func keyboardUp(_ notification: NSNotification) {
+    @objc private func keyboardUp(_ notification: NSNotification) {
         if let keyboardFrame:NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             
@@ -142,7 +142,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
     }
     
-    @objc func keyboardDown(_ notification: NSNotification) {
+    @objc private func keyboardDown(_ notification: NSNotification) {
         self.view.transform = .identity
     }
     
@@ -154,7 +154,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
-            .bind(with: self, onNext: { owner, arg in
+            .bind(with: self, onNext: { owner, _ in
                 let contentHeight = owner.scrollView.contentSize.height
                 let yOffset = owner.scrollView.contentOffset.y
                 let frameHeight = owner.scrollView.frame.size.height
@@ -207,6 +207,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         enterCommentTextView.rx.didEndEditing
             .bind(with: self, onNext: { owner, _ in
                 if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+                    owner.setEnterTextViewAutoSize()
                     owner.enterCommentTextView.text = "댓글을 입력해주세요."
                     owner.enterCommentTextView.textColor = UIColor.lightGray
                     owner.setDefaultSubmitButton()
@@ -215,14 +216,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         enterCommentTextView.rx.didChange
             .bind(with: self, onNext: { owner, _ in
-                let maxHeight = 94.0
-                let fixedWidth = owner.enterCommentTextView.frame.size.width
-                let size = owner.enterCommentTextView.sizeThatFits(CGSize(width: fixedWidth, height: .infinity))
-
-                owner.enterCommentTextView.isScrollEnabled = size.height > maxHeight
-                owner.enterCommentTextView.snp.updateConstraints {
-                    $0.height.equalTo(min(maxHeight, size.height))
-                }
+                owner.setEnterTextViewAutoSize()
 
                 if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 1 {
                     owner.submitCommentButton.isEnabled = true
@@ -231,6 +225,17 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                     owner.setDefaultSubmitButton()
                 }
             }).disposed(by: disposeBag)
+    }
+    
+    private func setEnterTextViewAutoSize() {
+        let maxHeight = 94.0
+        let fixedWidth = enterCommentTextView.frame.size.width
+        let size = enterCommentTextView.sizeThatFits(CGSize(width: fixedWidth, height: .infinity))
+
+        enterCommentTextView.isScrollEnabled = size.height > maxHeight
+        enterCommentTextView.snp.updateConstraints {
+            $0.height.equalTo(min(maxHeight, size.height))
+        }
     }
     
     private func submitComment() {
@@ -243,8 +248,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             DispatchQueue.main.async { [weak self] in
                 self?.viewModel.requestCommentData(idx: idx)
                 self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                self?.enterCommentTextView.text = nil
+                self?.enterCommentTextView.resignFirstResponder()
                 self?.commentData.accept([])
-                self?.enterCommentTextView.text = ""
                 self?.setDefaultSubmitButton()
             }
             LoadingIndicator.hideLoading()
@@ -272,7 +278,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
     }
     
-    func setVoteButtonLayout(with model: PostList) {
+    private func setVoteButtonLayout(with model: PostList) {
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
             firstVotingCount: Double(model.firstVotingCount),
             secondVotingCount: Double(model.secondVotingCount)
@@ -465,8 +471,8 @@ extension DetailPostViewController: UITableViewDelegate {
         
         lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
             self.viewModel.requestToDeleteComment(postIdx: self.model!.idx,
-                                         commentIdx: commentModel.idx,
-                                         completion: { [weak self] result in
+                                                  commentIdx: commentModel.idx,
+                                                  completion: { [weak self] result in
                 switch result {
                 case .success(()):
                     DispatchQueue.main.async {

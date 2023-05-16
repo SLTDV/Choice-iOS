@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 import Then
 
-class BaseVC<T: BaseViewModel>: UIViewController{
+class BaseVC<T: BaseViewModel>: UIViewController {
     let bound = UIScreen.main.bounds
     
     let viewModel: T
@@ -24,7 +24,6 @@ class BaseVC<T: BaseViewModel>: UIViewController{
         addView()
         setLayout()
         configureVC()
-        bindVM()
     }
     
     @available(*, unavailable)
@@ -41,7 +40,6 @@ class BaseVC<T: BaseViewModel>: UIViewController{
     func addView(){}
     func setLayout(){}
     func configureVC(){}
-    func bindVM(){}
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         self.view.endEditing(true)
