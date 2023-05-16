@@ -154,7 +154,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
-            .bind(with: self, onNext: { owner, arg in
+            .bind(with: self, onNext: { owner, _ in
                 let contentHeight = owner.scrollView.contentSize.height
                 let yOffset = owner.scrollView.contentOffset.y
                 let frameHeight = owner.scrollView.frame.size.height
@@ -243,8 +243,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             DispatchQueue.main.async { [weak self] in
                 self?.viewModel.requestCommentData(idx: idx)
                 self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                self?.enterCommentTextView.text = nil
                 self?.commentData.accept([])
-                self?.enterCommentTextView.text = ""
                 self?.setDefaultSubmitButton()
             }
             LoadingIndicator.hideLoading()
@@ -465,8 +465,8 @@ extension DetailPostViewController: UITableViewDelegate {
         
         lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
             self.viewModel.requestToDeleteComment(postIdx: self.model!.idx,
-                                         commentIdx: commentModel.idx,
-                                         completion: { [weak self] result in
+                                                  commentIdx: commentModel.idx,
+                                                  completion: { [weak self] result in
                 switch result {
                 case .success(()):
                     DispatchQueue.main.async {
