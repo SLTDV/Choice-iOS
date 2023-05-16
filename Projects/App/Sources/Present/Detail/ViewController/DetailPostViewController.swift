@@ -227,36 +227,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }).disposed(by: disposeBag)
     }
     
-    private func setEnterTextViewAutoSize() {
-        let maxHeight = 94.0
-        let fixedWidth = enterCommentTextView.frame.size.width
-        let size = enterCommentTextView.sizeThatFits(CGSize(width: fixedWidth, height: .infinity))
-
-        enterCommentTextView.isScrollEnabled = size.height > maxHeight
-        enterCommentTextView.snp.updateConstraints {
-            $0.height.equalTo(min(maxHeight, size.height))
-        }
-    }
-    
-    private func submitComment() {
-        guard let idx = model?.idx else { return }
-        guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
-        
-        LoadingIndicator.showLoading(text: "게시 중")
-        viewModel.commentCurrentPage = -1
-        viewModel.requestToCreateComment(idx: idx, content: content) {
-            DispatchQueue.main.async { [weak self] in
-                self?.viewModel.requestCommentData(idx: idx)
-                self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-                self?.enterCommentTextView.text = nil
-                self?.enterCommentTextView.resignFirstResponder()
-                self?.commentData.accept([])
-                self?.setDefaultSubmitButton()
-            }
-            LoadingIndicator.hideLoading()
-        }
-    }
-    
     private func submitCommentButtonDidTap() {
         submitCommentButton.rx.tap
             .bind(with: self, onNext: { owner, _ in
@@ -461,6 +431,36 @@ extension DetailPostViewController {
     private func setDefaultSubmitButton() {
         submitCommentButton.isEnabled = false
         submitCommentButton.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
+    }
+    
+    private func setEnterTextViewAutoSize() {
+        let maxHeight = 94.0
+        let fixedWidth = enterCommentTextView.frame.size.width
+        let size = enterCommentTextView.sizeThatFits(CGSize(width: fixedWidth, height: .infinity))
+
+        enterCommentTextView.isScrollEnabled = size.height > maxHeight
+        enterCommentTextView.snp.updateConstraints {
+            $0.height.equalTo(min(maxHeight, size.height))
+        }
+    }
+    
+    private func submitComment() {
+        guard let idx = model?.idx else { return }
+        guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
+        
+        LoadingIndicator.showLoading(text: "게시 중")
+        viewModel.commentCurrentPage = -1
+        viewModel.requestToCreateComment(idx: idx, content: content) {
+            DispatchQueue.main.async { [weak self] in
+                self?.viewModel.requestCommentData(idx: idx)
+                self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                self?.enterCommentTextView.text = nil
+                self?.enterCommentTextView.resignFirstResponder()
+                self?.commentData.accept([])
+                self?.setDefaultSubmitButton()
+            }
+            LoadingIndicator.hideLoading()
+        }
     }
 }
 
