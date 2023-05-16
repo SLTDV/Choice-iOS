@@ -207,6 +207,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         enterCommentTextView.rx.didEndEditing
             .bind(with: self, onNext: { owner, _ in
                 if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
+                    owner.setEnterTextViewSize()
                     owner.enterCommentTextView.text = "댓글을 입력해주세요."
                     owner.enterCommentTextView.textColor = UIColor.lightGray
                     owner.setDefaultSubmitButton()
@@ -215,14 +216,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         enterCommentTextView.rx.didChange
             .bind(with: self, onNext: { owner, _ in
-                let maxHeight = 94.0
-                let fixedWidth = owner.enterCommentTextView.frame.size.width
-                let size = owner.enterCommentTextView.sizeThatFits(CGSize(width: fixedWidth, height: .infinity))
-
-                owner.enterCommentTextView.isScrollEnabled = size.height > maxHeight
-                owner.enterCommentTextView.snp.updateConstraints {
-                    $0.height.equalTo(min(maxHeight, size.height))
-                }
+                owner.setEnterTextViewSize()
 
                 if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 1 {
                     owner.submitCommentButton.isEnabled = true
@@ -231,6 +225,17 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                     owner.setDefaultSubmitButton()
                 }
             }).disposed(by: disposeBag)
+    }
+    
+    private func setEnterTextViewSize() {
+        let maxHeight = 94.0
+        let fixedWidth = enterCommentTextView.frame.size.width
+        let size = enterCommentTextView.sizeThatFits(CGSize(width: fixedWidth, height: .infinity))
+
+        enterCommentTextView.isScrollEnabled = size.height > maxHeight
+        enterCommentTextView.snp.updateConstraints {
+            $0.height.equalTo(min(maxHeight, size.height))
+        }
     }
     
     private func submitComment() {
