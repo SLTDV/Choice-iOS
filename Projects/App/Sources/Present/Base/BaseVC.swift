@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 import Then
 
-class BaseVC<T: BaseViewModel>: UIViewController{
+class BaseVC<T: BaseViewModel>: UIViewController {
     let bound = UIScreen.main.bounds
     
     let viewModel: T

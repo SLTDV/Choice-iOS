@@ -125,11 +125,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         fatalError("init(coder:) has not been implemented")
     }
     
-    @objc func tapMethod(_ sender: UITapGestureRecognizer) {
+    @objc private func tapMethod(_ sender: UITapGestureRecognizer) {
         self.view.endEditing(true)
     }
     
-    @objc func keyboardUp(_ notification: NSNotification) {
+    @objc private func keyboardUp(_ notification: NSNotification) {
         if let keyboardFrame:NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             
@@ -142,7 +142,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
     }
     
-    @objc func keyboardDown(_ notification: NSNotification) {
+    @objc private func keyboardDown(_ notification: NSNotification) {
         self.view.transform = .identity
     }
     
@@ -278,7 +278,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
     }
     
-    func setVoteButtonLayout(with model: PostList) {
+    private func setVoteButtonLayout(with model: PostList) {
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
             firstVotingCount: Double(model.firstVotingCount),
             secondVotingCount: Double(model.secondVotingCount)
