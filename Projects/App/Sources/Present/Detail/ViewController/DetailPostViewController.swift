@@ -475,12 +475,17 @@ extension DetailPostViewController: UITableViewDelegate {
                                                   completion: { [weak self] result in
                 switch result {
                 case .success(()):
+                    LoadingIndicator.showLoading(text: "")
+                    var arr = self?.commentData.value
+                    arr?.remove(at: indexPath.row)
+                    self?.commentData.accept(arr!)
                     DispatchQueue.main.async {
                         self?.commentTableView.reloadRows(
                             at: [indexPath],
                             with: .automatic
                         )
                     }
+                    LoadingIndicator.hideLoading()
                 case .failure(let error):
                     print("Delete Faield = \(error.localizedDescription)")
                 }
