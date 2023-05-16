@@ -16,26 +16,14 @@ final class SignInViewController: BaseVC<SignInViewModel> {
         $0.font = .systemFont(ofSize: 16, weight: .light)
     }
     
-    private let inputPhoneNumberTextField = UITextField().then {
-        $0.addLeftPadding()
+    private let inputPhoneNumberTextField = BoxTextField().then {
         $0.placeholder = "전화번호"
-        $0.layer.borderColor = UIColor.quaternaryLabel.cgColor
-        $0.layer.borderWidth = 1
-        $0.layer.cornerRadius = 8
+        $0.hidePasswordShowButton()
     }
     
-    private let inputPasswordTextField = UITextField().then {
-        $0.addLeftPadding()
+    private let inputPasswordTextField = BoxTextField().then {
         $0.placeholder = "비밀번호"
-        $0.layer.borderColor = UIColor.quaternaryLabel.cgColor
-        $0.layer.borderWidth = 1
-        $0.layer.cornerRadius = 8
         $0.isSecureTextEntry = true
-    }
-    
-    private let passwordShowButton = UIButton().then {
-        $0.setImage(UIImage(systemName: "eye"), for: .normal)
-        $0.tintColor = ChoiceAsset.Colors.grayVoteButton.color
     }
     
     private lazy var signInButton = UIButton().then {
@@ -85,27 +73,13 @@ final class SignInViewController: BaseVC<SignInViewModel> {
             }).disposed(by: disposeBag)
     }
     
-    private func passwordShowButtonDidTap() {
-        passwordShowButton.rx.tap
-            .bind(with: self) { owner, _ in
-                owner.inputPasswordTextField.isSecureTextEntry.toggle()
-                owner.passwordShowButton.isSelected.toggle()
-                
-                let buttonImage = owner.passwordShowButton.isSelected ? "eye.slash" : "eye"
-                owner.passwordShowButton.setImage(UIImage(systemName: buttonImage), for: .normal)
-            }.disposed(by: disposeBag)
-    }
-    
     override func configureVC() {
         bind()
-        passwordShowButtonDidTap()
     }
     
     override func addView() {
         view.addSubviews(titleImageView, subTitleLabel, inputPhoneNumberTextField, inputPasswordTextField,
                          signInButton, divideLineButton, pushSignUpButton, warningLabel)
-        
-        inputPasswordTextField.addSubview(passwordShowButton)
     }
     
     override func setLayout() {
@@ -129,13 +103,6 @@ final class SignInViewController: BaseVC<SignInViewModel> {
             $0.top.equalTo(inputPhoneNumberTextField.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(58)
-        }
-        
-        passwordShowButton.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalTo(inputPasswordTextField.snp.trailing).inset(21)
-            $0.height.equalTo(26)
-            $0.width.equalTo(26)
         }
         
         signInButton.snp.makeConstraints {
