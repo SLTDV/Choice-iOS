@@ -284,6 +284,6 @@ extension RegistrationPhoneNumberViewController: UITextFieldDelegate {
     }
     
     func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
+        textField.layer.borderColor = UIColor.quaternaryLabel.cgColor
     }
 }

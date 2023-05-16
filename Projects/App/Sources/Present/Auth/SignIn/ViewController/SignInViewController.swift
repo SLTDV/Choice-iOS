@@ -19,7 +19,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     private let inputPhoneNumberTextField = UITextField().then {
         $0.addLeftPadding()
         $0.placeholder = "전화번호"
-        $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
+        $0.layer.borderColor = UIColor.quaternaryLabel.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 8
     }
@@ -27,7 +27,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     private let inputPasswordTextField = UITextField().then {
         $0.addLeftPadding()
         $0.placeholder = "비밀번호"
-        $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
+        $0.layer.borderColor = UIColor.quaternaryLabel.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 8
         $0.isSecureTextEntry = true
@@ -36,7 +36,6 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     private let passwordShowButton = UIButton().then {
         $0.setImage(UIImage(systemName: "eye"), for: .normal)
         $0.tintColor = ChoiceAsset.Colors.grayVoteButton.color
-        $0.backgroundColor = .clear
     }
     
     private lazy var signInButton = UIButton().then {

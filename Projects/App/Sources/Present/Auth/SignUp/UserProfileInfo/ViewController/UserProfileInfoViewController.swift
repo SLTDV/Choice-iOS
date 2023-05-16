@@ -31,8 +31,8 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     
     private let imagePickerController = UIImagePickerController()
     
-    private let userNameTextField = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "닉네임을 입력해 주세요")
+    private let userNameTextField = UITextField().then {
+        $0.placeholder = "닉네임을 입력해 주세요"
         $0.textAlignment = .center
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
