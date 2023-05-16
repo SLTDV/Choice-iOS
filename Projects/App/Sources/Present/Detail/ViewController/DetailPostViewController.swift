@@ -207,7 +207,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         enterCommentTextView.rx.didEndEditing
             .bind(with: self, onNext: { owner, _ in
                 if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-                    owner.setEnterTextViewSize()
+                    owner.setEnterTextViewAutoSize()
                     owner.enterCommentTextView.text = "댓글을 입력해주세요."
                     owner.enterCommentTextView.textColor = UIColor.lightGray
                     owner.setDefaultSubmitButton()
@@ -216,7 +216,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         enterCommentTextView.rx.didChange
             .bind(with: self, onNext: { owner, _ in
-                owner.setEnterTextViewSize()
+                owner.setEnterTextViewAutoSize()
 
                 if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 1 {
                     owner.submitCommentButton.isEnabled = true
@@ -227,7 +227,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }).disposed(by: disposeBag)
     }
     
-    private func setEnterTextViewSize() {
+    private func setEnterTextViewAutoSize() {
         let maxHeight = 94.0
         let fixedWidth = enterCommentTextView.frame.size.width
         let size = enterCommentTextView.sizeThatFits(CGSize(width: fixedWidth, height: .infinity))
