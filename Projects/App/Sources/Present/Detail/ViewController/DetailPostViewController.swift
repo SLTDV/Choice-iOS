@@ -152,15 +152,21 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
             .bind(with: self, onNext: { owner, _ in
-                let contentHeight = owner.scrollView.contentSize.height
-                let yOffset = owner.scrollView.contentOffset.y
-                let frameHeight = owner.scrollView.frame.size.height
-
+                print("ㅁㅇㄴㄹㅁㄴㅇㄹㅁㄴㅇㄹ")
+                
                 if owner.isLastPage {
+//                    owner.isLastPage = true
                     return
                 }
                 
+                print(self.isLastPage)
+                
+                let contentHeight = owner.scrollView.contentSize.height
+                let yOffset = owner.scrollView.contentOffset.y
+                let frameHeight = owner.scrollView.frame.size.height
+                
                 if yOffset > (contentHeight-frameHeight) - 100 {
+                    print(100)
                     owner.commentTableView.tableFooterView = owner.createSpinnerFooter()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
                         owner.commentTableView.performBatchUpdates(nil, completion: nil)
