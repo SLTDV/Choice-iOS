@@ -1,5 +1,4 @@
 import UIKit
-import PhotosUI
 import RxSwift
 import RxCocoa
 import Shared

@@ -1,7 +1,6 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import Kingfisher
 import Shared
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
@@ -133,9 +132,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         if let keyboardFrame:NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             
-            UIView.animate(
-                withDuration: 0.3
-                , animations: {
+            UIView.animate(withDuration: 0.3, animations: {
                     self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardRectangle.height)
                 }
             )
