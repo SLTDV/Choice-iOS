@@ -32,7 +32,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     private let imagePickerController = UIImagePickerController()
     
     private let userNameTextField = BoxTextField().then {
-        $0.placeholder = "닉네임 입력"
+        $0.placeholder = "닉네임을 입력해 주세요.."
         $0.hidePasswordShowButton()
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
@@ -64,7 +64,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     
     private func checkNicknameValid(_ nickname: String) -> Bool {
         let trimmedNicknameCount = nickname.trimmingCharacters(in: .whitespaces).count
-        return trimmedNicknameCount < 2 || trimmedNicknameCount > 6
+        return trimmedNicknameCount < 2 || trimmedNicknameCount > 10
     }
     
     private func bindUI() {
@@ -72,7 +72,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
             .map(checkNicknameValid(_:))
             .bind(with: self, onNext: { owner, isValid  in
                 if isValid {
-                    owner.warningLabel.show(warning: "*2자 이상 6자 이하로 입력해 주세요.")
+                    owner.warningLabel.show(warning: "*2자 이상 10자 이하로 입력해 주세요.")
                     
                     owner.completeButton.isEnabled = false
                     owner.completeButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
