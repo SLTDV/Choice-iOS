@@ -244,6 +244,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 self?.viewModel.requestCommentData(idx: idx)
                 self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
                 self?.enterCommentTextView.text = nil
+                self?.enterCommentTextView.resignFirstResponder()
                 self?.commentData.accept([])
                 self?.setDefaultSubmitButton()
             }
