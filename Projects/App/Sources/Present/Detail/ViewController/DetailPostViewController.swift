@@ -227,13 +227,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }).disposed(by: disposeBag)
     }
     
-    private func submitCommentButtonDidTap() {
-        submitCommentButton.rx.tap
-            .bind(with: self, onNext: { owner, _ in
-                owner.submitComment()
-            }).disposed(by: disposeBag)
-    }
-    
     private func changePostData(model: PostList) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
@@ -461,6 +454,13 @@ extension DetailPostViewController {
             }
             LoadingIndicator.hideLoading()
         }
+    }
+    
+    private func submitCommentButtonDidTap() {
+        submitCommentButton.rx.tap
+            .bind(with: self, onNext: { owner, _ in
+                owner.submitComment()
+            }).disposed(by: disposeBag)
     }
 }
 
