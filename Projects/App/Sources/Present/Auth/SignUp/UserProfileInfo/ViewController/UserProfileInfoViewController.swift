@@ -32,7 +32,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     private let imagePickerController = UIImagePickerController()
     
     private let userNameTextField = BoxTextField().then {
-        $0.placeholder = "닉네임을 입력해 주세요.."
+        $0.placeholder = "닉네임 입력"
         $0.hidePasswordShowButton()
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
@@ -138,7 +138,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         userNameTextField.snp.makeConstraints {
             $0.top.equalTo(profileImageView.snp.bottom).offset(80)
             $0.centerX.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(115)
+            $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(58)
         }
         
