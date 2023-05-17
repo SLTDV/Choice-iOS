@@ -36,7 +36,7 @@ final class DetailPostViewModel: BaseViewModel {
             switch response.result {
             case .success(let postData):
                 completion(.success(postData.size))
-//                print(postData.page, postData.size)
+                print(postData.page, postData.size)
                 self?.delegate?.writerImageStringData.onNext(postData.image)
                 self?.delegate?.writerNameData.onNext(postData.writer)
                 var relay = self?.delegate?.commentData.value

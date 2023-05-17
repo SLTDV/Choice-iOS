@@ -152,21 +152,25 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
             .bind(with: self, onNext: { owner, _ in
-                print("ㅁㅇㄴㄹㅁㄴㅇㄹㅁㄴㅇㄹ")
+                /*
+                 spinner 가 동작하지 않아야 할 때
+                 - size 가 10이 아닐 때
+                 -
+                 
+                 
+                 */
+                print(self.isLastPage)
                 
                 if owner.isLastPage {
-//                    owner.isLastPage = true
                     return
                 }
                 
-                print(self.isLastPage)
                 
                 let contentHeight = owner.scrollView.contentSize.height
                 let yOffset = owner.scrollView.contentOffset.y
                 let frameHeight = owner.scrollView.frame.size.height
                 
                 if yOffset > (contentHeight-frameHeight) - 100 {
-                    print(100)
                     owner.commentTableView.tableFooterView = owner.createSpinnerFooter()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
                         owner.commentTableView.performBatchUpdates(nil, completion: nil)
@@ -174,6 +178,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                             owner.commentTableView.tableFooterView = nil
                             switch result {
                             case .success(let size):
+                                print("size = \(size)")
                                 owner.commentTableView.reloadData()
                                 if size != 10 {
                                     owner.isLastPage = true
@@ -453,6 +458,7 @@ extension DetailPostViewController {
                 self?.enterCommentTextView.text = nil
                 self?.enterCommentTextView.resignFirstResponder()
                 self?.commentData.accept([])
+                self?.isLastPage = false
                 self?.setDefaultSubmitButton()
             }
             LoadingIndicator.hideLoading()
