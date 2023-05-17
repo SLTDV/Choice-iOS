@@ -210,9 +210,6 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         
         bindUI()
         
-        inputPhoneNumberTextfield.delegate = self
-        certificationNumberTextfield.delegate = self
-        
         navigationItem.title = "회원가입"
     }
     
@@ -275,15 +272,5 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(58)
         }
-    }
-}
-
-extension RegistrationPhoneNumberViewController: UITextFieldDelegate {
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        textField.layer.borderColor = UIColor.black.cgColor
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.layer.borderColor = UIColor.quaternaryLabel.cgColor
     }
 }

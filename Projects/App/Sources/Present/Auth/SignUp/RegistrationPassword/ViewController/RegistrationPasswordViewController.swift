@@ -56,11 +56,11 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
             } else {
                 self.warningLabel.show(warning: "*비밀번호 형식이 올바르지 않아요.")
             }
-            LoadingIndicator.hideLoading()
         } else {
             self.warningLabel.show(warning: "*비밀번호가 일치하지 않아요.")
-            LoadingIndicator.hideLoading()
         }
+        
+        LoadingIndicator.hideLoading()
     }
     
     private func nextButtonDidTap() {
