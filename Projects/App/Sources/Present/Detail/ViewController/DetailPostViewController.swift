@@ -152,19 +152,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
             .bind(with: self, onNext: { owner, _ in
-                /*
-                 spinner 가 동작하지 않아야 할 때
-                 - size 가 10이 아닐 때
-                 -
-                 
-                 
-                 */
-                print(self.isLastPage)
-                
                 if owner.isLastPage {
                     return
                 }
-                
                 
                 let contentHeight = owner.scrollView.contentSize.height
                 let yOffset = owner.scrollView.contentOffset.y
@@ -178,10 +168,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                             owner.commentTableView.tableFooterView = nil
                             switch result {
                             case .success(let size):
-                                print("size = \(size)")
-                                owner.commentTableView.reloadData()
                                 if size != 10 {
                                     owner.isLastPage = true
+                                } else {
+                                    owner.commentTableView.reloadData()
                                 }
                             case .failure(let error):
                                 print("comment pagination error = \(error.localizedDescription)")
