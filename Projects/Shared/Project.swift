@@ -13,5 +13,6 @@ let project = Project.makeModule(
         .SPM.RxCocoa,
         .SPM.Alamofire,
         .SPM.Swinject
-    ]
+    ],
+    resources: ["Resources/**"]
 )

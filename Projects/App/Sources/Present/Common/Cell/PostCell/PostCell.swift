@@ -69,7 +69,7 @@ final class PostCell: UITableViewCell {
         $0.setTitleColor(.white, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
+        $0.backgroundColor = SharedAsset.Colors.grayBackground.color
         $0.addTarget(self, action: #selector(PostVoteButtonDidTap(_:)), for: .touchUpInside)
     }
     
@@ -78,7 +78,7 @@ final class PostCell: UITableViewCell {
         $0.setTitleColor(.white, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = ChoiceAsset.Colors.grayBackground.color
+        $0.backgroundColor = SharedAsset.Colors.grayBackground.color
         $0.addTarget(self, action: #selector(PostVoteButtonDidTap(_:)), for: .touchUpInside)
     }
     
@@ -208,9 +208,9 @@ final class PostCell: UITableViewCell {
         secondPostVoteButton.setTitleColor(.white, for: .normal)
         
         firstPostVoteButton.isEnabled = (voting == 1) ? false : true
-        firstPostVoteButton.backgroundColor = (voting == 1) ? .black : ChoiceAsset.Colors.grayVoteButton.color
+        firstPostVoteButton.backgroundColor = (voting == 1) ? .black : SharedAsset.Colors.grayVoteButton.color
         secondPostVoteButton.isEnabled = (voting == 2) ? false : true
-        secondPostVoteButton.backgroundColor = (voting == 2) ? .black : ChoiceAsset.Colors.grayVoteButton.color
+        secondPostVoteButton.backgroundColor = (voting == 2) ? .black : SharedAsset.Colors.grayVoteButton.color
     }
     
     // MARK: - Profile
@@ -272,13 +272,13 @@ final class PostCell: UITableViewCell {
         switch voting {
         case 1:
             firstPostVoteButton.backgroundColor = .black
-            secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            secondPostVoteButton.backgroundColor = SharedAsset.Colors.grayDark.color
         case 2:
-            firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            firstPostVoteButton.backgroundColor = SharedAsset.Colors.grayDark.color
             secondPostVoteButton.backgroundColor = .black
         default:
-            firstPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            secondPostVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            firstPostVoteButton.backgroundColor = SharedAsset.Colors.grayDark.color
+            secondPostVoteButton.backgroundColor = SharedAsset.Colors.grayDark.color
             firstPostVoteButton.setTitle("0%(0명)", for: .normal)
             secondPostVoteButton.setTitle("0%(0명)", for: .normal)
         }
