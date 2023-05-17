@@ -12,7 +12,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     private var sortType: MenuOptionType = .findNewestPostData
     
     private let leftLogoImageView = UIImageView().then {
-        $0.image = ChoiceAsset.Images.homeLogo.image
+        $0.image = SharedAsset.Images.homeLogo.image
     }
     
     private lazy var addPostButton = UIBarButtonItem(image: UIImage(systemName: "plus.app"),

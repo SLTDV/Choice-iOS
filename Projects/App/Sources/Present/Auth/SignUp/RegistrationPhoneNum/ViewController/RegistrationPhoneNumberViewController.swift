@@ -18,7 +18,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     private let inputPhoneNumberTextfield = UITextField().then {
         $0.addLeftPadding()
         $0.placeholder = "전화번호 입력"
-        $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
+        $0.layer.borderColor = SharedAsset.Colors.grayMedium.color.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 8
         $0.keyboardType = .numberPad
@@ -28,14 +28,14 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.setTitle("인증 요청", for: .normal)
         $0.isEnabled = false
         $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
-        $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
+        $0.backgroundColor = SharedAsset.Colors.grayVoteButton.color
         $0.layer.cornerRadius = 8
     }
     
     private let certificationNumberTextfield = UITextField().then {
         $0.addLeftPadding()
         $0.placeholder = "인증번호 입력"
-        $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
+        $0.layer.borderColor = SharedAsset.Colors.grayMedium.color.cgColor
         $0.layer.borderWidth = 1
         $0.layer.cornerRadius = 8
         $0.keyboardType = .numberPad
@@ -65,7 +65,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.setTitle("다음", for: .normal)
         $0.isEnabled = false
-        $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
+        $0.backgroundColor = SharedAsset.Colors.grayVoteButton.color
         $0.layer.cornerRadius = 8
     }
     
@@ -98,14 +98,14 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         certificationNumberTextfield.rx.text.orEmpty
             .map { $0.count == 4 }
             .bind(with: self) { owner, isValid in
-                owner.nextButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayVoteButton.color
+                owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.Colors.grayVoteButton.color
                 owner.nextButton.isEnabled = isValid
             }.disposed(by: disposeBag)
         
         inputPhoneNumberTextfield.rx.text.orEmpty
             .map { $0.count == 11 }
             .bind(with: self) { owner, isValid in
-                owner.certificationRequestButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayVoteButton.color
+                owner.certificationRequestButton.backgroundColor = isValid ? .black : SharedAsset.Colors.grayVoteButton.color
                 owner.certificationRequestButton.isEnabled = isValid
             }.disposed(by: disposeBag)
     }
@@ -127,7 +127,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                             owner.resendLabel.isHidden = false
                             owner.resendButton.isHidden = false
                             
-                            owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
+                            owner.certificationRequestButton.backgroundColor = SharedAsset.Colors.grayVoteButton.color
                             owner.certificationRequestButton.isEnabled = false
                             
                             owner.inputPhoneNumberTextfield.isUserInteractionEnabled = false
