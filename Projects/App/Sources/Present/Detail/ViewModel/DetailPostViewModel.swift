@@ -48,7 +48,7 @@ final class DetailPostViewModel: BaseViewModel {
         }
     }
     
-    func requestToCreateComment(idx: Int, content: String, completion: @escaping () -> ()) {
+    func requestToCreateComment(idx: Int, content: String, completion: @escaping (Result<Void, Error>) -> Void) {
         let url = APIConstants.createCommentURL + "\(idx)"
         let params = [
             "content" : content
@@ -63,9 +63,9 @@ final class DetailPostViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
-                completion()
+                completion(.success(()))
             case .failure(let error):
-                print("post error = \(String(describing: error.localizedDescription))")
+                completion(.failure((error)))
             }
         }
     }

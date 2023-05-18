@@ -441,18 +441,23 @@ extension DetailPostViewController {
         
         LoadingIndicator.showLoading(text: "게시 중")
         viewModel.commentCurrentPage = -1
-        viewModel.requestToCreateComment(idx: idx, content: content) {
-            DispatchQueue.main.async { [weak self] in
-                self?.viewModel.requestCommentData(idx: idx)
-                self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-                self?.enterCommentTextView.text = nil
-                self?.enterCommentTextView.resignFirstResponder()
-                self?.commentData.accept([])
-                self?.isLastPage = false
-                self?.setDefaultSubmitButton()
+        viewModel.requestToCreateComment(idx: idx, content: content) { result in
+            switch result {
+            case .success(()):
+                DispatchQueue.main.async { [weak self] in
+                    self?.viewModel.requestCommentData(idx: idx)
+                    self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                    self?.enterCommentTextView.text = nil
+                    self?.enterCommentTextView.resignFirstResponder()
+                    self?.commentData.accept([])
+                    self?.isLastPage = false
+                    self?.setDefaultSubmitButton()
+                }
+            case .failure(let error):
+                print("post error = \(String(describing: error.localizedDescription))")
             }
-            LoadingIndicator.hideLoading()
         }
+        LoadingIndicator.hideLoading()
     }
     
     private func submitCommentButtonDidTap() {
