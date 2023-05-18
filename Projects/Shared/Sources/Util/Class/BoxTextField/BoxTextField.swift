@@ -47,7 +47,7 @@ public final class BoxTextField: UITextField {
         }
     }
     
-    public func passwordShowButtonDidTap() {
+    private func passwordShowButtonDidTap() {
         showPasswordButton.rx.tap
             .bind(with: self) { owner, _ in
                 owner.isSecureTextEntry.toggle()
