@@ -18,10 +18,9 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     
     private let inputPhoneNumberTextField = BoxTextField().then {
         $0.placeholder = "전화번호"
-        $0.hidePasswordShowButton()
     }
     
-    private let inputPasswordTextField = BoxTextField().then {
+    private let inputPasswordTextField = BoxTextField(type: .secureTextField).then {
         $0.placeholder = "비밀번호"
         $0.isSecureTextEntry = true
     }

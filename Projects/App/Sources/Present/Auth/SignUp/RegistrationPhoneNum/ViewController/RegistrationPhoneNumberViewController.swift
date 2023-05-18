@@ -15,12 +15,8 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.font = .systemFont(ofSize: 16, weight: .bold)
     }
     
-    private let inputPhoneNumberTextfield = UITextField().then {
-        $0.addLeftPadding()
+    private let inputPhoneNumberTextfield = BoxTextField().then {
         $0.placeholder = "전화번호 입력"
-        $0.layer.borderColor = SharedAsset.Colors.grayMedium.color.cgColor
-        $0.layer.borderWidth = 1
-        $0.layer.cornerRadius = 8
         $0.keyboardType = .numberPad
     }
     
@@ -32,12 +28,8 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.layer.cornerRadius = 8
     }
     
-    private let certificationNumberTextfield = UITextField().then {
-        $0.addLeftPadding()
+    private let certificationNumberTextfield = BoxTextField().then {
         $0.placeholder = "인증번호 입력"
-        $0.layer.borderColor = SharedAsset.Colors.grayMedium.color.cgColor
-        $0.layer.borderWidth = 1
-        $0.layer.cornerRadius = 8
         $0.keyboardType = .numberPad
         $0.isHidden = true
     }
@@ -210,6 +202,8 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         
         bindUI()
         
+        certificationNumberTextfield.delegate = self
+        
         navigationItem.title = "회원가입"
     }
     
@@ -273,4 +267,16 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             $0.height.equalTo(58)
         }
     }
+}
+
+extension RegistrationPhoneNumberViewController: UITextFieldDelegate {
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+            let updatedText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string) ?? string
+
+            if updatedText.count > 4 {
+                return false
+            }
+        
+            return true
+        }
 }

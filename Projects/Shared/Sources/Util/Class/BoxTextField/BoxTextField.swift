@@ -7,6 +7,8 @@ import RxCocoa
 public final class BoxTextField: UITextField {
     private let disposeBag = DisposeBag()
     
+    public var type: TextFieldType = .normalTextField
+    
     private let showPasswordButton = UIButton().then {
         $0.setImage(UIImage(systemName: "eye"), for: .normal)
         $0.tintColor = UIColor.quaternaryLabel
@@ -17,23 +19,32 @@ public final class BoxTextField: UITextField {
         
         self.delegate = self
         
-        addSubview(showPasswordButton)
-        passwordShowButtonDidTap()
-        
         self.addLeftPadding()
-        self.layer.borderColor = UIColor.quaternaryLabel.cgColor
+        self.layer.borderColor = SharedAsset.Colors.grayMedium.color.cgColor
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 8
+    }
+    
+    public convenience init(type: TextFieldType) {
+        self.init()
+        self.type = type
         
-        showPasswordButton.snp.makeConstraints {
-            $0.centerY.equalToSuperview()
-            $0.trailing.equalToSuperview().inset(21)
-            $0.size.equalTo(26)
-        }
+        layoutTypeTextField()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func layoutTypeTextField() {
+        switch type {
+        case .normalTextField:
+            break
+        case .secureTextField:
+            passwordShowButtonDidTap()
+            self.rightView = showPasswordButton
+            self.rightViewMode = .always
+        }
     }
     
     public func passwordShowButtonDidTap() {
@@ -47,8 +58,25 @@ public final class BoxTextField: UITextField {
             }.disposed(by: disposeBag)
     }
     
-    public func hidePasswordShowButton() {
-        showPasswordButton.isHidden = true
+    public override func rightViewRect(forBounds bounds: CGRect) -> CGRect {
+        var padding = super.rightViewRect(forBounds: bounds)
+        padding.origin.x -= 20
+        
+        return padding
+    }
+    
+    public override func textRect(forBounds bounds: CGRect) -> CGRect {
+        let padding = super.textRect(forBounds: bounds)
+        let rightViewWidth: CGFloat = rightView?.bounds.width ?? 0
+        let spacing: CGFloat = 10
+        
+        let newPadding = CGRect(x: padding.origin.x, y: padding.origin.y, width: padding.width - rightViewWidth - spacing, height: padding.height)
+        
+        return newPadding
+    }
+
+    public override func editingRect(forBounds bounds: CGRect) -> CGRect {
+        return textRect(forBounds: bounds)
     }
 }
 
@@ -58,6 +86,6 @@ extension BoxTextField: UITextFieldDelegate {
     }
     
     public func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.layer.borderColor = UIColor.quaternaryLabel.cgColor
+        textField.layer.borderColor = SharedAsset.Colors.grayMedium.color.cgColor
     }
 }

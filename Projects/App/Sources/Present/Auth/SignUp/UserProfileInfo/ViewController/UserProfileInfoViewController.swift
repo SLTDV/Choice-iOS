@@ -33,7 +33,6 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     
     private let userNameTextField = BoxTextField().then {
         $0.placeholder = "닉네임 입력"
-        $0.hidePasswordShowButton()
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     

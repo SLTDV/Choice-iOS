@@ -11,12 +11,12 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         $0.font = .systemFont(ofSize: 16, weight: .bold)
     }
     
-    private let inputPasswordTextField = BoxTextField().then {
+    private let inputPasswordTextField = BoxTextField(type: .secureTextField).then {
         $0.placeholder = "8~16자리 영문, 숫자, 특수문자 조합"
         $0.isSecureTextEntry = true
     }
     
-    private let checkPasswordTextField = BoxTextField().then {
+    private let checkPasswordTextField = BoxTextField(type: .secureTextField).then {
         $0.placeholder = "비밀번호 재입력"
         $0.isSecureTextEntry = true
     }
