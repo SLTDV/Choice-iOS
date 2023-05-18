@@ -42,7 +42,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         $0.setTitle("완료", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.isEnabled = false
-        $0.backgroundColor = SharedAsset.Colors.grayVoteButton.color
+        $0.backgroundColor = SharedAsset.grayVoteButton.color
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(signUpButtonDidTap(_ :)), for: .touchUpInside)
     }
@@ -74,7 +74,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
                     owner.warningLabel.show(warning: "*2자 이상 10자 이하로 입력해 주세요.")
                     
                     owner.completeButton.isEnabled = false
-                    owner.completeButton.backgroundColor = SharedAsset.Colors.grayVoteButton.color
+                    owner.completeButton.backgroundColor = SharedAsset.grayVoteButton.color
                 } else {
                     owner.warningLabel.hide()
                     

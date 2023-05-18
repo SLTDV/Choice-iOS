@@ -25,7 +25,7 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         $0.setTitle("다음", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.isEnabled = false
-        $0.backgroundColor = SharedAsset.Colors.grayVoteButton.color
+        $0.backgroundColor = SharedAsset.grayVoteButton.color
         $0.layer.cornerRadius = 8
     }
     
@@ -42,7 +42,7 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         )
         .bind(with: self) { owner, isValid in
             owner.nextButton.isEnabled = isValid
-            owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.Colors.grayVoteButton.color
+            owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
         }.disposed(by: disposeBag)
     }
     
