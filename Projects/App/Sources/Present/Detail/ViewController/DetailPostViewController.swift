@@ -3,6 +3,10 @@ import RxSwift
 import RxCocoa
 import Shared
 
+enum ContentSizeKey {
+    static let key = "ContentSize"
+}
+
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
     var writerNameData = PublishSubject<String>()
     var writerImageStringData = PublishSubject<String?>()
@@ -267,19 +271,19 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
+        self.commentTableView.addObserver(self, forKeyPath: ContentSizeKey.key, options: .new, context: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardUp), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDown), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.commentTableView.removeObserver(self, forKeyPath: "contentSize")
+        self.commentTableView.removeObserver(self, forKeyPath: ContentSizeKey.key)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "contentSize" {
+        if keyPath == ContentSizeKey.key {
             if object is UITableView {
                 if let newValue = change?[.newKey] as? CGSize {
                     commentTableView.snp.updateConstraints {
@@ -475,8 +479,7 @@ extension DetailPostViewController: UITableViewDelegate {
         
         lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
             self.viewModel.requestToDeleteComment(postIdx: self.model!.idx,
-                                                  commentIdx: commentModel.idx,
-                                                  completion: { [weak self] result in
+                                                  commentIdx: commentModel.idx) { [weak self] result in
                 switch result {
                 case .success(()):
                     LoadingIndicator.showLoading(text: "")
@@ -493,7 +496,7 @@ extension DetailPostViewController: UITableViewDelegate {
                 case .failure(let error):
                     print("Delete Faield = \(error.localizedDescription)")
                 }
-            })
+            }
         })
         deleteContextual.image = UIImage(systemName: "trash")
         
