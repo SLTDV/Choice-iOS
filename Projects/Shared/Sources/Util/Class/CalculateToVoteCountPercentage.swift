@@ -1,6 +1,6 @@
 import Foundation
 
-public final class CalculateToVoteCountPercentage {
+public enum CalculateToVoteCountPercentage {
     public static func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (String, String, Int, Int) {
         let sum = firstVotingCount + secondVotingCount
         var firstP = firstVotingCount / sum * 100.0
