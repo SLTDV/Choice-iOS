@@ -87,11 +87,19 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     }
     
     private func bindUI() {
+        let maxLength = 4
+        
         certificationNumberTextfield.rx.text.orEmpty
             .map { $0.count == 4 }
             .bind(with: self) { owner, isValid in
                 owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
                 owner.nextButton.isEnabled = isValid
+            }.disposed(by: disposeBag)
+        
+        certificationNumberTextfield.rx.text.orEmpty
+            .map { $0.prefix(maxLength) }
+            .bind(with: self) { owner, text in
+                owner.certificationNumberTextfield.text = String(text)
             }.disposed(by: disposeBag)
         
         inputPhoneNumberTextfield.rx.text.orEmpty
@@ -202,8 +210,6 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         
         bindUI()
         
-        certificationNumberTextfield.delegate = self
-        
         navigationItem.title = "회원가입"
     }
     
@@ -267,16 +273,4 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             $0.height.equalTo(58)
         }
     }
-}
-
-extension RegistrationPhoneNumberViewController: UITextFieldDelegate {
-    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
-            let updatedText = (textField.text as NSString?)?.replacingCharacters(in: range, with: string) ?? string
-
-            if updatedText.count > 4 {
-                return false
-            }
-        
-            return true
-        }
 }
