@@ -90,17 +90,17 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         let maxLength = 4
         
         certificationNumberTextfield.rx.text.orEmpty
-            .map { $0.count == 4 }
-            .bind(with: self) { owner, isValid in
+            .map { text -> (Bool, String) in
+                let isValid = text.count == 4
+                let truncatedText = String(text.prefix(maxLength))
+                return (isValid, truncatedText)
+            }
+            .bind(with: self, onNext: { owner, result in
+                let (isValid, text) = result
                 owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
                 owner.nextButton.isEnabled = isValid
-            }.disposed(by: disposeBag)
-        
-        certificationNumberTextfield.rx.text.orEmpty
-            .map { $0.prefix(maxLength) }
-            .bind(with: self) { owner, text in
-                owner.certificationNumberTextfield.text = String(text)
-            }.disposed(by: disposeBag)
+                owner.certificationNumberTextfield.text = text
+            }).disposed(by: disposeBag)
         
         inputPhoneNumberTextfield.rx.text.orEmpty
             .map { $0.count == 11 }
