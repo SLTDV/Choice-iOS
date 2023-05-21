@@ -20,7 +20,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     private lazy var addFirstImageButton = UIButton().then {
         $0.setTitle("+", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 30)
-        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
+        $0.setTitleColor(SharedAsset.grayDark.color, for: .normal)
         $0.layer.cornerRadius = 10
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
@@ -32,7 +32,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     private lazy var addSecondImageButton = UIButton().then {
         $0.setTitle("+", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 30)
-        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
+        $0.setTitleColor(SharedAsset.grayDark.color, for: .normal)
         $0.layer.cornerRadius = 10
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
@@ -69,7 +69,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.textColor = .lightGray
         $0.layer.cornerRadius = 8
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
+        $0.layer.borderColor = SharedAsset.grayDark.color.cgColor
     }
     
     private let topicTitleLabel = UILabel().then {
@@ -83,7 +83,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.tag = 0
         $0.setTitleColor(.gray, for: .normal)
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
+        $0.layer.borderColor = SharedAsset.grayDark.color.cgColor
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(SetTopicButtonDidTap(_:)), for: .touchUpInside)
     }
@@ -93,7 +93,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.tag = 1
         $0.setTitleColor(.gray, for: .normal)
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
+        $0.layer.borderColor = SharedAsset.grayDark.color.cgColor
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(SetTopicButtonDidTap(_:)), for: .touchUpInside)
     }
@@ -101,7 +101,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     private lazy var addPostViewButton = UIButton().then {
         $0.setTitle("완료", for: .normal)
         $0.setTitleColor( .white, for: .normal)
-        $0.backgroundColor = ChoiceAsset.Colors.grayMedium.color
+        $0.backgroundColor = SharedAsset.grayMedium.color
         $0.layer.cornerRadius = 8
         $0.isEnabled = false
         $0.addTarget(self, action: #selector(addPostViewButtonDidTap(_:)), for: .touchUpInside)
@@ -125,7 +125,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         )
         .bind(with: self, onNext: { owner, arg in
             owner.addPostViewButton.isEnabled = arg
-            owner.addPostViewButton.backgroundColor = arg ? .black : ChoiceAsset.Colors.grayMedium.color
+            owner.addPostViewButton.backgroundColor = arg ? .black : SharedAsset.grayMedium.color
         }).disposed(by: disposeBag)
     }
     

@@ -16,13 +16,12 @@ final class SignInViewController: BaseVC<SignInViewModel> {
         $0.font = .systemFont(ofSize: 16, weight: .light)
     }
     
-    private let inputPhoneNumberTextField = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "휴대폰 번호")
-        $0.keyboardType = .numberPad
+    private let inputPhoneNumberTextField = BoxTextField().then {
+        $0.placeholder = "전화번호"
     }
     
-    private let inputPasswordTextField = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "비밀번호")
+    private let inputPasswordTextField = BoxTextField(type: .secureTextField).then {
+        $0.placeholder = "비밀번호"
         $0.isSecureTextEntry = true
     }
     
@@ -84,7 +83,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     
     override func setLayout() {
         titleImageView.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(101)
+            $0.top.equalToSuperview().inset(112)
             $0.leading.equalToSuperview().inset(25)
         }
         
@@ -94,19 +93,21 @@ final class SignInViewController: BaseVC<SignInViewModel> {
         }
         
         inputPhoneNumberTextField.snp.makeConstraints {
-            $0.top.equalTo(subTitleLabel.snp.bottom).offset(77)
+            $0.top.equalTo(subTitleLabel.snp.bottom).offset(64)
             $0.leading.trailing.equalToSuperview().inset(26)
+            $0.height.equalTo(58)
         }
         
         inputPasswordTextField.snp.makeConstraints {
-            $0.top.equalTo(inputPhoneNumberTextField.snp.bottom).offset(40)
+            $0.top.equalTo(inputPhoneNumberTextField.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview().inset(26)
+            $0.height.equalTo(58)
         }
         
         signInButton.snp.makeConstraints {
-            $0.top.equalTo(inputPasswordTextField.snp.bottom).offset(52)
+            $0.top.equalTo(inputPasswordTextField.snp.bottom).offset(42)
             $0.leading.trailing.equalToSuperview().inset(26)
-            $0.height.equalTo(49)
+            $0.height.equalTo(58)
         }
         
         divideLineButton.snp.makeConstraints {

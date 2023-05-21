@@ -15,12 +15,8 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.font = .systemFont(ofSize: 16, weight: .bold)
     }
     
-    private let inputPhoneNumberTextfield = UITextField().then {
-        $0.addLeftPadding()
+    private let inputPhoneNumberTextfield = BoxTextField().then {
         $0.placeholder = "전화번호 입력"
-        $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
-        $0.layer.borderWidth = 1
-        $0.layer.cornerRadius = 8
         $0.keyboardType = .numberPad
     }
     
@@ -28,16 +24,12 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.setTitle("인증 요청", for: .normal)
         $0.isEnabled = false
         $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
-        $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
+        $0.backgroundColor = SharedAsset.grayVoteButton.color
         $0.layer.cornerRadius = 8
     }
     
-    private let certificationNumberTextfield = UITextField().then {
-        $0.addLeftPadding()
+    private let certificationNumberTextfield = BoxTextField().then {
         $0.placeholder = "인증번호 입력"
-        $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
-        $0.layer.borderWidth = 1
-        $0.layer.cornerRadius = 8
         $0.keyboardType = .numberPad
         $0.isHidden = true
     }
@@ -65,7 +57,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.setTitle("다음", for: .normal)
         $0.isEnabled = false
-        $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
+        $0.backgroundColor = SharedAsset.grayVoteButton.color
         $0.layer.cornerRadius = 8
     }
     
@@ -95,17 +87,25 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     }
     
     private func bindUI() {
+        let maxLength = 4
+        
         certificationNumberTextfield.rx.text.orEmpty
-            .map { $0.count == 4 }
-            .bind(with: self) { owner, isValid in
-                owner.nextButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayVoteButton.color
+            .map { text -> (Bool, String) in
+                let isValid = text.count == 4
+                let truncatedText = String(text.prefix(maxLength))
+                return (isValid, truncatedText)
+            }
+            .bind(with: self, onNext: { owner, result in
+                let (isValid, text) = result
+                owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
                 owner.nextButton.isEnabled = isValid
-            }.disposed(by: disposeBag)
+                owner.certificationNumberTextfield.text = text
+            }).disposed(by: disposeBag)
         
         inputPhoneNumberTextfield.rx.text.orEmpty
             .map { $0.count == 11 }
             .bind(with: self) { owner, isValid in
-                owner.certificationRequestButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayVoteButton.color
+                owner.certificationRequestButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
                 owner.certificationRequestButton.isEnabled = isValid
             }.disposed(by: disposeBag)
     }
@@ -127,7 +127,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                             owner.resendLabel.isHidden = false
                             owner.resendButton.isHidden = false
                             
-                            owner.certificationRequestButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
+                            owner.certificationRequestButton.backgroundColor = SharedAsset.grayVoteButton.color
                             owner.certificationRequestButton.isEnabled = false
                             
                             owner.inputPhoneNumberTextfield.isUserInteractionEnabled = false
@@ -210,9 +210,6 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         
         bindUI()
         
-        inputPhoneNumberTextfield.delegate = self
-        certificationNumberTextfield.delegate = self
-        
         navigationItem.title = "회원가입"
     }
     
@@ -275,15 +272,5 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(58)
         }
-    }
-}
-
-extension RegistrationPhoneNumberViewController: UITextFieldDelegate {
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        textField.layer.borderColor = UIColor.black.cgColor
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
     }
 }
