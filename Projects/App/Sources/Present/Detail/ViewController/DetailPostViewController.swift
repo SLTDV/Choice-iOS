@@ -35,7 +35,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let divideVotePostImageLineView = UIView().then {
-        $0.backgroundColor = ChoiceAsset.Colors.grayMedium.color
+        $0.backgroundColor = SharedAsset.grayMedium.color
     }
     
     private let contentLabel = UILabel().then {
@@ -69,18 +69,18 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.setTitleColor(.white, for: .normal)
         $0.isEnabled = false
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+        $0.backgroundColor = SharedAsset.grayDark.color
     }
     
     private let secondVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.isEnabled = false
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = ChoiceAsset.Colors.grayDark.color
+        $0.backgroundColor = SharedAsset.grayDark.color
     }
     
     private let divideCommentLineView = UIView().then {
-        $0.backgroundColor = ChoiceAsset.Colors.grayMedium.color
+        $0.backgroundColor = SharedAsset.grayMedium.color
     }
     
     private let whiteBackgroundView = UIView().then {
@@ -96,13 +96,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.textColor = .lightGray
         $0.layer.cornerRadius = 22
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = ChoiceAsset.Colors.grayDark.color.cgColor
+        $0.layer.borderColor = SharedAsset.grayDark.color.cgColor
     }
     
     private let submitCommentButton = UIButton().then {
         $0.isEnabled = false
         $0.setTitle("게시", for: .normal)
-        $0.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
+        $0.setTitleColor(SharedAsset.grayDark.color, for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
     }
     
@@ -292,13 +292,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         switch voting {
         case 1:
             firstVoteButton.backgroundColor = .black
-            secondVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            secondVoteButton.backgroundColor = SharedAsset.grayDark.color
         case 2:
-            firstVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            firstVoteButton.backgroundColor = SharedAsset.grayDark.color
             secondVoteButton.backgroundColor = .black
         default:
-            firstVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
-            secondVoteButton.backgroundColor = ChoiceAsset.Colors.grayDark.color
+            firstVoteButton.backgroundColor = SharedAsset.grayDark.color
+            secondVoteButton.backgroundColor = SharedAsset.grayDark.color
             firstVoteButton.setTitle("0%(0명)", for: .normal)
             secondVoteButton.setTitle("0%(0명)", for: .normal)
         }
@@ -460,7 +460,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
 extension DetailPostViewController {
     private func setDefaultSubmitButton() {
         submitCommentButton.isEnabled = false
-        submitCommentButton.setTitleColor(ChoiceAsset.Colors.grayDark.color, for: .normal)
+        submitCommentButton.setTitleColor(SharedAsset.grayDark.color, for: .normal)
     }
 }
 

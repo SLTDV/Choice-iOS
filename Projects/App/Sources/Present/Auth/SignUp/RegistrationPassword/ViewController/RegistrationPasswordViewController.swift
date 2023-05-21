@@ -11,35 +11,29 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         $0.font = .systemFont(ofSize: 16, weight: .bold)
     }
     
-    private let inputPasswordTextfield = UITextField().then {
-        $0.addLeftPadding()
+    private let inputPasswordTextField = BoxTextField(type: .secureTextField).then {
         $0.placeholder = "8~16자리 영문, 숫자, 특수문자 조합"
-        $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
-        $0.layer.borderWidth = 1
-        $0.layer.cornerRadius = 8
+        $0.isSecureTextEntry = true
     }
     
-    private let checkPasswordTextfield = UITextField().then {
-        $0.addLeftPadding()
+    private let checkPasswordTextField = BoxTextField(type: .secureTextField).then {
         $0.placeholder = "비밀번호 재입력"
-        $0.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
-        $0.layer.borderWidth = 1
-        $0.layer.cornerRadius = 8
+        $0.isSecureTextEntry = true
     }
     
     private lazy var nextButton = UIButton().then {
         $0.setTitle("다음", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.isEnabled = false
-        $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
+        $0.backgroundColor = SharedAsset.grayVoteButton.color
         $0.layer.cornerRadius = 8
     }
     
     private let warningLabel = WarningLabel()
     
     private func bindUI() {
-        let passwordObservable = inputPasswordTextfield.rx.text.orEmpty
-        let checkPasswordObservable = checkPasswordTextfield.rx.text.orEmpty
+        let passwordObservable = inputPasswordTextField.rx.text.orEmpty
+        let checkPasswordObservable = checkPasswordTextField.rx.text.orEmpty
         
         Observable.combineLatest(
             passwordObservable,
@@ -48,13 +42,13 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         )
         .bind(with: self) { owner, isValid in
             owner.nextButton.isEnabled = isValid
-            owner.nextButton.backgroundColor = isValid ? .black : ChoiceAsset.Colors.grayVoteButton.color
+            owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
         }.disposed(by: disposeBag)
     }
     
     private func checkPassword() {
-        guard let password = inputPasswordTextfield.text else { return }
-        guard let checkPassword = checkPasswordTextfield.text else { return }
+        guard let password = inputPasswordTextField.text else { return }
+        guard let checkPassword = checkPasswordTextField.text else { return }
         
         if password.elementsEqual(checkPassword) {
             if self.viewModel.isValidPassword(password: password){
@@ -71,10 +65,10 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
     
     private func nextButtonDidTap() {
         nextButton.rx.tap
-            .bind(onNext: {
+            .bind(with: self) { owner, _ in
                 LoadingIndicator.showLoading(text: "")
-                self.checkPassword()
-            }).disposed(by: disposeBag)
+                owner.checkPassword()
+            }.disposed(by: disposeBag)
     }
     
     override func configureVC() {
@@ -82,14 +76,11 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
         nextButtonDidTap()
         
         navigationItem.title = "회원가입"
-        
-        inputPasswordTextfield.delegate = self
-        checkPasswordTextfield.delegate = self
     }
     
     override func addView() {
-        view.addSubviews(passwordLabel, inputPasswordTextfield,
-                         checkPasswordTextfield, warningLabel, nextButton)
+        view.addSubviews(passwordLabel, inputPasswordTextField,
+                         checkPasswordTextField, warningLabel, nextButton)
     }
     
     override func setLayout() {
@@ -98,14 +89,14 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
             $0.leading.equalToSuperview().inset(26)
         }
         
-        inputPasswordTextfield.snp.makeConstraints {
+        inputPasswordTextField.snp.makeConstraints {
             $0.top.equalTo(passwordLabel.snp.bottom).offset(25)
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(58)
         }
         
-        checkPasswordTextfield.snp.makeConstraints {
-            $0.top.equalTo(inputPasswordTextfield.snp.bottom).offset(20)
+        checkPasswordTextField.snp.makeConstraints {
+            $0.top.equalTo(inputPasswordTextField.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(58)
         }
@@ -120,15 +111,5 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(58)
         }
-    }
-}
-
-extension RegistrationPasswordViewController: UITextFieldDelegate {
-    func textFieldDidBeginEditing(_ textField: UITextField) {
-        textField.layer.borderColor = UIColor.black.cgColor
-    }
-    
-    func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.layer.borderColor = ChoiceAsset.Colors.grayMedium.color.cgColor
     }
 }

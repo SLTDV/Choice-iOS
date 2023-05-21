@@ -31,9 +31,8 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     
     private let imagePickerController = UIImagePickerController()
     
-    private let userNameTextField = UnderLineTextField().then {
-        $0.setPlaceholder(placeholder: "닉네임을 입력해 주세요")
-        $0.textAlignment = .center
+    private let userNameTextField = BoxTextField().then {
+        $0.placeholder = "닉네임 입력"
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
@@ -43,7 +42,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         $0.setTitle("완료", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.isEnabled = false
-        $0.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
+        $0.backgroundColor = SharedAsset.grayVoteButton.color
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(signUpButtonDidTap(_ :)), for: .touchUpInside)
     }
@@ -64,7 +63,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     
     private func checkNicknameValid(_ nickname: String) -> Bool {
         let trimmedNicknameCount = nickname.trimmingCharacters(in: .whitespaces).count
-        return trimmedNicknameCount < 2 || trimmedNicknameCount > 6
+        return trimmedNicknameCount < 2 || trimmedNicknameCount > 10
     }
     
     private func bindUI() {
@@ -72,10 +71,10 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
             .map(checkNicknameValid(_:))
             .bind(with: self, onNext: { owner, isValid  in
                 if isValid {
-                    owner.warningLabel.show(warning: "*2자 이상 6자 이하로 입력해 주세요.")
+                    owner.warningLabel.show(warning: "*2자 이상 10자 이하로 입력해 주세요.")
                     
                     owner.completeButton.isEnabled = false
-                    owner.completeButton.backgroundColor = ChoiceAsset.Colors.grayVoteButton.color
+                    owner.completeButton.backgroundColor = SharedAsset.grayVoteButton.color
                 } else {
                     owner.warningLabel.hide()
                     
@@ -138,7 +137,8 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         userNameTextField.snp.makeConstraints {
             $0.top.equalTo(profileImageView.snp.bottom).offset(80)
             $0.centerX.equalToSuperview()
-            $0.leading.trailing.equalToSuperview().inset(93)
+            $0.leading.trailing.equalToSuperview().inset(26)
+            $0.height.equalTo(58)
         }
         
         warningLabel.snp.makeConstraints {
