@@ -80,6 +80,9 @@ final class ProfileViewModel: BaseViewModel {
             switch response.result {
             case .success:
                 self?.navigateToSignInVC()
+                if type == .callToMembershipWithdrawal {
+                    self?.container.deleteAll()
+                }
             case .failure(let error):
                 print("error = \(error.localizedDescription)")
             }
