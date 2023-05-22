@@ -20,7 +20,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.keyboardType = .numberPad
     }
     
-    private let requestCertificationButton = UIButton().then {
+    private let requestAuthButton = UIButton().then {
         $0.setTitle("인증 요청", for: .normal)
         $0.isEnabled = false
         $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
@@ -28,7 +28,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.layer.cornerRadius = 8
     }
     
-    private let certificationNumberTextfield = BoxTextField().then {
+    private let authNumberTextfield = BoxTextField().then {
         $0.placeholder = "인증번호 입력"
         $0.keyboardType = .numberPad
         $0.isHidden = true
@@ -73,7 +73,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     
     private func checkAuthCode() {
         guard let phoneNumber = inputPhoneNumberTextfield.text else { return }
-        guard let authCode = certificationNumberTextfield.text else { return }
+        guard let authCode = authNumberTextfield.text else { return }
         
         self.viewModel.requestAuthNumberConfirmation(phoneNumber: phoneNumber, authCode: authCode) { [weak self] isVaild in
             if isVaild {
@@ -88,7 +88,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     private func bindUI() {
         let maxLength = 4
         
-        certificationNumberTextfield.rx.text.orEmpty
+        authNumberTextfield.rx.text.orEmpty
             .map { text -> (Bool, String) in
                 let isValid = (text.count == maxLength)
                 let truncatedText = String(text.prefix(maxLength))
@@ -98,21 +98,21 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                 let (isValid, text) = result
                 owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
                 owner.nextButton.isEnabled = isValid
-                owner.certificationNumberTextfield.text = text
+                owner.authNumberTextfield.text = text
             }).disposed(by: disposeBag)
             
         inputPhoneNumberTextfield.rx.text.orEmpty
             .map { $0.count == 11 }
             .bind(with: self) { owner, isValid in
-                owner.requestCertificationButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
-                owner.requestCertificationButton.isEnabled = isValid
+                owner.requestAuthButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
+                owner.requestAuthButton.isEnabled = isValid
             }.disposed(by: disposeBag)
     }
     
-    private func requestCertificationButtonDidTap() {
+    private func requestAuthButtonDidTap() {
         let phoneNumberObservable = inputPhoneNumberTextfield.rx.text.orEmpty
         
-        requestCertificationButton.rx.tap
+        requestAuthButton.rx.tap
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
                 LoadingIndicator.showLoading(text: "")
@@ -127,12 +127,12 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                     if isValid {
                         owner.setupPossibleBackgroundTimer()
                         
-                        owner.certificationNumberTextfield.isHidden = false
+                        owner.authNumberTextfield.isHidden = false
                         owner.resendLabel.isHidden = false
                         owner.resendButton.isHidden = false
                         
-                        owner.requestCertificationButton.backgroundColor = SharedAsset.grayVoteButton.color
-                        owner.requestCertificationButton.isEnabled = false
+                        owner.requestAuthButton.backgroundColor = SharedAsset.grayVoteButton.color
+                        owner.requestAuthButton.isEnabled = false
                         
                         owner.inputPhoneNumberTextfield.isUserInteractionEnabled = false
                         owner.inputPhoneNumberTextfield.textColor = .placeholderText
@@ -202,7 +202,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         restoreFrameYValue = self.view.frame.origin.y
         nextButtonDidTap()
         resendButtonDidTap()
-        requestCertificationButtonDidTap()
+        requestAuthButtonDidTap()
         
         bindUI()
         
@@ -210,11 +210,11 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     }
     
     override func addView() {
-        view.addSubviews(emailLabel,inputPhoneNumberTextfield, requestCertificationButton,
-                         certificationNumberTextfield, warningLabel, nextButton,
+        view.addSubviews(emailLabel,inputPhoneNumberTextfield, requestAuthButton,
+                         authNumberTextfield, warningLabel, nextButton,
                          resendLabel, resendButton)
         
-        certificationNumberTextfield.addSubview(countLabel)
+        authNumberTextfield.addSubview(countLabel)
     }
     
     override func setLayout() {
@@ -226,18 +226,18 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         inputPhoneNumberTextfield.snp.makeConstraints {
             $0.top.equalTo(emailLabel.snp.bottom).offset(25)
             $0.leading.equalToSuperview().inset(26)
-            $0.trailing.equalTo(requestCertificationButton.snp.leading).offset(-10)
+            $0.trailing.equalTo(requestAuthButton.snp.leading).offset(-10)
             $0.height.equalTo(58)
         }
         
-        requestCertificationButton.snp.makeConstraints {
+        requestAuthButton.snp.makeConstraints {
             $0.top.equalTo(inputPhoneNumberTextfield.snp.top)
             $0.trailing.equalToSuperview().inset(26)
             $0.width.equalTo(inputPhoneNumberTextfield.snp.width).multipliedBy(0.4)
             $0.height.equalTo(58)
         }
         
-        certificationNumberTextfield.snp.makeConstraints {
+        authNumberTextfield.snp.makeConstraints {
             $0.top.equalTo(inputPhoneNumberTextfield.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(58)
@@ -254,7 +254,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         }
         
         resendButton.snp.makeConstraints {
-            $0.top.equalTo(certificationNumberTextfield.snp.bottom).offset(15)
+            $0.top.equalTo(authNumberTextfield.snp.bottom).offset(15)
             $0.leading.equalTo(resendLabel.snp.trailing).offset(8)
         }
         
