@@ -1,7 +1,6 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import Kingfisher
 import Shared
 
 final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
@@ -98,7 +97,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         
         let okayAction = UIAlertAction(title: "변경", style: .default) { [weak self] data in
             LoadingIndicator.showLoading(text: "")
-            self?.viewModel.callToChangeNickname(nickname: alert.textFields?[0].text ?? "")
+            self?.viewModel.requestToChangeNickname(nickname: alert.textFields?[0].text ?? "")
         }
         let cancelAction = UIAlertAction(title: "취소", style: .destructive)
         
@@ -113,7 +112,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         let alert = UIAlertController(title: "회원탈퇴", message: "회원탈퇴 하시겠습니까?", preferredStyle: .alert)
         
         let okayAction = UIAlertAction(title: "탈퇴", style: .destructive) { [weak self] data in
-            self?.viewModel.callToDeleteData(type: .callToMembershipWithdrawal)
+            self?.viewModel.requestToDeleteProfileData(type: .callToMembershipWithdrawal)
         }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
         
@@ -127,7 +126,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         let alert = UIAlertController(title: "로그아웃", message: "로그아웃 하시겠습니까?", preferredStyle: .alert)
         
         let okayAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] data in
-            self?.viewModel.callToDeleteData(type: .callToLogout)
+            self?.viewModel.requestToDeleteProfileData(type: .callToLogout)
         }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
         
@@ -145,7 +144,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         imagePickerController.delegate = self
         
         bindTableView()
-        viewModel.callToProfileData()
+        viewModel.requestProfileData()
     }
     
     override func addView() {
@@ -205,7 +204,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         }
         
         LoadingIndicator.showLoading(text: "")
-        viewModel.callToProfileImageUpload(profileImage: newImage)
+        viewModel.requestToUploadProfileImage(profileImage: newImage)
             .subscribe(with: self, onNext: { owner, response in
                 DispatchQueue.main.async {
                     owner.profileImageView.kf.setImage(with: URL(string: response.profileImageUrl))
@@ -219,7 +218,7 @@ extension ProfileViewController: PostTableViewCellButtonDelegate {
     func removePostButtonDidTap(postIdx: Int) {
         let alert = UIAlertController(title: "게시물 삭제", message: "삭제 하시겠습니까?", preferredStyle: .alert)
         let okayAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
-            self.viewModel.callToDeletePost(postIdx: postIdx)
+            self.viewModel.requestToDeletePost(postIdx: postIdx)
         }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
         

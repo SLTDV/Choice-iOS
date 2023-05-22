@@ -1,7 +1,6 @@
 import UIKit
 
-public final class LoadingIndicator {
-    private init() {}
+public enum LoadingIndicator {
     public static func showLoading(text: String) {
         DispatchQueue.main.async {
             guard let window = (UIApplication.shared.connectedScenes.first as? UIWindowScene)?.windows.last else { return }

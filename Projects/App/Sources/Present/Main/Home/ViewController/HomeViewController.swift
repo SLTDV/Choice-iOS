@@ -98,9 +98,10 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                             owner.postTableView.tableFooterView = nil
                             switch result {
                             case .success(let size):
-                                owner.postTableView.reloadData()
                                 if size != 10 {
                                     owner.isLastPage = true
+                                } else {
+                                    owner.postTableView.reloadData()
                                 }
                             case .failure(let error):
                                 print("pagination Error = \(error.localizedDescription)")
