@@ -75,12 +75,11 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         guard let phoneNumber = inputPhoneNumberTextfield.text else { return }
         guard let authCode = certificationNumberTextfield.text else { return }
         
-        self.viewModel.requestAuthNumberConfirmation(phoneNumber: phoneNumber, authCode: authCode) { isVaild in
+        self.viewModel.requestAuthNumberConfirmation(phoneNumber: phoneNumber, authCode: authCode) { [weak self] isVaild in
             if isVaild {
-                self.viewModel.pushRegistrationPasswordVC(phoneNumber: phoneNumber)
+                self?.viewModel.pushRegistrationPasswordVC(phoneNumber: phoneNumber)
             } else {
-                
-                self.warningLabel.show(warning: "*인증번호가 일치하지 않습니다")
+                self?.warningLabel.show(warning: "*인증번호가 일치하지 않습니다")
             }
             LoadingIndicator.hideLoading()
         }
@@ -91,7 +90,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         
         certificationNumberTextfield.rx.text.orEmpty
             .map { text -> (Bool, String) in
-                let isValid = text.count == 4
+                let isValid = (text.count == maxLength)
                 let truncatedText = String(text.prefix(maxLength))
                 return (isValid, truncatedText)
             }

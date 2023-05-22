@@ -1,8 +1,11 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import Kingfisher
 import Shared
+
+enum ContentSizeKey {
+    static let key = "contentSize"
+}
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
     var writerNameData = PublishSubject<String>()
@@ -133,9 +136,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         if let keyboardFrame:NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             
-            UIView.animate(
-                withDuration: 0.3
-                , animations: {
+            UIView.animate(withDuration: 0.3, animations: {
                     self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardRectangle.height)
                 }
             )
@@ -155,13 +156,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
             .bind(with: self, onNext: { owner, _ in
-                let contentHeight = owner.scrollView.contentSize.height
-                let yOffset = owner.scrollView.contentOffset.y
-                let frameHeight = owner.scrollView.frame.size.height
-
                 if owner.isLastPage {
                     return
                 }
+                
+                let contentHeight = owner.scrollView.contentSize.height
+                let yOffset = owner.scrollView.contentOffset.y
+                let frameHeight = owner.scrollView.frame.size.height
                 
                 if yOffset > (contentHeight-frameHeight) - 100 {
                     owner.commentTableView.tableFooterView = owner.createSpinnerFooter()
@@ -171,9 +172,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                             owner.commentTableView.tableFooterView = nil
                             switch result {
                             case .success(let size):
-                                owner.commentTableView.reloadData()
                                 if size != 10 {
                                     owner.isLastPage = true
+                                } else {
+                                    owner.commentTableView.reloadData()
                                 }
                             case .failure(let error):
                                 print("comment pagination error = \(error.localizedDescription)")
@@ -227,43 +229,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }).disposed(by: disposeBag)
     }
     
-    private func setEnterTextViewAutoSize() {
-        let maxHeight = 94.0
-        let fixedWidth = enterCommentTextView.frame.size.width
-        let size = enterCommentTextView.sizeThatFits(CGSize(width: fixedWidth, height: .infinity))
-
-        enterCommentTextView.isScrollEnabled = size.height > maxHeight
-        enterCommentTextView.snp.updateConstraints {
-            $0.height.equalTo(min(maxHeight, size.height))
-        }
-    }
-    
-    private func submitComment() {
-        guard let idx = model?.idx else { return }
-        guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
-        
-        LoadingIndicator.showLoading(text: "게시 중")
-        viewModel.commentCurrentPage = -1
-        viewModel.requestToCreateComment(idx: idx, content: content) {
-            DispatchQueue.main.async { [weak self] in
-                self?.viewModel.requestCommentData(idx: idx)
-                self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-                self?.enterCommentTextView.text = nil
-                self?.enterCommentTextView.resignFirstResponder()
-                self?.commentData.accept([])
-                self?.setDefaultSubmitButton()
-            }
-            LoadingIndicator.hideLoading()
-        }
-    }
-    
-    private func submitCommentButtonDidTap() {
-        submitCommentButton.rx.tap
-            .bind(with: self, onNext: { owner, _ in
-                owner.submitComment()
-            }).disposed(by: disposeBag)
-    }
-    
     private func changePostData(model: PostList) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
@@ -306,19 +271,19 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.commentTableView.addObserver(self, forKeyPath: "contentSize", options: .new, context: nil)
+        self.commentTableView.addObserver(self, forKeyPath: ContentSizeKey.key, options: .new, context: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardUp), name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardDown), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        self.commentTableView.removeObserver(self, forKeyPath: "contentSize")
+        self.commentTableView.removeObserver(self, forKeyPath: ContentSizeKey.key)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
         NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
-        if keyPath == "contentSize" {
+        if keyPath == ContentSizeKey.key {
             if object is UITableView {
                 if let newValue = change?[.newKey] as? CGSize {
                     commentTableView.snp.updateConstraints {
@@ -462,6 +427,49 @@ extension DetailPostViewController {
         submitCommentButton.isEnabled = false
         submitCommentButton.setTitleColor(SharedAsset.grayDark.color, for: .normal)
     }
+    
+    private func setEnterTextViewAutoSize() {
+        let maxHeight = 94.0
+        let fixedWidth = enterCommentTextView.frame.size.width
+        let size = enterCommentTextView.sizeThatFits(CGSize(width: fixedWidth, height: .infinity))
+
+        enterCommentTextView.isScrollEnabled = size.height > maxHeight
+        enterCommentTextView.snp.updateConstraints {
+            $0.height.equalTo(min(maxHeight, size.height))
+        }
+    }
+    
+    private func submitComment() {
+        guard let idx = model?.idx else { return }
+        guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
+        
+        LoadingIndicator.showLoading(text: "게시 중")
+        viewModel.commentCurrentPage = -1
+        viewModel.requestToCreateComment(idx: idx, content: content) { result in
+            switch result {
+            case .success(()):
+                DispatchQueue.main.async { [weak self] in
+                    self?.viewModel.requestCommentData(idx: idx)
+                    self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                    self?.enterCommentTextView.text = nil
+                    self?.enterCommentTextView.resignFirstResponder()
+                    self?.commentData.accept([])
+                    self?.isLastPage = false
+                    self?.setDefaultSubmitButton()
+                }
+            case .failure(let error):
+                print("post error = \(String(describing: error.localizedDescription))")
+            }
+        }
+        LoadingIndicator.hideLoading()
+    }
+    
+    private func submitCommentButtonDidTap() {
+        submitCommentButton.rx.tap
+            .bind(with: self, onNext: { owner, _ in
+                owner.submitComment()
+            }).disposed(by: disposeBag)
+    }
 }
 
 extension DetailPostViewController: UITableViewDelegate {
@@ -471,20 +479,24 @@ extension DetailPostViewController: UITableViewDelegate {
         
         lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
             self.viewModel.requestToDeleteComment(postIdx: self.model!.idx,
-                                                  commentIdx: commentModel.idx,
-                                                  completion: { [weak self] result in
+                                                  commentIdx: commentModel.idx) { [weak self] result in
                 switch result {
                 case .success(()):
+                    LoadingIndicator.showLoading(text: "")
+                    var arr = self?.commentData.value
+                    arr?.remove(at: indexPath.row)
+                    self?.commentData.accept(arr!)
                     DispatchQueue.main.async {
                         self?.commentTableView.reloadRows(
                             at: [indexPath],
                             with: .automatic
                         )
                     }
+                    LoadingIndicator.hideLoading()
                 case .failure(let error):
                     print("Delete Faield = \(error.localizedDescription)")
                 }
-            })
+            }
         })
         deleteContextual.image = UIImage(systemName: "trash")
         
