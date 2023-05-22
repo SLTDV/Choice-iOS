@@ -20,7 +20,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         $0.keyboardType = .numberPad
     }
     
-    private let certificationRequestButton = UIButton().then {
+    private let requestCertificationButton = UIButton().then {
         $0.setTitle("인증 요청", for: .normal)
         $0.isEnabled = false
         $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
@@ -104,15 +104,15 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         inputPhoneNumberTextfield.rx.text.orEmpty
             .map { $0.count == 11 }
             .bind(with: self) { owner, isValid in
-                owner.certificationRequestButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
-                owner.certificationRequestButton.isEnabled = isValid
+                owner.requestCertificationButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
+                owner.requestCertificationButton.isEnabled = isValid
             }.disposed(by: disposeBag)
     }
     
-    private func certificationRequestButtonDidTap() {
+    private func requestCertificationButtonDidTap() {
         let phoneNumberObservable = inputPhoneNumberTextfield.rx.text.orEmpty
         
-        certificationRequestButton.rx.tap
+        requestCertificationButton.rx.tap
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
                 LoadingIndicator.showLoading(text: "")
@@ -131,8 +131,8 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                         owner.resendLabel.isHidden = false
                         owner.resendButton.isHidden = false
                         
-                        owner.certificationRequestButton.backgroundColor = SharedAsset.grayVoteButton.color
-                        owner.certificationRequestButton.isEnabled = false
+                        owner.requestCertificationButton.backgroundColor = SharedAsset.grayVoteButton.color
+                        owner.requestCertificationButton.isEnabled = false
                         
                         owner.inputPhoneNumberTextfield.isUserInteractionEnabled = false
                         owner.inputPhoneNumberTextfield.textColor = .placeholderText
@@ -202,7 +202,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         restoreFrameYValue = self.view.frame.origin.y
         nextButtonDidTap()
         resendButtonDidTap()
-        certificationRequestButtonDidTap()
+        requestCertificationButtonDidTap()
         
         bindUI()
         
@@ -210,7 +210,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     }
     
     override func addView() {
-        view.addSubviews(emailLabel,inputPhoneNumberTextfield, certificationRequestButton,
+        view.addSubviews(emailLabel,inputPhoneNumberTextfield, requestCertificationButton,
                          certificationNumberTextfield, warningLabel, nextButton,
                          resendLabel, resendButton)
         
@@ -226,11 +226,11 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         inputPhoneNumberTextfield.snp.makeConstraints {
             $0.top.equalTo(emailLabel.snp.bottom).offset(25)
             $0.leading.equalToSuperview().inset(26)
-            $0.trailing.equalTo(certificationRequestButton.snp.leading).offset(-10)
+            $0.trailing.equalTo(requestCertificationButton.snp.leading).offset(-10)
             $0.height.equalTo(58)
         }
         
-        certificationRequestButton.snp.makeConstraints {
+        requestCertificationButton.snp.makeConstraints {
             $0.top.equalTo(inputPhoneNumberTextfield.snp.top)
             $0.trailing.equalToSuperview().inset(26)
             $0.width.equalTo(inputPhoneNumberTextfield.snp.width).multipliedBy(0.4)
