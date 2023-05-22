@@ -136,9 +136,9 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                         
                         owner.inputPhoneNumberTextfield.isUserInteractionEnabled = false
                         owner.inputPhoneNumberTextfield.textColor = .placeholderText
-                        self.warningLabel.hide()
+                        owner.warningLabel.hide()
                     } else {
-                        self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
+                        owner.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
                     }
                     
                     LoadingIndicator.hideLoading()
@@ -164,9 +164,9 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                 owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isValid in
                     if isValid {
                         owner.setupPossibleBackgroundTimer()
-                        self.warningLabel.hide()
+                        owner.warningLabel.hide()
                     } else {
-                        self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
+                        owner.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
                     }
                     
                     LoadingIndicator.hideLoading()
