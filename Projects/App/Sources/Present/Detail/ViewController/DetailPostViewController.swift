@@ -4,7 +4,7 @@ import RxCocoa
 import Shared
 
 enum ContentSizeKey {
-    static let key = "ContentSize"
+    static let key = "contentSize"
 }
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
