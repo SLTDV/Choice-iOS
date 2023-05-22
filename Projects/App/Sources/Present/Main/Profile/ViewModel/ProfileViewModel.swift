@@ -18,7 +18,7 @@ final class ProfileViewModel: BaseViewModel {
     weak var delegate: ProfileDataProtocol?
     private let container = AppDelegate.container.resolve(JwtStore.self)!
     
-    func callToProfileData() {
+    func requestProfileData() {
         let url = APIConstants.profileURL
         
         AF.request(url,
@@ -38,7 +38,7 @@ final class ProfileViewModel: BaseViewModel {
         }
     }
     
-    func callToChangeNickname(nickname: String) {
+    func requestToChangeNickname(nickname: String) {
         let url = APIConstants.changeNicknameURL
         let params = [
             "nickname" : nickname
@@ -61,7 +61,7 @@ final class ProfileViewModel: BaseViewModel {
         }
     }
     
-    func callToDeleteData(type: OptionItemType) {
+    func requestToDeleteProfileData(type: OptionItemType) {
         lazy var url = ""
         
         switch type {
@@ -89,7 +89,7 @@ final class ProfileViewModel: BaseViewModel {
         }
     }
     
-    func callToProfileImageUpload(profileImage: UIImage) -> Observable<ProfileImageModel> {
+    func requestToUploadProfileImage(profileImage: UIImage) -> Observable<ProfileImageModel> {
         var url = APIConstants.profileImageUploadURL
         
         var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
@@ -137,7 +137,7 @@ final class ProfileViewModel: BaseViewModel {
         }
     }
     
-    func callToDeletePost(postIdx: Int) {
+    func requestToDeletePost(postIdx: Int) {
         let url = APIConstants.deletePostURL + "\(postIdx)"
         AF.request(url,
                    method: .delete,
@@ -147,7 +147,7 @@ final class ProfileViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success:
-                self?.callToProfileData()
+                self?.requestProfileData()
             case .failure(let error):
                 print("error = \(error.localizedDescription)")
             }
