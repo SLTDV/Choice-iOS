@@ -79,7 +79,6 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             if isVaild {
                 self.viewModel.pushRegistrationPasswordVC(phoneNumber: phoneNumber)
             } else {
-                
                 self.warningLabel.show(warning: "*인증번호가 일치하지 않습니다")
             }
             LoadingIndicator.hideLoading()
@@ -101,7 +100,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                 owner.nextButton.isEnabled = isValid
                 owner.certificationNumberTextfield.text = text
             }).disposed(by: disposeBag)
-        
+            
         inputPhoneNumberTextfield.rx.text.orEmpty
             .map { $0.count == 11 }
             .bind(with: self) { owner, isValid in
@@ -118,29 +117,30 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             .bind(with: self) { owner, inputPhoneNumber in
                 LoadingIndicator.showLoading(text: "")
                 
-                if inputPhoneNumber.hasPrefix("010"){
-                    owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isValid in
-                        if isValid {
-                            owner.setupPossibleBackgroundTimer()
-                            
-                            owner.certificationNumberTextfield.isHidden = false
-                            owner.resendLabel.isHidden = false
-                            owner.resendButton.isHidden = false
-                            
-                            owner.certificationRequestButton.backgroundColor = SharedAsset.grayVoteButton.color
-                            owner.certificationRequestButton.isEnabled = false
-                            
-                            owner.inputPhoneNumberTextfield.isUserInteractionEnabled = false
-                            owner.inputPhoneNumberTextfield.textColor = .placeholderText
-                            self.warningLabel.hide()
-                            LoadingIndicator.hideLoading()
-                        } else {
-                            self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
-                            LoadingIndicator.hideLoading()
-                        }
+                guard inputPhoneNumber.hasPrefix("010") else {
+                    owner.warningLabel.show(warning: "*전화번호 형식이 올바르지 않아요.")
+                    LoadingIndicator.hideLoading()
+                    return
+                }
+                
+                owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isValid in
+                    if isValid {
+                        owner.setupPossibleBackgroundTimer()
+                        
+                        owner.certificationNumberTextfield.isHidden = false
+                        owner.resendLabel.isHidden = false
+                        owner.resendButton.isHidden = false
+                        
+                        owner.certificationRequestButton.backgroundColor = SharedAsset.grayVoteButton.color
+                        owner.certificationRequestButton.isEnabled = false
+                        
+                        owner.inputPhoneNumberTextfield.isUserInteractionEnabled = false
+                        owner.inputPhoneNumberTextfield.textColor = .placeholderText
+                        self.warningLabel.hide()
+                    } else {
+                        self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
                     }
-                } else {
-                    self.warningLabel.show(warning: "*전화번호 형식이 올바르지 않아요.")
+                    
                     LoadingIndicator.hideLoading()
                 }
                 owner.view.endEditing(true)
@@ -157,12 +157,6 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
                 
                 if !owner.isValidAuth {
                     owner.warningLabel.show(warning: "*3분 후에 다시 시도해주세요")
-                    LoadingIndicator.hideLoading()
-                    return
-                }
-                
-                guard inputPhoneNumber.hasPrefix("010") else {
-                    owner.warningLabel.show(warning: "*전화번호 형식이 올바르지 않아요.")
                     LoadingIndicator.hideLoading()
                     return
                 }
