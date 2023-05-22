@@ -154,25 +154,27 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
                 LoadingIndicator.showLoading(text: "")
-                if owner.isValidAuth {
-                    if inputPhoneNumber.hasPrefix("010") {
-                        owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isValid in
-                            if isValid {
-                                owner.setupPossibleBackgroundTimer()
-                                
-                                self.warningLabel.hide()
-                                LoadingIndicator.hideLoading()
-                            } else {
-                                self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
-                                LoadingIndicator.hideLoading()
-                            }
-                        }
-                    } else {
-                        self.warningLabel.show(warning: "*전화번호 형식이 올바르지 않아요.")
-                        LoadingIndicator.hideLoading()
-                    }
-                } else {
+                
+                if !owner.isValidAuth {
                     owner.warningLabel.show(warning: "*3분 후에 다시 시도해주세요")
+                    LoadingIndicator.hideLoading()
+                    return
+                }
+                
+                guard inputPhoneNumber.hasPrefix("010") else {
+                    owner.warningLabel.show(warning: "*전화번호 형식이 올바르지 않아요.")
+                    LoadingIndicator.hideLoading()
+                    return
+                }
+                
+                owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isValid in
+                    if isValid {
+                        owner.setupPossibleBackgroundTimer()
+                        self.warningLabel.hide()
+                    } else {
+                        self.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
+                    }
+                    
                     LoadingIndicator.hideLoading()
                 }
             }.disposed(by: disposeBag)
