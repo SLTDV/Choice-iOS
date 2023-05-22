@@ -155,7 +155,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             .bind(with: self) { owner, inputPhoneNumber in
                 LoadingIndicator.showLoading(text: "")
                 
-                if !owner.isValidAuth {
+                guard owner.isValidAuth else {
                     owner.warningLabel.show(warning: "*3분 후에 다시 시도해주세요")
                     LoadingIndicator.hideLoading()
                     return
