@@ -72,16 +72,15 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
             cell.separatorInset = UIEdgeInsets.zero
         }.disposed(by: disposeBag)
         
-        nicknameData.bind(with: self, onNext: { owner, arg in
-            owner.userNameLabel.text = arg
-        }).disposed(by: disposeBag)
+        nicknameData
+            .bind(to: userNameLabel.rx.text)
+            .disposed(by: disposeBag)
         
-        imageData.bind(with: self, onNext: { owner, arg in
-            guard arg == nil else {
-                owner.profileImageView.kf.setImage(with: URL(string: arg!))
-                return
-            }
-        }).disposed(by: disposeBag)
+        imageData
+            .compactMap { URL(string: $0!) }
+            .bind(with: self) { owner, arg in
+                owner.profileImageView.kf.setImage(with: arg)
+            }.disposed(by: disposeBag)
     }
     
     @objc private func editProfileImageButtonDidTap(_ sender: UIButton) {
