@@ -3,6 +3,11 @@ import RxSwift
 import RxCocoa
 import Shared
 
+enum PickerKey {
+    static let first = "first"
+    static let second = "second"
+}
+
 final class AddPostViewController: BaseVC<AddPostViewModel> {
     private let disposeBag = DisposeBag()
     
@@ -42,13 +47,13 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
     
     private let firstImagePicker = UIImagePickerController().then {
-        $0.restorationIdentifier = "first"
+        $0.restorationIdentifier = PickerKey.first
         $0.sourceType = .photoLibrary
         $0.allowsEditing = true
     }
     
     private let secondImagePicker = UIImagePickerController().then {
-        $0.restorationIdentifier = "second"
+        $0.restorationIdentifier = PickerKey.second
         $0.sourceType = .photoLibrary
         $0.allowsEditing = true
     }
@@ -311,9 +316,9 @@ extension AddPostViewController: UIImagePickerControllerDelegate, UINavigationCo
         }
         
         switch picker.restorationIdentifier {
-        case "first":
+        case PickerKey.first:
             self.addFirstImageButton.setImage(newImage, for: .normal)
-        case "second":
+        case PickerKey.second:
             self.addSecondImageButton.setImage(newImage, for: .normal)
         default:
             return
