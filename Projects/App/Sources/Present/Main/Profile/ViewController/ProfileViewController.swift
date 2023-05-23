@@ -10,7 +10,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     private let disposeBag = DisposeBag()
     
-    lazy var optionItem = [
+    private lazy var optionItem = [
         UIAction(title: "회원탈퇴", attributes: .destructive, handler: { _ in self.membershipWithdrawalMenuDidTap()}),
         UIAction(title: "로그아웃", attributes: .destructive, handler: { _ in self.logOutMenuDidTap()})
     ]
@@ -94,7 +94,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
                                       message: "변경하실 닉네임을 입력해주세요.",
                                       preferredStyle: .alert)
         
-        let okayAction = UIAlertAction(title: "변경", style: .default) { [weak self] data in
+        let okayAction = UIAlertAction(title: "확인", style: .default) { [weak self] data in
             LoadingIndicator.showLoading(text: "")
             self?.viewModel.requestToChangeNickname(nickname: alert.textFields?[0].text ?? "")
         }
@@ -110,7 +110,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     private func membershipWithdrawalMenuDidTap() {
         let alert = UIAlertController(title: "회원탈퇴", message: "회원탈퇴 하시겠습니까?", preferredStyle: .alert)
         
-        let okayAction = UIAlertAction(title: "탈퇴", style: .destructive) { [weak self] data in
+        let okayAction = UIAlertAction(title: "확인", style: .destructive) { [weak self] data in
             self?.viewModel.requestToDeleteProfileData(type: .callToMembershipWithdrawal)
         }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
@@ -124,7 +124,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     private func logOutMenuDidTap() {
         let alert = UIAlertController(title: "로그아웃", message: "로그아웃 하시겠습니까?", preferredStyle: .alert)
         
-        let okayAction = UIAlertAction(title: "로그아웃", style: .destructive) { [weak self] data in
+        let okayAction = UIAlertAction(title: "확인", style: .destructive) { [weak self] data in
             self?.viewModel.requestToDeleteProfileData(type: .callToLogout)
         }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
