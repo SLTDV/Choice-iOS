@@ -29,6 +29,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         $0.tintColor = .black
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 50
+        $0.contentMode = .scaleAspectFill
     }
     
     private lazy var editProfileImageButton = UIButton().then {
