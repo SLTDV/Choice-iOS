@@ -79,7 +79,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             .drive(with: self, onNext: { owner, post in
                 owner.viewModel.pushDetailPostVC(model: post)
             }).disposed(by: disposeBag)
-        
+            
         postTableView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
             .bind(with: self, onNext: { owner, arg in
@@ -138,7 +138,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     private func configureDropDown() {
-        let recentSort = UIAction(title: "최신순으로", image: UIImage(systemName: "clock"), handler: { [weak self] _ in
+        let recentSort = UIAction(title: "최신순으로",
+                                  image: UIImage(systemName: "clock")) { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
             self?.sortTableViewData(type: .findNewestPostData)
             DispatchQueue.main.async {
@@ -146,8 +147,9 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                 self?.postData.accept([])
                 self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
             }
-        })
-        let popularSort = UIAction(title: "인기순으로", image: UIImage(systemName: "heart"), handler: { [weak self] _ in
+        }
+        let popularSort = UIAction(title: "인기순으로",
+                                   image: UIImage(systemName: "heart")) { [weak self] _ in
             LoadingIndicator.showLoading(text: "")
             self?.sortTableViewData(type: .findBestPostData)
             DispatchQueue.main.async {
@@ -155,7 +157,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                 self?.postData.accept([])
                 self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
             }
-        })
+        }
         dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
     }
     
@@ -201,14 +203,14 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         }
         
         dropdownButton.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).inset(20)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(12)
             $0.trailing.equalToSuperview().inset(14)
             $0.width.equalTo(64)
             $0.height.equalTo(28)
         }
         
         postTableView.snp.makeConstraints {
-            $0.top.equalTo(dropdownButton.snp.bottom).offset(28)
+            $0.top.equalTo(dropdownButton.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
