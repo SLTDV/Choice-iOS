@@ -145,32 +145,30 @@ final class PostCell: UITableViewCell {
     
     private func setLayout() {
         titleLabel.snp.makeConstraints {
-            $0.top.equalToSuperview().inset(31)
-            $0.leading.equalToSuperview().inset(31)
-            $0.trailing.equalToSuperview()
-            $0.height.equalTo(21)
+            $0.top.equalToSuperview().inset(23)
+            $0.leading.trailing.equalToSuperview().inset(33)
         }
         
         contentLabel.snp.makeConstraints {
             $0.top.equalTo(titleLabel.snp.bottom).offset(16)
-            $0.leading.trailing.equalToSuperview().inset(31)
+            $0.leading.trailing.equalToSuperview().inset(33)
         }
         
         removePostButton.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(31)
+            $0.top.equalToSuperview().offset(27)
             $0.trailing.equalToSuperview().inset(30)
         }
         
         firstPostImageView.snp.makeConstraints {
             $0.top.equalTo(contentLabel.snp.bottom).offset(24)
-            $0.leading.equalToSuperview().inset(31)
+            $0.leading.equalToSuperview().inset(33)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
         }
         
         secondPostImageView.snp.makeConstraints {
             $0.top.equalTo(contentLabel.snp.bottom).offset(24)
-            $0.trailing.equalToSuperview().inset(31)
+            $0.trailing.equalToSuperview().inset(33)
             $0.width.equalTo(134)
             $0.height.equalTo(145)
         }
