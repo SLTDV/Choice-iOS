@@ -2,6 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Shared
+import SafariServices
 
 final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
     var nicknameData = PublishSubject<String>()
@@ -12,8 +13,12 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     private lazy var optionItem = [
         UIAction(title: "회원탈퇴", attributes: .destructive, handler: { _ in self.membershipWithdrawalMenuDidTap()}),
-        UIAction(title: "로그아웃", attributes: .destructive, handler: { _ in self.logOutMenuDidTap()})
+        UIAction(title: "로그아웃", attributes: .destructive, handler: { _ in self.logOutMenuDidTap() }),
+        UIAction(title: "개인정보처리방침", handler: { _ in self.presentPrivacyProlicyPage() })
     ]
+    
+    private let privacyPolicyUrl = NSURL(string: "https://opaque-plate-ed2.notion.site/aa6adde3d5cf4836847f8fc79a6cc3cf")
+    
     
     private lazy var optionButton = UIBarButtonItem(image: UIImage(systemName: "gearshape")).then {
         $0.menu = UIMenu(title: "설정", children: optionItem)
@@ -106,6 +111,11 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         alert.addTextField()
         
         present(alert, animated: true)
+    }
+    
+    private func presentPrivacyProlicyPage() {
+        let privacyPolicyView: SFSafariViewController = SFSafariViewController(url: privacyPolicyUrl as! URL)
+        present(privacyPolicyView, animated: true)
     }
     
     private func membershipWithdrawalMenuDidTap() {
