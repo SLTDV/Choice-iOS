@@ -12,9 +12,9 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     private let disposeBag = DisposeBag()
     
     private lazy var optionItem = [
+        UIAction(title: "개인정보처리방침", handler: { _ in self.presentPrivacyProlicyPage() })
         UIAction(title: "회원탈퇴", attributes: .destructive, handler: { _ in self.membershipWithdrawalMenuDidTap()}),
         UIAction(title: "로그아웃", attributes: .destructive, handler: { _ in self.logOutMenuDidTap() }),
-        UIAction(title: "개인정보처리방침", handler: { _ in self.presentPrivacyProlicyPage() })
     ]
     
     private let privacyPolicyUrl = NSURL(string: "https://opaque-plate-ed2.notion.site/aa6adde3d5cf4836847f8fc79a6cc3cf")
