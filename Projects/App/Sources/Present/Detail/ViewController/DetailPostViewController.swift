@@ -248,6 +248,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             firstVotingCount: Double(model.firstVotingCount),
             secondVotingCount: Double(model.secondVotingCount)
         )
+        
+        print("0 = \(data.0)")
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
         votePostLayout(voting: model.votingState)
@@ -264,8 +266,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         default:
             firstVoteButton.backgroundColor = SharedAsset.grayDark.color
             secondVoteButton.backgroundColor = SharedAsset.grayDark.color
-            firstVoteButton.setTitle("0%(0명)", for: .normal)
-            secondVoteButton.setTitle("0%(0명)", for: .normal)
+            firstVoteButton.setTitle("???", for: .normal)
+            secondVoteButton.setTitle("???", for: .normal)
         }
     }
     
