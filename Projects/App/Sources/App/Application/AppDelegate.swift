@@ -15,8 +15,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         assembler = Assembler([
             JwtStoreAssembly()
         ], container: AppDelegate.container)
-        
-        
         return true
     }
 
