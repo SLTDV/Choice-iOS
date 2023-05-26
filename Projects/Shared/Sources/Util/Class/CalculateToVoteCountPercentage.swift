@@ -3,15 +3,11 @@ import Foundation
 public enum CalculateToVoteCountPercentage {
     public static func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (String, String, Int, Int) {
         let sum = firstVotingCount + secondVotingCount
-        print("fasdf = \(firstVotingCount / sum)")
-        let firstP = firstVotingCount / sum * 100.0
-        let secondP = secondVotingCount / sum * 100.0
+        let firstP = firstVotingCount / sum * 100
+        let secondP = secondVotingCount / sum * 100
         
-        print(firstVotingCount / sum * 100.0)
-        print("string = \(firstVotingCount / sum * 100.0)")
-        
-        let firstStr = String(firstP)
-        let secondStr = String(secondP)
+        let firstStr = (sum != 0) ? String(Int(firstP)) : String(firstP)
+        let secondStr = (sum != 0) ? String(Int(secondP)) : String(secondP)
         
         return (firstStr, secondStr, Int(firstVotingCount), Int(secondVotingCount))
     }
