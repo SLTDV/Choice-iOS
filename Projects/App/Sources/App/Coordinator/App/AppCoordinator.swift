@@ -47,15 +47,9 @@ final class AppCoordinator: Coordinator {
         coordinator.start()
     }
     
-    func didFinish(coordinator: Coordinator) {
-        
-    }
+    func didFinish(coordinator: Coordinator) {}
     
-    func navigate(to step: ChoiceStep) {
-        
-    }
+    func navigate(to step: ChoiceStep) {}
     
-    func removeChildCoordinators() {
-        
-    }
+    func removeChildCoordinators() {}
 }
