@@ -248,8 +248,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             firstVotingCount: Double(model.firstVotingCount),
             secondVotingCount: Double(model.secondVotingCount)
         )
-        
-        print("0 = \(data.0)")
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
         votePostLayout(voting: model.votingState)
