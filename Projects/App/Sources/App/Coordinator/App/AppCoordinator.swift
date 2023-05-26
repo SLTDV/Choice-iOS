@@ -32,6 +32,7 @@ final class AppCoordinator: Coordinator {
                    headers: headers)
         .validate()
         .responseDecodable(of: ManageTokenModel.self) { [weak self] response in
+            self?.navigationController.popViewController(animated: false)
             switch response.result {
             case .success(let data):
                 self?.container.saveToken(type: .refreshToken, token: data.refreshToken)

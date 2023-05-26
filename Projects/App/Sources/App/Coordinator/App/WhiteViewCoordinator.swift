@@ -18,7 +18,6 @@ class WhiteViewController: UIViewController {
 class WhiteViewCoordinator: BaseCoordinator {
     override func start() {
         let vc = WhiteViewController()
-        
         navigationController.pushViewController(vc, animated: true)
     }
 }
