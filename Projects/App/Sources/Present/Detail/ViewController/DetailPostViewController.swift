@@ -264,8 +264,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         default:
             firstVoteButton.backgroundColor = SharedAsset.grayDark.color
             secondVoteButton.backgroundColor = SharedAsset.grayDark.color
-            firstVoteButton.setTitle("0%(0명)", for: .normal)
-            secondVoteButton.setTitle("0%(0명)", for: .normal)
+            firstVoteButton.setTitle("???", for: .normal)
+            secondVoteButton.setTitle("???", for: .normal)
         }
     }
     
