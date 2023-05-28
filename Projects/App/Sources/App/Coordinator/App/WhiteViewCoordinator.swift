@@ -1,11 +1,3 @@
-//
-//  WhiteViewController.swift
-//  Choice
-//
-//  Created by 민도현 on 2023/05/26.
-//  Copyright © 2023 dohyeon. All rights reserved.
-//
-
 import UIKit
 
 class WhiteViewController: UIViewController {
@@ -13,7 +5,6 @@ class WhiteViewController: UIViewController {
         view.backgroundColor = .white
     }
 }
-
 
 class WhiteViewCoordinator: BaseCoordinator {
     override func start() {

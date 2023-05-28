@@ -22,9 +22,9 @@ final class AppCoordinator: Coordinator {
         
         let signInController = SignInCoordinator(navigationController: navigationController)
         let homeController = HomeCoordinator(navigationController: navigationController)
-        let whiteControlelr = WhiteViewCoordinator(navigationController: navigationController)
+        let whiteController = WhiteViewCoordinator(navigationController: navigationController)
         window?.rootViewController = navigationController
-        start(coordinator: whiteControlelr)
+        start(coordinator: whiteController)
         
         AF.request(url,
                    method: .patch,
