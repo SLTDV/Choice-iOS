@@ -31,7 +31,7 @@ final class ProfileViewModel: BaseViewModel {
                 let decodeResponse = try? JSONDecoder().decode(ProfileModel.self, from: data)
                 self?.delegate?.postListData.accept(decodeResponse?.postList ?? .init())
                 self?.delegate?.nicknameData.onNext(decodeResponse?.nickname ?? "")
-                self?.delegate?.imageData.onNext(decodeResponse?.image)
+                self?.delegate?.imageData.onNext(decodeResponse?.image ?? "")
             case .failure(let error):
                 print("error = \(error.localizedDescription)")
             }
