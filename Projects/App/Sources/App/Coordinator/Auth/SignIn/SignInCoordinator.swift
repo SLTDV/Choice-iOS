@@ -5,7 +5,7 @@ final class SignInCoordinator: BaseCoordinator {
         let vm = SignInViewModel(coordinator: self)
         let vc = SignInViewController(viewModel: vm)
         
-        navigationController.setViewControllers([vc], animated: true)
+        navigationController.setViewControllers([vc], animated: false)
     }
     
     override func navigate(to step: ChoiceStep) {

@@ -50,7 +50,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     private let userNameLabel = UILabel().then {
         $0.text = "닉네임"
-        $0.font = .systemFont(ofSize: 14, weight: .semibold)
+        $0.font = .systemFont(ofSize: 18, weight: .semibold)
     }
     
     private lazy var editUserNameButton = UIButton().then {
@@ -70,13 +70,38 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
     
+    private let emptyLabel = UILabel().then {
+        $0.text = """
+        아직 게시물이 없습니다
+        게시물을 만들어 보세요!
+        """
+        $0.font = .systemFont(ofSize: 18, weight: .semibold)
+        $0.textAlignment = .center
+        $0.textColor = SharedAsset.grayDark.color
+        $0.numberOfLines = 0
+    }
+    
     private func bindTableView() {
-        postListData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
-                                                     cellType: PostCell.self)) { (row, data, cell) in
-            cell.changeCellData(with: data, type: .profile)
-            cell.delegate = self
-            cell.separatorInset = UIEdgeInsets.zero
-        }.disposed(by: disposeBag)
+        postListData
+            .do{ [weak postTableView] posts in
+                if posts.isEmpty {
+                    let tableViewWrapper = UIView(frame: postTableView?.bounds ?? CGRect.zero)
+                    self.emptyLabel.frame = CGRect(x: 0, y: 110, width: postTableView?.bounds.width ?? 0, height: 50)
+                    
+                    tableViewWrapper.addSubview(self.emptyLabel)
+                    postTableView?.backgroundView = tableViewWrapper
+                    postTableView?.separatorStyle = .none
+                } else {
+                    postTableView?.backgroundView = nil
+                    postTableView?.separatorStyle = .singleLine
+                }
+            }
+            .bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
+                                             cellType: PostCell.self)) { (row, data, cell) in
+                cell.changeCellData(with: data, type: .profile)
+                cell.delegate = self
+                cell.separatorInset = UIEdgeInsets.zero
+            }.disposed(by: disposeBag)
         
         nicknameData
             .bind(to: userNameLabel.rx.text)
@@ -198,7 +223,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         }
         
         postTableView.snp.makeConstraints {
-            $0.top.equalTo(whiteBackgroundView.snp.bottom).offset(28)
+            $0.top.equalTo(whiteBackgroundView.snp.bottom)
             $0.leading.trailing.equalToSuperview().inset(9)
             $0.bottom.equalToSuperview()
         }
