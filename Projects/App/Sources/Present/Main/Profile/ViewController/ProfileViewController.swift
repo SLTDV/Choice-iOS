@@ -19,7 +19,6 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     private let privacyPolicyUrl = NSURL(string: "https://opaque-plate-ed2.notion.site/aa6adde3d5cf4836847f8fc79a6cc3cf")
     
-    
     private lazy var optionButton = UIBarButtonItem(image: UIImage(systemName: "gearshape")).then {
         $0.menu = UIMenu(title: "설정", children: optionItem)
         $0.tintColor = .black
@@ -101,6 +100,12 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
                 cell.changeCellData(with: data, type: .profile)
                 cell.delegate = self
                 cell.separatorInset = UIEdgeInsets.zero
+            }.disposed(by: disposeBag)
+
+        postTableView.rx.modelSelected(PostList.self)
+            .asDriver()
+            .drive(with: self) { owner, post in
+                owner.viewModel.pushDetailPostVC(model: post)
             }.disposed(by: disposeBag)
         
         nicknameData

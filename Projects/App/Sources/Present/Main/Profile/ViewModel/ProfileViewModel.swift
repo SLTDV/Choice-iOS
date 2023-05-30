@@ -157,4 +157,8 @@ final class ProfileViewModel: BaseViewModel {
     func navigateToSignInVC() {
         coordinator.navigate(to: .logOutIsRequired)
     }
+    
+    func pushDetailPostVC(model: PostList) {
+        coordinator.navigate(to: .detailPostIsRequired(model: model))
+    }
 }
