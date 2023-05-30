@@ -12,6 +12,8 @@ final class ProfileCoordinator: BaseCoordinator {
         switch step {
         case .logOutIsRequired:
             logOutIsRequired()
+        case .detailPostIsRequired(let model):
+            detailPostIsRequired(model: model)
         default:
             return
         }
@@ -24,5 +26,12 @@ extension ProfileCoordinator {
         vc.parentCoordinator = self
         childCoordinators.append(vc)
         vc.start()
+    }
+    
+    private func detailPostIsRequired(model: PostList) {
+        let vc = DetailPostCoordiantor(navigationController: navigationController)
+        vc.parentCoordinator = self
+        childCoordinators.append(vc)
+        vc.startDetailPostVC(model: model)
     }
 }
