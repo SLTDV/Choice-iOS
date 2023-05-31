@@ -85,12 +85,17 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
             .do{ [weak postTableView] posts in
                 if posts.isEmpty {
                     let tableViewWrapper = UIView(frame: postTableView?.bounds ?? CGRect.zero)
+                    self.emptyLabel.text = """
+                                    아직 게시물이 없습니다
+                                    게시물을 만들어 보세요!
+                                    """
                     self.emptyLabel.frame = CGRect(x: 0, y: 110, width: postTableView?.bounds.width ?? 0, height: 50)
                     
                     tableViewWrapper.addSubview(self.emptyLabel)
                     postTableView?.backgroundView = tableViewWrapper
                     postTableView?.separatorStyle = .none
                 } else {
+                    self.emptyLabel.text = ""
                     postTableView?.backgroundView = nil
                     postTableView?.separatorStyle = .singleLine
                 }
@@ -144,10 +149,10 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     }
     
     @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
+        postListData.accept([])
         viewModel.requestProfileData()
         DispatchQueue.main.async {
             self.postTableView.reloadData()
-            self.postListData.accept([])
             self.postTableView.refreshControl?.endRefreshing()
         }
     }
