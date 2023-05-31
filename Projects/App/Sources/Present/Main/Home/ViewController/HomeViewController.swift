@@ -77,7 +77,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         postTableView.rx.modelSelected(PostList.self)
             .asDriver()
             .drive(with: self, onNext: { owner, post in
-                owner.viewModel.pushDetailPostVC(model: post)
+                owner.viewModel.pushDetailPostVC(model: post, type: .home)
             }).disposed(by: disposeBag)
             
         postTableView.rx.contentOffset

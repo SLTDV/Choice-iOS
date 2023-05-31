@@ -105,7 +105,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         postTableView.rx.modelSelected(PostList.self)
             .asDriver()
             .drive(with: self) { owner, post in
-                owner.viewModel.pushDetailPostVC(model: post)
+                owner.viewModel.pushDetailPostVC(model: post, type: .profile)
             }.disposed(by: disposeBag)
         
         nicknameData
