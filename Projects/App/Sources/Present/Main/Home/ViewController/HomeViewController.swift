@@ -69,7 +69,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             .asDriver()
             .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                           cellType: PostCell.self)) { (row, data, cell) in
-                cell.changeCellData(with: data, type: .home)
+                cell.configure(with: data, type: .home)
                 cell.postVoteButtonDelegate = self
                 cell.separatorInset = UIEdgeInsets.zero
             }.disposed(by: disposeBag)
