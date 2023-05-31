@@ -143,8 +143,25 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         present(alert, animated: true)
     }
     
+    @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
+        viewModel.requestProfileData()
+        DispatchQueue.main.async {
+            self.postTableView.reloadData()
+            self.postListData.accept([])
+            self.postTableView.refreshControl?.endRefreshing()
+        }
+    }
+    
+    private func configureRefreshControl() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self,
+                                 action: #selector(handleRefreshControl(_:)),
+                                 for: .valueChanged)
+        postTableView.refreshControl = refreshControl
+    }
+    
     private func presentPrivacyProlicyPage() {
-        let privacyPolicyView: SFSafariViewController = SFSafariViewController(url: privacyPolicyUrl as! URL)
+        let privacyPolicyView: SFSafariViewController = SFSafariViewController(url: privacyPolicyUrl! as URL)
         present(privacyPolicyView, animated: true)
     }
     
@@ -185,6 +202,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         
         bindTableView()
         viewModel.requestProfileData()
+        configureRefreshControl()
     }
     
     override func addView() {
