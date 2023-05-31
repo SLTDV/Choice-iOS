@@ -443,7 +443,6 @@ extension DetailPostViewController {
         guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
-        LoadingIndicator.showLoading(text: "게시 중")
         viewModel.commentCurrentPage = -1
         viewModel.requestToCreateComment(idx: idx, content: content) { result in
             switch result {
@@ -460,13 +459,14 @@ extension DetailPostViewController {
             case .failure(let error):
                 print("post error = \(String(describing: error.localizedDescription))")
             }
+            LoadingIndicator.hideLoading()
         }
-        LoadingIndicator.hideLoading()
     }
     
     private func submitCommentButtonDidTap() {
         submitCommentButton.rx.tap
             .bind(with: self, onNext: { owner, _ in
+                LoadingIndicator.showLoading(text: "게시 중")
                 owner.submitComment()
             }).disposed(by: disposeBag)
     }
