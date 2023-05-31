@@ -144,7 +144,6 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     }
     
     @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
-        postListData.accept([])
         viewModel.requestProfileData()
         DispatchQueue.main.async {
             self.postTableView.reloadData()
