@@ -165,27 +165,37 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 let contentHeight = owner.scrollView.contentSize.height
                 let yOffset = owner.scrollView.contentOffset.y
                 let frameHeight = owner.scrollView.frame.size.height
+                let shouldLoadMore = yOffset > (contentHeight-frameHeight) - 100
                 
-                if yOffset > (contentHeight-frameHeight) - 100 {
-                    owner.commentTableView.tableFooterView = owner.createSpinnerFooter()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
-                        owner.commentTableView.performBatchUpdates(nil, completion: nil)
-                        owner.viewModel.requestCommentData(idx: owner.model!.idx) { result in
-                            owner.commentTableView.tableFooterView = nil
-                            switch result {
-                            case .success(let size):
-                                if size != 10 {
-                                    owner.isLastPage = true
-                                } else {
-                                    owner.commentTableView.reloadData()
-                                }
-                            case .failure(let error):
-                                print("comment pagination error = \(error.localizedDescription)")
-                            }
-                        }
-                    }
+                if shouldLoadMore {
+                    owner.loadMoreComments()
                 }
             }).disposed(by: disposeBag)
+    }
+    
+    private func loadMoreComments() {
+        commentTableView.tableFooterView = createSpinnerFooter()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) { [weak self] in
+            guard let self = self else { return }
+            
+            self.commentTableView.performBatchUpdates(nil, completion: nil)
+            self.viewModel.requestCommentData(idx: self.model!.idx) { [weak self] result in
+                guard let self = self else { return }
+                
+                self.commentTableView.tableFooterView = nil
+                
+                switch result {
+                case .success(let size):
+                    if size != 10 {
+                        self.isLastPage = true
+                    } else {
+                        self.commentTableView.reloadData()
+                    }
+                case .failure(let error):
+                    print("comment pagination error = \(error.localizedDescription)")
+                }
+            }
+        }
     }
     
     private func bindUI() {
