@@ -152,7 +152,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func bindTableView() {
         commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
                                              cellType: CommentCell.self)) { (row, data, cell) in
-            cell.changeCommentData(model: data)
+            cell.configure(model: data)
         }.disposed(by: disposeBag)
         
         scrollView.rx.contentOffset
@@ -231,7 +231,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }).disposed(by: disposeBag)
     }
     
-    private func changePostData(model: PostList) {
+    private func configure(model: PostList) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async { [weak self] in
@@ -305,7 +305,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         bindTableView()
         bindUI()
         submitCommentButtonDidTap()
-        changePostData(model: model!)
+        configure(model: model!)
     }
     
     override func addView() {
