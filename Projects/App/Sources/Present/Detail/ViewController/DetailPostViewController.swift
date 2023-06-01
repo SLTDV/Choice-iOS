@@ -232,22 +232,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         firstVoteButton.rx.tap
             .bind(with: self) { owner, _ in
-                owner.model?.firstVotingCount += 1
-                owner.model?.secondVotingCount -= 1
-                owner.model?.votingState = 1
-                owner.model?.secondVotingCount = (owner.model!.secondVotingCount < 0) ? 0 : owner.model!.secondVotingCount
-                owner.viewModel.requestVote(idx: owner.model!.idx, choice: owner.model!.votingState)
-                owner.setVoteButtonLayout(with: owner.model!)
+                owner.updateVotingStateWithLayout(1)
             }.disposed(by: disposeBag)
         
         secondVoteButton.rx.tap
             .bind(with: self) { owner, _ in
-                owner.model?.firstVotingCount -= 1
-                owner.model?.secondVotingCount += 1
-                owner.model?.firstVotingCount = (owner.model!.firstVotingCount < 0) ? 0 : owner.model!.firstVotingCount
-                owner.model?.votingState = 2
-                owner.viewModel.requestVote(idx: owner.model!.idx, choice: owner.model!.votingState)
-                owner.setVoteButtonLayout(with: owner.model!)
+                owner.updateVotingStateWithLayout(2)
             }.disposed(by: disposeBag)
     }
     
@@ -265,6 +255,31 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
     }
     
+    private func updateVotingStateWithLayout(_ votingState: Int) {
+        guard let model = model else { return }
+        
+        switch votingState {
+        case 1:
+            model.firstVotingCount += 1
+            model.secondVotingCount -= 1
+        case 2:
+            model.firstVotingCount -= 1
+            model.secondVotingCount += 1
+        default:
+            break
+        }
+        
+        firstVoteButton.isEnabled = (votingState == 1) ? false : true
+        secondVoteButton.isEnabled = (votingState == 2) ? false : true
+        
+        model.firstVotingCount = max(0, model.firstVotingCount)
+        model.secondVotingCount = max(0, model.secondVotingCount)
+        
+        model.votingState = votingState
+        viewModel.requestVote(idx: model.idx, choice: model.votingState)
+        setVoteButtonLayout(with: model)
+    }
+    
     private func setVoteButtonLayout(with model: PostList) {
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
             firstVotingCount: Double(model.firstVotingCount),
@@ -272,10 +287,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         )
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
-        votePostLayout(voting: model.votingState)
+        setVoteButtonLayout(voting: model.votingState)
     }
     
-    private func votePostLayout(voting: Int) {
+    private func setVoteButtonLayout(voting: Int) {
         switch voting {
         case 1:
             firstVoteButton.backgroundColor = .black
@@ -291,13 +306,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 secondVoteButton.setTitle("???", for: .normal)
             }
         }
-        
-        firstVoteButton.isEnabled = (voting == 1) ? false : true
-        firstVoteButton.backgroundColor = (voting == 1) ? .black : SharedAsset.grayVoteButton.color
-        secondVoteButton.isEnabled = (voting == 2) ? false : true
-        secondVoteButton.backgroundColor = (voting == 2) ? .black : SharedAsset.grayVoteButton.color
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: ContentSizeKey.key, options: .new, context: nil)
