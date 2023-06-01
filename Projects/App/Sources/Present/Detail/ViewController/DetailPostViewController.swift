@@ -71,14 +71,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let firstVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
-        $0.isEnabled = false
+//        $0.isEnabled = false
         $0.layer.cornerRadius = 10
         $0.backgroundColor = SharedAsset.grayDark.color
     }
     
     private let secondVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
-        $0.isEnabled = false
+//        $0.isEnabled = false
         $0.layer.cornerRadius = 10
         $0.backgroundColor = SharedAsset.grayDark.color
     }
@@ -229,6 +229,26 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                     owner.setDefaultSubmitButton()
                 }
             }).disposed(by: disposeBag)
+        
+        firstVoteButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.model?.firstVotingCount += 1
+                owner.model?.secondVotingCount -= 1
+                owner.model?.votingState = 1
+                owner.model?.secondVotingCount = (owner.model!.secondVotingCount < 0) ? 0 : owner.model!.secondVotingCount
+                owner.viewModel.requestVote(idx: owner.model!.idx, choice: owner.model!.votingState)
+                owner.setVoteButtonLayout(with: owner.model!)
+            }.disposed(by: disposeBag)
+        
+        secondVoteButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.model?.firstVotingCount -= 1
+                owner.model?.secondVotingCount += 1
+                owner.model?.firstVotingCount = (owner.model!.firstVotingCount < 0) ? 0 : owner.model!.firstVotingCount
+                owner.model?.votingState = 2
+                owner.viewModel.requestVote(idx: owner.model!.idx, choice: owner.model!.votingState)
+                owner.setVoteButtonLayout(with: owner.model!)
+            }.disposed(by: disposeBag)
     }
     
     private func configure(model: PostList) {
@@ -271,6 +291,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 secondVoteButton.setTitle("???", for: .normal)
             }
         }
+        
+        firstVoteButton.isEnabled = (voting == 1) ? false : true
+        firstVoteButton.backgroundColor = (voting == 1) ? .black : SharedAsset.grayVoteButton.color
+        secondVoteButton.isEnabled = (voting == 2) ? false : true
+        secondVoteButton.backgroundColor = (voting == 2) ? .black : SharedAsset.grayVoteButton.color
     }
     
     override func viewWillAppear(_ animated: Bool) {

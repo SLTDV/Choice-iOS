@@ -48,6 +48,28 @@ final class DetailPostViewModel: BaseViewModel {
         }
     }
     
+    func requestVote(idx: Int, choice: Int) {
+        let url = APIConstants.addVoteNumberURL + "\(idx)"
+        let params = [
+            "choice" : choice
+        ] as Dictionary
+        
+        AF.request(url,
+                   method: .post,
+                   parameters: params,
+                   encoding: JSONEncoding.default,
+                   interceptor: JwtRequestInterceptor(jwtStore: container))
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+            switch response.result {
+            case .success:
+                print("success")
+            case .failure(let error):
+                print("vote error = \(error.localizedDescription)")
+            }
+        }
+    }
+    
     func requestToCreateComment(idx: Int, content: String, completion: @escaping (Result<Void, Error>) -> Void) {
         let url = APIConstants.createCommentURL + "\(idx)"
         let params = [
