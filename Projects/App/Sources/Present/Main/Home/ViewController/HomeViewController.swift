@@ -69,7 +69,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             .asDriver()
             .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                           cellType: PostCell.self)) { (row, data, cell) in
-                cell.changeCellData(with: data, type: .home)
+                cell.configure(with: data, type: .home)
                 cell.postVoteButtonDelegate = self
                 cell.separatorInset = UIEdgeInsets.zero
             }.disposed(by: disposeBag)
@@ -77,7 +77,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         postTableView.rx.modelSelected(PostList.self)
             .asDriver()
             .drive(with: self, onNext: { owner, post in
-                owner.viewModel.pushDetailPostVC(model: post)
+                owner.viewModel.pushDetailPostVC(model: post, type: .home)
             }).disposed(by: disposeBag)
             
         postTableView.rx.contentOffset
@@ -162,10 +162,10 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
+        self.postData.accept([])
         sortTableViewData(type: .findNewestPostData)
         DispatchQueue.main.async {
             self.postTableView.reloadData()
-            self.postData.accept([])
             self.postTableView.refreshControl?.endRefreshing()
         }
     }

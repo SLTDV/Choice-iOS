@@ -97,7 +97,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
             }
             .bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                              cellType: PostCell.self)) { (row, data, cell) in
-                cell.changeCellData(with: data, type: .profile)
+                cell.configure(with: data, type: .profile)
                 cell.delegate = self
                 cell.separatorInset = UIEdgeInsets.zero
             }.disposed(by: disposeBag)
@@ -105,7 +105,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         postTableView.rx.modelSelected(PostList.self)
             .asDriver()
             .drive(with: self) { owner, post in
-                owner.viewModel.pushDetailPostVC(model: post)
+                owner.viewModel.pushDetailPostVC(model: post, type: .profile)
             }.disposed(by: disposeBag)
         
         nicknameData
@@ -143,8 +143,24 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         present(alert, animated: true)
     }
     
+    @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
+        viewModel.requestProfileData()
+        DispatchQueue.main.async {
+            self.postTableView.reloadData()
+            self.postTableView.refreshControl?.endRefreshing()
+        }
+    }
+    
+    private func configureRefreshControl() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self,
+                                 action: #selector(handleRefreshControl(_:)),
+                                 for: .valueChanged)
+        postTableView.refreshControl = refreshControl
+    }
+    
     private func presentPrivacyProlicyPage() {
-        let privacyPolicyView: SFSafariViewController = SFSafariViewController(url: privacyPolicyUrl as! URL)
+        let privacyPolicyView: SFSafariViewController = SFSafariViewController(url: privacyPolicyUrl! as URL)
         present(privacyPolicyView, animated: true)
     }
     
@@ -185,6 +201,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         
         bindTableView()
         viewModel.requestProfileData()
+        configureRefreshControl()
     }
     
     override func addView() {

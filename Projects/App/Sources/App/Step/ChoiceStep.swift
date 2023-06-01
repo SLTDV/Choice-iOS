@@ -11,7 +11,7 @@ enum ChoiceStep {
     
     //Main
     case addPostIsRequired
-    case detailPostIsRequired(model: PostList)
+    case detailPostIsRequired(model: PostList, type: ViewControllerType)
     case profileIsRequired
     
     //AddPost
