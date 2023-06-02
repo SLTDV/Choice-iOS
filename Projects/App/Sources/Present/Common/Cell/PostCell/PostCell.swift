@@ -19,17 +19,17 @@ final class PostCell: UITableViewCell {
     // MARK: - Properties
     //    var model: PostList?
     var model = BehaviorRelay<PostList>(value: PostList(idx: 0,
-                                                       firstImageUrl: "",
-                                                       secondImageUrl: "",
-                                                       title: "",
-                                                       content: "",
-                                                       firstVotingOption: "",
-                                                       secondVotingOption: "",
-                                                       firstVotingCount: 0,
-                                                       secondVotingCount: 0,
-                                                       votingState: 0,
-                                                       participants: 0,
-                                                       commentCount: 0))
+                                                        firstImageUrl: "",
+                                                        secondImageUrl: "",
+                                                        title: "",
+                                                        content: "",
+                                                        firstVotingOption: "",
+                                                        secondVotingOption: "",
+                                                        firstVotingCount: 0,
+                                                        secondVotingCount: 0,
+                                                        votingState: 0,
+                                                        participants: 0,
+                                                        commentCount: 0))
     var delegate: PostTableViewCellButtonDelegate?
     var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
     var type: ViewControllerType?
@@ -108,20 +108,15 @@ final class PostCell: UITableViewCell {
         $0.font = .systemFont(ofSize: 12, weight: .medium)
     }
     
-        override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-            super.init(style: style, reuseIdentifier: reuseIdentifier)
-    
-            addView()
-            setLayout()
-            bindUI()
-    
-            selectionStyle = .none
-        }
-//
-//    init(type: ViewControllerType, reuseIdentifier: String) {
-//
-//        super.init(style: .default, reuseIdentifier: reuseIdentifier)
-//    }
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        addView()
+        setLayout()
+        bindUI()
+        
+        selectionStyle = .none
+    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -330,16 +325,15 @@ final class PostCell: UITableViewCell {
     
     func bindUI() {
         model
-//            .asDriver()
-            .bind(with: self) { owner, _ in
-                print(owner.model.value)
+            .asDriver()
+            .drive(with: self) { owner, _ in
                 let model = owner.model.value
-//                guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
-//                guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
+                guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
+                guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
-                owner.firstPostImageView.kf.setImage(with: URL(string: model.firstImageUrl))
-                owner.secondPostImageView.kf.setImage(with: URL(string: model.secondImageUrl))
+                owner.firstPostImageView.kf.setImage(with: firstImageUrl)
+                owner.secondPostImageView.kf.setImage(with: secondImageUrl)
                 switch owner.type {
                 case .home:
                     owner.firstVoteButton.setTitle(model.firstVotingOption, for: .normal)
