@@ -283,7 +283,7 @@ final class PostCell: UITableViewCell {
     }
     
     // MARK: - prepare
-    func changeCellData(with model: PostList, type: ViewControllerType) {
+    func configure(with model: PostList, type: ViewControllerType) {
         self.model = model
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }

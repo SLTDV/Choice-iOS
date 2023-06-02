@@ -20,8 +20,8 @@ class HomeCoordinator: BaseCoordinator {
         switch step {
         case .addPostIsRequired:
             addPostIsRequired()
-        case .detailPostIsRequired(let model):
-            detailPostIsRequired(model: model)
+        case .detailPostIsRequired(let model, let type):
+            detailPostIsRequired(model: model, type: type)
         case .profileIsRequired:
             profileIsRequired()
         default:
@@ -38,11 +38,11 @@ extension HomeCoordinator {
         vc.start()
     }
     
-    private func detailPostIsRequired(model: PostList) {
+    private func detailPostIsRequired(model: PostList, type: ViewControllerType) {
         let vc = DetailPostCoordiantor(navigationController: navigationController)
         vc.parentCoordinator = self
         childCoordinators.append(vc)
-        vc.startDetailPostVC(model: model)
+        vc.startDetailPostVC(model: model, type: type)
     }
     
     private func profileIsRequired() {

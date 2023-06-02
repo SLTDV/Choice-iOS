@@ -13,6 +13,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     var commentData = BehaviorRelay<[CommentList]>(value: [])
     private var model: PostList?
     var isLastPage = false
+    var type: ViewControllerType?
     
     private let disposeBag = DisposeBag()
     
@@ -128,9 +129,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
     
-    init(viewModel: DetailPostViewModel, model: PostList) {
+    init(viewModel: DetailPostViewModel, model: PostList, type: ViewControllerType) {
         super.init(viewModel: viewModel)
         self.model = model
+        self.type = type
         
         scrollView.addGestureRecognizer(tapGestureRecognizer)
     }
@@ -293,8 +295,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         default:
             firstVoteButton.backgroundColor = SharedAsset.grayDark.color
             secondVoteButton.backgroundColor = SharedAsset.grayDark.color
-            firstVoteButton.setTitle("???", for: .normal)
-            secondVoteButton.setTitle("???", for: .normal)
+            if type == .home {
+                firstVoteButton.setTitle("???", for: .normal)
+                secondVoteButton.setTitle("???", for: .normal)
+            }
         }
     }
     
