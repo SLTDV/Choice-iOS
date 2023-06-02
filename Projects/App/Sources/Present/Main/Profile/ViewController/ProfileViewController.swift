@@ -98,7 +98,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
             .bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                              cellType: PostCell.self)) { (row, data, cell) in
                 cell.setType(type: .profile)
-                cell.model.accept(data)
+                cell.configure(with: data)
                 cell.delegate = self
                 cell.separatorInset = UIEdgeInsets.zero
             }.disposed(by: disposeBag)

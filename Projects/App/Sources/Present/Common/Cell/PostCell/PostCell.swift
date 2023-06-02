@@ -32,7 +32,7 @@ final class PostCell: UITableViewCell {
                                                         commentCount: 0))
     var delegate: PostTableViewCellButtonDelegate?
     var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
-    var type: ViewControllerType?
+    var type: ViewControllerType = .home
     var disposeBag = DisposeBag()
     
     static let identifier = "PostCellIdentifier"
@@ -113,7 +113,6 @@ final class PostCell: UITableViewCell {
         
         addView()
         setLayout()
-        bindUI()
         
         selectionStyle = .none
     }
@@ -300,31 +299,10 @@ final class PostCell: UITableViewCell {
     }
     
     // MARK: - prepare
-    func configure(with model: PostList, type: ViewControllerType) {
-        //        self.model = model
-        guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
-        guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-        titleLabel.text = model.title
-        contentLabel.text = model.content
-        firstPostImageView.kf.setImage(with: firstImageUrl)
-        secondPostImageView.kf.setImage(with: secondImageUrl)
-        switch type {
-        case .home:
-            firstVoteButton.setTitle(model.firstVotingOption, for: .normal)
-            secondVoteButton.setTitle(model.secondVotingOption, for: .normal)
-            setHomeVotePostLayout(voting: model.votingState)
-        case .profile:
-            firstVoteOptionLabel.text = model.firstVotingOption
-            secondVoteOptionLabel.text = model.secondVotingOption
-            setProfileVoteButtonLayout(with: model)
-            setVoteOptionLabelLayout()
-        }
-        participantsCountLabel.text = "👻 참여자 \(model.participants)명"
-        commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
-    }
-    
-    func bindUI() {
-        model
+    func configure(with model: PostList) {
+        self.model.accept(model)
+        
+        self.model
             .asDriver()
             .drive(with: self) { owner, _ in
                 let model = owner.model.value
@@ -344,8 +322,6 @@ final class PostCell: UITableViewCell {
                     owner.secondVoteOptionLabel.text = model.secondVotingOption
                     owner.setProfileVoteButtonLayout(with: model)
                     owner.setVoteOptionLabelLayout()
-                default:
-                    return
                 }
                 owner.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
                 owner.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
