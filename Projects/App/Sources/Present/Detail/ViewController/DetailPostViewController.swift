@@ -93,7 +93,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let enterCommentTextView = UITextView().then {
-        $0.textContainerInset = UIEdgeInsets(top: 13, left: 14, bottom: 14, right: 14)
+        $0.textContainerInset = UIEdgeInsets(top: 13, left: 14, bottom: 14, right: 50)
         $0.text = "댓글을 입력해주세요."
         $0.isScrollEnabled = false
         $0.font = .systemFont(ofSize: 14)
@@ -119,7 +119,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private let emptyLabel = UILabel().then {
         $0.text = """
         아직 댓글이 없습니다
-        댓글을 작성 해보세요!
+        댓글을 작성해 보세요!
         """
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.textAlignment = .center
@@ -387,12 +387,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
         
         firstVoteOptionLabel.snp.makeConstraints {
-            $0.top.equalTo(contentLabel.snp.bottom).offset(40)
+            $0.top.equalTo(contentLabel.snp.bottom).offset(30)
             $0.centerX.equalTo(firstPostImageView)
         }
         
         secondVoteOptionLabel.snp.makeConstraints {
-            $0.top.equalTo(contentLabel.snp.bottom).offset(40)
+            $0.top.equalTo(contentLabel.snp.bottom).offset(30)
             $0.centerX.equalTo(secondPostImageView)
         }
         
