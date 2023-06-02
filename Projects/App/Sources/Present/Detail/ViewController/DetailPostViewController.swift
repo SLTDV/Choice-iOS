@@ -286,6 +286,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         model.secondVotingCount = max(0, model.secondVotingCount)
         
         model.votingState = votingState
+        print(model.votingState)
         viewModel.requestVote(idx: model.idx, choice: model.votingState)
         setVoteButtonLayout(with: model)
     }

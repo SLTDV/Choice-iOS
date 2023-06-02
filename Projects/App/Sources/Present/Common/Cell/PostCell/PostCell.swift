@@ -107,27 +107,29 @@ final class PostCell: UITableViewCell {
     
     // MARK: - Function
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
+        guard let model = model else { return }
         switch sender.tag {
         case 1:
-            model?.firstVotingCount += 1
-            model?.secondVotingCount -= 1
-            model?.secondVotingCount = (model!.secondVotingCount < 0) ? 0 : model!.secondVotingCount
+            model.firstVotingCount += 1
+            model.secondVotingCount -= 1
+            model.secondVotingCount = max(0, model.secondVotingCount)
             startAnimation(button: firstVoteButton)
         case 2:
-            model?.firstVotingCount -= 1
-            model?.secondVotingCount += 1
-            model?.firstVotingCount = (model!.firstVotingCount < 0) ? 0 : model!.firstVotingCount
+            model.firstVotingCount -= 1
+            model.secondVotingCount += 1
+            model.firstVotingCount = max(0, model.firstVotingCount)
             startAnimation(button: secondVoteButton)
         default:
             return
         }
         
-        if model?.votingState == 0 {
+        if model.votingState == 0 {
             self.participantsCountLabel.text = "👻 참여자 \(self.model!.participants + 1)명"
         }
         
-        model?.votingState = sender.tag
-        postVoteButtonDelegate?.postVoteButtonDidTap(idx: model!.idx, choice: sender.tag)
+        model.votingState = sender.tag
+        print("this is postCell = \(model.votingState)")
+        postVoteButtonDelegate?.postVoteButtonDidTap(idx: model.idx, choice: sender.tag)
         DispatchQueue.main.async {
             self.setHomeVotePostLayout(voting: sender.tag)
         }
