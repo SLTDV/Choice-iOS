@@ -3,6 +3,8 @@ import SnapKit
 import Then
 import Kingfisher
 import Shared
+import RxSwift
+import RxCocoa
 
 // MARK: - Protocol
 protocol PostTableViewCellButtonDelegate: AnyObject {
@@ -15,9 +17,23 @@ protocol PostVoteButtonDidTapDelegate: AnyObject {
 
 final class PostCell: UITableViewCell {
     // MARK: - Properties
-    var model: PostList?
+    //    var model: PostList?
+    var model = BehaviorRelay<PostList>(value: PostList(idx: 0,
+                                                       firstImageUrl: "",
+                                                       secondImageUrl: "",
+                                                       title: "",
+                                                       content: "",
+                                                       firstVotingOption: "",
+                                                       secondVotingOption: "",
+                                                       firstVotingCount: 0,
+                                                       secondVotingCount: 0,
+                                                       votingState: 0,
+                                                       participants: 0,
+                                                       commentCount: 0))
     var delegate: PostTableViewCellButtonDelegate?
     var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
+    var type: ViewControllerType?
+    var disposeBag = DisposeBag()
     
     static let identifier = "PostCellIdentifier"
     
@@ -35,8 +51,8 @@ final class PostCell: UITableViewCell {
         $0.menu = UIMenu(title: "", children: [UIAction(
             title: "게시물 삭제",
             attributes: .destructive,
-            handler: { _ in self.removePostButtonDidTap(postIdx: self.model!.idx)
-        })])
+            handler: { _ in self.removePostButtonDidTap(postIdx: self.model.value.idx)
+            })])
         $0.isHidden = true
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
@@ -92,14 +108,20 @@ final class PostCell: UITableViewCell {
         $0.font = .systemFont(ofSize: 12, weight: .medium)
     }
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        addView()
-        setLayout()
-        
-        selectionStyle = .none
-    }
+        override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+            super.init(style: style, reuseIdentifier: reuseIdentifier)
+    
+            addView()
+            setLayout()
+            bindUI()
+    
+            selectionStyle = .none
+        }
+//
+//    init(type: ViewControllerType, reuseIdentifier: String) {
+//
+//        super.init(style: .default, reuseIdentifier: reuseIdentifier)
+//    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -107,29 +129,27 @@ final class PostCell: UITableViewCell {
     
     // MARK: - Function
     @objc private func PostVoteButtonDidTap(_ sender: UIButton) {
-        guard let model = model else { return }
         switch sender.tag {
         case 1:
-            model.firstVotingCount += 1
-            model.secondVotingCount -= 1
-            model.secondVotingCount = max(0, model.secondVotingCount)
+            model.value.firstVotingCount += 1
+            model.value.secondVotingCount -= 1
+            model.value.secondVotingCount = max(0, model.value.secondVotingCount)
             startAnimation(button: firstVoteButton)
         case 2:
-            model.firstVotingCount -= 1
-            model.secondVotingCount += 1
-            model.firstVotingCount = max(0, model.firstVotingCount)
+            model.value.firstVotingCount -= 1
+            model.value.secondVotingCount += 1
+            model.value.firstVotingCount = max(0, model.value.firstVotingCount)
             startAnimation(button: secondVoteButton)
         default:
             return
         }
         
-        if model.votingState == 0 {
-            self.participantsCountLabel.text = "👻 참여자 \(self.model!.participants + 1)명"
+        if model.value.votingState == 0 {
+            self.participantsCountLabel.text = "👻 참여자 \(self.model.value.participants + 1)명"
         }
         
-        model.votingState = sender.tag
-        print("this is postCell = \(model.votingState)")
-        postVoteButtonDelegate?.postVoteButtonDidTap(idx: model.idx, choice: sender.tag)
+        model.value.votingState = sender.tag
+        postVoteButtonDelegate?.postVoteButtonDidTap(idx: model.value.idx, choice: sender.tag)
         DispatchQueue.main.async {
             self.setHomeVotePostLayout(voting: sender.tag)
         }
@@ -142,7 +162,7 @@ final class PostCell: UITableViewCell {
     private func addView() {
         contentView.addSubviews(titleLabel, contentLabel, removePostButton, firstVoteOptionLabel, secondVoteOptionLabel,
                                 firstPostImageView, secondPostImageView, firstVoteButton, secondVoteButton,
-                                 participantsCountLabel, commentCountLabel)
+                                participantsCountLabel, commentCountLabel)
     }
     
     private func setLayout() {
@@ -223,7 +243,7 @@ final class PostCell: UITableViewCell {
             self?.firstVoteButton.isEnabled = false
             self?.secondVoteButton.isEnabled = false
             self?.removePostButton.isHidden = false
-
+            
             self?.firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
             self?.secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
         }
@@ -286,7 +306,7 @@ final class PostCell: UITableViewCell {
     
     // MARK: - prepare
     func configure(with model: PostList, type: ViewControllerType) {
-        self.model = model
+        //        self.model = model
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         titleLabel.text = model.title
@@ -306,5 +326,40 @@ final class PostCell: UITableViewCell {
         }
         participantsCountLabel.text = "👻 참여자 \(model.participants)명"
         commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
+    }
+    
+    func bindUI() {
+        model
+//            .asDriver()
+            .bind(with: self) { owner, _ in
+                print(owner.model.value)
+                let model = owner.model.value
+//                guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
+//                guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
+                owner.titleLabel.text = model.title
+                owner.contentLabel.text = model.content
+                owner.firstPostImageView.kf.setImage(with: URL(string: model.firstImageUrl))
+                owner.secondPostImageView.kf.setImage(with: URL(string: model.secondImageUrl))
+                switch owner.type {
+                case .home:
+                    owner.firstVoteButton.setTitle(model.firstVotingOption, for: .normal)
+                    owner.secondVoteButton.setTitle(model.secondVotingOption, for: .normal)
+                    owner.setHomeVotePostLayout(voting: model.votingState)
+                case .profile:
+                    owner.firstVoteOptionLabel.text = model.firstVotingOption
+                    owner.secondVoteOptionLabel.text = model.secondVotingOption
+                    owner.setProfileVoteButtonLayout(with: model)
+                    owner.setVoteOptionLabelLayout()
+                default:
+                    return
+                }
+                owner.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
+                owner.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
+                
+            }.disposed(by: disposeBag)
+    }
+    
+    func setType(type: ViewControllerType) {
+        self.type = type
     }
 }
