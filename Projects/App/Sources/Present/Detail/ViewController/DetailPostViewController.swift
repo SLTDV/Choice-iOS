@@ -115,6 +115,17 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
     }
     
+    private let emptyLabel = UILabel().then {
+        $0.text = """
+        아직 댓글이 없습니다
+        댓글을 작성 해보세요!
+        """
+        $0.font = .systemFont(ofSize: 18, weight: .semibold)
+        $0.textAlignment = .center
+        $0.textColor = SharedAsset.grayDark.color
+        $0.numberOfLines = 0
+    }
+    
     private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
     
     init(viewModel: DetailPostViewModel, model: PostList) {
@@ -147,16 +158,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.transform = .identity
     }
     
-    private func bindTableView() {
-        commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
-                                             cellType: CommentCell.self)) { (row, data, cell) in
-            cell.changeCommentData(model: data)
-        }.disposed(by: disposeBag)
-        
+    private func bindPagination() {
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
             .bind(with: self, onNext: { owner, _ in
                 if owner.isLastPage {
+                    owner.updateEmptyLabelLayout()
                     return
                 }
                 
@@ -164,7 +171,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 let yOffset = owner.scrollView.contentOffset.y
                 let frameHeight = owner.scrollView.frame.size.height
                 
-                if yOffset > (contentHeight-frameHeight) - 100 {
+                if yOffset > (contentHeight - frameHeight) - 100 {
                     owner.commentTableView.tableFooterView = owner.createSpinnerFooter()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
                         owner.commentTableView.performBatchUpdates(nil, completion: nil)
@@ -176,6 +183,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                                     owner.isLastPage = true
                                 } else {
                                     owner.commentTableView.reloadData()
+                                    owner.updateEmptyLabelLayout()
                                 }
                             case .failure(let error):
                                 print("comment pagination error = \(error.localizedDescription)")
@@ -183,7 +191,28 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                         }
                     }
                 }
-            }).disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func updateEmptyLabelLayout() {
+        let comments = commentData.value
+        if comments.isEmpty && isLastPage {
+            emptyLabel.frame = CGRect(x: 0, y: 15, width: commentTableView.bounds.width, height: 100)
+            commentTableView.tableHeaderView = emptyLabel
+            commentTableView.separatorStyle = .none
+        } else {
+            commentTableView.tableHeaderView = nil
+            commentTableView.separatorStyle = .singleLine
+        }
+    }
+
+    private func bindTableView() {
+        commentData
+            .bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier, cellType: CommentCell.self)) { (row, data, cell) in
+                cell.changeCommentData(model: data)
+            }
+            .disposed(by: disposeBag)
     }
     
     private func bindUI() {
@@ -298,6 +327,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         viewModel.delegate = self
         commentTableView.delegate = self
         
+        bindPagination()
         bindTableView()
         bindUI()
         submitCommentButtonDidTap()
@@ -400,7 +430,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.top.equalTo(divideCommentLineView).offset(32)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
-            $0.height.equalTo(1)
+            $0.height.equalTo(100)
         }
         
         whiteBackgroundView.snp.makeConstraints {
@@ -467,6 +497,7 @@ extension DetailPostViewController {
         submitCommentButton.rx.tap
             .bind(with: self, onNext: { owner, _ in
                 LoadingIndicator.showLoading(text: "게시 중")
+                owner.commentTableView.tableHeaderView = nil
                 owner.submitComment()
             }).disposed(by: disposeBag)
     }
