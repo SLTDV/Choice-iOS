@@ -167,6 +167,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
             .bind(with: self, onNext: { owner, _ in
+                print(owner.model.value.votingState)
                 if owner.isLastPage {
                     return
                 }

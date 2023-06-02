@@ -71,7 +71,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                                           cellType: PostCell.self)) { (row, data, cell) in
                 cell.setType(type: .home)
                 cell.configure(with: data)
-                print(cell.model)
                 cell.postVoteButtonDelegate = self
                 cell.separatorInset = UIEdgeInsets.zero
             }.disposed(by: disposeBag)
@@ -190,6 +189,12 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         navigationBarButtonDidTap()
         viewModel.requestPostData(type: sortType)
         configureRefreshControl()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        DispatchQueue.main.async {
+            self.postTableView.reloadData()
+        }
     }
 
     override func addView() {
