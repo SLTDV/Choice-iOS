@@ -206,14 +206,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             commentTableView.separatorStyle = .singleLine
         }
     }
-
-    private func bindTableView() {
-        commentData
-            .bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier, cellType: CommentCell.self)) { (row, data, cell) in
-                cell.changeCommentData(model: data)
-            }
-            .disposed(by: disposeBag)
-    }
     
     private func loadMoreComments() {
         commentTableView.tableFooterView = createSpinnerFooter()
@@ -389,7 +381,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         viewModel.delegate = self
         commentTableView.delegate = self
         
-        bindPagination()
         bindTableView()
         bindUI()
         submitCommentButtonDidTap()
