@@ -69,7 +69,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
             .asDriver()
             .drive(postTableView.rx.items(cellIdentifier: PostCell.identifier,
                                           cellType: PostCell.self)) { (row, data, cell) in
-                cell.configure(with: data, type: .home)
+                cell.setType(type: .home)
+                cell.configure(with: data)
                 cell.postVoteButtonDelegate = self
                 cell.separatorInset = UIEdgeInsets.zero
             }.disposed(by: disposeBag)
@@ -188,6 +189,12 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
         navigationBarButtonDidTap()
         viewModel.requestPostData(type: sortType)
         configureRefreshControl()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        DispatchQueue.main.async {
+            self.postTableView.reloadData()
+        }
     }
 
     override func addView() {

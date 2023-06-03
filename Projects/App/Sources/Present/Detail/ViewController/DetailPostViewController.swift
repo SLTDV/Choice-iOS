@@ -11,7 +11,18 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     var writerNameData = PublishSubject<String>()
     var writerImageStringData = PublishSubject<String?>()
     var commentData = BehaviorRelay<[CommentList]>(value: [])
-    private var model: PostList?
+    private var model = BehaviorRelay<PostList>(value: PostList(idx: 0,
+                                                                firstImageUrl: "",
+                                                                secondImageUrl: "",
+                                                                title: "",
+                                                                content: "",
+                                                                firstVotingOption: "",
+                                                                secondVotingOption: "",
+                                                                firstVotingCount: 0,
+                                                                secondVotingCount: 0,
+                                                                votingState: 0,
+                                                                participants: 0,
+                                                                commentCount: 0))
     var isLastPage = false
     var type: ViewControllerType?
     
@@ -71,14 +82,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let firstVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
-        $0.isEnabled = false
         $0.layer.cornerRadius = 10
         $0.backgroundColor = SharedAsset.grayDark.color
     }
     
     private let secondVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
-        $0.isEnabled = false
         $0.layer.cornerRadius = 10
         $0.backgroundColor = SharedAsset.grayDark.color
     }
@@ -131,7 +140,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     init(viewModel: DetailPostViewModel, model: PostList, type: ViewControllerType) {
         super.init(viewModel: viewModel)
-        self.model = model
+        self.model.accept(model)
         self.type = type
         
         scrollView.addGestureRecognizer(tapGestureRecognizer)
@@ -160,7 +169,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.transform = .identity
     }
     
-    private func bindPagination() {
+    private func bindTableView() {
+        commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
+                                             cellType: CommentCell.self)) { (row, data, cell) in
+            cell.configure(model: data)
+        }.disposed(by: disposeBag)
+        
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
             .bind(with: self, onNext: { owner, _ in
@@ -172,26 +186,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 let contentHeight = owner.scrollView.contentSize.height
                 let yOffset = owner.scrollView.contentOffset.y
                 let frameHeight = owner.scrollView.frame.size.height
+                let shouldLoadMore = yOffset > (contentHeight-frameHeight) - 100
                 
-                if yOffset > (contentHeight - frameHeight) - 100 {
-                    owner.commentTableView.tableFooterView = owner.createSpinnerFooter()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
-                        owner.commentTableView.performBatchUpdates(nil, completion: nil)
-                        owner.viewModel.requestCommentData(idx: owner.model!.idx) { result in
-                            owner.commentTableView.tableFooterView = nil
-                            switch result {
-                            case .success(let size):
-                                if size != 10 {
-                                    owner.isLastPage = true
-                                } else {
-                                    owner.commentTableView.reloadData()
-                                    owner.updateEmptyLabelLayout()
-                                }
-                            case .failure(let error):
-                                print("comment pagination error = \(error.localizedDescription)")
-                            }
-                        }
-                    }
+                if shouldLoadMore {
+                    owner.loadMoreComments()
                 }
             })
             .disposed(by: disposeBag)
@@ -208,13 +206,30 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             commentTableView.separatorStyle = .singleLine
         }
     }
-
-    private func bindTableView() {
-        commentData
-            .bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier, cellType: CommentCell.self)) { (row, data, cell) in
-                cell.changeCommentData(model: data)
+    
+    private func loadMoreComments() {
+        commentTableView.tableFooterView = createSpinnerFooter()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) { [weak self] in
+            guard let self = self else { return }
+            
+            self.commentTableView.performBatchUpdates(nil, completion: nil)
+            self.viewModel.requestCommentData(idx: self.model.value.idx) { [weak self] result in
+                guard let self = self else { return }
+                
+                self.commentTableView.tableFooterView = nil
+                
+                switch result {
+                case .success(let size):
+                    if size != 10 {
+                        self.isLastPage = true
+                    } else {
+                        self.commentTableView.reloadData()
+                    }
+                case .failure(let error):
+                    print("comment pagination error = \(error.localizedDescription)")
+                }
             }
-            .disposed(by: disposeBag)
+        }
     }
     
     private func bindUI() {
@@ -258,9 +273,19 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                     owner.setDefaultSubmitButton()
                 }
             }).disposed(by: disposeBag)
+        
+        firstVoteButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.updateVotingStateWithLayout(1)
+            }.disposed(by: disposeBag)
+        
+        secondVoteButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.updateVotingStateWithLayout(2)
+            }.disposed(by: disposeBag)
     }
     
-    private func changePostData(model: PostList) {
+    private func configure(model: PostList) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async { [weak self] in
@@ -274,6 +299,31 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
     }
     
+    private func updateVotingStateWithLayout(_ votingState: Int) {
+        let model = model.value
+        
+        switch votingState {
+        case 1:
+            model.firstVotingCount += 1
+            model.secondVotingCount -= 1
+        case 2:
+            model.firstVotingCount -= 1
+            model.secondVotingCount += 1
+        default:
+            break
+        }
+        
+        firstVoteButton.isEnabled = (votingState == 1) ? false : true
+        secondVoteButton.isEnabled = (votingState == 2) ? false : true
+        
+        model.firstVotingCount = max(0, model.firstVotingCount)
+        model.secondVotingCount = max(0, model.secondVotingCount)
+        
+        model.votingState = votingState
+        viewModel.requestVote(idx: model.idx, choice: model.votingState)
+        setVoteButtonLayout(with: model)
+    }
+    
     private func setVoteButtonLayout(with model: PostList) {
         let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
             firstVotingCount: Double(model.firstVotingCount),
@@ -281,10 +331,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         )
         firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
         secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
-        votePostLayout(voting: model.votingState)
+        setVoteButtonLayout(voting: model.votingState)
     }
     
-    private func votePostLayout(voting: Int) {
+    private func setVoteButtonLayout(voting: Int) {
         switch voting {
         case 1:
             firstVoteButton.backgroundColor = .black
@@ -301,7 +351,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }
         }
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: ContentSizeKey.key, options: .new, context: nil)
@@ -331,11 +381,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         viewModel.delegate = self
         commentTableView.delegate = self
         
-        bindPagination()
         bindTableView()
         bindUI()
         submitCommentButtonDidTap()
-        changePostData(model: model!)
+        configure(model: model.value)
     }
     
     override func addView() {
@@ -474,15 +523,15 @@ extension DetailPostViewController {
     }
     
     private func submitComment() {
-        guard let idx = model?.idx else { return }
+//        guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         viewModel.commentCurrentPage = -1
-        viewModel.requestToCreateComment(idx: idx, content: content) { result in
+        viewModel.requestToCreateComment(idx: model.value.idx, content: content) { result in
             switch result {
             case .success(()):
                 DispatchQueue.main.async { [weak self] in
-                    self?.viewModel.requestCommentData(idx: idx)
+                    self?.viewModel.requestCommentData(idx: (self?.model.value.idx)!)
                     self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
                     self?.enterCommentTextView.text = nil
                     self?.enterCommentTextView.resignFirstResponder()
@@ -513,7 +562,7 @@ extension DetailPostViewController: UITableViewDelegate {
         let commentModel = commentData.value[indexPath.row]
         
         lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
-            self.viewModel.requestToDeleteComment(postIdx: self.model!.idx,
+            self.viewModel.requestToDeleteComment(postIdx: self.model.value.idx,
                                                   commentIdx: commentModel.idx) { [weak self] result in
                 switch result {
                 case .success(()):
