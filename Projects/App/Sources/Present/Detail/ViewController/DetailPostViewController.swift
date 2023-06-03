@@ -102,7 +102,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let enterCommentTextView = UITextView().then {
-        $0.textContainerInset = UIEdgeInsets(top: 13, left: 14, bottom: 14, right: 14)
+        $0.textContainerInset = UIEdgeInsets(top: 13, left: 14, bottom: 14, right: 50)
         $0.text = "댓글을 입력해주세요."
         $0.isScrollEnabled = false
         $0.font = .systemFont(ofSize: 14)
@@ -123,6 +123,17 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.rowHeight = UITableView.automaticDimension
         $0.estimatedRowHeight = 70
         $0.register(CommentCell.self, forCellReuseIdentifier: CommentCell.identifier)
+    }
+    
+    private let emptyLabel = UILabel().then {
+        $0.text = """
+        아직 댓글이 없습니다
+        댓글을 작성해 보세요!
+        """
+        $0.font = .systemFont(ofSize: 18, weight: .semibold)
+        $0.textAlignment = .center
+        $0.textColor = SharedAsset.grayDark.color
+        $0.numberOfLines = 0
     }
     
     private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
@@ -169,6 +180,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             .bind(with: self, onNext: { owner, _ in
                 print(owner.model.value.votingState)
                 if owner.isLastPage {
+                    owner.updateEmptyLabelLayout()
                     return
                 }
                 
@@ -180,7 +192,28 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 if shouldLoadMore {
                     owner.loadMoreComments()
                 }
-            }).disposed(by: disposeBag)
+            })
+            .disposed(by: disposeBag)
+    }
+
+    private func updateEmptyLabelLayout() {
+        let comments = commentData.value
+        if comments.isEmpty && isLastPage {
+            emptyLabel.frame = CGRect(x: 0, y: 15, width: commentTableView.bounds.width, height: 100)
+            commentTableView.tableHeaderView = emptyLabel
+            commentTableView.separatorStyle = .none
+        } else {
+            commentTableView.tableHeaderView = nil
+            commentTableView.separatorStyle = .singleLine
+        }
+    }
+
+    private func bindTableView() {
+        commentData
+            .bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier, cellType: CommentCell.self)) { (row, data, cell) in
+                cell.changeCommentData(model: data)
+            }
+            .disposed(by: disposeBag)
     }
     
     private func loadMoreComments() {
@@ -357,6 +390,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         viewModel.delegate = self
         commentTableView.delegate = self
         
+        bindPagination()
         bindTableView()
         bindUI()
         submitCommentButtonDidTap()
@@ -412,12 +446,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
         
         firstVoteOptionLabel.snp.makeConstraints {
-            $0.top.equalTo(contentLabel.snp.bottom).offset(40)
+            $0.top.equalTo(contentLabel.snp.bottom).offset(30)
             $0.centerX.equalTo(firstPostImageView)
         }
         
         secondVoteOptionLabel.snp.makeConstraints {
-            $0.top.equalTo(contentLabel.snp.bottom).offset(40)
+            $0.top.equalTo(contentLabel.snp.bottom).offset(30)
             $0.centerX.equalTo(secondPostImageView)
         }
         
@@ -459,7 +493,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.top.equalTo(divideCommentLineView).offset(32)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
-            $0.height.equalTo(1)
+            $0.height.equalTo(100)
         }
         
         whiteBackgroundView.snp.makeConstraints {
@@ -502,7 +536,6 @@ extension DetailPostViewController {
 //        guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
-        LoadingIndicator.showLoading(text: "게시 중")
         viewModel.commentCurrentPage = -1
         viewModel.requestToCreateComment(idx: model.value.idx, content: content) { result in
             switch result {
@@ -519,13 +552,15 @@ extension DetailPostViewController {
             case .failure(let error):
                 print("post error = \(String(describing: error.localizedDescription))")
             }
+            LoadingIndicator.hideLoading()
         }
-        LoadingIndicator.hideLoading()
     }
     
     private func submitCommentButtonDidTap() {
         submitCommentButton.rx.tap
             .bind(with: self, onNext: { owner, _ in
+                LoadingIndicator.showLoading(text: "게시 중")
+                owner.commentTableView.tableHeaderView = nil
                 owner.submitComment()
             }).disposed(by: disposeBag)
     }
