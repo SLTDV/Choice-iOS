@@ -17,7 +17,6 @@ protocol PostVoteButtonDidTapDelegate: AnyObject {
 
 final class PostCell: UITableViewCell {
     // MARK: - Properties
-    //    var model: PostList?
     var model = BehaviorRelay<PostList>(value: PostList(idx: 0,
                                                         firstImageUrl: "",
                                                         secondImageUrl: "",
