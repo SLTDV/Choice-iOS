@@ -97,14 +97,22 @@ final class PostCell: UITableViewCell {
         $0.addTarget(self, action: #selector(PostVoteButtonDidTap(_:)), for: .touchUpInside)
     }
     
+    private let participantsCountImageView = UIImageView().then {
+        $0.image = ChoiceAsset.Images.voteCountEmoji.image
+    }
+    
+    private let commentCountImageView = UIImageView().then {
+        $0.image = ChoiceAsset.Images.commentCountEmoji.image
+    }
+    
     private let participantsCountLabel = UILabel().then {
-        $0.text = "👻 참여자 없음"
-        $0.font = .systemFont(ofSize: 12, weight: .medium)
+        $0.text = "참여자 없음"
+        $0.font = .systemFont(ofSize: 14, weight: .medium)
     }
     
     private let commentCountLabel = UILabel().then {
-        $0.text = "🔥 댓글 없음 "
-        $0.font = .systemFont(ofSize: 12, weight: .medium)
+        $0.text = "댓글 없음 "
+        $0.font = .systemFont(ofSize: 14, weight: .medium)
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -138,7 +146,7 @@ final class PostCell: UITableViewCell {
         }
         
         if model.value.votingState == 0 {
-            self.participantsCountLabel.text = "👻 참여자 \(self.model.value.participants + 1)명"
+            self.participantsCountLabel.text = "참여자 \(self.model.value.participants + 1)명"
         }
         
         model.value.votingState = sender.tag
@@ -153,9 +161,13 @@ final class PostCell: UITableViewCell {
     }
     
     private func addView() {
-        contentView.addSubviews(titleLabel, contentLabel, removePostButton, firstVoteOptionLabel, secondVoteOptionLabel,
-                                firstPostImageView, secondPostImageView, firstVoteButton, secondVoteButton,
-                                participantsCountLabel, commentCountLabel)
+        contentView.addSubviews(
+            titleLabel, contentLabel, removePostButton,
+            firstVoteOptionLabel, secondVoteOptionLabel,
+            firstPostImageView, secondPostImageView,
+            firstVoteButton, secondVoteButton,
+            participantsCountImageView, commentCountImageView,
+            participantsCountLabel, commentCountLabel)
     }
     
     private func setLayout() {
@@ -202,15 +214,28 @@ final class PostCell: UITableViewCell {
             $0.height.equalTo(56)
         }
         
-        participantsCountLabel.snp.makeConstraints {
+        participantsCountImageView.snp.makeConstraints {
             $0.top.equalTo(firstVoteButton.snp.bottom).offset(25)
-            $0.leading.equalToSuperview().inset(33)
+            $0.leading.equalTo(firstVoteButton.snp.leading)
             $0.bottom.equalToSuperview().inset(16)
+            $0.size.equalTo(20)
+        }
+        
+        participantsCountLabel.snp.makeConstraints {
+            $0.top.equalTo(participantsCountImageView.snp.top).offset(3)
+            $0.leading.equalTo(participantsCountImageView.snp.trailing).offset(4)
+        }
+        
+        commentCountImageView.snp.makeConstraints {
+            $0.top.equalTo(firstVoteButton.snp.bottom).offset(25)
+            $0.leading.equalTo(participantsCountLabel.snp.trailing).offset(13)
+            $0.bottom.equalToSuperview().inset(16)
+            $0.size.equalTo(20)
         }
         
         commentCountLabel.snp.makeConstraints {
-            $0.top.equalTo(firstVoteButton.snp.bottom).offset(25)
-            $0.leading.equalTo(participantsCountLabel.snp.trailing).offset(13)
+            $0.top.equalTo(commentCountImageView.snp.top).offset(3)
+            $0.leading.equalTo(commentCountImageView.snp.trailing).offset(4)
             $0.bottom.equalToSuperview().inset(16)
         }
     }
@@ -322,8 +347,8 @@ final class PostCell: UITableViewCell {
                     owner.setProfileVoteButtonLayout(with: model)
                     owner.setVoteOptionLabelLayout()
                 }
-                owner.participantsCountLabel.text = "👻 참여자 \(model.participants)명"
-                owner.commentCountLabel.text = "🔥 댓글 \(model.commentCount)개"
+                owner.participantsCountLabel.text = "참여자 \(model.participants)명"
+                owner.commentCountLabel.text = "댓글 \(model.commentCount)개"
                 
             }.disposed(by: disposeBag)
     }
