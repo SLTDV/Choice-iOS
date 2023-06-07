@@ -8,7 +8,7 @@ enum PickerKey {
     static let second = "second"
 }
 
-final class AddPostViewController: BaseVC<AddPostViewModel> {
+final class AddImageViewController: BaseVC<AddPostViewModel> {
     private let disposeBag = DisposeBag()
     
     private let scrollView = UIScrollView().then {
@@ -58,7 +58,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.allowsEditing = true
     }
     
-    private let inputTitleTextField = UITextField().then {
+    private let inputTitleTextField = BoxTextField(type: .countTextField).then {
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.placeholder = "제목입력 (2~16)"
         $0.borderStyle = .none
@@ -68,13 +68,9 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.backgroundColor = .black
     }
     
-    private let inputDescriptionTextView = UITextView().then {
-        $0.text = "내용입력 (2~100)"
-        $0.font = .systemFont(ofSize: 14, weight: .semibold)
-        $0.textColor = .lightGray
-        $0.layer.cornerRadius = 8
-        $0.layer.borderWidth = 1
-        $0.layer.borderColor = SharedAsset.grayDark.color.cgColor
+    private let inputDescriptionTextView = BoxTextField(type: .countTextField).then {
+        $0.placeholder = "내용입력 (2~100)"
+        $0.font = .systemFont(ofSize: 18, weight: .semibold)
     }
     
     private let topicTitleLabel = UILabel().then {
@@ -195,7 +191,6 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     override func configureVC() {
         navigationItem.title = "게시물 작성"
         
-        inputDescriptionTextView.delegate = self
         firstImagePicker.delegate = self
         secondImagePicker.delegate = self
         scrollView.addGestureRecognizer(tapGestureRecognizer)
@@ -241,6 +236,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         inputTitleTextField.snp.makeConstraints {
             $0.top.equalTo(addFirstImageButton.snp.bottom).offset(36)
             $0.leading.trailing.equalToSuperview().inset(32)
+            $0.height.equalTo(58)
         }
         
         divideLine.snp.makeConstraints {
@@ -251,7 +247,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         
         inputDescriptionTextView.snp.makeConstraints {
             $0.top.equalTo(divideLine.snp.bottom).offset(20)
-            $0.height.equalTo(130)
+            $0.height.equalTo(113)
             $0.leading.trailing.equalToSuperview().inset(32)
         }
         
@@ -283,29 +279,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     }
 }
 
-extension AddPostViewController: UITextViewDelegate {
-    private func setTextViewPlaceholder() {
-        if inputDescriptionTextView.text.isEmpty {
-            inputDescriptionTextView.text = "내용입력 (2~100)"
-            inputDescriptionTextView.textColor = UIColor.lightGray
-        } else if inputDescriptionTextView.text == "내용입력 (2~100)" {
-            inputDescriptionTextView.text = ""
-            inputDescriptionTextView.textColor = UIColor.black
-        }
-    }
-    
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        setTextViewPlaceholder()
-    }
-    
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text == "" {
-            setTextViewPlaceholder()
-        }
-    }
-}
-
-extension AddPostViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+extension AddImageViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
         var newImage: UIImage? = nil
         
