@@ -7,7 +7,7 @@ class PhoneNumberAuthViewController: BaseVC<PhoneNumberAuthViewModel>, InputPhon
     private let component = InputphoneNumberComponent()
     
     override func configureVC() {
-        
+        component.delegate = self
     }
     
     override func addView() {
@@ -44,6 +44,7 @@ extension PhoneNumberAuthViewController {
     
     func requestAuthButtonDidTap(phoneNumber: String) {
         LoadingIndicator.showLoading(text: "")
+        print("requestAuthButton")
         
         guard phoneNumber.hasPrefix("010") else {
             component.warningLabel.show(warning: "*전화번호 형식이 올바르지 않아요.")
@@ -66,7 +67,7 @@ extension PhoneNumberAuthViewController {
                 self?.component.inputPhoneNumberTextfield.textColor = .placeholderText
                 self?.component.warningLabel.hide()
             } else {
-                self?.component.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
+                self?.component.warningLabel.show(warning: "전화번호를 찾을 수 없습니다.")
             }
             
             LoadingIndicator.hideLoading()
