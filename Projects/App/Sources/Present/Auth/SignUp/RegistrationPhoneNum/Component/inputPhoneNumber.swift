@@ -1,18 +1,32 @@
 import UIKit
 import Shared
+import RxSwift
+import RxCocoa
 
-class inputphoneNumberComponent: UIView {
-    private let emailLabel = UILabel().then {
+protocol PhoneNumberComponentProtocol: AnyObject {
+    func nextButtonDidTap()
+    func requestAuthButtonDidTap(phoneNumber: String)
+    func resendButtonDidTap()
+}
+
+class InputphoneNumberComponent: UIView {
+    weak var delegate: PhoneNumberComponentProtocol?
+    
+    private let disposeBag = DisposeBag()
+    
+    let warningLabel = WarningLabel()
+    
+    let emailLabel = UILabel().then {
         $0.text = "전화번호"
         $0.font = .systemFont(ofSize: 16, weight: .bold)
     }
     
-    private let inputPhoneNumberTextfield = BoxTextField().then {
-        $0.placeholder = "전화번호 입력"
+    let inputPhoneNumberTextfield = BoxTextField().then {
+        $0.placeholder = "전화번호 (- 없이 입력)"
         $0.keyboardType = .numberPad
     }
     
-    private let requestAuthButton = UIButton().then {
+    let requestAuthButton = UIButton().then {
         $0.setTitle("인증 요청", for: .normal)
         $0.isEnabled = false
         $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
@@ -20,47 +34,83 @@ class inputphoneNumberComponent: UIView {
         $0.layer.cornerRadius = 8
     }
     
-    private let authNumberTextfield = BoxTextField().then {
+    let authNumberTextfield = BoxTextField().then {
         $0.placeholder = "인증번호 입력"
         $0.keyboardType = .numberPad
         $0.isHidden = true
     }
     
-    private let countLabel = UILabel().then {
+    let countLabel = UILabel().then {
         $0.textAlignment = .center
         $0.textColor = .black
     }
     
-    private let resendLabel = UILabel().then {
+    let resendLabel = UILabel().then {
         $0.text = "인증번호가 오지 않나요?"
         $0.font = .systemFont(ofSize: 12, weight: .medium)
         $0.textColor = .gray
         $0.isHidden = true
     }
     
-    private let resendButton = UIButton().then {
+    let resendButton = UIButton().then {
         $0.setTitle("재요청", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 13, weight: .semibold)
         $0.setTitleColor(.black, for: .normal)
         $0.isHidden = true
     }
     
-    private lazy var nextButton = UIButton().then {
+    let nextButton = UIButton().then {
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.setTitle("다음", for: .normal)
         $0.isEnabled = false
         $0.backgroundColor = SharedAsset.grayVoteButton.color
         $0.layer.cornerRadius = 8
     }
-    
-    private let warningLabel = WarningLabel()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        addView()
+        setLayout()
+        bindRx()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func bindRx() {
+        nextButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.delegate?.nextButtonDidTap()
+            }.disposed(by: disposeBag)
+        
+        requestAuthButtonDidTap()
+    }
+    
+    private func bindUI() {
+        let maxLength = 4
+        
+        authNumberTextfield.rx.text.orEmpty
+            .map { text -> (Bool, String) in
+                let isValid = (text.count == maxLength)
+                let truncatedText = String(text.prefix(maxLength))
+                return (isValid, truncatedText)
+            }
+            .bind(with: self, onNext: { owner, result in
+                let (isValid, text) = result
+                owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
+                owner.nextButton.isEnabled = isValid
+                owner.authNumberTextfield.text = text
+            }).disposed(by: disposeBag)
+        
+        inputPhoneNumberTextfield.rx.text.orEmpty
+            .map { $0.count == 11 }
+            .bind(with: self) { owner, isValid in
+                print(isValid)
+                owner.requestAuthButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
+                owner.requestAuthButton.isEnabled = isValid
+            }.disposed(by: disposeBag)
     }
     
     func addView() {
@@ -122,4 +172,16 @@ class inputphoneNumberComponent: UIView {
             $0.height.equalTo(58)
         }
     }
+    
+    private func requestAuthButtonDidTap() {
+        let phoneNumberObservable = inputPhoneNumberTextfield.rx.text.orEmpty
+        
+        requestAuthButton.rx.tap
+            .withLatestFrom(phoneNumberObservable)
+            .bind(with: self) { owner, inputPhoneNumber in
+                owner.delegate?.requestAuthButtonDidTap(phoneNumber: inputPhoneNumber)
+            }.disposed(by: disposeBag)
+    }
 }
+
+
