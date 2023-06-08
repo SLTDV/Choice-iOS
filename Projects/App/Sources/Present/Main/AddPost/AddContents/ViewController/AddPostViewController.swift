@@ -7,18 +7,28 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     private let disposeBag = DisposeBag()
 
     private let inputTitleTextField = BoxTextField(type: .countTextField).then {
-        $0.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.placeholder = "제목입력 (2~16)"
-        $0.borderStyle = .none
+        $0.font = .systemFont(ofSize: 18, weight: .semibold)
     }
     
     private let divideLine = UIView().then {
         $0.backgroundColor = .black
     }
     
-    private let inputDescriptionTextView = BoxTextField(type: .countTextField).then {
-        $0.placeholder = "내용입력 (2~100)"
+    private let inputDescriptionTextView = UITextView().then {
+        $0.text = "내용입력 (0~100)"
+        $0.textContainerInset = UIEdgeInsets(top: 18, left: 8, bottom: 18, right: 8)
+        $0.textColor = .placeholderText
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
+        $0.layer.cornerRadius = 8
+        $0.layer.borderWidth = 1
+        $0.layer.borderColor = SharedAsset.grayMedium.color.cgColor
+    }
+    
+    private let textCountLabel = UILabel().then {
+        $0.text = "(0/100)"
+        $0.font = .systemFont(ofSize: 12, weight: .semibold)
+        $0.textColor = .placeholderText
     }
     
     private lazy var addPostViewButton = UIButton().then {
@@ -29,16 +39,10 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.isEnabled = false
     }
     
-    @objc private func tapMethod(_ sender: UITapGestureRecognizer) {
-        view.endEditing(true)
-    }
-    
-    private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
-    
     private func bindUI() {
         let titleTextObservable = inputTitleTextField.rx.text.orEmpty
         let descriptionTextObservable = inputDescriptionTextView.rx.text.orEmpty
-            .filter { $0 != "내용입력 (2~100)" }
+            .filter { $0 != "내용입력 (0~100)" }
         
         Observable.combineLatest(
             titleTextObservable,
@@ -51,62 +55,71 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         }).disposed(by: disposeBag)
     }
     
+    private func bindCountTextLabel() {
+        inputDescriptionTextView.rx.text
+            .orEmpty
+            .filter { $0 != "내용입력 (0~100)" }
+            .map { text in
+                let count = text.count
+                return "(\(count)/100)"
+            }
+            .bind(to: textCountLabel.rx.text)
+            .disposed(by: disposeBag)
+    }
+    
+    private func textSetUp(){
+        inputDescriptionTextView.rx.didBeginEditing
+                .subscribe(onNext: { [self] in
+                if(inputDescriptionTextView.text == "내용입력 (0~100)"){
+                    inputDescriptionTextView.text = nil
+                    inputDescriptionTextView.textColor = .black
+                }}).disposed(by: disposeBag)
+            
+        inputDescriptionTextView.rx.didEndEditing
+                .subscribe(onNext: { [self] in
+                if(inputDescriptionTextView.text == nil || inputDescriptionTextView.text == ""){
+                    inputDescriptionTextView.text = "내용입력 (0~100)"
+                    inputDescriptionTextView.textColor = .placeholderText
+                }}).disposed(by: disposeBag)
+        }
+    
     override func configureVC() {
         navigationItem.title = "게시물 작성"
+        let backBarButtonItem = UIBarButtonItem(title: "dasd", style: .plain, target: self, action: nil)
+        self.navigationItem.backBarButtonItem = backBarButtonItem
         
+        textSetUp()
+        bindCountTextLabel()
         bindUI()
     }
     
     override func addView() {
         view.addSubviews(inputTitleTextField, divideLine,
-                         inputDescriptionTextView, addPostViewButton)
+                         inputDescriptionTextView, textCountLabel, addPostViewButton)
     }
     
     override func setLayout() {
         inputTitleTextField.snp.makeConstraints {
-            $0.top.equalToSuperview().offset(36)
-            $0.leading.trailing.equalToSuperview().inset(32)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(42)
             $0.height.equalTo(58)
-        }
-        
-        divideLine.snp.makeConstraints {
-            $0.top.equalTo(inputTitleTextField.snp.bottom).offset(10)
-            $0.height.equalTo(1)
             $0.leading.trailing.equalToSuperview().inset(32)
         }
         
         inputDescriptionTextView.snp.makeConstraints {
-            $0.top.equalTo(divideLine.snp.bottom).offset(20)
-            $0.height.equalTo(113)
+            $0.top.equalTo(inputTitleTextField.snp.bottom).offset(25)
+            $0.height.equalTo(150)
             $0.leading.trailing.equalToSuperview().inset(32)
+        }
+        
+        textCountLabel.snp.makeConstraints {
+            $0.trailing.equalTo(inputDescriptionTextView.snp.trailing).inset(10)
+            $0.bottom.equalTo(inputDescriptionTextView.snp.bottom).inset(10)
         }
         
         addPostViewButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(32)
             $0.height.equalTo(49)
             $0.bottom.equalToSuperview().inset(40)
-        }
-    }
-}
-
-extension AddPostViewController: UITextViewDelegate {
-    private func setTextViewPlaceholder() {
-        if ((inputDescriptionTextView.text?.isEmpty) != nil) {
-            inputDescriptionTextView.text = "내용입력 (2~100)"
-            inputDescriptionTextView.textColor = UIColor.lightGray
-        } else if inputDescriptionTextView.text == "내용입력 (2~100)" {
-            inputDescriptionTextView.text = ""
-            inputDescriptionTextView.textColor = UIColor.black
-        }
-    }
-    
-    func textViewDidBeginEditing(_ textView: UITextView) {
-        setTextViewPlaceholder()
-    }
-    
-    func textViewDidEndEditing(_ textView: UITextView) {
-        if textView.text == "" {
-            setTextViewPlaceholder()
         }
     }
 }

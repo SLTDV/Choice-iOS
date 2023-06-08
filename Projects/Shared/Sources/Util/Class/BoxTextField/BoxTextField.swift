@@ -61,7 +61,7 @@ public final class BoxTextField: UITextField {
             .orEmpty
             .map { text in
                 let count = text.count
-                return "(\(count)/100)"
+                return "(\(count)/16)"
             }
             .bind(to: textCountLabel.rx.text)
             .disposed(by: disposeBag)
