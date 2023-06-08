@@ -15,7 +15,7 @@ enum ChoiceStep {
     case profileIsRequired
     
     //AddPost
-    case addImageIsRequired(title: String, content: String?)
+    case addImageIsRequired(title: String, content: String)
     
     //Profile
     case logOutIsRequired

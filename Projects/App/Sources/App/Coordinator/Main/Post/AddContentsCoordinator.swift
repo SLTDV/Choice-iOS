@@ -19,10 +19,10 @@ final class AddContentsCoordiantor: BaseCoordinator {
 }
 
 extension AddContentsCoordiantor {
-    private func addImageIsRequired(title: String, content: String?) {
+    private func addImageIsRequired(title: String, content: String) {
         let vc = AddImageCoordiantor(navigationController: navigationController)
         vc.parentCoordinator = self
         childCoordinators.append(vc)
-        vc.startAddImageVC(title: title, content: content ?? "")
+        vc.startAddImageVC(title: title, content: content)
     }
 }

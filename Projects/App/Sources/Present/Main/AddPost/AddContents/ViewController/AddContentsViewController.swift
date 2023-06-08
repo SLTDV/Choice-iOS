@@ -102,7 +102,7 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
     
     private func pushAddImageVC() {
         guard let title = inputTitleTextField.text else { return }
-        var content = inputDescriptionTextView.text ?? ""
+        guard var content = inputDescriptionTextView.text else { return }
         
         if content == "내용입력 (0~100)" {
             content = ""
