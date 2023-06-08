@@ -53,4 +53,8 @@ class PhoneNumberAuthViewModel: BaseViewModel {
             }
         }
     }
+    
+    func pushChangeToPassword(phoneNumber: String) {
+        coordinator.navigate(to: .findPasword_changepassword(phoneNumber: phoneNumber))
+    }
 }

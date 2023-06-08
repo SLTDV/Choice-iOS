@@ -5,6 +5,7 @@ enum ChoiceStep {
     case signUpIsRequired
     case mainVCIsRequried
     case findPassword_phoneNumberAuth
+    case findPasword_changepassword(phoneNumber: String)
     
     //SignUp
     case registrationPasswordIsRequired(phoneNumber: String)

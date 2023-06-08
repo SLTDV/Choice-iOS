@@ -27,7 +27,7 @@ class PhoneNumberAuthViewController: BaseVC<PhoneNumberAuthViewModel>, InputPhon
         
         self.viewModel.requestAuthNumberConfirmation(phoneNumber: phoneNumber, authCode: authCode) { [weak self] isVaild in
             if isVaild {
-//                self?.viewModel.pushRegistrationPasswordVC(phoneNumber: phoneNumber)
+                self?.viewModel.pushChangeToPassword(phoneNumber: phoneNumber)
             } else {
                 self?.component.warningLabel.show(warning: "*인증번호가 일치하지 않습니다")
             }
