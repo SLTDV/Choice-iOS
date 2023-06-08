@@ -11,13 +11,18 @@ class PhoneNumberAuthCoordiantor: BaseCoordinator {
     override func navigate(to step: ChoiceStep) {
         switch step {
         case .findPasword_changepassword(let phoneNumber):
-            findPasword_changepassword()
+            findPasword_changepassword(phoneNumber: phoneNumber)
+        default:
+            return
         }
     }
 }
 
 extension PhoneNumberAuthCoordiantor {
     private func findPasword_changepassword(phoneNumber: String) {
-        let vc = 
+        let vc = ChangePasswordCoordinator(navigationController: navigationController)
+        vc.parentCoordinator = self
+        childCoordinators.append(vc)
+        vc.start()
     }
 }
