@@ -76,6 +76,11 @@ final class SignInViewController: BaseVC<SignInViewModel> {
             .bind(onNext: { [weak self] _ in
                 self?.viewModel.pushSignUpVC()
             }).disposed(by: disposeBag)
+        
+        findPasswordButton.rx.tap
+            .bind(with: self) { owner, _ in
+                
+            }.disposed(by: disposeBag)
     }
     
     override func configureVC() {
