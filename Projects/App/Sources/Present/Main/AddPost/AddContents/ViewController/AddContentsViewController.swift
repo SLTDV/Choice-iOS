@@ -40,19 +40,13 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
     }
     
     private func bindUI() {
-        let titleTextObservable = inputTitleTextField.rx.text.orEmpty
-        let descriptionTextObservable = inputDescriptionTextView.rx.text.orEmpty
-            .filter { $0 != "내용입력 (0~100)" }
-        
-        Observable.combineLatest(
-            titleTextObservable,
-            descriptionTextObservable,
-            resultSelector: { s1, s2 in (2...16).contains(s1.count) && (2...100).contains(s2.count) }
-        )
-        .bind(with: self, onNext: { owner, arg in
-            owner.nextButton.isEnabled = arg
-            owner.nextButton.backgroundColor = arg ? .black : SharedAsset.grayMedium.color
-        }).disposed(by: disposeBag)
+        inputTitleTextField.rx.text.orEmpty
+            .map { $0.count }
+            .bind(with: self) { owner, count in
+                let isValid = (2...16).contains(count)
+                owner.nextButton.isEnabled = isValid
+                owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.grayMedium.color
+            }.disposed(by: disposeBag)
     }
     
     private func limitText() {
@@ -108,6 +102,7 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
     override func configureVC() {
         navigationItem.title = "게시물 작성"
         
+        nextButtonDidTap()
         limitText()
         textSetUp()
         bindCountTextLabel()
