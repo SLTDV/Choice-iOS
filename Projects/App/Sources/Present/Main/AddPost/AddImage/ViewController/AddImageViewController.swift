@@ -12,8 +12,8 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
     private let disposeBag = DisposeBag()
     
     private let addImageTitleLabel = UILabel().then {
-        $0.text = "대표 사진을 설정해주세요. (필수)"
-        $0.font = .systemFont(ofSize: 12, weight: .semibold)
+        $0.text = "사진을 추가해주세요"
+        $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
     private lazy var addFirstImageButton = UIButton().then {
@@ -53,13 +53,13 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
     }
     
     private let topicTitleLabel = UILabel().then {
-        $0.text = "주제를 입력해주세요. (필수)"
-        $0.font = .systemFont(ofSize: 12, weight: .semibold)
+        $0.text = "사진 설명을 입력해주세요"
+        $0.font = .systemFont(ofSize: 14, weight: .semibold)
         $0.textColor = .black
     }
     
     private lazy var firstSetTopicButton = UIButton().then {
-        $0.setTitle("주제1 ✏️", for: .normal)
+        $0.setTitle("주제1", for: .normal)
         $0.tag = 0
         $0.setTitleColor(.gray, for: .normal)
         $0.layer.borderWidth = 1
@@ -69,7 +69,7 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
     }
     
     private lazy var secondSetTopicButton = UIButton().then {
-        $0.setTitle("주제2 ✏️", for: .normal)
+        $0.setTitle("주제2", for: .normal)
         $0.tag = 1
         $0.setTitleColor(.gray, for: .normal)
         $0.layer.borderWidth = 1
@@ -81,9 +81,8 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
     private lazy var addPostViewButton = UIButton().then {
         $0.setTitle("완료", for: .normal)
         $0.setTitleColor( .white, for: .normal)
-        $0.backgroundColor = SharedAsset.grayMedium.color
+        $0.backgroundColor = .black
         $0.layer.cornerRadius = 8
-        $0.isEnabled = false
         $0.addTarget(self, action: #selector(addPostViewButtonDidTap(_:)), for: .touchUpInside)
     }
     
@@ -126,7 +125,7 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
         guard let secondImage = addSecondImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let firstVotingOption = firstSetTopicButton.titleLabel?.text?.trimmingCharacters(in: .whitespaces) else { return }
         guard let secondVotingOtion = secondSetTopicButton.titleLabel?.text?.trimmingCharacters(in: .whitespaces) else { return }
-        if firstVotingOption.elementsEqual("주제1 ✏️") || secondVotingOtion.elementsEqual("주제2 ✏️") {
+        if firstVotingOption.elementsEqual("주제1") || secondVotingOtion.elementsEqual("주제2") {
             alert.message = "주제를 입력해주세요."
             return present(alert, animated: true)
         }

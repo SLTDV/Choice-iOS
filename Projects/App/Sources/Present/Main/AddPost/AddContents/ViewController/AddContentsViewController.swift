@@ -90,13 +90,21 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
     }
     
     private func nextButtonDidTap() {
-        guard let title = inputTitleTextField.text else { return }
-        guard let content = inputDescriptionTextView.text else { return }
-        
         nextButton.rx.tap
             .bind(with: self) { owner, _ in
-                owner.viewModel.pushAddImageVC(title: title, content: content)
+                owner.pushAddImageVC()
             }.disposed(by: disposeBag)
+    }
+    
+    private func pushAddImageVC() {
+        guard let title = inputTitleTextField.text else { return }
+        var content = inputDescriptionTextView.text ?? ""
+        
+        if content == "내용입력 (0~100)" {
+            content = ""
+        }
+        
+        self.viewModel.pushAddImageVC(title: title, content: content)
     }
     
     override func configureVC() {
