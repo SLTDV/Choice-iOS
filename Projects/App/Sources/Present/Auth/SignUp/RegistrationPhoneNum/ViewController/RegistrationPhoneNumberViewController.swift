@@ -12,6 +12,25 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     
     private let component = InputphoneNumberComponent()
     
+    override func configureVC() {
+        restoreFrameYValue = self.view.frame.origin.y
+        
+        bindUI()
+        component.delegate = self
+        
+        navigationItem.title = "회원가입"
+    }
+    
+    override func addView() {
+        view.addSubviews(component)
+    }
+    
+    override func setLayout() {
+        component.snp.makeConstraints {
+            $0.edges.equalToSuperview()
+        }
+    }
+    
     private func bindUI() {
         let maxLength = 4
         
@@ -57,27 +76,22 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
             }.disposed(by: disposeBag)
     }
     
+    private func checkAuthCode() {
+        guard let phoneNumber = component.inputPhoneNumberTextfield.text else { return }
+        guard let authCode = component.authNumberTextfield.text else { return }
+        
+        self.viewModel.requestAuthNumberConfirmation(phoneNumber: phoneNumber, authCode: authCode) { [weak self] isVaild in
+            if isVaild {
+                self?.viewModel.pushRegistrationPasswordVC(phoneNumber: phoneNumber)
+            } else {
+                self?.component.warningLabel.show(warning: "*인증번호가 일치하지 않습니다")
+            }
+            LoadingIndicator.hideLoading()
+        }
+    }
+    
     private func testPassword(password: String) -> Bool {
         return viewModel.isValidPassword(password: password)
-    }
-    
-    override func configureVC() {
-        restoreFrameYValue = self.view.frame.origin.y
-        
-        bindUI()
-        component.delegate = self
-        
-        navigationItem.title = "회원가입"
-    }
-    
-    override func addView() {
-        view.addSubviews(component)
-    }
-    
-    override func setLayout() {
-        component.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
     }
 }
 
@@ -120,44 +134,24 @@ extension RegistrationPhoneNumberViewController {
         view.endEditing(true)
     }
     
-    func resendButtonDidTap() {
-        let phoneNumberObservable = component.inputPhoneNumberTextfield.rx.text.orEmpty
+    func resendButtonDidTap(phoneNumber: String) {
+        LoadingIndicator.showLoading(text: "")
+        print(phoneNumber)
         
-        component.resendButton.rx.tap
-            .withLatestFrom(phoneNumberObservable)
-            .bind(with: self) { owner, inputPhoneNumber in
-                LoadingIndicator.showLoading(text: "")
-                print(inputPhoneNumber)
-                
-                guard owner.isValidAuth else {
-                    owner.component.warningLabel.show(warning: "*3분 후에 다시 시도해주세요")
-                    LoadingIndicator.hideLoading()
-                    return
-                }
-                
-                owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isValid in
-                    if isValid {
-                        owner.setupPossibleBackgroundTimer()
-                        owner.component.warningLabel.hide()
-                    } else {
-                        owner.component.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
-                    }
-                    
-                    LoadingIndicator.hideLoading()
-                }
-            }.disposed(by: disposeBag)
-    }
-    
-    private func checkAuthCode() {
-        guard let phoneNumber = component.inputPhoneNumberTextfield.text else { return }
-        guard let authCode = component.authNumberTextfield.text else { return }
+        guard isValidAuth else {
+            component.warningLabel.show(warning: "*3분 후에 다시 시도해주세요")
+            LoadingIndicator.hideLoading()
+            return
+        }
         
-        self.viewModel.requestAuthNumberConfirmation(phoneNumber: phoneNumber, authCode: authCode) { [weak self] isVaild in
-            if isVaild {
-                self?.viewModel.pushRegistrationPasswordVC(phoneNumber: phoneNumber)
+        viewModel.requestAuthNumber(phoneNumber: phoneNumber) { [weak self] isValid in
+            if isValid {
+                self?.setupPossibleBackgroundTimer()
+                self?.component.warningLabel.hide()
             } else {
-                self?.component.warningLabel.show(warning: "*인증번호가 일치하지 않습니다")
+                self?.component.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
             }
+            
             LoadingIndicator.hideLoading()
         }
     }

@@ -6,7 +6,7 @@ import RxCocoa
 protocol PhoneNumberComponentProtocol: AnyObject {
     func nextButtonDidTap()
     func requestAuthButtonDidTap(phoneNumber: String)
-    func resendButtonDidTap()
+    func resendButtonDidTap(phoneNumber: String)
 }
 
 class InputphoneNumberComponent: UIView {
@@ -180,6 +180,16 @@ class InputphoneNumberComponent: UIView {
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
                 owner.delegate?.requestAuthButtonDidTap(phoneNumber: inputPhoneNumber)
+            }.disposed(by: disposeBag)
+    }
+    
+    private func resendButtonDidTap() {
+        let phoneNumberObservable = inputPhoneNumberTextfield.rx.text.orEmpty
+        
+        resendButton.rx.tap
+            .withLatestFrom(phoneNumberObservable)
+            .bind(with: self) { owner, inputPhoneNumber in
+                owner.delegate?.resendButtonDidTap(phoneNumber: inputPhoneNumber)
             }.disposed(by: disposeBag)
     }
 }
