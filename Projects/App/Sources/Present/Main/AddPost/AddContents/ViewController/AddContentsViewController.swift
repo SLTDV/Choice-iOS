@@ -79,16 +79,18 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
                 if(inputDescriptionTextView.text == "내용입력 (0~100)"){
                     inputDescriptionTextView.text = nil
                     inputDescriptionTextView.textColor = .black
+                }
                     inputDescriptionTextView.layer.borderColor = UIColor.black.cgColor
-                }}).disposed(by: disposeBag)
+                }).disposed(by: disposeBag)
             
         inputDescriptionTextView.rx.didEndEditing
                 .subscribe(onNext: { [self] in
                 if(inputDescriptionTextView.text == nil || inputDescriptionTextView.text == ""){
                     inputDescriptionTextView.text = "내용입력 (0~100)"
                     inputDescriptionTextView.textColor = .placeholderText
+                }
                     inputDescriptionTextView.layer.borderColor = SharedAsset.grayMedium.color.cgColor
-                }}).disposed(by: disposeBag)
+                }).disposed(by: disposeBag)
     }
     
     private func nextButtonDidTap() {
