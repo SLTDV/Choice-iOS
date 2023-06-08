@@ -12,7 +12,6 @@ class ChangePasswordViewModel: BaseViewModel {
         .responseData { response in
             switch response.result {
             case .success:
-                print("asf")
                 completion(.success(()))
             case .failure(let error):
                 print("Error - change password = \(error.localizedDescription)")

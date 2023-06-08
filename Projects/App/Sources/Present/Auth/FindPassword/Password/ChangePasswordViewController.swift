@@ -21,8 +21,14 @@ class ChangePasswordViewController: BaseVC<ChangePasswordViewModel>, InputPasswo
         
         if password.elementsEqual(checkPassword) {
             if self.viewModel.isValidPassword(password: password){
-                viewModel.requestToChangePassword(phoneNumber: phoneNumber!, password: password)
-                self.viewModel.popToRoot()
+                viewModel.requestToChangePassword(phoneNumber: phoneNumber!, password: password) { [ weak self] result in
+                    switch result {
+                    case .success:
+                        self?.viewModel.popToRoot()
+                    case .failure:
+                        self?.component.warningLabel.show(warning: "*비밀번호 변경에 실패했습니다.")
+                    }
+                }
             } else {
                 self.component.warningLabel.show(warning: "*비밀번호 형식이 올바르지 않아요.")
             }
