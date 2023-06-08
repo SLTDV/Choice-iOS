@@ -11,12 +11,6 @@ enum PickerKey {
 final class AddImageViewController: BaseVC<AddImageViewModel> {
     private let disposeBag = DisposeBag()
     
-    private let scrollView = UIScrollView().then {
-        $0.showsVerticalScrollIndicator = false
-    }
-
-    private let contentView = UIView()
-    
     private let addImageTitleLabel = UILabel().then {
         $0.text = "대표 사진을 설정해주세요. (필수)"
         $0.font = .systemFont(ofSize: 12, weight: .semibold)
@@ -58,21 +52,6 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
         $0.allowsEditing = true
     }
     
-    private let inputTitleTextField = BoxTextField(type: .countTextField).then {
-        $0.font = .systemFont(ofSize: 18, weight: .semibold)
-        $0.placeholder = "제목입력 (2~16)"
-        $0.borderStyle = .none
-    }
-    
-    private let divideLine = UIView().then {
-        $0.backgroundColor = .black
-    }
-    
-    private let inputDescriptionTextView = BoxTextField(type: .countTextField).then {
-        $0.placeholder = "내용입력 (2~100)"
-        $0.font = .systemFont(ofSize: 18, weight: .semibold)
-    }
-    
     private let topicTitleLabel = UILabel().then {
         $0.text = "주제를 입력해주세요. (필수)"
         $0.font = .systemFont(ofSize: 12, weight: .semibold)
@@ -106,28 +85,6 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
         $0.layer.cornerRadius = 8
         $0.isEnabled = false
         $0.addTarget(self, action: #selector(addPostViewButtonDidTap(_:)), for: .touchUpInside)
-    }
-    
-    @objc private func tapMethod(_ sender: UITapGestureRecognizer) {
-        view.endEditing(true)
-    }
-    
-    private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
-    
-    private func bindUI() {
-        let titleTextObservable = inputTitleTextField.rx.text.orEmpty
-        let descriptionTextObservable = inputDescriptionTextView.rx.text.orEmpty
-            .filter { $0 != "내용입력 (2~100)" }
-        
-        Observable.combineLatest(
-            titleTextObservable,
-            descriptionTextObservable,
-            resultSelector: { s1, s2 in (2...16).contains(s1.count) && (2...100).contains(s2.count) }
-        )
-        .bind(with: self, onNext: { owner, arg in
-            owner.addPostViewButton.isEnabled = arg
-            owner.addPostViewButton.backgroundColor = arg ? .black : SharedAsset.grayMedium.color
-        }).disposed(by: disposeBag)
     }
     
     @objc private func addFirstImageButtonDidTap(_ sender: UIButton) {
@@ -164,9 +121,7 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
     @objc private func addPostViewButtonDidTap(_ sender: UIButton) {
         let alert = UIAlertController(title: "실패", message: "대표사진을 모두 등록해주세요.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
-        
-        guard let title = inputTitleTextField.text else { return }
-        guard let content = inputDescriptionTextView.text else { return }
+
         guard let firstImage = addFirstImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let secondImage = addSecondImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let firstVotingOption = firstSetTopicButton.titleLabel?.text?.trimmingCharacters(in: .whitespaces) else { return }
@@ -179,8 +134,7 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
         if (1...8).contains(firstVotingOption.count) && (1...8).contains(secondVotingOtion.count) {
             LoadingIndicator.showLoading(text: "게시 중")
             
-            viewModel.createPost(title: title, content: content,
-                                 firstImage: firstImage, secondImage: secondImage,
+            viewModel.createPost(firstImage: firstImage, secondImage: secondImage,
                                  firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
         } else {
             alert.message = "주제는 1~8 글자만 입력 가능합니다."
@@ -193,88 +147,57 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
         
         firstImagePicker.delegate = self
         secondImagePicker.delegate = self
-        scrollView.addGestureRecognizer(tapGestureRecognizer)
-        
-        bindUI()
     }
     
     override func addView() {
-        view.addSubview(scrollView)
-        scrollView.addSubview(contentView)
-        contentView.addSubviews(addImageTitleLabel, addFirstImageButton,
-                                addSecondImageButton, inputTitleTextField, divideLine,
-                                inputDescriptionTextView, topicTitleLabel, firstSetTopicButton,
-                                secondSetTopicButton, addPostViewButton)
+        view.addSubviews(addImageTitleLabel, addFirstImageButton,addSecondImageButton,
+                         topicTitleLabel, firstSetTopicButton,
+                         secondSetTopicButton, addPostViewButton)
     }
     
     override func setLayout() {
-        scrollView.snp.makeConstraints {
-            $0.top.leading.trailing.bottom.equalTo(view.safeAreaLayoutGuide)
-        }
-        
-        contentView.snp.makeConstraints {
-            $0.centerX.width.top.bottom.equalToSuperview()
-        }
-
         addImageTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaInsets).inset(30)
-            $0.leading.equalToSuperview().inset(33)
+            $0.top.equalTo(view.safeAreaLayoutGuide).inset(50)
+            $0.leading.equalToSuperview().inset(26)
         }
         
         addFirstImageButton.snp.makeConstraints {
-            $0.top.equalTo(addImageTitleLabel.snp.bottom).offset(16)
-            $0.size.equalTo(130)
-            $0.leading.equalToSuperview().inset(32)
+            $0.top.equalTo(addImageTitleLabel.snp.bottom).offset(15)
+            $0.leading.equalTo(addImageTitleLabel.snp.leading)
+            $0.width.equalToSuperview().dividedBy(2.77)
+            $0.height.equalToSuperview().dividedBy(6.2)
         }
         
         addSecondImageButton.snp.makeConstraints {
-            $0.top.equalTo(addImageTitleLabel.snp.bottom).offset(16)
-            $0.size.equalTo(130)
-            $0.trailing.equalToSuperview().inset(32)
-        }
-        
-        inputTitleTextField.snp.makeConstraints {
-            $0.top.equalTo(addFirstImageButton.snp.bottom).offset(36)
-            $0.leading.trailing.equalToSuperview().inset(32)
-            $0.height.equalTo(58)
-        }
-        
-        divideLine.snp.makeConstraints {
-            $0.top.equalTo(inputTitleTextField.snp.bottom).offset(10)
-            $0.height.equalTo(1)
-            $0.leading.trailing.equalToSuperview().inset(32)
-        }
-        
-        inputDescriptionTextView.snp.makeConstraints {
-            $0.top.equalTo(divideLine.snp.bottom).offset(20)
-            $0.height.equalTo(113)
-            $0.leading.trailing.equalToSuperview().inset(32)
+            $0.top.equalTo(addImageTitleLabel.snp.bottom).offset(15)
+            $0.trailing.equalToSuperview().inset(26)
+            $0.width.equalToSuperview().dividedBy(2.77)
+            $0.height.equalToSuperview().dividedBy(6.2)
         }
         
         topicTitleLabel.snp.makeConstraints {
-            $0.top.equalTo(inputDescriptionTextView.snp.bottom).offset(35)
-            $0.leading.equalToSuperview().offset(32)
+            $0.top.equalTo(addFirstImageButton.snp.bottom).offset(35)
+            $0.leading.equalTo(addFirstImageButton.snp.leading)
         }
         
         firstSetTopicButton.snp.makeConstraints {
             $0.top.equalTo(topicTitleLabel.snp.bottom).offset(15)
-            $0.leading.equalToSuperview().inset(32)
-            $0.trailing.equalToSuperview().inset(211)
-            $0.height.equalTo(89)
+            $0.leading.equalTo(topicTitleLabel.snp.leading)
+            $0.width.equalToSuperview().dividedBy(2.77)
+            $0.height.equalToSuperview().dividedBy(10.4)
         }
         
         secondSetTopicButton.snp.makeConstraints {
             $0.top.equalTo(topicTitleLabel.snp.bottom).offset(15)
-            $0.leading.equalToSuperview().inset(211)
-            $0.trailing.equalToSuperview().inset(32)
-            $0.height.equalTo(89)
+            $0.trailing.equalTo(addSecondImageButton.snp.trailing)
+            $0.width.equalToSuperview().dividedBy(2.77)
+            $0.height.equalToSuperview().dividedBy(10.4)
         }
         
         addPostViewButton.snp.makeConstraints {
-            $0.top.equalTo(firstSetTopicButton.snp.bottom).offset(70)
-            $0.leading.trailing.equalToSuperview().inset(32)
-            $0.height.equalTo(49)
-            $0.bottom.equalToSuperview().inset(40)
+            $0.bottom.equalTo(view.safeAreaInsets.bottom).inset(40)
+            $0.leading.trailing.equalToSuperview().inset(26)
+            $0.height.equalTo(58)
         }
     }
 }

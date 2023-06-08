@@ -116,15 +116,15 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
     
     override func setLayout() {
         inputTitleTextField.snp.makeConstraints {
-            $0.top.equalTo(view.safeAreaLayoutGuide).offset(42)
+            $0.top.equalTo(view.safeAreaLayoutGuide).offset(50)
             $0.height.equalTo(58)
-            $0.leading.trailing.equalToSuperview().inset(32)
+            $0.leading.trailing.equalToSuperview().inset(26)
         }
         
         inputDescriptionTextView.snp.makeConstraints {
             $0.top.equalTo(inputTitleTextField.snp.bottom).offset(25)
             $0.height.equalTo(150)
-            $0.leading.trailing.equalToSuperview().inset(32)
+            $0.leading.trailing.equalToSuperview().inset(26)
         }
         
         textCountLabel.snp.makeConstraints {
@@ -133,9 +133,9 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
         }
         
         nextButton.snp.makeConstraints {
-            $0.leading.trailing.equalToSuperview().inset(32)
-            $0.height.equalTo(49)
-            $0.bottom.equalToSuperview().inset(40)
+            $0.bottom.equalTo(view.safeAreaInsets.bottom).inset(40)
+            $0.leading.trailing.equalToSuperview().inset(26)
+            $0.height.equalTo(58)
         }
     }
 }

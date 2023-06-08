@@ -14,7 +14,7 @@ final class AddImageViewModel: BaseViewModel {
         self.content = content ?? ""
     }
     
-    func createPost(title: String, content: String, firstImage: UIImage, secondImage: UIImage,
+    func createPost(firstImage: UIImage, secondImage: UIImage,
                     firstVotingOption: String, secondVotingOtion: String) {
         var url = APIConstants.postImageUploadURL
         var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
@@ -37,8 +37,8 @@ final class AddImageViewModel: BaseViewModel {
                 headers = ["Content-Type": "application/json"]
                 url = APIConstants.createPostURL
                 let params = [
-                    "title" : title,
-                    "content" : content,
+                    "title" : self?.title,
+                    "content" : self?.content,
                     "firstVotingOption" : firstVotingOption,
                     "secondVotingOption" : secondVotingOtion,
                     "firstImageUrl" : firstImageUrl,
