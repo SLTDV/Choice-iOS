@@ -4,7 +4,7 @@ import Shared
 import JwtStore
 import Swinject
 
-final class AddPostViewModel: BaseViewModel {
+final class AddContentsViewModel: BaseViewModel {
     func createPost(title: String, content: String, firstImage: UIImage, secondImage: UIImage,
                     firstVotingOption: String, secondVotingOtion: String) {
         var url = APIConstants.postImageUploadURL
@@ -56,5 +56,9 @@ final class AddPostViewModel: BaseViewModel {
                 print("upload error \(String(describing: error.localizedDescription))")
             }
         }
+    }
+    
+    func pushAddImageVC(title: String, content: String?) {
+        self.coordinator.navigate(to: .addImageIsRequired(title: title, content: content))
     }
 }

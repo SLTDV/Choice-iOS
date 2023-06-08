@@ -3,7 +3,7 @@ import RxSwift
 import RxCocoa
 import Shared
 
-final class AddPostViewController: BaseVC<AddPostViewModel> {
+final class AddContentsViewController: BaseVC<AddContentsViewModel> {
     private let disposeBag = DisposeBag()
 
     private let inputTitleTextField = BoxTextField(type: .countTextField).then {
@@ -31,8 +31,8 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         $0.textColor = .placeholderText
     }
     
-    private lazy var addPostViewButton = UIButton().then {
-        $0.setTitle("완료", for: .normal)
+    private lazy var nextButton = UIButton().then {
+        $0.setTitle("다음", for: .normal)
         $0.setTitleColor( .white, for: .normal)
         $0.backgroundColor = SharedAsset.grayMedium.color
         $0.layer.cornerRadius = 8
@@ -50,8 +50,8 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
             resultSelector: { s1, s2 in (2...16).contains(s1.count) && (2...100).contains(s2.count) }
         )
         .bind(with: self, onNext: { owner, arg in
-            owner.addPostViewButton.isEnabled = arg
-            owner.addPostViewButton.backgroundColor = arg ? .black : SharedAsset.grayMedium.color
+            owner.nextButton.isEnabled = arg
+            owner.nextButton.backgroundColor = arg ? .black : SharedAsset.grayMedium.color
         }).disposed(by: disposeBag)
     }
     
@@ -93,7 +93,17 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
                     inputDescriptionTextView.text = "내용입력 (0~100)"
                     inputDescriptionTextView.textColor = .placeholderText
                 }}).disposed(by: disposeBag)
-        }
+    }
+    
+    private func nextButtonDidTap() {
+        guard let title = inputTitleTextField.text else { return }
+        guard let content = inputDescriptionTextView.text else { return }
+        
+        nextButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.viewModel.pushAddImageVC(title: title, content: content)
+            }.disposed(by: disposeBag)
+    }
     
     override func configureVC() {
         navigationItem.title = "게시물 작성"
@@ -106,7 +116,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     
     override func addView() {
         view.addSubviews(inputTitleTextField, divideLine,
-                         inputDescriptionTextView, textCountLabel, addPostViewButton)
+                         inputDescriptionTextView, textCountLabel, nextButton)
     }
     
     override func setLayout() {
@@ -127,7 +137,7 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
             $0.bottom.equalTo(inputDescriptionTextView.snp.bottom).inset(10)
         }
         
-        addPostViewButton.snp.makeConstraints {
+        nextButton.snp.makeConstraints {
             $0.leading.trailing.equalToSuperview().inset(32)
             $0.height.equalTo(49)
             $0.bottom.equalToSuperview().inset(40)

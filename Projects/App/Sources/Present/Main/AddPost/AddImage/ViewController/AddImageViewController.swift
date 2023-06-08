@@ -8,7 +8,7 @@ enum PickerKey {
     static let second = "second"
 }
 
-final class AddImageViewController: BaseVC<AddPostViewModel> {
+final class AddImageViewController: BaseVC<AddImageViewModel> {
     private let disposeBag = DisposeBag()
     
     private let scrollView = UIScrollView().then {

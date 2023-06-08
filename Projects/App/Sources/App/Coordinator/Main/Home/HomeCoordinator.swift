@@ -24,7 +24,7 @@ class HomeCoordinator: BaseCoordinator {
 
 extension HomeCoordinator {
     private func addPostIsRequired() {
-        let vc = AddPostCoordiantor(navigationController: navigationController)
+        let vc = AddContentsCoordiantor(navigationController: navigationController)
         vc.parentCoordinator = self
         childCoordinators.append(vc)
         vc.start()
