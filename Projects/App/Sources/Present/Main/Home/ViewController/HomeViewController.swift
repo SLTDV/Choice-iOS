@@ -72,6 +72,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
                 cell.setType(type: .home)
                 cell.configure(with: data)
                 cell.postVoteButtonDelegate = self
+                cell.disposeBag = self.disposeBag
                 cell.separatorInset = UIEdgeInsets.zero
             }.disposed(by: disposeBag)
         
