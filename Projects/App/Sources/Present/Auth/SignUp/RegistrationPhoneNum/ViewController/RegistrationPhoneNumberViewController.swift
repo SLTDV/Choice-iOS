@@ -10,7 +10,7 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     
     private lazy var restoreFrameYValue = 0.0
     
-    private let emailLabel = UILabel().then {
+    private let phoneNumberLabel = UILabel().then {
         $0.text = "전화번호"
         $0.font = .systemFont(ofSize: 16, weight: .bold)
     }
@@ -62,6 +62,8 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     }
     
     private let warningLabel = WarningLabel()
+    
+    private let component = inputphoneNumberComponent(frame: CGRect(x: 0, y: 0, width: 300, height: 300))
     
     private func nextButtonDidTap() {
         nextButton.rx.tap
@@ -210,21 +212,24 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     }
     
     override func addView() {
-        view.addSubviews(emailLabel,inputPhoneNumberTextfield, requestAuthButton,
+        view.addSubviews(phoneNumberLabel,inputPhoneNumberTextfield, requestAuthButton,
                          authNumberTextfield, warningLabel, nextButton,
-                         resendLabel, resendButton)
+                         resendLabel, resendButton, component)
         
         authNumberTextfield.addSubview(countLabel)
     }
     
     override func setLayout() {
-        emailLabel.snp.makeConstraints {
+//        component.snp.makeConstraints {
+//            $0.edges.equalToSuperview()
+//        }
+        phoneNumberLabel.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(70)
             $0.leading.equalToSuperview().inset(26)
         }
         
         inputPhoneNumberTextfield.snp.makeConstraints {
-            $0.top.equalTo(emailLabel.snp.bottom).offset(25)
+            $0.top.equalTo(phoneNumberLabel.snp.bottom).offset(25)
             $0.leading.equalToSuperview().inset(26)
             $0.trailing.equalTo(requestAuthButton.snp.leading).offset(-10)
             $0.height.equalTo(58)
