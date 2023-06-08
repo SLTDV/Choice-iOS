@@ -11,7 +11,7 @@ final class AddImageCoordiantor: BaseCoordinator {
     override func navigate(to step: ChoiceStep) {
         switch step {
         case .popAddpostIsRequired:
-            popAddImageIsRequired()
+            popVCIsRequired()
         default:
             return
         }
@@ -19,8 +19,8 @@ final class AddImageCoordiantor: BaseCoordinator {
 }
 
 extension AddImageCoordiantor {
-    private func popAddImageIsRequired() {
-        navigationController.popViewController(animated: true)
+    private func popVCIsRequired() {
+        navigationController.popToRootViewController(animated: true)
     }
 }
 
