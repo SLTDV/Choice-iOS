@@ -26,7 +26,7 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
     }
     
     private let textCountLabel = UILabel().then {
-        $0.text = "(0/100)"
+        $0.text = "0 / 100"
         $0.font = .systemFont(ofSize: 12, weight: .semibold)
         $0.textColor = .placeholderText
     }
@@ -67,7 +67,7 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
             .filter { $0 != "내용입력 (0~100)" }
             .map { text in
                 let count = min(text.count, 100)
-                return "(\(count)/100)"
+                return "\(count) / 100"
             }
             .bind(to: textCountLabel.rx.text)
             .disposed(by: disposeBag)
@@ -96,6 +96,7 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
     private func nextButtonDidTap() {
         nextButton.rx.tap
             .bind(with: self) { owner, _ in
+                LoadingIndicator.showLoading(text: "")
                 owner.pushAddImageVC()
             }.disposed(by: disposeBag)
     }
@@ -109,6 +110,7 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
         }
         
         self.viewModel.pushAddImageVC(title: title, content: content)
+        LoadingIndicator.hideLoading()
     }
     
     override func configureVC() {
