@@ -2,9 +2,8 @@ import Foundation
 import Alamofire
 import JwtStore
 
-enum ErrorType: Error {
-    case recentPassword
-    case incorrectForm
+ enum ErrorType: Error {
+    case recentPassword, incorrectForm, serverError
 }
 
 class ChangePasswordViewModel: BaseViewModel {
@@ -15,18 +14,15 @@ class ChangePasswordViewModel: BaseViewModel {
                    encoding: JSONEncoding.default)
         .validate()
         .responseData { response in
-            switch response.result {
-            case .success:
-                completion(.success(()))
-            case .failure(let error):
-                print("Error - change password = \(error.localizedDescription)")
-                completion(.failure(error))
-            }
-            
             switch response.response?.statusCode {
             case 200:
                 completion(.success(()))
-                case 
+            case 400:
+                completion(.failure(.incorrectForm))
+            case 401:
+                completion(.failure(.recentPassword))
+            default:
+                completion(.failure(.serverError))
             }
         }
     }
