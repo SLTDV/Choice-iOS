@@ -73,13 +73,13 @@ final class SignInViewController: BaseVC<SignInViewModel> {
             }).disposed(by: disposeBag)
         
         pushSignUpButton.rx.tap
-            .bind(onNext: { [weak self] _ in
-                self?.viewModel.pushSignUpVC()
-            }).disposed(by: disposeBag)
+            .bind(with: self) { owner, _ in
+                owner.viewModel.pushSignUpVC()
+            }.disposed(by: disposeBag)
         
         findPasswordButton.rx.tap
             .bind(with: self) { owner, _ in
-                
+                owner.viewModel.pushFindPassword()
             }.disposed(by: disposeBag)
     }
     
