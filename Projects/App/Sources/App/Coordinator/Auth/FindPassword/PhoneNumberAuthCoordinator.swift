@@ -21,8 +21,6 @@ class PhoneNumberAuthCoordiantor: BaseCoordinator {
 extension PhoneNumberAuthCoordiantor {
     private func findPasword_changepassword(phoneNumber: String) {
         let vc = ChangePasswordCoordinator(navigationController: navigationController)
-        vc.parentCoordinator = self
-        childCoordinators.append(vc)
         vc.startChangePasswordCoordinator(phoneNumber: phoneNumber)
     }
 }

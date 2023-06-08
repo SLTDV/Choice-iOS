@@ -4,8 +4,6 @@ import JwtStore
 import Alamofire
 
 class PhoneNumberAuthViewModel: BaseViewModel {
-    let container = AppDelegate.container.resolve(JwtStore.self)!
-    
     func requestAuthNumber(phoneNumber: String, completion: @escaping (Bool) -> Void) {
         let url = APIConstants.findPasswordAuthCodeURL
         

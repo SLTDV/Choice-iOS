@@ -4,14 +4,23 @@ import JwtStore
 
 class ChangePasswordViewModel: BaseViewModel {
     func requestToChangePassword(phoneNumber: String, password: String, completion: @escaping (Result<Void, Error>) -> Void = { _ in }) {
-        let url = APIConstants.findPasswordAuthCodeURL
+        let url = APIConstants.changePasswordURL
+        
+        print(phoneNumber, password)
+        let param = [
+            "phoneNumber" : phoneNumber,
+            "password" : password
+        ]
+        
         AF.request(url,
                    method: .patch,
+                   parameters: param,
                    encoding: JSONEncoding.default)
         .validate()
         .responseData { response in
             switch response.result {
             case .success:
+                print("Success")
                 completion(.success(()))
             case .failure(let error):
                 print("Error - change password = \(error.localizedDescription)")
@@ -27,6 +36,6 @@ class ChangePasswordViewModel: BaseViewModel {
     }
     
     func popToRoot() {
-        
+        coordinator.navigate(to: .popToRoot)
     }
 }
