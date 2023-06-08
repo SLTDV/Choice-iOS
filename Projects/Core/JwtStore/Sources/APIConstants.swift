@@ -7,6 +7,7 @@ public struct APIConstants {
     public static let signInURL = baseURL + "auth/signin"
     public static let reissueURL = baseURL + "auth"
     public static let logoutURL = baseURL + "auth"
+    public static let findPasswordAuthCodeURL = baseURL + "auth/phone/password"
     
     //SignUp
     public static let signUpURL = baseURL + "auth/signup"

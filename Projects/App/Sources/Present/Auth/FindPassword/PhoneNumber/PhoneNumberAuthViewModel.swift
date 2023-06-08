@@ -7,7 +7,7 @@ class PhoneNumberAuthViewModel: BaseViewModel {
     let container = AppDelegate.container.resolve(JwtStore.self)!
     
     func requestAuthNumber(phoneNumber: String, completion: @escaping (Bool) -> Void) {
-        let url = APIConstants.certificationRequestURL
+        let url = APIConstants.findPasswordAuthCodeURL
         
         let phoneNumberItem = URLQueryItem(name: "phoneNumber", value: phoneNumber)
         
@@ -16,8 +16,7 @@ class PhoneNumberAuthViewModel: BaseViewModel {
         
         AF.request(components!,
                    method: .post,
-                   encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor(jwtStore: container))
+                   encoding: URLEncoding.queryString)
         .validate()
         .responseData { response in
             switch response.response?.statusCode {
