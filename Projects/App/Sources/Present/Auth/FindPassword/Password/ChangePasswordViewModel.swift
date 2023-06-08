@@ -2,27 +2,20 @@ import Foundation
 import Alamofire
 import JwtStore
 
- enum ErrorType: Error {
-    case recentPassword, incorrectForm, serverError
-}
-
 class ChangePasswordViewModel: BaseViewModel {
-    func requestToChangePassword(phoneNumber: String, password: String, completion: @escaping (Result<Void, ErrorType>) -> Void = { _ in }) {
+    func requestToChangePassword(phoneNumber: String, password: String, completion: @escaping (Result<Void, Error>) -> Void = { _ in }) {
         let url = APIConstants.findPasswordAuthCodeURL
         AF.request(url,
                    method: .patch,
                    encoding: JSONEncoding.default)
         .validate()
         .responseData { response in
-            switch response.response?.statusCode {
-            case 200:
+            switch response.result {
+            case .success:
                 completion(.success(()))
-            case 400:
-                completion(.failure(.incorrectForm))
-            case 401:
-                completion(.failure(.recentPassword))
-            default:
-                completion(.failure(.serverError))
+            case .failure(let error):
+                print("Error - change password = \(error.localizedDescription)")
+                completion(.failure(error))
             }
         }
     }
