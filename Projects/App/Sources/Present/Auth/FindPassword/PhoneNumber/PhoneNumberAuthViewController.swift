@@ -44,7 +44,6 @@ extension PhoneNumberAuthViewController {
     
     func requestAuthButtonDidTap(phoneNumber: String) {
         LoadingIndicator.showLoading(text: "")
-        print("requestAuthButton")
         
         guard phoneNumber.hasPrefix("010") else {
             component.warningLabel.show(warning: "*전화번호 형식이 올바르지 않아요.")

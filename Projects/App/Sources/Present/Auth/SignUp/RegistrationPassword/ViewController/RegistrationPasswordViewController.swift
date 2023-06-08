@@ -41,7 +41,7 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
 }
 
 extension RegistrationPasswordViewController {
-    func nextButtonDidTap() {
+    func nextButtonDidTap(password: String) {
         LoadingIndicator.showLoading(text: "")
         checkPassword()
     }

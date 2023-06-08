@@ -4,7 +4,7 @@ import RxSwift
 import RxCocoa
 
 protocol InputPasswordComponentProtocol: AnyObject {
-    func nextButtonDidTap()
+    func nextButtonDidTap(password: String)
 }
 
 class InputPasswordComponent: UIView {
@@ -27,7 +27,7 @@ class InputPasswordComponent: UIView {
         $0.isSecureTextEntry = true
     }
     
-    lazy var nextButton = UIButton().then {
+    let nextButton = UIButton().then {
         $0.setTitle("다음", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.isEnabled = false
@@ -103,7 +103,7 @@ class InputPasswordComponent: UIView {
     private func bindRx() {
         nextButton.rx.tap
             .bind(with: self) { owner, _ in
-                owner.delegate?.nextButtonDidTap()
+                owner.delegate?.nextButtonDidTap(password: owner.inputPasswordTextField.text!)
             }.disposed(by: disposeBag)
     }
 }

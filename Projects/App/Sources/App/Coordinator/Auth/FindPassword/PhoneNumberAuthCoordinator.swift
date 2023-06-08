@@ -23,6 +23,6 @@ extension PhoneNumberAuthCoordiantor {
         let vc = ChangePasswordCoordinator(navigationController: navigationController)
         vc.parentCoordinator = self
         childCoordinators.append(vc)
-        vc.start()
+        vc.startChangePasswordCoordinator(phoneNumber: phoneNumber)
     }
 }
