@@ -10,7 +10,7 @@ final class AddImageCoordiantor: BaseCoordinator {
     
     override func navigate(to step: ChoiceStep) {
         switch step {
-        case .popAddpostIsRequired:
+        case .popVCIsRequired:
             popVCIsRequired()
         default:
             return
