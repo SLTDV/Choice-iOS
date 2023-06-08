@@ -8,10 +8,10 @@ final class AddImageViewModel: BaseViewModel {
     var title = ""
     var content = ""
     
-    init(coordinator: AddImageCoordiantor, title: String, content: String?) {
+    init(coordinator: AddImageCoordiantor, title: String, content: String) {
         super.init(coordinator: coordinator)
         self.title = title
-        self.content = content ?? ""
+        self.content = content
     }
     
     func createPost(firstImage: UIImage, secondImage: UIImage,

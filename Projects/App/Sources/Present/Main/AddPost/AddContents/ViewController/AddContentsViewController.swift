@@ -3,11 +3,16 @@ import RxSwift
 import RxCocoa
 import Shared
 
+enum ContentsPlaceHolder {
+    static let titleText = "제목입력 (2~16)"
+    static let contentText = "내용입력 (0~100)"
+}
+
 final class AddContentsViewController: BaseVC<AddContentsViewModel> {
     private let disposeBag = DisposeBag()
 
     private let inputTitleTextField = BoxTextField(type: .countTextField).then {
-        $0.placeholder = "제목입력 (2~16)"
+        $0.placeholder = ContentsPlaceHolder.titleText
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
     }
     
@@ -15,8 +20,8 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
         $0.backgroundColor = .black
     }
     
-    private let inputDescriptionTextView = UITextView().then {
-        $0.text = "내용입력 (0~100)"
+    private let inputContentTextView = UITextView().then {
+        $0.text = ContentsPlaceHolder.contentText
         $0.textContainerInset = UIEdgeInsets(top: 18, left: 8, bottom: 18, right: 8)
         $0.textColor = .placeholderText
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
@@ -55,16 +60,16 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
             .bind(to: inputTitleTextField.rx.text)
             .disposed(by: disposeBag)
         
-        inputDescriptionTextView.rx.text.orEmpty
+        inputContentTextView.rx.text.orEmpty
             .map { $0.count <= 100 ? $0 : String($0.prefix(100)) }
-            .bind(to: inputDescriptionTextView.rx.text)
+            .bind(to: inputContentTextView.rx.text)
             .disposed(by: disposeBag)
     }
     
     private func bindCountTextLabel() {
-        inputDescriptionTextView.rx.text
+        inputContentTextView.rx.text
             .orEmpty
-            .filter { $0 != "내용입력 (0~100)" }
+            .filter { $0 != ContentsPlaceHolder.contentText }
             .map { text in
                 let count = min(text.count, 100)
                 return "\(count) / 100"
@@ -74,22 +79,22 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
     }
     
     private func textSetUp() {
-        inputDescriptionTextView.rx.didBeginEditing
+        inputContentTextView.rx.didBeginEditing
             .bind(with: self){ owner, _ in
-                if(owner.inputDescriptionTextView.text == "내용입력 (0~100)"){
-                    owner.inputDescriptionTextView.text = nil
-                    owner.inputDescriptionTextView.textColor = .black
+                if(owner.inputContentTextView.text == ContentsPlaceHolder.contentText){
+                    owner.inputContentTextView.text = nil
+                    owner.inputContentTextView.textColor = .black
                 }
-                owner.inputDescriptionTextView.layer.borderColor = UIColor.black.cgColor
+                owner.inputContentTextView.layer.borderColor = UIColor.black.cgColor
             }.disposed(by: disposeBag)
         
-        inputDescriptionTextView.rx.didEndEditing
+        inputContentTextView.rx.didEndEditing
             .bind(with: self){ owner, _ in
-                if(owner.inputDescriptionTextView.text == nil || owner.inputDescriptionTextView.text == ""){
-                    owner.inputDescriptionTextView.text = "내용입력 (0~100)"
-                    owner.inputDescriptionTextView.textColor = .placeholderText
+                if(owner.inputContentTextView.text == nil || owner.inputContentTextView.text == ""){
+                    owner.inputContentTextView.text = ContentsPlaceHolder.contentText
+                    owner.inputContentTextView.textColor = .placeholderText
                 }
-                owner.inputDescriptionTextView.layer.borderColor = SharedAsset.grayMedium.color.cgColor
+                owner.inputContentTextView.layer.borderColor = SharedAsset.grayMedium.color.cgColor
             }.disposed(by: disposeBag)
     }
     
@@ -102,14 +107,14 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
     }
     
     private func pushAddImageVC() {
-        guard let title = inputTitleTextField.text else { return }
-        guard var content = inputDescriptionTextView.text else { return }
+        let title = inputTitleTextField.text
+        var content = inputContentTextView.text
         
-        if content == "내용입력 (0~100)" {
+        if content == ContentsPlaceHolder.contentText {
             content = ""
         }
         
-        self.viewModel.pushAddImageVC(title: title, content: content)
+        self.viewModel.pushAddImageVC(title: title!, content: content!)
         LoadingIndicator.hideLoading()
     }
     
@@ -125,7 +130,7 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
     
     override func addView() {
         view.addSubviews(inputTitleTextField, divideLine,
-                         inputDescriptionTextView, textCountLabel, nextButton)
+                         inputContentTextView, textCountLabel, nextButton)
     }
     
     override func setLayout() {
@@ -135,15 +140,15 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
             $0.leading.trailing.equalToSuperview().inset(26)
         }
         
-        inputDescriptionTextView.snp.makeConstraints {
+        inputContentTextView.snp.makeConstraints {
             $0.top.equalTo(inputTitleTextField.snp.bottom).offset(25)
             $0.height.equalTo(150)
             $0.leading.trailing.equalToSuperview().inset(26)
         }
         
         textCountLabel.snp.makeConstraints {
-            $0.trailing.equalTo(inputDescriptionTextView.snp.trailing).inset(10)
-            $0.bottom.equalTo(inputDescriptionTextView.snp.bottom).inset(10)
+            $0.trailing.equalTo(inputContentTextView.snp.trailing).inset(10)
+            $0.bottom.equalTo(inputContentTextView.snp.bottom).inset(10)
         }
         
         nextButton.snp.makeConstraints {
