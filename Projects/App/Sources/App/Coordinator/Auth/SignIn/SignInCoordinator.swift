@@ -38,6 +38,9 @@ extension SignInCoordinator {
     }
     
     private func findPassword_phoneNumberAuth() {
-        let vc =
+        let vc = PhoneNumberAuthCoordiantor(navigationController: navigationController)
+        vc.parentCoordinator = self
+        childCoordinators.append(vc)
+        vc.start()
     }
 }
