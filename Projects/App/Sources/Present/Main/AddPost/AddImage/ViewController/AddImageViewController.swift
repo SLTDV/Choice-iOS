@@ -78,12 +78,11 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
         $0.addTarget(self, action: #selector(SetTopicButtonDidTap(_:)), for: .touchUpInside)
     }
     
-    private lazy var addPostViewButton = UIButton().then {
+    private let addPostButton = UIButton().then {
         $0.setTitle("완료", for: .normal)
         $0.setTitleColor( .white, for: .normal)
         $0.backgroundColor = .black
         $0.layer.cornerRadius = 8
-        $0.addTarget(self, action: #selector(addPostViewButtonDidTap(_:)), for: .touchUpInside)
     }
     
     @objc private func addFirstImageButtonDidTap(_ sender: UIButton) {
@@ -117,7 +116,14 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
         self.present(alert, animated: true)
     }
     
-    @objc private func addPostViewButtonDidTap(_ sender: UIButton) {
+    private func addPostButtonDidTap() {
+        addPostButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.checkContents()
+            }.disposed(by: disposeBag)
+    }
+    
+    private func checkContents() {
         let alert = UIAlertController(title: "실패", message: "대표사진을 모두 등록해주세요.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
 
@@ -146,12 +152,14 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
         
         firstImagePicker.delegate = self
         secondImagePicker.delegate = self
+        
+        addPostButtonDidTap()
     }
     
     override func addView() {
         view.addSubviews(addImageTitleLabel, addFirstImageButton,addSecondImageButton,
                          topicTitleLabel, firstSetTopicButton,
-                         secondSetTopicButton, addPostViewButton)
+                         secondSetTopicButton, addPostButton)
     }
     
     override func setLayout() {
@@ -193,7 +201,7 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
             $0.height.equalToSuperview().dividedBy(10.4)
         }
         
-        addPostViewButton.snp.makeConstraints {
+        addPostButton.snp.makeConstraints {
             $0.bottom.equalTo(view.safeAreaInsets.bottom).inset(40)
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(58)
