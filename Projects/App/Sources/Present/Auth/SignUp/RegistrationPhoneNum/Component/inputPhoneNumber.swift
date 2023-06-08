@@ -14,6 +14,8 @@ class InputphoneNumberComponent: UIView {
     
     private let disposeBag = DisposeBag()
     
+    var isValidAuth = true
+    
     let warningLabel = WarningLabel()
     
     private let phoneNumberLabel = UILabel().then {
@@ -73,6 +75,7 @@ class InputphoneNumberComponent: UIView {
         addView()
         setLayout()
         bindRx()
+        bindUI()
     }
     
     required init?(coder: NSCoder) {
@@ -86,31 +89,6 @@ class InputphoneNumberComponent: UIView {
             }.disposed(by: disposeBag)
         
         requestAuthButtonDidTap()
-    }
-    
-    private func bindUI() {
-        let maxLength = 4
-        
-        authNumberTextfield.rx.text.orEmpty
-            .map { text -> (Bool, String) in
-                let isValid = (text.count == maxLength)
-                let truncatedText = String(text.prefix(maxLength))
-                return (isValid, truncatedText)
-            }
-            .bind(with: self, onNext: { owner, result in
-                let (isValid, text) = result
-                owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
-                owner.nextButton.isEnabled = isValid
-                owner.authNumberTextfield.text = text
-            }).disposed(by: disposeBag)
-        
-        inputPhoneNumberTextfield.rx.text.orEmpty
-            .map { $0.count == 11 }
-            .bind(with: self) { owner, isValid in
-                print(isValid)
-                owner.requestAuthButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
-                owner.requestAuthButton.isEnabled = isValid
-            }.disposed(by: disposeBag)
     }
     
     func addView() {
@@ -190,6 +168,51 @@ class InputphoneNumberComponent: UIView {
             .withLatestFrom(phoneNumberObservable)
             .bind(with: self) { owner, inputPhoneNumber in
                 owner.delegate?.resendButtonDidTap(phoneNumber: inputPhoneNumber)
+            }.disposed(by: disposeBag)
+    }
+    
+    func setupPossibleBackgroundTimer() {
+        let count = 180
+        
+        isValidAuth = false
+        
+        Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+            .take(count+1)
+            .map { count - $0 }
+            .bind(with: self) { owner, remainingSeconds in
+                let minutes = remainingSeconds / 60
+                let seconds = remainingSeconds % 60
+                owner.countLabel.text = String(format: "%02d:%02d", minutes, seconds)
+                
+                if remainingSeconds == 0 {
+                    owner.countLabel.text = "00:00"
+                    owner.isValidAuth = true
+                }
+            }.disposed(by: disposeBag)
+    }
+    
+    private func bindUI() {
+        let maxLength = 4
+        
+        authNumberTextfield.rx.text.orEmpty
+            .map { text -> (Bool, String) in
+                let isValid = (text.count == maxLength)
+                let truncatedText = String(text.prefix(maxLength))
+                return (isValid, truncatedText)
+            }
+            .bind(with: self, onNext: { owner, result in
+                let (isValid, text) = result
+                owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
+                owner.nextButton.isEnabled = isValid
+                owner.authNumberTextfield.text = text
+            }).disposed(by: disposeBag)
+        
+        inputPhoneNumberTextfield.rx.text.orEmpty
+            .map { $0.count == 11 }
+            .bind(with: self) { owner, isValid in
+                print(isValid)
+                owner.requestAuthButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
+                owner.requestAuthButton.isEnabled = isValid
             }.disposed(by: disposeBag)
     }
 }

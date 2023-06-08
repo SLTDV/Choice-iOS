@@ -5,9 +5,7 @@ import Shared
 
 final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumberViewModel>, PhoneNumberComponentProtocol {
     private let disposeBag = DisposeBag()
-    
-    private var isValidAuth = true
-    
+
     private lazy var restoreFrameYValue = 0.0
     
     private let component = InputphoneNumberComponent()
@@ -15,7 +13,6 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     override func configureVC() {
         restoreFrameYValue = self.view.frame.origin.y
         
-        bindUI()
         component.delegate = self
         
         navigationItem.title = "회원가입"
@@ -29,51 +26,6 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
         component.snp.makeConstraints {
             $0.edges.equalToSuperview()
         }
-    }
-    
-    private func bindUI() {
-        let maxLength = 4
-        
-        component.authNumberTextfield.rx.text.orEmpty
-            .map { text -> (Bool, String) in
-                let isValid = (text.count == maxLength)
-                let truncatedText = String(text.prefix(maxLength))
-                return (isValid, truncatedText)
-            }
-            .bind(with: self, onNext: { owner, result in
-                let (isValid, text) = result
-                owner.component.nextButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
-                owner.component.nextButton.isEnabled = isValid
-                owner.component.authNumberTextfield.text = text
-            }).disposed(by: disposeBag)
-        
-        component.inputPhoneNumberTextfield.rx.text.orEmpty
-            .map { $0.count == 11 }
-            .bind(with: self) { owner, isValid in
-                print(isValid)
-                owner.component.requestAuthButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
-                owner.component.requestAuthButton.isEnabled = isValid
-            }.disposed(by: disposeBag)
-    }
-    
-    private func setupPossibleBackgroundTimer() {
-        let count = 180
-        
-        isValidAuth = false
-        
-        Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
-            .take(count+1)
-            .map { count - $0 }
-            .bind(with: self) { owner, remainingSeconds in
-                let minutes = remainingSeconds / 60
-                let seconds = remainingSeconds % 60
-                owner.component.countLabel.text = String(format: "%02d:%02d", minutes, seconds)
-                
-                if remainingSeconds == 0 {
-                    owner.component.countLabel.text = "00:00"
-                    owner.isValidAuth = true
-                }
-            }.disposed(by: disposeBag)
     }
     
     private func checkAuthCode() {
@@ -113,7 +65,7 @@ extension RegistrationPhoneNumberViewController {
         
         viewModel.requestAuthNumber(phoneNumber: phoneNumber) { [weak self] isValid in
             if isValid {
-                self?.setupPossibleBackgroundTimer()
+                self?.component.setupPossibleBackgroundTimer()
                 
                 self?.component.authNumberTextfield.isHidden = false
                 self?.component.resendLabel.isHidden = false
@@ -136,9 +88,8 @@ extension RegistrationPhoneNumberViewController {
     
     func resendButtonDidTap(phoneNumber: String) {
         LoadingIndicator.showLoading(text: "")
-        print(phoneNumber)
         
-        guard isValidAuth else {
+        guard component.isValidAuth else {
             component.warningLabel.show(warning: "*3분 후에 다시 시도해주세요")
             LoadingIndicator.hideLoading()
             return
@@ -146,7 +97,7 @@ extension RegistrationPhoneNumberViewController {
         
         viewModel.requestAuthNumber(phoneNumber: phoneNumber) { [weak self] isValid in
             if isValid {
-                self?.setupPossibleBackgroundTimer()
+                self?.component.setupPossibleBackgroundTimer()
                 self?.component.warningLabel.hide()
             } else {
                 self?.component.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
