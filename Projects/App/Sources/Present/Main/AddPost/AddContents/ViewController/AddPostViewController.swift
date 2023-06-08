@@ -55,12 +55,24 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
         }).disposed(by: disposeBag)
     }
     
+    private func limitText() {
+        inputTitleTextField.rx.text.orEmpty
+            .map { $0.count <= 16 ? $0 : String($0.prefix(16)) }
+            .bind(to: inputTitleTextField.rx.text)
+            .disposed(by: disposeBag)
+        
+        inputDescriptionTextView.rx.text.orEmpty
+            .map { $0.count <= 100 ? $0 : String($0.prefix(100)) }
+            .bind(to: inputDescriptionTextView.rx.text)
+            .disposed(by: disposeBag)
+    }
+    
     private func bindCountTextLabel() {
         inputDescriptionTextView.rx.text
             .orEmpty
             .filter { $0 != "내용입력 (0~100)" }
             .map { text in
-                let count = text.count
+                let count = min(text.count, 100)
                 return "(\(count)/100)"
             }
             .bind(to: textCountLabel.rx.text)
@@ -85,9 +97,8 @@ final class AddPostViewController: BaseVC<AddPostViewModel> {
     
     override func configureVC() {
         navigationItem.title = "게시물 작성"
-        let backBarButtonItem = UIBarButtonItem(title: "dasd", style: .plain, target: self, action: nil)
-        self.navigationItem.backBarButtonItem = backBarButtonItem
         
+        limitText()
         textSetUp()
         bindCountTextLabel()
         bindUI()

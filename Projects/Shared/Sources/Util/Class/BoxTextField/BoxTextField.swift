@@ -60,7 +60,7 @@ public final class BoxTextField: UITextField {
         self.rx.text
             .orEmpty
             .map { text in
-                let count = text.count
+                let count = min(text.count, 16)
                 return "(\(count)/16)"
             }
             .bind(to: textCountLabel.rx.text)
