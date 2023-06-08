@@ -3,14 +3,14 @@ import Shared
 import RxSwift
 import RxCocoa
 
-protocol PhoneNumberComponentProtocol: AnyObject {
+protocol InputPhoneNumberComponentProtocol: AnyObject {
     func nextButtonDidTap()
     func requestAuthButtonDidTap(phoneNumber: String)
     func resendButtonDidTap(phoneNumber: String)
 }
 
 class InputphoneNumberComponent: UIView {
-    weak var delegate: PhoneNumberComponentProtocol?
+    weak var delegate: InputPhoneNumberComponentProtocol?
     
     private let disposeBag = DisposeBag()
     
@@ -61,7 +61,7 @@ class InputphoneNumberComponent: UIView {
         $0.isHidden = true
     }
     
-    let nextButton = UIButton().then {
+    private let nextButton = UIButton().then {
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.setTitle("다음", for: .normal)
         $0.isEnabled = false
@@ -210,7 +210,6 @@ class InputphoneNumberComponent: UIView {
         inputPhoneNumberTextfield.rx.text.orEmpty
             .map { $0.count == 11 }
             .bind(with: self) { owner, isValid in
-                print(isValid)
                 owner.requestAuthButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
                 owner.requestAuthButton.isEnabled = isValid
             }.disposed(by: disposeBag)

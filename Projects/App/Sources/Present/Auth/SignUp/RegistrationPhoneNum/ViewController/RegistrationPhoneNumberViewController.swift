@@ -3,7 +3,7 @@ import RxSwift
 import RxCocoa
 import Shared
 
-final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumberViewModel>, PhoneNumberComponentProtocol {
+final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumberViewModel>, InputPhoneNumberComponentProtocol {
     private let disposeBag = DisposeBag()
 
     private lazy var restoreFrameYValue = 0.0
