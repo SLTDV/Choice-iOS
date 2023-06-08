@@ -75,22 +75,22 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
     
     private func textSetUp() {
         inputDescriptionTextView.rx.didBeginEditing
-                .subscribe(onNext: { [self] in
-                if(inputDescriptionTextView.text == "내용입력 (0~100)"){
-                    inputDescriptionTextView.text = nil
-                    inputDescriptionTextView.textColor = .black
+            .bind(with: self){ owner, _ in
+                if(owner.inputDescriptionTextView.text == "내용입력 (0~100)"){
+                    owner.inputDescriptionTextView.text = nil
+                    owner.inputDescriptionTextView.textColor = .black
                 }
-                    inputDescriptionTextView.layer.borderColor = UIColor.black.cgColor
-                }).disposed(by: disposeBag)
-            
+                owner.inputDescriptionTextView.layer.borderColor = UIColor.black.cgColor
+            }.disposed(by: disposeBag)
+        
         inputDescriptionTextView.rx.didEndEditing
-                .subscribe(onNext: { [self] in
-                if(inputDescriptionTextView.text == nil || inputDescriptionTextView.text == ""){
-                    inputDescriptionTextView.text = "내용입력 (0~100)"
-                    inputDescriptionTextView.textColor = .placeholderText
+            .bind(with: self){ owner, _ in
+                if(owner.inputDescriptionTextView.text == nil || owner.inputDescriptionTextView.text == ""){
+                    owner.inputDescriptionTextView.text = "내용입력 (0~100)"
+                    owner.inputDescriptionTextView.textColor = .placeholderText
                 }
-                    inputDescriptionTextView.layer.borderColor = SharedAsset.grayMedium.color.cgColor
-                }).disposed(by: disposeBag)
+                owner.inputDescriptionTextView.layer.borderColor = SharedAsset.grayMedium.color.cgColor
+            }.disposed(by: disposeBag)
     }
     
     private func nextButtonDidTap() {
