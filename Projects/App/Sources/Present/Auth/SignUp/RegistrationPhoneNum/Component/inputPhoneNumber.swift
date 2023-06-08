@@ -16,7 +16,7 @@ class InputphoneNumberComponent: UIView {
     
     let warningLabel = WarningLabel()
     
-    let emailLabel = UILabel().then {
+    private let phoneNumberLabel = UILabel().then {
         $0.text = "전화번호"
         $0.font = .systemFont(ofSize: 16, weight: .bold)
     }
@@ -66,7 +66,7 @@ class InputphoneNumberComponent: UIView {
         $0.backgroundColor = SharedAsset.grayVoteButton.color
         $0.layer.cornerRadius = 8
     }
-
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -114,20 +114,20 @@ class InputphoneNumberComponent: UIView {
     }
     
     func addView() {
-        self.addSubviews(emailLabel,inputPhoneNumberTextfield, requestAuthButton,
+        self.addSubviews(phoneNumberLabel,inputPhoneNumberTextfield, requestAuthButton,
                          authNumberTextfield, warningLabel, nextButton,
                          resendLabel, resendButton)
         authNumberTextfield.addSubview(countLabel)
     }
     
     func setLayout() {
-        emailLabel.snp.makeConstraints {
+        phoneNumberLabel.snp.makeConstraints {
             $0.top.equalTo(self.safeAreaLayoutGuide).offset(70)
             $0.leading.equalToSuperview().inset(26)
         }
         
         inputPhoneNumberTextfield.snp.makeConstraints {
-            $0.top.equalTo(emailLabel.snp.bottom).offset(25)
+            $0.top.equalTo(phoneNumberLabel.snp.bottom).offset(25)
             $0.leading.equalToSuperview().inset(26)
             $0.trailing.equalTo(requestAuthButton.snp.leading).offset(-10)
             $0.height.equalTo(58)

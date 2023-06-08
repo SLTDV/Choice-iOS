@@ -136,7 +136,6 @@ extension RegistrationPhoneNumberViewController {
                 }
                 
                 owner.viewModel.requestAuthNumber(phoneNumber: inputPhoneNumber) { isValid in
-                    print("request!!@#")
                     if isValid {
                         owner.setupPossibleBackgroundTimer()
                         owner.component.warningLabel.hide()
