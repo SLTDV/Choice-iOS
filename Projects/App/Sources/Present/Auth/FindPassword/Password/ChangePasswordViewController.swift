@@ -13,7 +13,7 @@ class ChangePasswordViewController: BaseVC<ChangePasswordViewModel>, InputPasswo
                 viewModel.requestToChangePassword(password: password) { [ weak self] result in
                     switch result {
                     case .success:
-                        self?.viewModel.popToRoot()
+                        self?.viewModel.popToRootVC()
                     case .failure:
                         self?.component.warningLabel.show(warning: "*비밀번호 변경에 실패했습니다.")
                     }

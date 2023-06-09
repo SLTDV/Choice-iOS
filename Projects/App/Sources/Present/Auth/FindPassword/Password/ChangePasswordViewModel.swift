@@ -43,7 +43,7 @@ class ChangePasswordViewModel: BaseViewModel {
         return passwordTest.evaluate(with: password)
     }
     
-    func popToRoot() {
-        coordinator.navigate(to: .popToRoot)
+    func popToRootVC() {
+        coordinator.navigate(to: .popToRootVC)
     }
 }
