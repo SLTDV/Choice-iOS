@@ -4,8 +4,17 @@ import Shared
 import JwtStore
 import Swinject
 
-final class AddPostViewModel: BaseViewModel {
-    func createPost(title: String, content: String, firstImage: UIImage, secondImage: UIImage,
+final class AddImageViewModel: BaseViewModel {
+    var title = ""
+    var content = ""
+    
+    init(coordinator: AddImageCoordiantor, title: String, content: String) {
+        super.init(coordinator: coordinator)
+        self.title = title
+        self.content = content
+    }
+    
+    func createPost(firstImage: UIImage, secondImage: UIImage,
                     firstVotingOption: String, secondVotingOtion: String) {
         var url = APIConstants.postImageUploadURL
         var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
@@ -28,8 +37,8 @@ final class AddPostViewModel: BaseViewModel {
                 headers = ["Content-Type": "application/json"]
                 url = APIConstants.createPostURL
                 let params = [
-                    "title" : title,
-                    "content" : content,
+                    "title" : self?.title,
+                    "content" : self?.content,
                     "firstVotingOption" : firstVotingOption,
                     "secondVotingOption" : secondVotingOtion,
                     "firstImageUrl" : firstImageUrl,
@@ -47,7 +56,7 @@ final class AddPostViewModel: BaseViewModel {
                     switch response.result {
                     case .success:
                         LoadingIndicator.hideLoading()
-                        self?.coordinator.navigate(to: .popAddpostIsRequired)
+                        self?.coordinator.navigate(to: .popVCIsRequired)
                     case .failure(let error):
                         print("post error = \(String(describing: error.localizedDescription))")
                     }
