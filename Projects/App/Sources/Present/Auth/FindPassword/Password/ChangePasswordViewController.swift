@@ -5,8 +5,8 @@ class ChangePasswordViewController: BaseVC<ChangePasswordViewModel>, InputPasswo
     let component = InputPasswordComponent()
     
     private func checkPassword() {
-        guard let password = component.inputPasswordTextField.text else { return }
-        guard let checkPassword = component.checkPasswordTextField.text else { return }
+        let password = component.inputPasswordTextField.text!
+        let checkPassword = component.checkPasswordTextField.text!
         
         if password.elementsEqual(checkPassword) {
             if self.viewModel.isValidPassword(password: password){

@@ -22,8 +22,8 @@ class PhoneNumberAuthViewController: BaseVC<PhoneNumberAuthViewModel>, InputPhon
     }
     
     private func checkAuthCode() {
-        guard let phoneNumber = component.inputPhoneNumberTextfield.text else { return }
-        guard let authCode = component.authNumberTextfield.text else { return }
+        let phoneNumber = component.inputPhoneNumberTextfield.text!
+        let authCode = component.authNumberTextfield.text!
         
         self.viewModel.requestAuthNumberConfirmation(phoneNumber: phoneNumber, authCode: authCode) { [weak self] isVaild in
             if isVaild {
