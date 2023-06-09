@@ -3,7 +3,15 @@ import Alamofire
 import JwtStore
 
 class ChangePasswordViewModel: BaseViewModel {
-    func requestToChangePassword(phoneNumber: String, password: String, completion: @escaping (Result<Void, Error>) -> Void = { _ in }) {
+    var phoneNumber: String
+    
+    init(coordinator: BaseCoordinator, phoneNumber: String) {
+        self.phoneNumber = phoneNumber
+        
+        super.init(coordinator: coordinator)
+    }
+    
+    func requestToChangePassword(password: String, completion: @escaping (Result<Void, Error>) -> Void = { _ in }) {
         let url = APIConstants.changePasswordURL
         
         print(phoneNumber, password)

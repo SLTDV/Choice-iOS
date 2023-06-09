@@ -4,24 +4,13 @@ import Shared
 class ChangePasswordViewController: BaseVC<ChangePasswordViewModel>, InputPasswordComponentProtocol {
     let component = InputPasswordComponent()
     
-    var phoneNumber: String?
-    
-    init(viewModel: ChangePasswordViewModel, phoneNumber: String) {
-        super.init(viewModel: viewModel)
-        self.phoneNumber = phoneNumber
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     private func checkPassword() {
         guard let password = component.inputPasswordTextField.text else { return }
         guard let checkPassword = component.checkPasswordTextField.text else { return }
         
         if password.elementsEqual(checkPassword) {
             if self.viewModel.isValidPassword(password: password){
-                viewModel.requestToChangePassword(phoneNumber: phoneNumber!, password: password) { [ weak self] result in
+                viewModel.requestToChangePassword(password: password) { [ weak self] result in
                     switch result {
                     case .success:
                         self?.viewModel.popToRoot()
