@@ -21,6 +21,4 @@ enum ChoiceStep {
     
     //Profile
     case logOutIsRequired
-    
-    case popToRootVC
 }

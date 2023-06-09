@@ -10,8 +10,8 @@ class ChangePasswordCoordinator: BaseCoordinator {
     
     override func navigate(to step: ChoiceStep) {
         switch step {
-        case .popToRootVC:
-            popToRootVC()
+        case .popVCIsRequired:
+            popVCIsRequired()
         default:
             return
         }
@@ -19,7 +19,7 @@ class ChangePasswordCoordinator: BaseCoordinator {
 }
 
 extension ChangePasswordCoordinator {
-    func popToRootVC() {
+    func popVCIsRequired() {
         navigationController.popToRootViewController(animated: true)
     }
 }
