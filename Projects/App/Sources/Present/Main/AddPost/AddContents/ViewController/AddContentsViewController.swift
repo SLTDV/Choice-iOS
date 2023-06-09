@@ -82,7 +82,7 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
         inputContentTextView.rx.didBeginEditing
             .bind(with: self){ owner, _ in
                 if(owner.inputContentTextView.text == ContentsPlaceHolder.contentText){
-                    owner.inputContentTextView.text = nil
+                    owner.inputContentTextView.text = ""
                     owner.inputContentTextView.textColor = .black
                 }
                 owner.inputContentTextView.layer.borderColor = UIColor.black.cgColor
@@ -90,7 +90,7 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
         
         inputContentTextView.rx.didEndEditing
             .bind(with: self){ owner, _ in
-                if(owner.inputContentTextView.text == nil || owner.inputContentTextView.text == ""){
+                if owner.inputContentTextView.text == "" {
                     owner.inputContentTextView.text = ContentsPlaceHolder.contentText
                     owner.inputContentTextView.textColor = .placeholderText
                 }
