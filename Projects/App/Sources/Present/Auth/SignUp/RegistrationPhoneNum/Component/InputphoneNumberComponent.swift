@@ -12,6 +12,7 @@ protocol InputPhoneNumberComponentProtocol: AnyObject {
 final class InputphoneNumberComponent: UIView {
     weak var delegate: InputPhoneNumberComponentProtocol?
     
+    private var timerDisposable: Disposable?
     private let disposeBag = DisposeBag()
     
     var isValidAuth = true
@@ -89,6 +90,7 @@ final class InputphoneNumberComponent: UIView {
             }.disposed(by: disposeBag)
         
         requestAuthButtonDidTap()
+        resendButtonDidTap()
     }
     
     func addView() {
@@ -172,11 +174,12 @@ final class InputphoneNumberComponent: UIView {
     }
     
     func setupPossibleBackgroundTimer() {
-        let count = 180
+        timerDisposable?.dispose()
         
+        let count = 180
         isValidAuth = false
         
-        Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
+        timerDisposable = Observable<Int>.interval(.seconds(1), scheduler: MainScheduler.instance)
             .take(count+1)
             .map { count - $0 }
             .bind(with: self) { owner, remainingSeconds in
@@ -188,7 +191,7 @@ final class InputphoneNumberComponent: UIView {
                     owner.countLabel.text = "00:00"
                     owner.isValidAuth = true
                 }
-            }.disposed(by: disposeBag)
+            }
     }
     
     private func bindUI() {
