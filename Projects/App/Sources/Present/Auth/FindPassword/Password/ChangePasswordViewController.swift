@@ -29,6 +29,8 @@ class ChangePasswordViewController: BaseVC<ChangePasswordViewModel>, InputPasswo
     
     override func configureVC() {
         component.delegate = self
+        
+        component.passwordLabel.text = "새로운 비밀번호"
     }
     
     override func addView() {

@@ -12,7 +12,7 @@ class InputPasswordComponent: UIView {
     
     private let disposeBag = DisposeBag()
     
-    private let passwordLabel = UILabel().then {
+    let passwordLabel = UILabel().then {
         $0.text = "비밀번호"
         $0.font = .systemFont(ofSize: 16, weight: .bold)
     }
