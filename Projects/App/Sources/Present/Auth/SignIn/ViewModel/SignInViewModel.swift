@@ -7,13 +7,6 @@ import Swinject
 
 final class SignInViewModel: BaseViewModel {
     let container = AppDelegate.container.resolve(JwtStore.self)!
-    func pushMainVC() {
-        coordinator.navigate(to: .mainVCIsRequried)
-    }
-    
-    func pushSignUpVC() {
-        coordinator.navigate(to: .signUpIsRequired)
-    }
     
     func requestSignIn(phoneNumber: String, password: String, completion: @escaping (Bool) -> Void) {
         let url = APIConstants.signInURL
@@ -42,4 +35,17 @@ final class SignInViewModel: BaseViewModel {
             }
         }
     }
+    
+    func pushMainVC() {
+        coordinator.navigate(to: .mainVCIsRequried)
+    }
+    
+    func pushSignUpVC() {
+        coordinator.navigate(to: .signUpIsRequired)
+    }
+    
+    func pushFindPassword() {
+        coordinator.navigate(to: .findPassword_phoneNumberAuth)
+    }
+    
 }

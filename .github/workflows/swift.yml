@@ -2,9 +2,9 @@ name: Swift
 
 on:
   push:
-    branches: [ master, develop ]
+    branches: [ master, develop, feedback_1 ]
   pull_request:
-    branches: [ master, develop ]
+    branches: [ master, develop, feedback_1 ]
 
 jobs:
   build:

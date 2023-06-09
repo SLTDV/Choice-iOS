@@ -25,6 +25,12 @@ final class SignInViewController: BaseVC<SignInViewModel> {
         $0.isSecureTextEntry = true
     }
     
+    private let findPasswordButton = UIButton().then {
+        $0.setTitle("비밀번호를 잊어버리셨나요?", for: .normal)
+        $0.setTitleColor(UIColor.gray, for: .normal)
+        $0.titleLabel?.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+    }
+    
     private lazy var signInButton = UIButton().then {
         $0.setTitle("로그인", for: .normal)
         $0.backgroundColor = .black
@@ -67,9 +73,14 @@ final class SignInViewController: BaseVC<SignInViewModel> {
             }).disposed(by: disposeBag)
         
         pushSignUpButton.rx.tap
-            .bind(onNext: { [weak self] _ in
-                self?.viewModel.pushSignUpVC()
-            }).disposed(by: disposeBag)
+            .bind(with: self) { owner, _ in
+                owner.viewModel.pushSignUpVC()
+            }.disposed(by: disposeBag)
+        
+        findPasswordButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.viewModel.pushFindPassword()
+            }.disposed(by: disposeBag)
     }
     
     override func configureVC() {
@@ -77,8 +88,11 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     }
     
     override func addView() {
-        view.addSubviews(titleImageView, subTitleLabel, inputPhoneNumberTextField, inputPasswordTextField,
-                         signInButton, divideLineButton, pushSignUpButton, warningLabel)
+        view.addSubviews(
+            titleImageView, subTitleLabel,
+            inputPhoneNumberTextField, inputPasswordTextField,
+            findPasswordButton, signInButton, divideLineButton,
+            pushSignUpButton, warningLabel)
     }
     
     override func setLayout() {
@@ -102,6 +116,11 @@ final class SignInViewController: BaseVC<SignInViewModel> {
             $0.top.equalTo(inputPhoneNumberTextField.snp.bottom).offset(14)
             $0.leading.trailing.equalToSuperview().inset(26)
             $0.height.equalTo(58)
+        }
+        
+        findPasswordButton.snp.makeConstraints {
+            $0.top.equalTo(inputPasswordTextField.snp.bottom).offset(7)
+            $0.trailing.equalTo(inputPasswordTextField.snp.trailing)
         }
         
         signInButton.snp.makeConstraints {

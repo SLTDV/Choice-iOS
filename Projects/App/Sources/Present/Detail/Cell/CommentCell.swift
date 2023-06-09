@@ -61,7 +61,7 @@ final class CommentCell: UITableViewCell {
 }
 
 extension CommentCell {
-    func changeCommentData(model: CommentList) {
+    func configure(model: CommentList) {
         self.nicknameLabel.text = model.nickname
         self.contentLabel.text = model.content
         guard model.profileImageUrl == nil else {

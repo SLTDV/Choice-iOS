@@ -1,17 +1,22 @@
 import Foundation
 
 public enum CalculateToVoteCountPercentage {
-    public static func calculateToVoteCountPercentage(firstVotingCount: Double, secondVotingCount: Double) -> (String, String, Int, Int) {
+    public static func calculateToVoteCountPercentage(
+        firstVotingCount: Double,
+        secondVotingCount: Double
+    ) -> (String, String, Int, Int) {
         let sum = firstVotingCount + secondVotingCount
-        var firstP = firstVotingCount / sum * 100.0
-        var secondP = secondVotingCount / sum * 100.0
+        var firstP = firstVotingCount / sum * 100
+        var secondP = secondVotingCount / sum * 100
         
-        firstP = firstP.isNaN ? 0.0 : firstP
-        secondP = secondP.isNaN ? 0.0 : secondP
+        firstP = firstP.isNaN ? 0 : firstP
+        secondP = secondP.isNaN ? 0 : secondP
         
-        let firstStr = String(format: "%0.2f", firstP)
-        let secondStr = String(format: "%0.2f", secondP)
-        
-        return (firstStr, secondStr, Int(firstVotingCount), Int(secondVotingCount))
+        return (
+            String(Int(firstP)),
+            String(Int(secondP)),
+            Int(firstVotingCount),
+            Int(secondVotingCount)
+        )
     }
 }
