@@ -3,7 +3,7 @@ import Shared
 import RxSwift
 import RxCocoa
 
-class PhoneNumberAuthViewController: BaseVC<PhoneNumberAuthViewModel>, InputPhoneNumberComponentProtocol {
+final class PhoneNumberAuthViewController: BaseVC<PhoneNumberAuthViewModel>, InputPhoneNumberComponentProtocol {
     private let component = InputphoneNumberComponent()
     
     override func configureVC() {

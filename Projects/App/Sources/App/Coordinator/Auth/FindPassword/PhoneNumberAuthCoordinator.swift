@@ -1,6 +1,6 @@
 import Foundation
 
-class PhoneNumberAuthCoordiantor: BaseCoordinator {
+final class PhoneNumberAuthCoordiantor: BaseCoordinator {
     override func start() {
         let vm = PhoneNumberAuthViewModel(coordinator: self)
         let vc = PhoneNumberAuthViewController(viewModel: vm)

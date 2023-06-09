@@ -9,7 +9,7 @@ protocol InputPhoneNumberComponentProtocol: AnyObject {
     func resendButtonDidTap(phoneNumber: String)
 }
 
-class InputphoneNumberComponent: UIView {
+final class InputphoneNumberComponent: UIView {
     weak var delegate: InputPhoneNumberComponentProtocol?
     
     private let disposeBag = DisposeBag()

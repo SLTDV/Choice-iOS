@@ -1,7 +1,7 @@
 import UIKit
 import Shared
 
-class ChangePasswordViewController: BaseVC<ChangePasswordViewModel>, InputPasswordComponentProtocol {
+final class ChangePasswordViewController: BaseVC<ChangePasswordViewModel>, InputPasswordComponentProtocol {
     let component = InputPasswordComponent()
     
     private func checkPassword() {

@@ -3,7 +3,7 @@ import Shared
 import JwtStore
 import Alamofire
 
-class PhoneNumberAuthViewModel: BaseViewModel {
+final class PhoneNumberAuthViewModel: BaseViewModel {
     func requestAuthNumber(phoneNumber: String, completion: @escaping (Bool) -> Void) {
         let url = APIConstants.findPasswordAuthCodeURL
         

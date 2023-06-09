@@ -7,7 +7,7 @@ protocol InputPasswordComponentProtocol: AnyObject {
     func nextButtonDidTap(password: String)
 }
 
-class InputPasswordComponent: UIView {
+final class InputPasswordComponent: UIView {
     weak var delegate: InputPasswordComponentProtocol?
     
     private let disposeBag = DisposeBag()

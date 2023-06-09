@@ -2,7 +2,7 @@ import Foundation
 import Alamofire
 import JwtStore
 
-class ChangePasswordViewModel: BaseViewModel {
+final class ChangePasswordViewModel: BaseViewModel {
     var phoneNumber: String
     
     init(coordinator: BaseCoordinator, phoneNumber: String) {

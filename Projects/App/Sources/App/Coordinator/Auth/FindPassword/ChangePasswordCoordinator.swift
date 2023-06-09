@@ -1,6 +1,6 @@
 import Foundation
 
-class ChangePasswordCoordinator: BaseCoordinator {
+final class ChangePasswordCoordinator: BaseCoordinator {
     func startChangePasswordCoordinator(phoneNumber: String) {
         let vm = ChangePasswordViewModel(coordinator: self, phoneNumber: phoneNumber)
         let vc = ChangePasswordViewController(viewModel: vm)
