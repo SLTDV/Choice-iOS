@@ -1,19 +1,23 @@
 import UIKit
-import RxSwift
-import RxCocoa
 import Shared
 
-final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewModel>, InputPasswordComponentProtocol {
-    
-    private let component = InputPasswordComponent()
+final class ChangePasswordViewController: BaseVC<ChangePasswordViewModel>, InputPasswordComponentProtocol {
+    let component = InputPasswordComponent()
     
     private func checkPassword() {
-        guard let password = component.inputPasswordTextField.text else { return }
-        guard let checkPassword = component.checkPasswordTextField.text else { return }
+        let password = component.inputPasswordTextField.text!
+        let checkPassword = component.checkPasswordTextField.text!
         
         if password.elementsEqual(checkPassword) {
             if self.viewModel.isValidPassword(password: password){
-                self.viewModel.pushUserProfileInfoVC(password: password)
+                viewModel.requestToChangePassword(password: password) { [ weak self] result in
+                    switch result {
+                    case .success:
+                        self?.viewModel.popToRootVC()
+                    case .failure:
+                        self?.component.warningLabel.show(warning: "*비밀번호 변경에 실패했습니다.")
+                    }
+                }
             } else {
                 self.component.warningLabel.show(warning: "*비밀번호 형식이 올바르지 않아요.")
             }
@@ -24,9 +28,9 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
     }
     
     override func configureVC() {
-        navigationItem.title = "회원가입"
-        
         component.delegate = self
+        
+        component.passwordLabel.text = "새로운 비밀번호"
     }
     
     override func addView() {
@@ -40,9 +44,8 @@ final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewM
     }
 }
 
-extension RegistrationPasswordViewController {
+extension ChangePasswordViewController {
     func nextButtonDidTap(password: String) {
-        LoadingIndicator.showLoading(text: "")
         checkPassword()
     }
 }

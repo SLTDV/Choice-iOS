@@ -14,6 +14,8 @@ final class SignInCoordinator: BaseCoordinator {
             signUpIsRequired()
         case .mainVCIsRequried:
             mainVCIsRequired()
+        case .findPassword_phoneNumberAuth:
+            findPassword_phoneNumberAuth()
         default:
             return
         }
@@ -30,6 +32,13 @@ extension SignInCoordinator {
     
     private func mainVCIsRequired() {
         let vc = HomeCoordinator(navigationController: navigationController)
+        vc.parentCoordinator = self
+        childCoordinators.append(vc)
+        vc.start()
+    }
+    
+    private func findPassword_phoneNumberAuth() {
+        let vc = PhoneNumberAuthCoordiantor(navigationController: navigationController)
         vc.parentCoordinator = self
         childCoordinators.append(vc)
         vc.start()
