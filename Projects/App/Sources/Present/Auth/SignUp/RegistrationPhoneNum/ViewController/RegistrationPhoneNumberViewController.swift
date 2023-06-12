@@ -89,12 +89,6 @@ extension RegistrationPhoneNumberViewController {
     func resendButtonDidTap(phoneNumber: String) {
         LoadingIndicator.showLoading(text: "")
         
-        guard component.isValidAuth else {
-            component.warningLabel.show(warning: "*3분 후에 다시 시도해주세요")
-            LoadingIndicator.hideLoading()
-            return
-        }
-        
         viewModel.requestAuthNumber(phoneNumber: phoneNumber) { [weak self] isValid in
             if isValid {
                 self?.component.setupPossibleBackgroundTimer()
@@ -102,6 +96,9 @@ extension RegistrationPhoneNumberViewController {
             } else {
                 self?.component.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
             }
+            
+            self?.component.resendButton.isHidden = true
+            self?.component.resendLabel.isHidden = true
             
             LoadingIndicator.hideLoading()
         }
