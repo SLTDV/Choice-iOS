@@ -14,6 +14,11 @@ public final class BoxTextField: UITextField {
         $0.tintColor = UIColor.quaternaryLabel
     }
     
+    private let textCountLabel = UILabel().then {
+        $0.font = .systemFont(ofSize: 12, weight: .semibold)
+        $0.textColor = .placeholderText
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         
@@ -44,6 +49,28 @@ public final class BoxTextField: UITextField {
             passwordShowButtonDidTap()
             self.rightView = showPasswordButton
             self.rightViewMode = .always
+        case .countTextField:
+            self.addSubview(textCountLabel)
+            bindCountTextLabel()
+            countLabelLayout()
+        }
+    }
+    
+    private func bindCountTextLabel() {
+        self.rx.text
+            .orEmpty
+            .map { text in
+                let count = min(text.count, 16)
+                return "\(count) / 16"
+            }
+            .bind(to: textCountLabel.rx.text)
+            .disposed(by: disposeBag)
+    }
+    
+    private func countLabelLayout() {
+        textCountLabel.snp.makeConstraints {
+            $0.trailing.equalToSuperview().inset(10)
+            $0.bottom.equalToSuperview().inset(10)
         }
     }
     

@@ -22,8 +22,9 @@ final class AppCoordinator: Coordinator {
         
         let signInController = SignInCoordinator(navigationController: navigationController)
         let homeController = HomeCoordinator(navigationController: navigationController)
-        
+        let whiteController = WhiteViewCoordinator(navigationController: navigationController)
         window?.rootViewController = navigationController
+        start(coordinator: whiteController)
         
         AF.request(url,
                    method: .patch,
@@ -31,6 +32,7 @@ final class AppCoordinator: Coordinator {
                    headers: headers)
         .validate()
         .responseDecodable(of: ManageTokenModel.self) { [weak self] response in
+            self?.navigationController.popViewController(animated: false)
             switch response.result {
             case .success(let data):
                 self?.container.saveToken(type: .refreshToken, token: data.refreshToken)
@@ -45,15 +47,9 @@ final class AppCoordinator: Coordinator {
         coordinator.start()
     }
     
-    func didFinish(coordinator: Coordinator) {
-        
-    }
+    func didFinish(coordinator: Coordinator) {}
     
-    func navigate(to step: ChoiceStep) {
-        
-    }
+    func navigate(to step: ChoiceStep) {}
     
-    func removeChildCoordinators() {
-        
-    }
+    func removeChildCoordinators() {}
 }

@@ -1,26 +1,19 @@
 import UIKit
+import Shared
 import RxSwift
 import RxCocoa
-import Shared
 
-final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumberViewModel>, InputPhoneNumberComponentProtocol {
-    private let disposeBag = DisposeBag()
-
-    private lazy var restoreFrameYValue = 0.0
-    
+final class PhoneNumberAuthViewController: BaseVC<PhoneNumberAuthViewModel>, InputPhoneNumberComponentProtocol {
     private let component = InputphoneNumberComponent()
     
     override func configureVC() {
-        restoreFrameYValue = self.view.frame.origin.y
-        
         component.delegate = self
-        
-        navigationItem.title = "회원가입"
     }
     
     override func addView() {
-        view.addSubviews(component)
+        view.addSubview(component)
     }
+    
     
     override func setLayout() {
         component.snp.makeConstraints {
@@ -29,26 +22,21 @@ final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumbe
     }
     
     private func checkAuthCode() {
-        guard let phoneNumber = component.inputPhoneNumberTextfield.text else { return }
-        guard let authCode = component.authNumberTextfield.text else { return }
+        let phoneNumber = component.inputPhoneNumberTextfield.text!
+        let authCode = component.authNumberTextfield.text!
         
         self.viewModel.requestAuthNumberConfirmation(phoneNumber: phoneNumber, authCode: authCode) { [weak self] isVaild in
             if isVaild {
-                self?.viewModel.pushRegistrationPasswordVC(phoneNumber: phoneNumber)
+                self?.viewModel.pushChangeToPassword(phoneNumber: phoneNumber)
             } else {
                 self?.component.warningLabel.show(warning: "*인증번호가 일치하지 않습니다")
             }
             LoadingIndicator.hideLoading()
         }
     }
-    
-    private func testPassword(password: String) -> Bool {
-        return viewModel.isValidPassword(password: password)
-    }
 }
 
-
-extension RegistrationPhoneNumberViewController {
+extension PhoneNumberAuthViewController {
     func nextButtonDidTap() {
         LoadingIndicator.showLoading(text: "")
         checkAuthCode()
@@ -78,7 +66,7 @@ extension RegistrationPhoneNumberViewController {
                 self?.component.inputPhoneNumberTextfield.textColor = .placeholderText
                 self?.component.warningLabel.hide()
             } else {
-                self?.component.warningLabel.show(warning: "*이미 인증된 전화번호입니다")
+                self?.component.warningLabel.show(warning: "전화번호를 찾을 수 없습니다.")
             }
             
             LoadingIndicator.hideLoading()
@@ -88,6 +76,8 @@ extension RegistrationPhoneNumberViewController {
     
     func resendButtonDidTap(phoneNumber: String) {
         LoadingIndicator.showLoading(text: "")
+        
+        self.component.setupPossibleBackgroundTimer()
         
         viewModel.requestAuthNumber(phoneNumber: phoneNumber) { [weak self] isValid in
             if isValid {

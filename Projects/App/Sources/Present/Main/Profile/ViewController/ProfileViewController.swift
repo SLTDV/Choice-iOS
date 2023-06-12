@@ -19,7 +19,6 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     private let privacyPolicyUrl = NSURL(string: "https://opaque-plate-ed2.notion.site/aa6adde3d5cf4836847f8fc79a6cc3cf")
     
-    
     private lazy var optionButton = UIBarButtonItem(image: UIImage(systemName: "gearshape")).then {
         $0.menu = UIMenu(title: "설정", children: optionItem)
         $0.tintColor = .black
@@ -50,7 +49,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
     
     private let userNameLabel = UILabel().then {
         $0.text = "닉네임"
-        $0.font = .systemFont(ofSize: 14, weight: .semibold)
+        $0.font = .systemFont(ofSize: 18, weight: .semibold)
     }
     
     private lazy var editUserNameButton = UIButton().then {
@@ -70,13 +69,45 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         $0.register(PostCell.self, forCellReuseIdentifier: PostCell.identifier)
     }
     
+    private let emptyLabel = UILabel().then {
+        $0.text = """
+        아직 게시물이 없습니다
+        게시물을 만들어 보세요!
+        """
+        $0.font = .systemFont(ofSize: 18, weight: .semibold)
+        $0.textAlignment = .center
+        $0.textColor = SharedAsset.grayDark.color
+        $0.numberOfLines = 0
+    }
+    
     private func bindTableView() {
-        postListData.bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
-                                                     cellType: PostCell.self)) { (row, data, cell) in
-            cell.changeCellData(with: data, type: .profile)
-            cell.delegate = self
-            cell.separatorInset = UIEdgeInsets.zero
-        }.disposed(by: disposeBag)
+        postListData
+            .do{ [weak postTableView] posts in
+                if posts.isEmpty {
+                    let tableViewWrapper = UIView(frame: postTableView?.bounds ?? CGRect.zero)
+                    self.emptyLabel.frame = CGRect(x: 0, y: 110, width: postTableView?.bounds.width ?? 0, height: 50)
+                    
+                    tableViewWrapper.addSubview(self.emptyLabel)
+                    postTableView?.backgroundView = tableViewWrapper
+                    postTableView?.separatorStyle = .none
+                } else {
+                    postTableView?.backgroundView = nil
+                    postTableView?.separatorStyle = .singleLine
+                }
+            }
+            .bind(to: postTableView.rx.items(cellIdentifier: PostCell.identifier,
+                                             cellType: PostCell.self)) { (row, data, cell) in
+                cell.setType(type: .profile)
+                cell.configure(with: data)
+                cell.delegate = self
+                cell.separatorInset = UIEdgeInsets.zero
+            }.disposed(by: disposeBag)
+
+        postTableView.rx.modelSelected(PostList.self)
+            .asDriver()
+            .drive(with: self) { owner, post in
+                owner.viewModel.pushDetailPostVC(model: post, type: .profile)
+            }.disposed(by: disposeBag)
         
         nicknameData
             .bind(to: userNameLabel.rx.text)
@@ -113,8 +144,24 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         present(alert, animated: true)
     }
     
+    @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
+        viewModel.requestProfileData()
+        DispatchQueue.main.async {
+            self.postTableView.reloadData()
+            self.postTableView.refreshControl?.endRefreshing()
+        }
+    }
+    
+    private func configureRefreshControl() {
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self,
+                                 action: #selector(handleRefreshControl(_:)),
+                                 for: .valueChanged)
+        postTableView.refreshControl = refreshControl
+    }
+    
     private func presentPrivacyProlicyPage() {
-        let privacyPolicyView: SFSafariViewController = SFSafariViewController(url: privacyPolicyUrl as! URL)
+        let privacyPolicyView: SFSafariViewController = SFSafariViewController(url: privacyPolicyUrl! as URL)
         present(privacyPolicyView, animated: true)
     }
     
@@ -155,6 +202,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         
         bindTableView()
         viewModel.requestProfileData()
+        configureRefreshControl()
     }
     
     override func addView() {
@@ -198,7 +246,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         }
         
         postTableView.snp.makeConstraints {
-            $0.top.equalTo(whiteBackgroundView.snp.bottom).offset(28)
+            $0.top.equalTo(whiteBackgroundView.snp.bottom)
             $0.leading.trailing.equalToSuperview().inset(9)
             $0.bottom.equalToSuperview()
         }
