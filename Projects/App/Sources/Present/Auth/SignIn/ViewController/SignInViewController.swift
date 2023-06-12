@@ -18,6 +18,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     
     private let inputPhoneNumberTextField = BoxTextField().then {
         $0.placeholder = "전화번호"
+        $0.keyboardType = .numberPad
     }
     
     private let inputPasswordTextField = BoxTextField(type: .secureTextField).then {
@@ -60,7 +61,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
                 DispatchQueue.main.async {
                     self?.viewModel.requestSignIn(phoneNumber: phoneNumber, password: password){ [weak self] isComplete in
                         guard isComplete else {
-                            self?.warningLabel.show(warning: "아이디 또는 비밀번호가 잘못되었습니다.")
+                            self?.warningLabel.show(warning: "존재하지 않는 계정입니다.")
                            
                             DispatchQueue.main.async {
                                 self?.inputPhoneNumberTextField.shake()
@@ -142,7 +143,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
         }
         
         warningLabel.snp.makeConstraints {
-            $0.top.equalTo(inputPasswordTextField.snp.bottom).offset(15)
+            $0.top.equalTo(inputPasswordTextField.snp.bottom).offset(12)
             $0.leading.equalTo(inputPasswordTextField.snp.leading).offset(5)
         }
     }
