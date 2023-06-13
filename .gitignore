@@ -26,6 +26,12 @@ Network Trash Folder
 Temporary Items
 .apdisk
 
+## App packaging
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+
 ### Xcode ###
 # Xcode
 #
