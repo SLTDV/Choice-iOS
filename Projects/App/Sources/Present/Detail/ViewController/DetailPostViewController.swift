@@ -42,11 +42,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let userNameLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 12, weight: .semibold)
+        $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
     private let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 18, weight: .semibold)
+        $0.font = .systemFont(ofSize: 21, weight: .semibold)
     }
     
     private let divideVotePostImageLineView = UIView().then {
@@ -54,7 +54,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let contentLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 14, weight: .regular)
+        $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.numberOfLines = 0
     }
     
@@ -62,14 +62,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
-        $0.contentMode = .scaleToFill
+        $0.contentMode = .scaleAspectFill
     }
     
     private let secondPostImageView = UIImageView().then {
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
-        $0.contentMode = .scaleToFill
+        $0.contentMode = .scaleAspectFill
     }
     
     private let firstVoteOptionLabel = UILabel().then {
@@ -430,7 +430,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         userImageView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaInsets).inset(24)
             $0.leading.equalToSuperview().inset(40)
-            $0.size.equalTo(24)
+            $0.size.equalTo(28)
         }
         
         userNameLabel.snp.makeConstraints {
@@ -466,30 +466,30 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         firstPostImageView.snp.makeConstraints {
             $0.top.equalTo(firstVoteOptionLabel.snp.bottom).offset(10)
-            $0.leading.equalToSuperview().inset(37)
-            $0.width.equalTo(134)
-            $0.height.equalTo(145)
+            $0.leading.equalToSuperview().inset(20)
+            $0.width.equalTo(160)
+            $0.height.equalTo(160)
         }
         
         secondPostImageView.snp.makeConstraints {
             $0.top.equalTo(secondVoteOptionLabel.snp.bottom).offset(10)
-            $0.trailing.equalToSuperview().inset(37)
-            $0.width.equalTo(134)
-            $0.height.equalTo(145)
+            $0.trailing.equalToSuperview().inset(20)
+            $0.width.equalTo(160)
+            $0.height.equalTo(160)
         }
         
         firstVoteButton.snp.makeConstraints {
             $0.top.equalTo(firstPostImageView.snp.bottom).offset(26)
-            $0.leading.equalTo(firstPostImageView.snp.leading)
-            $0.trailing.equalTo(firstPostImageView.snp.trailing)
-            $0.height.equalTo(56)
+            $0.centerX.equalTo(firstPostImageView)
+            $0.width.equalTo(144)
+            $0.height.equalTo(68)
         }
         
         secondVoteButton.snp.makeConstraints {
             $0.top.equalTo(secondPostImageView.snp.bottom).offset(26)
-            $0.leading.equalTo(secondPostImageView.snp.leading)
-            $0.trailing.equalTo(secondPostImageView.snp.trailing)
-            $0.height.equalTo(56)
+            $0.centerX.equalTo(secondPostImageView)
+            $0.width.equalTo(144)
+            $0.height.equalTo(68)
         }
         
         divideCommentLineView.snp.makeConstraints {
