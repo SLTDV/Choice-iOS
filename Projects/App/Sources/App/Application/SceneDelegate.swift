@@ -20,10 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidBecomeActive(_ scene: UIScene) {}
 
-    func sceneWillResignActive(_ scene: UIScene) {
-//        print("switcher")
-//        window?.reloadInputViews()
-    }
+    func sceneWillResignActive(_ scene: UIScene) {}
 
     func sceneWillEnterForeground(_ scene: UIScene) {}
 
