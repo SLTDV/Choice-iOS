@@ -247,7 +247,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         
         postTableView.snp.makeConstraints {
             $0.top.equalTo(whiteBackgroundView.snp.bottom)
-            $0.leading.trailing.equalToSuperview().inset(9)
+            $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
     }
