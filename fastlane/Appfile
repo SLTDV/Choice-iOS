@@ -1,5 +1,6 @@
 app_identifier("dohyeon.Choice") # The bundle identifier of your app
 apple_id(ENV["APPLE_ID"]) # Your Apple Developer Portal username
+apple_password(ENV["APPLE_PASSWORD"])
 
 itc_team_id("125563811") # App Store Connect Team ID
 team_id("X52UAWWKMX") # Developer Portal Team ID
