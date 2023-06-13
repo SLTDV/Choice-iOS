@@ -157,7 +157,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     func setKeyboard() {
         let keyboardWillShow = NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
         let keyboardWillHide =
-        NotificationCenter.default.rx.notification(UIResponder.keyboardDidHideNotification)
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
         
         keyboardWillShow
             .asDriver(onErrorRecover: { _ in .never()})
@@ -174,11 +174,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func keyboardUp(_ notification: Notification) {
         print("up")
-        if let keyboardFrame:NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-            let keyboardRectangle = keyboardFrame.cgRectValue
+        if let keyboardFrame:CGRect = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
             
             UIView.animate(withDuration: 0.3, animations: {
-                    self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardRectangle.height)
+                self.view.frame.origin.y -= keyboardFrame.size.height
                 }
             )
         }
@@ -186,7 +185,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func keyboardDown() {
         print("down")
-        self.view.transform = .identity
+        self.view.frame.origin.y = .zero
     }
     
     private func bindTableView() {
