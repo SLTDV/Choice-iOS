@@ -3,7 +3,7 @@
 .DS_Store
 .AppleDouble
 .LSOverride
-
+/fastlane/.env
 # Icon must end with two
 Icon
 
