@@ -30,7 +30,8 @@ Temporary Items
 *.ipa
 *.dSYM.zip
 *.dSYM
-
+*.mobileprovision
+*.cer
 
 ### Xcode ###
 # Xcode
