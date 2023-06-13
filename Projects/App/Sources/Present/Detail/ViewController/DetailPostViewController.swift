@@ -173,6 +173,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func keyboardUp(_ notification: Notification) {
+        print("up")
         if let keyboardFrame:NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             
@@ -184,12 +185,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func keyboardDown() {
+        print("down")
         self.view.transform = .identity
     }
     
     private func bindTableView() {
-        commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
-                                             cellType: CommentCell.self)) { (row, data, cell) in
+        commentData.bind(to: commentTableView.rx.items(
+            cellIdentifier: CommentCell.identifier,
+            cellType: CommentCell.self)) { (row, data, cell) in
             cell.configure(model: data)
         }.disposed(by: disposeBag)
         
@@ -320,6 +323,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func updateVotingStateWithLayout(_ votingState: Int) {
         let model = model.value
         
+        if model.votingState == votingState {
+            return
+        }
+        
         switch votingState {
         case 1:
             model.firstVotingCount += 1
@@ -395,9 +402,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         viewModel.delegate = self
         commentTableView.delegate = self
         
-        setKeyboard()
         bindTableView()
         bindUI()
+        setKeyboard()
         submitCommentButtonDidTap()
         configure(model: model.value)
     }
@@ -420,7 +427,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
         
         contentView.snp.makeConstraints {
-            $0.centerX.width.top.bottom.equalToSuperview()
+            $0.edges.equalToSuperview()
+            $0.width.equalToSuperview()
         }
         
         userImageView.snp.makeConstraints {
