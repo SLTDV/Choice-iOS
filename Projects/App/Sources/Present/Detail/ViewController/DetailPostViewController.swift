@@ -157,7 +157,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     func setKeyboard() {
         let keyboardWillShow = NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
         let keyboardWillHide =
-        NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
+        NotificationCenter.default.rx.notification(UIResponder.keyboardDidHideNotification)
         
         keyboardWillShow
             .asDriver(onErrorRecover: { _ in .never()})
