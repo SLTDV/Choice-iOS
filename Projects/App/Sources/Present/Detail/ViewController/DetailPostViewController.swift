@@ -154,24 +154,41 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.endEditing(true)
     }
     
-    @objc private func keyboardUp(_ notification: NSNotification) {
-        if let keyboardFrame:NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
-            let keyboardRectangle = keyboardFrame.cgRectValue
-            
+    func setKeyboard() {
+        let keyboardWillShow = NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
+        let keyboardWillHide =
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
+        
+        keyboardWillShow
+            .asDriver(onErrorRecover: { _ in .never()})
+            .drive(with: self) { owner, noti in
+                owner.keyboardUp(noti)
+            }.disposed(by: disposeBag)
+        
+        keyboardWillHide
+            .asDriver(onErrorRecover: { _ in .never()})
+            .drive(with: self) { owner, noti in
+                owner.keyboardDown()
+            }.disposed(by: disposeBag)
+    }
+    
+    private func keyboardUp(_ notification: Notification) {
+        if let keyboardFrame:CGRect = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
             UIView.animate(withDuration: 0.3, animations: {
-                    self.view.transform = CGAffineTransform(translationX: 0, y: -keyboardRectangle.height)
+                self.view.frame.origin.y -= keyboardFrame.size.height
                 }
             )
         }
     }
     
-    @objc private func keyboardDown(_ notification: NSNotification) {
-        self.view.transform = .identity
+    private func keyboardDown() {
+        self.view.frame.origin.y = .zero
     }
     
     private func bindTableView() {
-        commentData.bind(to: commentTableView.rx.items(cellIdentifier: CommentCell.identifier,
-                                             cellType: CommentCell.self)) { (row, data, cell) in
+        commentData.bind(to: commentTableView.rx.items(
+            cellIdentifier: CommentCell.identifier,
+            cellType: CommentCell.self)) { (row, data, cell) in
             cell.configure(model: data)
         }.disposed(by: disposeBag)
         
@@ -302,6 +319,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func updateVotingStateWithLayout(_ votingState: Int) {
         let model = model.value
         
+        if model.votingState == votingState {
+            return
+        }
+        
         switch votingState {
         case 1:
             model.firstVotingCount += 1
@@ -355,14 +376,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: ContentSizeKey.key, options: .new, context: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardUp), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDown), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         self.commentTableView.removeObserver(self, forKeyPath: ContentSizeKey.key)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -383,6 +400,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         bindTableView()
         bindUI()
+        setKeyboard()
         submitCommentButtonDidTap()
         configure(model: model.value)
     }
@@ -405,7 +423,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
         
         contentView.snp.makeConstraints {
-            $0.centerX.width.top.bottom.equalToSuperview()
+            $0.edges.equalToSuperview()
+            $0.width.equalToSuperview()
         }
         
         userImageView.snp.makeConstraints {
@@ -523,7 +542,6 @@ extension DetailPostViewController {
     }
     
     private func submitComment() {
-//        guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         viewModel.commentCurrentPage = -1
