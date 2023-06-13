@@ -173,9 +173,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func keyboardUp(_ notification: Notification) {
-        print("up")
         if let keyboardFrame:CGRect = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
-            
             UIView.animate(withDuration: 0.3, animations: {
                 self.view.frame.origin.y -= keyboardFrame.size.height
                 }
@@ -184,7 +182,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func keyboardDown() {
-        print("down")
         self.view.frame.origin.y = .zero
     }
     
