@@ -69,14 +69,14 @@ final class PostCell: UITableViewCell {
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
-        $0.contentMode = .scaleToFill
+        $0.contentMode = .scaleAspectFill
     }
     
     private let secondPostImageView = UIImageView().then {
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
-        $0.contentMode = .scaleToFill
+        $0.contentMode = .scaleAspectFill
     }
     
     private lazy var firstVoteButton = UIButton().then {
@@ -188,30 +188,30 @@ final class PostCell: UITableViewCell {
         
         firstPostImageView.snp.makeConstraints {
             $0.top.equalTo(contentLabel.snp.bottom).offset(24)
-            $0.leading.equalToSuperview().inset(33)
-            $0.width.equalTo(134)
-            $0.height.equalTo(145)
+            $0.leading.equalToSuperview().inset(20)
+            $0.width.equalTo(160)
+            $0.height.equalTo(160)
         }
         
         secondPostImageView.snp.makeConstraints {
             $0.top.equalTo(contentLabel.snp.bottom).offset(24)
-            $0.trailing.equalToSuperview().inset(33)
-            $0.width.equalTo(134)
-            $0.height.equalTo(145)
+            $0.trailing.equalToSuperview().inset(20)
+            $0.width.equalTo(160)
+            $0.height.equalTo(160)
         }
         
         firstVoteButton.snp.makeConstraints {
             $0.top.equalTo(firstPostImageView.snp.bottom).offset(26)
-            $0.leading.equalTo(firstPostImageView.snp.leading)
-            $0.trailing.equalTo(firstPostImageView.snp.trailing)
-            $0.height.equalTo(56)
+            $0.leading.equalTo(contentLabel.snp.leading)
+            $0.width.equalTo(134)
+            $0.height.equalTo(68)
         }
         
         secondVoteButton.snp.makeConstraints {
             $0.top.equalTo(secondPostImageView.snp.bottom).offset(26)
-            $0.leading.equalTo(secondPostImageView.snp.leading)
-            $0.trailing.equalTo(secondPostImageView.snp.trailing)
-            $0.height.equalTo(56)
+            $0.trailing.equalTo(contentLabel.snp.trailing)
+            $0.width.equalTo(134)
+            $0.height.equalTo(68)
         }
         
         participantsCountImageView.snp.makeConstraints {
@@ -282,26 +282,26 @@ final class PostCell: UITableViewCell {
         
         firstPostImageView.snp.remakeConstraints {
             $0.top.equalTo(firstVoteOptionLabel.snp.bottom).offset(10)
-            $0.leading.equalToSuperview().inset(31)
-            $0.width.equalTo(134)
-            $0.height.equalTo(145)
+            $0.leading.equalToSuperview().inset(20)
+            $0.width.equalTo(160)
+            $0.height.equalTo(160)
         }
         
         secondPostImageView.snp.remakeConstraints {
             $0.top.equalTo(secondVoteOptionLabel.snp.bottom).offset(10)
-            $0.trailing.equalToSuperview().inset(31)
-            $0.width.equalTo(134)
-            $0.height.equalTo(145)
+            $0.trailing.equalToSuperview().inset(20)
+            $0.width.equalTo(160)
+            $0.height.equalTo(160)
         }
     }
     
     private func votePostButtonLayout(voting: Int) {
         firstVoteButton.snp.updateConstraints {
-            $0.height.equalTo(52)
+            $0.height.equalTo(68)
         }
         
         secondVoteButton.snp.updateConstraints {
-            $0.height.equalTo(52)
+            $0.height.equalTo(68)
         }
         
         firstVoteButton.setTitleColor(.white, for: .normal)
