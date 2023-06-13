@@ -19,7 +19,7 @@
       )
       slack(
         message: "AppStore 배포에 성공했습니다!",
-        slack_url: "https://hooks.slack.com/자신의 채널 훅스 링크"
+        slack_url: "https://w1670903828-cdl915195.slack.com/archives/D04EXBSN858"
       )
     end
   end
