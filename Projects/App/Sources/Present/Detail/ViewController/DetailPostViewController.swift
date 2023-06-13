@@ -154,7 +154,25 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.endEditing(true)
     }
     
-    @objc private func keyboardUp(_ notification: NSNotification) {
+    func setKeyboard() {
+        let keyboardWillShow = NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
+        let keyboardWillHide =
+        NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
+        
+        keyboardWillShow
+            .asDriver(onErrorRecover: { _ in .never()})
+            .drive(with: self) { owner, noti in
+                owner.keyboardUp(noti)
+            }.disposed(by: disposeBag)
+        
+        keyboardWillHide
+            .asDriver(onErrorRecover: { _ in .never()})
+            .drive(with: self) { owner, noti in
+                owner.keyboardDown()
+            }.disposed(by: disposeBag)
+    }
+    
+    private func keyboardUp(_ notification: Notification) {
         if let keyboardFrame:NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
             let keyboardRectangle = keyboardFrame.cgRectValue
             
@@ -165,7 +183,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
     }
     
-    @objc private func keyboardDown(_ notification: NSNotification) {
+    private func keyboardDown() {
         self.view.transform = .identity
     }
     
@@ -355,14 +373,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: ContentSizeKey.key, options: .new, context: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardUp), name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(keyboardDown), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         self.commentTableView.removeObserver(self, forKeyPath: ContentSizeKey.key)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillShowNotification, object: nil)
-        NotificationCenter.default.removeObserver(self, name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -381,6 +395,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         viewModel.delegate = self
         commentTableView.delegate = self
         
+        setKeyboard()
         bindTableView()
         bindUI()
         submitCommentButtonDidTap()
@@ -523,7 +538,6 @@ extension DetailPostViewController {
     }
     
     private func submitComment() {
-//        guard let idx = model?.idx else { return }
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         viewModel.commentCurrentPage = -1
