@@ -28,8 +28,9 @@ public class CompleteViewController: UIViewController {
         view.addSubview(animationView)
         
         animationView.snp.makeConstraints {
-            $0.center.equalToSuperview()
-            $0.size.equalTo(326)
+            $0.centerX.equalToSuperview()
+            $0.centerY.equalToSuperview().offset(-50)
+            $0.size.equalTo(280)
         }
         
         animationView.play { (finished) in
