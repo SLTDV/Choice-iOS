@@ -77,7 +77,7 @@ final class UserProfileInfoViewModel: BaseViewModel {
         }
     }
     
-    func navigateRootVC() {
-        self.coordinator.navigate(to: .popVCIsRequired)
+    func pushCompleteView() {
+        self.coordinator.navigate(to: .pushCompleteViewIsRequired)
     }
 }
