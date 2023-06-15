@@ -6,11 +6,11 @@ import Lottie
 public class CompleteViewController: UIViewController {
     private var text: String
     
-    private let animationView = LottieAnimationView().then {
-        $0.animation = LottieAnimation.named("CompleteLottie")
+    private let animationView = LottieAnimationView(name: "CompleteLottie").then {
         $0.contentMode = .scaleAspectFit
-        $0.play()
     }
+    
+    
     
     public init(text: String) {
         self.text = text
@@ -26,9 +26,12 @@ public class CompleteViewController: UIViewController {
         view.backgroundColor = .white
 
         view.addSubview(animationView)
+        
         animationView.snp.makeConstraints {
             $0.center.equalToSuperview()
             $0.size.equalTo(326)
         }
+        
+        animationView.play()
     }
 }
