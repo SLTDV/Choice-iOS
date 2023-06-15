@@ -50,7 +50,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.menu = UIMenu(title: "", children: [UIAction(
             title: "게시물 신고",
             attributes: .destructive,
-            handler: { _ in self.reportPostButtonDidTap(postIdx: self.model.value.idx)
+            handler: { _ in self.reportPostButtonDidTap()
             })])
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
@@ -165,7 +165,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.endEditing(true)
     }
     
-    private func reportPostButtonDidTap(postIdx: Int) {
+    private func reportPostButtonDidTap() {
         let alert = UIAlertController(title: "게시물 신고",
                                       message: """
                                       해당 게시물이 불쾌감을 줬다면 신고해주세요.
