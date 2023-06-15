@@ -212,7 +212,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 alert.message = "신고가 접수되었습니다"
             } else {
                 alert.title = "실패"
-                alert.message = "이미 신고한 계시물입니다"
+                alert.message = "이미 신고한 게시물입니다"
             }
             
             self.present(alert, animated: true)
