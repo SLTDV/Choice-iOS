@@ -24,6 +24,7 @@ public class CompleteViewController: UIViewController {
     
     public override func viewDidLoad() {
         view.backgroundColor = .white
+        navigationItem.hidesBackButton = true
 
         view.addSubview(animationView)
         
