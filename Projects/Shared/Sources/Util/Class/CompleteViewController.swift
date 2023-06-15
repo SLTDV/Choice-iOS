@@ -1,6 +1,6 @@
 import UIKit
 import SnapKit
-import Then
+import Theng
 
 class CompleteViewController: UIViewController {
     private let animationView: ANimation
