@@ -10,7 +10,7 @@ public class CompleteViewController: UIViewController {
         $0.contentMode = .scaleAspectFit
     }
     
-    
+    private let completeLabel = UILabel()
     
     public init(text: String) {
         self.text = text
@@ -32,6 +32,10 @@ public class CompleteViewController: UIViewController {
             $0.size.equalTo(326)
         }
         
-        animationView.play()
+        animationView.play { (finished) in
+            if finished {
+                self.navigationController?.popToRootViewController(animated: true)
+            }
+        }
     }
 }

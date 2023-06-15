@@ -62,7 +62,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
                     self?.viewModel.requestSignIn(phoneNumber: phoneNumber, password: password){ [weak self] isComplete in
                         guard isComplete else {
                             self?.warningLabel.show(warning: "존재하지 않는 계정입니다.")
-                            self?.navigationController?.pushViewController(CompleteViewController(text: "hihi"), animated: true)
+                           
                             DispatchQueue.main.async {
                                 self?.inputPhoneNumberTextField.shake()
                                 self?.inputPasswordTextField.shake()

@@ -1,4 +1,5 @@
 import Foundation
+import Shared
 
 final class AddImageCoordiantor: BaseCoordinator {
     func startAddImageVC(title: String, content: String) {
@@ -12,6 +13,8 @@ final class AddImageCoordiantor: BaseCoordinator {
         switch step {
         case .popVCIsRequired:
             popVCIsRequired()
+        case .pushCompleteViewIsRequired:
+            pushCompleteViewIsRequired()
         default:
             return
         }
@@ -21,6 +24,13 @@ final class AddImageCoordiantor: BaseCoordinator {
 extension AddImageCoordiantor {
     private func popVCIsRequired() {
         navigationController.popToRootViewController(animated: true)
+    }
+    
+    private func pushCompleteViewIsRequired() {
+        navigationController.pushViewController(
+            CompleteViewController(text: "게시물이 생성되었습니다!"),
+            animated: true
+        )
     }
 }
 

@@ -56,7 +56,7 @@ final class AddImageViewModel: BaseViewModel {
                     switch response.result {
                     case .success:
                         LoadingIndicator.hideLoading()
-                        self?.coordinator.navigate(to: .popVCIsRequired)
+                        self?.coordinator.navigate(to: .pushCompleteViewIsRequired)
                     case .failure(let error):
                         print("post error = \(String(describing: error.localizedDescription))")
                     }
