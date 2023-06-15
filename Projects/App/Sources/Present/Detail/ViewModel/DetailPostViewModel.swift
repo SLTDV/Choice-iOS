@@ -108,4 +108,8 @@ final class DetailPostViewModel: BaseViewModel {
             }
         }
     }
+    
+    func requestToReportPost() {
+        
+    }
 }
