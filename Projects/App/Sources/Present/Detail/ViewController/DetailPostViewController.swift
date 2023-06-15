@@ -210,12 +210,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             if isVaild {
                 alert.title = "완료"
                 alert.message = "신고가 접수되었습니다"
-                self.present(alert, animated: true)
             } else {
                 alert.title = "실패"
                 alert.message = "이미 신고한 계시물입니다"
-                self.present(alert, animated: true)
             }
+            
+            self.present(alert, animated: true)
         }
     }
     
