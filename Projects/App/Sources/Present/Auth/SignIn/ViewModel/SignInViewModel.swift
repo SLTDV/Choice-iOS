@@ -24,8 +24,7 @@ final class SignInViewModel: BaseViewModel {
             switch response.result {
             case .success(let data):
                 self?.container.setToken(data: data)
-                self?.pushMainVC()
-                print("accessTokenExpiredTime = \(self?.container.getToken(type: .accessExpiredTime))")
+//                self?.pushMainVC()
                 LoadingIndicator.hideLoading()
                 completion(true)
             case .failure(let error):

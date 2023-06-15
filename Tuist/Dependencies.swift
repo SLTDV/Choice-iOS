@@ -23,7 +23,7 @@ let dependencies = Dependencies(
                 url: "https://github.com/Swinject/Swinject",
                 requirement: .upToNextMajor(from: "2.8.3")),
             .remote(
-                url: "https://github.com/airbnb/lottie-ios",
+                url: "https://github.com/airbnb/lottie-spm.git",
                 requirement: .upToNextMajor(from: "4.2.0"))
             
         ],
