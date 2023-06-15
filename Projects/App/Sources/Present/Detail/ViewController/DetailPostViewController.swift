@@ -45,6 +45,17 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
+    private lazy var reportPostButton = UIButton().then {
+        $0.showsMenuAsPrimaryAction = true
+        $0.menu = UIMenu(title: "신고", children: [UIAction(
+            title: "게시물 신고",
+            attributes: .destructive,
+            handler: { _ in self.reportPostButtonDidTap()
+            })])
+        $0.tintColor = .black
+        $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+    }
+    
     private let titleLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 21, weight: .semibold)
     }
@@ -154,6 +165,25 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.endEditing(true)
     }
     
+    private func reportPostButtonDidTap() {
+        let alert = UIAlertController(title: "게시물 신고",
+                                      message: """
+                                      해당 게시물이 불쾌감을 줬다면 신고해주세요.
+                                      신고가 누적되면 필터링을 통해 게시물이
+                                      삭제될 수 있습니다. (중복 불가능)
+                                      """,
+                                      preferredStyle: .alert)
+        let okayAction = UIAlertAction(title: "신고", style: .destructive) { _ in
+            self.reportPostAlert()
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .default)
+        
+        alert.addAction(cancelAction)
+        alert.addAction(okayAction)
+        
+        self.present(alert, animated: true)
+    }
+    
     func setKeyboard() {
         let keyboardWillShow = NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
         let keyboardWillHide =
@@ -170,6 +200,23 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             .drive(with: self) { owner, noti in
                 owner.keyboardDown()
             }.disposed(by: disposeBag)
+    }
+    
+    private func reportPostAlert() {
+        let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .cancel))
+        
+        viewModel.requestToReportPost(postIdx: self.model.value.idx) { isVaild in
+            if isVaild {
+                alert.title = "완료"
+                alert.message = "신고가 접수되었습니다"
+            } else {
+                alert.title = "실패"
+                alert.message = "이미 신고한 게시물입니다"
+            }
+            
+            self.present(alert, animated: true)
+        }
     }
     
     private func keyboardUp(_ notification: Notification) {
@@ -408,7 +455,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func addView() {
         view.addSubviews(scrollView, whiteBackgroundView)
         scrollView.addSubview(contentView)
-        contentView.addSubviews(userImageView, userNameLabel,titleLabel,
+        contentView.addSubviews(userImageView, userNameLabel,reportPostButton, titleLabel,
                                 divideVotePostImageLineView, contentLabel,
                                 firstVoteOptionLabel, secondVoteOptionLabel,
                                 firstPostImageView, secondPostImageView,
@@ -436,6 +483,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         userNameLabel.snp.makeConstraints {
             $0.centerY.equalTo(userImageView)
             $0.leading.equalTo(userImageView.snp.trailing).offset(9)
+        }
+        
+        reportPostButton.snp.makeConstraints {
+            $0.centerY.equalTo(userImageView)
+            $0.trailing.equalTo(divideVotePostImageLineView.snp.trailing)
         }
         
         titleLabel.snp.makeConstraints {

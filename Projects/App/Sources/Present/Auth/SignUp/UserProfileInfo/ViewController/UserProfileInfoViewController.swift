@@ -98,7 +98,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         
         viewModel.callToSignUp(phoneNumber: phoneNumber, password: password, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
             if isDuplicate {
-                self.viewModel.navigateRootVC()
+                self.viewModel.pushCompleteView()
                 self.warningLabel.hide()
             } else {
                 self.shakeAllTextField()

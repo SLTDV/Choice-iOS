@@ -1,4 +1,5 @@
 import Foundation
+import Shared
 
 final class UserProfileInfoCoordinator: BaseCoordinator {
     func startUserProfileInfoVC(phoneNumber: String, password: String) {
@@ -10,8 +11,8 @@ final class UserProfileInfoCoordinator: BaseCoordinator {
     
     override func navigate(to step: ChoiceStep) {
         switch step {
-        case .popVCIsRequired:
-            popVCIsRequired()
+        case .pushCompleteViewIsRequired:
+            pushCompleteViewIsRequired()
         default:
             return
         }
@@ -19,7 +20,7 @@ final class UserProfileInfoCoordinator: BaseCoordinator {
 }
 
 extension UserProfileInfoCoordinator {
-    private func popVCIsRequired() {
-        navigationController.popToRootViewController(animated: true)
+    private func pushCompleteViewIsRequired() {
+        navigationController.pushViewController(CompleteViewController(), animated: true)
     }
 }

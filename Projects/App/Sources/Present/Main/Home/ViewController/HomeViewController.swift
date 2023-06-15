@@ -165,7 +165,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     
     @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
         self.postData.accept([])
-        sortTableViewData(type: .findNewestPostData)
+        sortTableViewData(type: sortType)
         DispatchQueue.main.async {
             self.postTableView.reloadData()
             self.postTableView.refreshControl?.endRefreshing()

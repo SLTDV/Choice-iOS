@@ -21,4 +21,7 @@ enum ChoiceStep {
     
     //Profile
     case logOutIsRequired
+    
+    //lottie
+    case pushCompleteViewIsRequired
 }

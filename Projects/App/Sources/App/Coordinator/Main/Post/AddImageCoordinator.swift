@@ -1,4 +1,5 @@
 import Foundation
+import Shared
 
 final class AddImageCoordiantor: BaseCoordinator {
     func startAddImageVC(title: String, content: String) {
@@ -10,8 +11,8 @@ final class AddImageCoordiantor: BaseCoordinator {
     
     override func navigate(to step: ChoiceStep) {
         switch step {
-        case .popVCIsRequired:
-            popVCIsRequired()
+        case .pushCompleteViewIsRequired:
+            pushCompleteViewIsRequired()
         default:
             return
         }
@@ -19,8 +20,9 @@ final class AddImageCoordiantor: BaseCoordinator {
 }
 
 extension AddImageCoordiantor {
-    private func popVCIsRequired() {
-        navigationController.popToRootViewController(animated: true)
+    private func pushCompleteViewIsRequired() {
+        navigationController.pushViewController(CompleteViewController(), animated: true
+        )
     }
 }
 
