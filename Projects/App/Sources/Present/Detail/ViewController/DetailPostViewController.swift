@@ -47,7 +47,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private lazy var reportPostButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.menu = UIMenu(title: "", children: [UIAction(
+        $0.menu = UIMenu(title: "신고", children: [UIAction(
             title: "게시물 신고",
             attributes: .destructive,
             handler: { _ in self.reportPostButtonDidTap()
