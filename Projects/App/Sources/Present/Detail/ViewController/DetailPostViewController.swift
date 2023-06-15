@@ -174,6 +174,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                                       """,
                                       preferredStyle: .alert)
         let okayAction = UIAlertAction(title: "신고", style: .destructive) { _ in
+            self.reportPostAlert()
         }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
         
@@ -199,6 +200,23 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             .drive(with: self) { owner, noti in
                 owner.keyboardDown()
             }.disposed(by: disposeBag)
+    }
+    
+    private func reportPostAlert() {
+        let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .cancel))
+        
+        viewModel.requestToReportPost(postIdx: self.model.value.idx) { isVaild in
+            if isVaild {
+                alert.title = "완료"
+                alert.message = "신고가 접수되었습니다"
+                self.present(alert, animated: true)
+            } else {
+                alert.title = "실패"
+                alert.message = "이미 신고한 계시물입니다"
+                self.present(alert, animated: true)
+            }
+        }
     }
     
     private func keyboardUp(_ notification: Notification) {
