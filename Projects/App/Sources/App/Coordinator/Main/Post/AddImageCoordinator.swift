@@ -11,8 +11,6 @@ final class AddImageCoordiantor: BaseCoordinator {
     
     override func navigate(to step: ChoiceStep) {
         switch step {
-        case .popVCIsRequired:
-            popVCIsRequired()
         case .pushCompleteViewIsRequired:
             pushCompleteViewIsRequired()
         default:
@@ -22,14 +20,8 @@ final class AddImageCoordiantor: BaseCoordinator {
 }
 
 extension AddImageCoordiantor {
-    private func popVCIsRequired() {
-        navigationController.popToRootViewController(animated: true)
-    }
-    
     private func pushCompleteViewIsRequired() {
-        navigationController.pushViewController(
-            CompleteViewController(text: "게시물이 생성되었습니다!"),
-            animated: true
+        navigationController.pushViewController(CompleteViewController(), animated: true
         )
     }
 }
