@@ -29,7 +29,7 @@ final class AgreementComponentView: UIView {
         $0.setTitleColor(UIColor.gray, for: .normal)
     }
     
-    func linkTextButtonDidTap() {
+    private func linkTextButtonDidTap() {
         linkTextButton.rx.tap
             .bind(with: self) { owner, _ in
                 owner.delegate?.agreementComponentViewDidTapLinkButton(self)

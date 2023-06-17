@@ -84,7 +84,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
             .disposed(by: disposeBag)
     }
     
-    func signUpButtonDidTap() {
+    func checkSignUp() {
         guard let phoneNumber = phoneNumber else { return  }
         guard let password = password else { return  }
         guard let nickName = userNameTextField.text else { return }
@@ -184,7 +184,7 @@ extension UserProfileInfoViewController: UIImagePickerControllerDelegate, UINavi
 }
 
 extension UserProfileInfoViewController: ToSModalViewControllerDelegate {
-    func UpButtonDidTap() {
-        signUpButtonDidTap()
+    func requestSignUp() {
+        checkSignUp()
     }
 }

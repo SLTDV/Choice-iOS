@@ -7,7 +7,7 @@ import RxCocoa
 import Shared
 
 protocol ToSModalViewControllerDelegate: AnyObject {
-    func UpButtonDidTap()
+    func requestSignUp()
 }
 
 final class ToSModalViewController: UIViewController, AgreementComponentViewDelegate {
@@ -61,7 +61,7 @@ final class ToSModalViewController: UIViewController, AgreementComponentViewDele
                 owner.agreeInfoView.setCheckButton()
                 
                 owner.dismiss(animated: true) {
-                    owner.delegate?.UpButtonDidTap()
+                    owner.delegate?.requestSignUp()
                 }
             }.disposed(by: disposeBag)
     }
