@@ -74,6 +74,6 @@ final class AgreementComponentView: UIView {
     }
     
     func setOptionLabel(_ text: String) {
-        
+        optionLabel.text = text
     }
 }

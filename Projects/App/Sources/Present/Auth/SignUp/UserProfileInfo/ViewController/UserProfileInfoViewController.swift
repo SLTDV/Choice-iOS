@@ -84,7 +84,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
             .disposed(by: disposeBag)
     }
     
-    private func signUpButtonDidTap() {
+    func signUpButtonDidTap() {
         guard let phoneNumber = phoneNumber else { return  }
         guard let password = password else { return  }
         guard let nickName = userNameTextField.text else { return }
@@ -95,10 +95,9 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         
         LoadingIndicator.showLoading(text: "")
         
-        
         viewModel.callToSignUp(phoneNumber: phoneNumber, password: password, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
             if isDuplicate {
-                self.pushModal()
+                self.viewModel.pushCompleteView()
                 self.warningLabel.hide()
             } else {
                 self.warningLabel.show(warning: "*이미 존재하는 닉네임 입니다.")
@@ -109,23 +108,24 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     private func completeButtonDidTap() {
         completeButton.rx.tap
             .bind(with: self) { owner, _ in
-                owner.signUpButtonDidTap()
+                owner.pushModal()
             }.disposed(by: disposeBag)
     }
     
     private func pushModal() {
         let vc = ToSModalViewController()
+        vc.delegate = self
         
         vc.modalPresentationStyle = .pageSheet
         vc.sheetPresentationController?.detents = [.medium()]
         
-        self.present(vc, animated: true) 
+        self.present(vc, animated: true)
     }
     
     override func configureVC() {
         imagePickerController.delegate = self
         
-        pushModal()
+        completeButtonDidTap()
         bindUI()
     }
     
@@ -180,5 +180,11 @@ extension UserProfileInfoViewController: UIImagePickerControllerDelegate, UINavi
         
         picker.dismiss(animated: true, completion: nil)
         isImageChanged = true
+    }
+}
+
+extension UserProfileInfoViewController: ToSModalViewControllerDelegate {
+    func UpButtonDidTap() {
+        signUpButtonDidTap()
     }
 }

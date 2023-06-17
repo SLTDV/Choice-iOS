@@ -6,11 +6,16 @@ import RxSwift
 import RxCocoa
 import Shared
 
+protocol ToSModalViewControllerDelegate: AnyObject {
+    func UpButtonDidTap()
+}
+
 final class ToSModalViewController: UIViewController, AgreementComponentViewDelegate {
     private let disposeBag = DisposeBag()
     
+    weak var delegate: ToSModalViewControllerDelegate?
+    
     private let privacyPolicyUrl = NSURL(string: "https://opaque-plate-ed2.notion.site/aa6adde3d5cf4836847f8fc79a6cc3cf")
-    weak var userProfileInfoViewController: UserProfileInfoViewController?
     
     private let allAgreementButton = UIButton().then {
         $0.tintColor = .gray
@@ -26,9 +31,13 @@ final class ToSModalViewController: UIViewController, AgreementComponentViewDele
         $0.backgroundColor = .black
     }
     
-    private let agreeToSView = AgreementComponentView()
+    private let agreeToSView = AgreementComponentView().then {
+        $0.setOptionLabel("[필수] 이용약관")
+    }
     
-    private let agreeInfoView = AgreementComponentView()
+    private let agreeInfoView = AgreementComponentView().then {
+        $0.setOptionLabel("[필수] 개인정보 수집 동의")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,8 +56,12 @@ final class ToSModalViewController: UIViewController, AgreementComponentViewDele
             .bind(with: self) { owner, _ in
                 owner.allAgreementButton.setImage(UIImage(systemName: "checkmark.square.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 30)), for: .normal)
                 owner.allAgreementButton.tintColor = .black
+                
+                owner.agreeToSView.setCheckButton()
+                owner.agreeInfoView.setCheckButton()
+                
                 owner.dismiss(animated: true) {
-                    owner.userProfileInfoViewController?.viewModel.navigateRootVC()
+                    owner.delegate?.UpButtonDidTap()
                 }
             }.disposed(by: disposeBag)
     }
