@@ -16,6 +16,7 @@ final class AgreementComponentView: UIView {
     private let checkButton = UIButton().then {
         $0.setImage(UIImage(systemName: "checkmark", withConfiguration: UIImage.SymbolConfiguration(pointSize: 20)), for: .normal)
         $0.tintColor = .gray
+        $0.isEnabled = false
     }
     
     private let optionLabel = UILabel().then {
