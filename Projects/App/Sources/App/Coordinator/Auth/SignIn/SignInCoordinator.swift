@@ -24,7 +24,7 @@ final class SignInCoordinator: BaseCoordinator {
 
 extension SignInCoordinator {
     private func signUpIsRequired() {
-        let vc = RegistrationPhoneNumberCoordinator(navigationController: navigationController)
+        let vc = UserProfileInfoCoordinator(navigationController: navigationController)
         vc.parentCoordinator = self
         childCoordinators.append(vc)
         vc.start()

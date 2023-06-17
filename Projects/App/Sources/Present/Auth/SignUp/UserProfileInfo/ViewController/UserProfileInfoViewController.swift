@@ -44,7 +44,6 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         $0.isEnabled = false
         $0.backgroundColor = SharedAsset.grayVoteButton.color
         $0.layer.cornerRadius = 8
-        $0.addTarget(self, action: #selector(signUpButtonDidTap(_ :)), for: .touchUpInside)
     }
     
     init(viewModel: UserProfileInfoViewModel, phoneNumber: String, password: String) {
@@ -85,7 +84,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
             .disposed(by: disposeBag)
     }
     
-    @objc private func signUpButtonDidTap(_ sender: UIButton) {
+    private func signUpButtonDidTap() {
         guard let phoneNumber = phoneNumber else { return  }
         guard let password = password else { return  }
         guard let nickName = userNameTextField.text else { return }
@@ -96,24 +95,37 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         
         LoadingIndicator.showLoading(text: "")
         
+        
         viewModel.callToSignUp(phoneNumber: phoneNumber, password: password, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
             if isDuplicate {
-                self.viewModel.pushCompleteView()
+                self.pushModal()
                 self.warningLabel.hide()
             } else {
-                self.shakeAllTextField()
                 self.warningLabel.show(warning: "*이미 존재하는 닉네임 입니다.")
             }
         }
     }
     
-    private func shakeAllTextField() {
-        userNameTextField.shake()
+    private func completeButtonDidTap() {
+        completeButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.signUpButtonDidTap()
+            }.disposed(by: disposeBag)
+    }
+    
+    private func pushModal() {
+        let vc = ToSModalViewController()
+        
+        vc.modalPresentationStyle = .pageSheet
+        vc.sheetPresentationController?.detents = [.medium()]
+        
+        self.present(vc, animated: true) 
     }
     
     override func configureVC() {
         imagePickerController.delegate = self
         
+        pushModal()
         bindUI()
     }
     
