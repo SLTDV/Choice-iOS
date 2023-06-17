@@ -6,14 +6,14 @@ import RxSwift
 import RxCocoa
 import Shared
 
-protocol ToSModalViewControllerDelegate: AnyObject {
+protocol PrivacyPolicyViewControllerDelegate: AnyObject {
     func requestSignUp()
 }
 
-final class ToSModalViewController: UIViewController, AgreementComponentViewDelegate {
+final class PrivacyPolicyModalViewController: UIViewController, AgreementComponentViewDelegate {
     private let disposeBag = DisposeBag()
     
-    weak var delegate: ToSModalViewControllerDelegate?
+    weak var delegate: PrivacyPolicyViewControllerDelegate?
     
     private let privacyPolicyUrl = NSURL(string: "https://opaque-plate-ed2.notion.site/aa6adde3d5cf4836847f8fc79a6cc3cf")
     
@@ -66,7 +66,7 @@ final class ToSModalViewController: UIViewController, AgreementComponentViewDele
             }.disposed(by: disposeBag)
     }
     
-    func agreementComponentViewDidTapLinkButton(_ view: AgreementComponentView) {
+    func privacyPolicyUrlLinkButtonDidTap(_ view: AgreementComponentView) {
             let privacyPolicyView = SFSafariViewController(url: privacyPolicyUrl! as URL)
             present(privacyPolicyView, animated: true)
     }

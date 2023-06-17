@@ -6,7 +6,7 @@ import RxCocoa
 import SafariServices
 
 protocol AgreementComponentViewDelegate: AnyObject {
-    func agreementComponentViewDidTapLinkButton(_ view: AgreementComponentView)
+    func privacyPolicyUrlLinkButtonDidTap(_ view: AgreementComponentView)
 }
 
 final class AgreementComponentView: UIView {
@@ -23,7 +23,7 @@ final class AgreementComponentView: UIView {
         $0.font = .systemFont(ofSize: 16, weight: .regular)
     }
     
-    let linkTextButton = UIButton().then {
+    private let linkTextButton = UIButton().then {
         $0.setTitle("자세히보기", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
         $0.setTitleColor(UIColor.gray, for: .normal)
@@ -32,7 +32,7 @@ final class AgreementComponentView: UIView {
     private func linkTextButtonDidTap() {
         linkTextButton.rx.tap
             .bind(with: self) { owner, _ in
-                owner.delegate?.agreementComponentViewDidTapLinkButton(self)
+                owner.delegate?.privacyPolicyUrlLinkButtonDidTap(self)
         }.disposed(by: disposeBag)
     }
     

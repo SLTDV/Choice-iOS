@@ -113,7 +113,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     }
     
     private func pushModal() {
-        let vc = ToSModalViewController()
+        let vc = PrivacyPolicyModalViewController()
         vc.delegate = self
         
         vc.modalPresentationStyle = .pageSheet
@@ -183,7 +183,7 @@ extension UserProfileInfoViewController: UIImagePickerControllerDelegate, UINavi
     }
 }
 
-extension UserProfileInfoViewController: ToSModalViewControllerDelegate {
+extension UserProfileInfoViewController: PrivacyPolicyViewControllerDelegate {
     func requestSignUp() {
         checkSignUp()
     }
