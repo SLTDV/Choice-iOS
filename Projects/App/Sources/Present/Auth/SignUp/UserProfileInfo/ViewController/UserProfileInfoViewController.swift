@@ -44,7 +44,6 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         $0.isEnabled = false
         $0.backgroundColor = SharedAsset.grayVoteButton.color
         $0.layer.cornerRadius = 8
-        $0.addTarget(self, action: #selector(signUpButtonDidTap(_ :)), for: .touchUpInside)
     }
     
     init(viewModel: UserProfileInfoViewModel, phoneNumber: String, password: String) {
@@ -85,35 +84,57 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
             .disposed(by: disposeBag)
     }
     
-    @objc private func signUpButtonDidTap(_ sender: UIButton) {
-        guard let phoneNumber = phoneNumber else { return  }
-        guard let password = password else { return  }
-        guard let nickName = userNameTextField.text else { return }
+    func checkSignUp() {
+        let phoneNumber = phoneNumber
+        let password = password
+        let nickName = userNameTextField.text
         
-        let trimmedNickName = nickName.trimmingCharacters(in: .whitespaces)
+        let trimmedNickName = nickName!.trimmingCharacters(in: .whitespaces)
     
         let profileImage = isImageChanged ? profileImageView.image : nil
         
         LoadingIndicator.showLoading(text: "")
         
-        viewModel.callToSignUp(phoneNumber: phoneNumber, password: password, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
+        viewModel.callToSignUp(phoneNumber: phoneNumber!, password: password!, nickname: trimmedNickName, profileImage: profileImage!) { isDuplicate in
             if isDuplicate {
                 self.viewModel.pushCompleteView()
                 self.warningLabel.hide()
             } else {
-                self.shakeAllTextField()
                 self.warningLabel.show(warning: "*이미 존재하는 닉네임 입니다.")
             }
         }
     }
     
-    private func shakeAllTextField() {
-        userNameTextField.shake()
+    private func completeButtonDidTap() {
+        completeButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.presentModal()
+            }.disposed(by: disposeBag)
+    }
+    
+    private func presentModal() {
+        let vc = PrivacyPolicyModalViewController()
+        vc.delegate = self
+        
+        vc.modalPresentationStyle = .pageSheet
+        
+        if #available(iOS 16.0, *) {
+            vc.sheetPresentationController?.detents = [
+                .custom { _ in
+                    return 300
+                }
+            ]
+        } else {
+            vc.sheetPresentationController?.detents = [.medium()]
+        }
+        
+        self.present(vc, animated: true)
     }
     
     override func configureVC() {
         imagePickerController.delegate = self
         
+        completeButtonDidTap()
         bindUI()
     }
     
@@ -168,5 +189,11 @@ extension UserProfileInfoViewController: UIImagePickerControllerDelegate, UINavi
         
         picker.dismiss(animated: true, completion: nil)
         isImageChanged = true
+    }
+}
+
+extension UserProfileInfoViewController: PrivacyPolicyViewControllerDelegate {
+    func requestSignUp() {
+        checkSignUp()
     }
 }
