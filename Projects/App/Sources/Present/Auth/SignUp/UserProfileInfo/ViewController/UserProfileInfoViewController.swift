@@ -108,16 +108,25 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     private func completeButtonDidTap() {
         completeButton.rx.tap
             .bind(with: self) { owner, _ in
-                owner.pushModal()
+                owner.presentModal()
             }.disposed(by: disposeBag)
     }
     
-    private func pushModal() {
+    private func presentModal() {
         let vc = PrivacyPolicyModalViewController()
         vc.delegate = self
         
         vc.modalPresentationStyle = .pageSheet
-        vc.sheetPresentationController?.detents = [.medium()]
+        
+        if #available(iOS 16.0, *) {
+            vc.sheetPresentationController?.detents = [
+                .custom { _ in
+                    return 300
+                }
+            ]
+        } else {
+            vc.sheetPresentationController?.detents = [.medium()]
+        }
         
         self.present(vc, animated: true)
     }

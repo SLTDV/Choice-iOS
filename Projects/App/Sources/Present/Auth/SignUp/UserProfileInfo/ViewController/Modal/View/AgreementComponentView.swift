@@ -3,6 +3,7 @@ import SnapKit
 import Then
 import RxSwift
 import RxCocoa
+import Shared
 import SafariServices
 
 protocol AgreementComponentViewDelegate: AnyObject {
@@ -20,14 +21,14 @@ final class AgreementComponentView: UIView {
     }
     
     private let optionLabel = UILabel().then {
-        $0.text = "[필수] 이용약관 동의"
         $0.font = .systemFont(ofSize: 16, weight: .regular)
     }
     
     private let linkTextButton = UIButton().then {
-        $0.setTitle("자세히보기", for: .normal)
-        $0.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
+        $0.setTitle("보기", for: .normal)
+        $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .regular)
         $0.setTitleColor(UIColor.gray, for: .normal)
+        $0.setUnderline()
     }
     
     private func linkTextButtonDidTap() {
@@ -66,7 +67,7 @@ final class AgreementComponentView: UIView {
         
         linkTextButton.snp.makeConstraints {
             $0.centerY.equalTo(optionLabel)
-            $0.trailing.equalToSuperview()
+            $0.leading.equalTo(optionLabel.snp.trailing).offset(10)
         }
     }
     
