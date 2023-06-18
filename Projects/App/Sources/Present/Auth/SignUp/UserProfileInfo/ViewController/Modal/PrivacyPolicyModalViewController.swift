@@ -35,7 +35,7 @@ final class PrivacyPolicyModalViewController: UIViewController, AgreementCompone
         $0.setOptionLabel("[필수] 이용약관")
     }
     
-    private let agreeInfoView = AgreementComponentView().then {
+    private let agreePrivacyView = AgreementComponentView().then {
         $0.setOptionLabel("[필수] 개인정보 수집 동의")
     }
     
@@ -44,7 +44,7 @@ final class PrivacyPolicyModalViewController: UIViewController, AgreementCompone
         view.backgroundColor = .white
         
         agreeToSView.delegate = self
-        agreeInfoView.delegate = self
+        agreePrivacyView.delegate = self
         
         allAgreeButtonDidTap()
         addView()
@@ -58,7 +58,7 @@ final class PrivacyPolicyModalViewController: UIViewController, AgreementCompone
                 owner.allAgreementButton.tintColor = .black
                 
                 owner.agreeToSView.setCheckButton()
-                owner.agreeInfoView.setCheckButton()
+                owner.agreePrivacyView.setCheckButton()
                 
                 owner.dismiss(animated: true) {
                     owner.delegate?.requestSignUp()
@@ -72,7 +72,7 @@ final class PrivacyPolicyModalViewController: UIViewController, AgreementCompone
     }
     
     private func addView() {
-        view.addSubviews(allAgreementButton, allAgreementLabel, divideLineView, agreeToSView, agreeInfoView)
+        view.addSubviews(allAgreementButton, allAgreementLabel, divideLineView, agreeToSView, agreePrivacyView)
     }
     
     private func setLayout() {
@@ -98,7 +98,7 @@ final class PrivacyPolicyModalViewController: UIViewController, AgreementCompone
             $0.height.equalTo(40)
         }
         
-        agreeInfoView.snp.makeConstraints {
+        agreePrivacyView.snp.makeConstraints {
             $0.top.equalTo(agreeToSView.snp.bottom).offset(30)
             $0.leading.trailing.equalToSuperview().inset(35)
             $0.height.equalTo(40)

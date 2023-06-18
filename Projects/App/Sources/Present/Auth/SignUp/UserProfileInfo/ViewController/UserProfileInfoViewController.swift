@@ -85,17 +85,17 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     }
     
     func checkSignUp() {
-        guard let phoneNumber = phoneNumber else { return  }
-        guard let password = password else { return  }
-        guard let nickName = userNameTextField.text else { return }
+        let phoneNumber = phoneNumber
+        let password = password
+        let nickName = userNameTextField.text
         
-        let trimmedNickName = nickName.trimmingCharacters(in: .whitespaces)
+        let trimmedNickName = nickName!.trimmingCharacters(in: .whitespaces)
     
         let profileImage = isImageChanged ? profileImageView.image : nil
         
         LoadingIndicator.showLoading(text: "")
         
-        viewModel.callToSignUp(phoneNumber: phoneNumber, password: password, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
+        viewModel.callToSignUp(phoneNumber: phoneNumber!, password: password!, nickname: trimmedNickName, profileImage: profileImage!) { isDuplicate in
             if isDuplicate {
                 self.viewModel.pushCompleteView()
                 self.warningLabel.hide()
