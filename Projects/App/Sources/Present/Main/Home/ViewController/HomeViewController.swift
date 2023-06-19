@@ -54,7 +54,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     // MARK: - Function
     @objc func handleBlockButtonPressed() {
         self.postData.accept([])
-        print("request")
         sortTableViewData(type: sortType)
         DispatchQueue.main.async {
             self.postTableView.reloadData()
