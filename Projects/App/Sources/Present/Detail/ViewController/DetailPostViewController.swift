@@ -244,10 +244,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         
-        viewModel.requestToReportPost(postIdx: self.model.value.idx) { isVaild in
+        viewModel.requestToBlockUser(postIdx: self.model.value.idx) { [weak viewModel] isVaild in
             if isVaild {
                 alert.title = "완료"
                 alert.message = "차단이 완료되었습니다."
+                viewModel?.popToRootVC()
             } else {
                 alert.title = "실패"
                 alert.message = "차단이 실패했습니다."

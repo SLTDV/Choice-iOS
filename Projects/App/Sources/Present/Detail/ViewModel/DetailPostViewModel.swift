@@ -137,9 +137,15 @@ final class DetailPostViewModel: BaseViewModel {
             switch response.result {
             case .success:
                 completion(true)
-            case .failure(_):
+            case .failure(let error):
+                print("Erorr - BlockUser = \(error.localizedDescription)")
                 completion(false)
             }
         }
     }
+    
+    func popToRootVC() {
+        coordinator.navigate(to: .popVCIsRequired)
+    }
+    
 }
