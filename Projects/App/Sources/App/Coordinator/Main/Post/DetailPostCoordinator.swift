@@ -1,9 +1,9 @@
 import Foundation
 
 final class DetailPostCoordiantor: BaseCoordinator {
-    func startDetailPostVC(model: PostList, type: ViewControllerType) {
+    func startDetailPostVC(model: PostList, type: ViewControllerType, vc: HomeViewController) {
         let vm = DetailPostViewModel(coordinator: self)
-        let vc = DetailPostViewController(viewModel: vm, model: model, type: type)
+        let vc = DetailPostViewController(viewModel: vm, model: model, type: type, vc: vc)
         
         navigationController.pushViewController(vc, animated: true)
     }

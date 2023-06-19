@@ -3,7 +3,17 @@ import RxSwift
 import RxCocoa
 import Shared
 
-final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVoteButtonDidTapDelegate {
+final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
+                                PostVoteButtonDidTapDelegate {
+    func blockUserButtonDidTap() {
+        postTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+        self.postData.accept([])
+        sortTableViewData(type: sortType)
+        DispatchQueue.main.async {
+            self.postTableView.reloadData()
+        }
+    }
+    
     // MARK: - Properties
     var postData = BehaviorRelay<[PostList]>(value: [])
     private let disposeBag = DisposeBag()

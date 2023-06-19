@@ -32,6 +32,8 @@ extension ProfileCoordinator {
         let vc = DetailPostCoordiantor(navigationController: navigationController)
         vc.parentCoordinator = self
         childCoordinators.append(vc)
-        vc.startDetailPostVC(model: model, type: type)
+        let vm = HomeViewModel(coordinator: self)
+        let hVc = HomeViewController(viewModel: vm)
+        vc.startDetailPostVC(model: model, type: type, vc: hVc)
     }
 }

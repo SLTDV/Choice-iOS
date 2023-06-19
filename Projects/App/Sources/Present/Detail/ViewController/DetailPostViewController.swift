@@ -12,20 +12,24 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     var writerImageStringData = PublishSubject<String?>()
     var isMineData = false
     var commentData = BehaviorRelay<[CommentList]>(value: [])
-    private var model = BehaviorRelay<PostList>(value: PostList(idx: 0,
-                                                                firstImageUrl: "",
-                                                                secondImageUrl: "",
-                                                                title: "",
-                                                                content: "",
-                                                                firstVotingOption: "",
-                                                                secondVotingOption: "",
-                                                                firstVotingCount: 0,
-                                                                secondVotingCount: 0,
-                                                                votingState: 0,
-                                                                participants: 0,
-                                                                commentCount: 0))
+    private var model = BehaviorRelay<PostList>(
+        value: PostList(
+            idx: 0,
+            firstImageUrl: "",
+            secondImageUrl: "",
+            title: "",
+            content: "",
+            firstVotingOption: "",
+            secondVotingOption: "",
+            firstVotingCount: 0,
+            secondVotingCount: 0,
+            votingState: 0,
+            participants: 0,
+            commentCount: 0)
+    )
     var isLastPage = false
     var type: ViewControllerType?
+    var vc: HomeViewController?
     
     private let disposeBag = DisposeBag()
     
@@ -152,10 +156,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
     
-    init(viewModel: DetailPostViewModel, model: PostList, type: ViewControllerType) {
+    init(viewModel: DetailPostViewModel, model: PostList, type: ViewControllerType, vc: HomeViewController) {
         super.init(viewModel: viewModel)
         self.model.accept(model)
         self.type = type
+        self.vc = vc
         
         scrollView.addGestureRecognizer(tapGestureRecognizer)
     }
@@ -245,21 +250,21 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         
-        viewModel.requestToBlockUser(postIdx: self.model.value.idx) { [weak viewModel] result in
+        viewModel.requestToBlockUser(postIdx: self.model.value.idx) { [weak self] result in
             switch result {
             case true:
                 alert.title = "완료"
                 alert.message = "차단이 완료되었습니다."
-                viewModel?.popToRootVC()
+                self?.viewModel.popToRootVC()
+                self?.vc?.blockUserButtonDidTap()
             case false:
                 alert.title = "실패"
                 alert.message = "차단이 완료되었습니다."
             }
             
-            self.present(alert, animated: true)
+            self?.present(alert, animated: true)
         }
     }
-    
     
     private func keyboardUp(_ notification: Notification) {
         if let keyboardFrame:CGRect = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
