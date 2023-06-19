@@ -51,7 +51,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             title: "게시물 신고",
             attributes: .destructive,
             handler: { _ in self.reportPostButtonDidTap()
-            })])
+            }), UIAction(title: "차단하기",
+                         attributes: .destructive,
+                         handler: { _ in self.reportPostButtonDidTap()})])
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
     }
@@ -174,6 +176,25 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                                       """,
                                       preferredStyle: .alert)
         let okayAction = UIAlertAction(title: "신고", style: .destructive) { _ in
+            self.reportPostAlert()
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .default)
+        
+        alert.addAction(cancelAction)
+        alert.addAction(okayAction)
+        
+        self.present(alert, animated: true)
+    }
+    
+    private func blockUserButtonDidTap() {
+        let alert = UIAlertController(title: "차단하기",
+                                      message: """
+                                      해당 사용자를 차단할 수 있습니다.
+                                      차단하면 해당 사용자의 게시물은
+                                      보이지 않습니다.
+                                      """,
+                                      preferredStyle: .alert)
+        let okayAction = UIAlertAction(title: "차단", style: .destructive) { _ in
             self.reportPostAlert()
         }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
