@@ -46,9 +46,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
-    private lazy var reportPostButton = UIButton().then {
+    private lazy var userOptionButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.menu = UIMenu(title: "신고", children: [UIAction(
+        $0.menu = UIMenu(title: "신고 & 차단", children: [UIAction(
             title: "게시물 신고",
             attributes: .destructive,
             handler: { _ in self.reportPostButtonDidTap()
@@ -302,8 +302,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func setOptionLayout() {
+        print(isMineData)
         if !isMineData {
-            reportPostButton.snp.makeConstraints {
+            userOptionButton.snp.makeConstraints {
                 $0.centerY.equalTo(userImageView)
                 $0.trailing.equalTo(divideVotePostImageLineView.snp.trailing)
             }
@@ -509,7 +510,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func addView() {
         view.addSubviews(scrollView, whiteBackgroundView)
         scrollView.addSubview(contentView)
-        contentView.addSubviews(userImageView, userNameLabel,reportPostButton, titleLabel,
+        contentView.addSubviews(userImageView, userNameLabel,userOptionButton, titleLabel,
                                 divideVotePostImageLineView, contentLabel,
                                 firstVoteOptionLabel, secondVoteOptionLabel,
                                 firstPostImageView, secondPostImageView,
@@ -538,11 +539,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.centerY.equalTo(userImageView)
             $0.leading.equalTo(userImageView.snp.trailing).offset(9)
         }
-        
-//        reportPostButton.snp.makeConstraints {
-//            $0.centerY.equalTo(userImageView)
-//            $0.trailing.equalTo(divideVotePostImageLineView.snp.trailing)
-//        }
         
         titleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(43)
