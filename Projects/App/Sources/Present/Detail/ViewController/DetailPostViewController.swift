@@ -244,16 +244,19 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         
-        viewModel.requestToBlockUser(postIdx: self.model.value.idx) { [weak viewModel] isVaild in
-            if isVaild {
+        viewModel.requestToBlockUser(postIdx: self.model.value.idx) { [weak viewModel] result in
+            switch result {
+            case .success:
                 alert.title = "완료"
                 alert.message = "차단이 완료되었습니다."
                 viewModel?.popToRootVC()
-            } else {
+            case .failure(.whenYouBlockMe):
+                alert.title = "실패"
+                alert.message = "자기 자신은 차단할 수 없습니다."
+            case .failure(.failedRequest):
                 alert.title = "실패"
                 alert.message = "차단이 실패했습니다."
             }
-            
             self.present(alert, animated: true)
         }
     }
