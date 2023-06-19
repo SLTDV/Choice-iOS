@@ -5,6 +5,7 @@ struct CommentModel: Codable {
     var size: Int
     var writer: String
     var image: String?
+    var isMine: Bool
     var commentList : [CommentList]
 }
 

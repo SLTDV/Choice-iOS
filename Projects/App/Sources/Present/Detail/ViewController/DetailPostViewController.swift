@@ -10,6 +10,7 @@ enum ContentSizeKey {
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
     var writerNameData = PublishSubject<String>()
     var writerImageStringData = PublishSubject<String?>()
+    var isMineData = false
     var commentData = BehaviorRelay<[CommentList]>(value: [])
     private var model = BehaviorRelay<PostList>(value: PostList(idx: 0,
                                                                 firstImageUrl: "",
@@ -246,17 +247,15 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         viewModel.requestToBlockUser(postIdx: self.model.value.idx) { [weak viewModel] result in
             switch result {
-            case .success:
+            case true:
                 alert.title = "완료"
                 alert.message = "차단이 완료되었습니다."
                 viewModel?.popToRootVC()
-            case .failure(.whenYouBlockMe):
+            case false:
                 alert.title = "실패"
-                alert.message = "자기 자신은 차단할 수 없습니다."
-            case .failure(.failedRequest):
-                alert.title = "실패"
-                alert.message = "차단이 실패했습니다."
+                alert.message = "차단이 완료되었습니다."
             }
+            
             self.present(alert, animated: true)
         }
     }
@@ -301,8 +300,19 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             })
             .disposed(by: disposeBag)
     }
+    
+    private func setOptionLayout() {
+        if !isMineData {
+            reportPostButton.snp.makeConstraints {
+                $0.centerY.equalTo(userImageView)
+                $0.trailing.equalTo(divideVotePostImageLineView.snp.trailing)
+            }
+        }
+    }
 
     private func updateEmptyLabelLayout() {
+        setOptionLayout()
+        
         let comments = commentData.value
         if comments.isEmpty && isLastPage {
             emptyLabel.frame = CGRect(x: 0, y: 15, width: commentTableView.bounds.width, height: 100)
@@ -342,6 +352,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func bindUI() {
         writerNameData.bind(with: self, onNext: { owner, arg in
             owner.userNameLabel.text = arg
+
         }).disposed(by: disposeBag)
         
         writerImageStringData.bind(with: self, onNext: { owner, arg in
@@ -528,10 +539,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.leading.equalTo(userImageView.snp.trailing).offset(9)
         }
         
-        reportPostButton.snp.makeConstraints {
-            $0.centerY.equalTo(userImageView)
-            $0.trailing.equalTo(divideVotePostImageLineView.snp.trailing)
-        }
+//        reportPostButton.snp.makeConstraints {
+//            $0.centerY.equalTo(userImageView)
+//            $0.trailing.equalTo(divideVotePostImageLineView.snp.trailing)
+//        }
         
         titleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(43)
