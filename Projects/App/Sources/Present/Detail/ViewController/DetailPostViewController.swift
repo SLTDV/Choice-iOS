@@ -29,7 +29,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     )
     var isLastPage = false
     var type: ViewControllerType?
-    var vc: HomeViewController?
     
     private let disposeBag = DisposeBag()
     
@@ -156,11 +155,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
     
-    init(viewModel: DetailPostViewModel, model: PostList, type: ViewControllerType, vc: HomeViewController) {
+    init(viewModel: DetailPostViewModel, model: PostList, type: ViewControllerType) {
         super.init(viewModel: viewModel)
         self.model.accept(model)
         self.type = type
-        self.vc = vc
         
         scrollView.addGestureRecognizer(tapGestureRecognizer)
     }
@@ -256,7 +254,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 alert.title = "완료"
                 alert.message = "차단이 완료되었습니다."
                 self?.viewModel.popToRootVC()
-                self?.vc?.blockUserButtonDidTap()
+                NotificationCenter.default.post(name: NSNotification.Name("BlockButtonPressed"), object: nil)
             case false:
                 alert.title = "실패"
                 alert.message = "차단이 완료되었습니다."

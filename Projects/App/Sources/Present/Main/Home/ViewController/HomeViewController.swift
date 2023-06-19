@@ -5,14 +5,6 @@ import Shared
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                                 PostVoteButtonDidTapDelegate {
-    func blockUserButtonDidTap() {
-        postTableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
-        self.postData.accept([])
-        sortTableViewData(type: sortType)
-        DispatchQueue.main.async {
-            self.postTableView.reloadData()
-        }
-    }
     
     // MARK: - Properties
     var postData = BehaviorRelay<[PostList]>(value: [])
@@ -60,6 +52,15 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     }
     
     // MARK: - Function
+    @objc func handleBlockButtonPressed() {
+        self.postData.accept([])
+        print("request")
+        sortTableViewData(type: sortType)
+        DispatchQueue.main.async {
+            self.postTableView.reloadData()
+        }
+    }
+    
     private func navigationBarButtonDidTap() {
         profileButton.rx.tap
             .throttle(.seconds(2), latest: false, scheduler: MainScheduler.instance)
@@ -204,6 +205,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     
     override func viewWillAppear(_ animated: Bool) {
         self.postTableView.reloadData()
+        NotificationCenter.default.addObserver(self, selector: #selector(handleBlockButtonPressed), name: NSNotification.Name("BlockButtonPressed"), object: nil)
     }
 
     override func addView() {
