@@ -125,4 +125,21 @@ final class DetailPostViewModel: BaseViewModel {
             }
         }
     }
+    
+    func requestToBlockUser(postIdx: Int, completion: @escaping (Bool) -> Void) {
+        let url = APIConstants.blockUserURL + "\(postIdx)"
+        AF.request(url,
+                   method: .post,
+                   encoding: URLEncoding.queryString,
+                   interceptor: JwtRequestInterceptor(jwtStore: container))
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+            switch response.result {
+            case .success:
+                completion(true)
+            case .failure(_):
+                completion(false)
+            }
+        }
+    }
 }

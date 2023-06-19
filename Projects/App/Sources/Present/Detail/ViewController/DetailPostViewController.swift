@@ -53,7 +53,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             handler: { _ in self.reportPostButtonDidTap()
             }), UIAction(title: "차단하기",
                          attributes: .destructive,
-                         handler: { _ in self.reportPostButtonDidTap()})])
+                         handler: { _ in self.blockUserButtonDidTap()})])
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
     }
@@ -195,7 +195,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                                       """,
                                       preferredStyle: .alert)
         let okayAction = UIAlertAction(title: "차단", style: .destructive) { _ in
-            self.reportPostAlert()
+            self.blockUserAlert()
         }
         let cancelAction = UIAlertAction(title: "취소", style: .default)
         
@@ -239,6 +239,24 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             self.present(alert, animated: true)
         }
     }
+    
+    private func blockUserAlert() {
+        let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .cancel))
+        
+        viewModel.requestToReportPost(postIdx: self.model.value.idx) { isVaild in
+            if isVaild {
+                alert.title = "완료"
+                alert.message = "차단이 완료되었습니다."
+            } else {
+                alert.title = "실패"
+                alert.message = "차단이 실패했습니다."
+            }
+            
+            self.present(alert, animated: true)
+        }
+    }
+    
     
     private func keyboardUp(_ notification: Notification) {
         if let keyboardFrame:CGRect = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
