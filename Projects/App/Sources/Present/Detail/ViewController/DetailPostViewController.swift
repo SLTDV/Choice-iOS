@@ -253,8 +253,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             case true:
                 alert.title = "완료"
                 alert.message = "차단이 완료되었습니다."
-                NotificationCenter.default.post(name: NSNotification.Name("BlockButtonPressed"), object: nil)
                 self?.viewModel.popToRootVC()
+                NotificationCenter.default.post(name: NSNotification.Name("BlockButtonPressed"), object: nil)
             case false:
                 alert.title = "실패"
                 alert.message = "차단이 완료되었습니다."

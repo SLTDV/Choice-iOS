@@ -58,6 +58,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
             self.postTableView.reloadData()
             self.postData.accept([])
         }
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("BlockButtonPressed"), object: nil)
     }
     
     private func navigationBarButtonDidTap() {
@@ -205,6 +206,10 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     override func viewWillAppear(_ animated: Bool) {
         self.postTableView.reloadData()
         NotificationCenter.default.addObserver(self, selector: #selector(handleBlockButtonPressed), name: NSNotification.Name("BlockButtonPressed"), object: nil)
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("BlockButtonPressed"), object: nil)
     }
 
     override func addView() {
