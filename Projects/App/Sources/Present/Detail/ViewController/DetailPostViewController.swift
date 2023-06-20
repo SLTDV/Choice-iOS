@@ -305,7 +305,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func setOptionLayout() {
-        print(isMineData)
         if !isMineData {
             userOptionButton.snp.makeConstraints {
                 $0.centerY.equalTo(userImageView)
