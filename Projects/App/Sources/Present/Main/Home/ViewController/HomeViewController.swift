@@ -151,27 +151,23 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     }
     
     private func configureDropDown() {
-        let recentSort = UIAction(title: "최신순으로",
-                                  image: UIImage(systemName: "clock")) { [weak self] _ in
-            LoadingIndicator.showLoading(text: "")
-            self?.sortTableViewData(type: .findNewestPostData)
-            DispatchQueue.main.async {
-                self?.postTableView.reloadData()
-                self?.postData.accept([])
-                self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
+        let actinos: [(title: String, image: UIImage?, type: MenuOptionType)] = [
+            ("최신순으로", UIImage(systemName: "clock"), .findBestPostData),
+            ("인기순으로", UIImage(systemName: "heart"), .findNewestPostData)
+        ]
+        
+        let menuItems = actinos.map { action in
+            UIAction(title: action.title, image: action.image) { [weak self] _ in
+                LoadingIndicator.showLoading(text: "")
+                self?.sortTableViewData(type: action.type)
+                DispatchQueue.main.async {
+                    self?.postTableView.reloadData()
+                    self?.postData.accept([])
+                    self?.dropdownButton.setTitle("\(action.title) ↓", for: .normal)
+                }
             }
         }
-        let popularSort = UIAction(title: "인기순으로",
-                                   image: UIImage(systemName: "heart")) { [weak self] _ in
-            LoadingIndicator.showLoading(text: "")
-            self?.sortTableViewData(type: .findBestPostData)
-            DispatchQueue.main.async {
-                self?.postTableView.reloadData()
-                self?.postData.accept([])
-                self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
-            }
-        }
-        dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
+        dropdownButton.menu = UIMenu(title: "정렬", children: menuItems)
     }
     
     @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
