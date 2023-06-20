@@ -3,7 +3,9 @@ import RxSwift
 import RxCocoa
 import Shared
 
-final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVoteButtonDidTapDelegate {
+final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
+                                PostVoteButtonDidTapDelegate {
+    
     // MARK: - Properties
     var postData = BehaviorRelay<[PostList]>(value: [])
     private let disposeBag = DisposeBag()
@@ -50,6 +52,15 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     // MARK: - Function
+    @objc func handleBlockButtonPressed() {
+        sortTableViewData(type: .findBestPostData)
+        DispatchQueue.main.async {
+            self.postTableView.reloadData()
+            self.postData.accept([])
+        }
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name("BlockButtonPressed"), object: nil)
+    }
+    
     private func navigationBarButtonDidTap() {
         profileButton.rx.tap
             .throttle(.seconds(2), latest: false, scheduler: MainScheduler.instance)
@@ -140,34 +151,30 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     }
     
     private func configureDropDown() {
-        let recentSort = UIAction(title: "최신순으로",
-                                  image: UIImage(systemName: "clock")) { [weak self] _ in
-            LoadingIndicator.showLoading(text: "")
-            self?.sortTableViewData(type: .findNewestPostData)
-            DispatchQueue.main.async {
-                self?.postTableView.reloadData()
-                self?.postData.accept([])
-                self?.dropdownButton.setTitle("최신순 ↓", for: .normal)
+        let actinos: [(title: String, image: UIImage?, type: MenuOptionType)] = [
+            ("최신순", UIImage(systemName: "clock"), .findNewestPostData),
+            ("인기순", UIImage(systemName: "heart"), .findBestPostData)
+        ]
+        
+        let menuItems = actinos.map { action in
+            UIAction(title: action.title, image: action.image) { [weak self] _ in
+                LoadingIndicator.showLoading(text: "")
+                self?.sortTableViewData(type: action.type)
+                DispatchQueue.main.async {
+                    self?.postTableView.reloadData()
+                    self?.postData.accept([])
+                    self?.dropdownButton.setTitle("\(action.title) ↓", for: .normal)
+                }
             }
         }
-        let popularSort = UIAction(title: "인기순으로",
-                                   image: UIImage(systemName: "heart")) { [weak self] _ in
-            LoadingIndicator.showLoading(text: "")
-            self?.sortTableViewData(type: .findBestPostData)
-            DispatchQueue.main.async {
-                self?.postTableView.reloadData()
-                self?.postData.accept([])
-                self?.dropdownButton.setTitle("인기순 ↓", for: .normal)
-            }
-        }
-        dropdownButton.menu = UIMenu(title: "정렬", children: [recentSort, popularSort])
+        dropdownButton.menu = UIMenu(title: "정렬", children: menuItems)
     }
     
     @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
-        self.postData.accept([])
         sortTableViewData(type: sortType)
         DispatchQueue.main.async {
             self.postTableView.reloadData()
+            self.postData.accept([])
             self.postTableView.refreshControl?.endRefreshing()
         }
     }
@@ -194,6 +201,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol, PostVo
     
     override func viewWillAppear(_ animated: Bool) {
         self.postTableView.reloadData()
+        NotificationCenter.default.addObserver(self, selector: #selector(handleBlockButtonPressed), name: NSNotification.Name("BlockButtonPressed"), object: nil)
     }
 
     override func addView() {

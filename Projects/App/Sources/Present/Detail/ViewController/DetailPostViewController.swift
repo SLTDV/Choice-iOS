@@ -10,19 +10,23 @@ enum ContentSizeKey {
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
     var writerNameData = PublishSubject<String>()
     var writerImageStringData = PublishSubject<String?>()
+    var isMineData = false
     var commentData = BehaviorRelay<[CommentList]>(value: [])
-    private var model = BehaviorRelay<PostList>(value: PostList(idx: 0,
-                                                                firstImageUrl: "",
-                                                                secondImageUrl: "",
-                                                                title: "",
-                                                                content: "",
-                                                                firstVotingOption: "",
-                                                                secondVotingOption: "",
-                                                                firstVotingCount: 0,
-                                                                secondVotingCount: 0,
-                                                                votingState: 0,
-                                                                participants: 0,
-                                                                commentCount: 0))
+    private var model = BehaviorRelay<PostList>(
+        value: PostList(
+            idx: 0,
+            firstImageUrl: "",
+            secondImageUrl: "",
+            title: "",
+            content: "",
+            firstVotingOption: "",
+            secondVotingOption: "",
+            firstVotingCount: 0,
+            secondVotingCount: 0,
+            votingState: 0,
+            participants: 0,
+            commentCount: 0)
+    )
     var isLastPage = false
     var type: ViewControllerType?
     
@@ -45,13 +49,15 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.font = .systemFont(ofSize: 14, weight: .semibold)
     }
     
-    private lazy var reportPostButton = UIButton().then {
+    private lazy var userOptionButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.menu = UIMenu(title: "신고", children: [UIAction(
+        $0.menu = UIMenu(title: "신고 & 차단", children: [UIAction(
             title: "게시물 신고",
             attributes: .destructive,
             handler: { _ in self.reportPostButtonDidTap()
-            })])
+            }), UIAction(title: "차단하기",
+                         attributes: .destructive,
+                         handler: { _ in self.blockUserButtonDidTap()})])
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
     }
@@ -184,6 +190,25 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.present(alert, animated: true)
     }
     
+    private func blockUserButtonDidTap() {
+        let alert = UIAlertController(title: "차단하기",
+                                      message: """
+                                      해당 사용자를 차단할 수 있습니다.
+                                      차단하면 해당 사용자의 게시물은
+                                      보이지 않습니다.
+                                      """,
+                                      preferredStyle: .alert)
+        let okayAction = UIAlertAction(title: "차단", style: .destructive) { _ in
+            self.blockUserAlert()
+        }
+        let cancelAction = UIAlertAction(title: "취소", style: .default)
+        
+        alert.addAction(cancelAction)
+        alert.addAction(okayAction)
+        
+        self.present(alert, animated: true)
+    }
+    
     func setKeyboard() {
         let keyboardWillShow = NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
         let keyboardWillHide =
@@ -216,6 +241,26 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }
             
             self.present(alert, animated: true)
+        }
+    }
+    
+    private func blockUserAlert() {
+        let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "확인", style: .cancel))
+        
+        viewModel.requestToBlockUser(postIdx: self.model.value.idx) { [weak self] result in
+            switch result {
+            case true:
+                alert.title = "완료"
+                alert.message = "차단이 완료되었습니다."
+                self?.viewModel.popToRootVC()
+                NotificationCenter.default.post(name: NSNotification.Name("BlockButtonPressed"), object: nil)
+            case false:
+                alert.title = "실패"
+                alert.message = "차단이 완료되었습니다."
+            }
+            
+            self?.present(alert, animated: true)
         }
     }
     
@@ -258,8 +303,19 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             })
             .disposed(by: disposeBag)
     }
+    
+    private func setOptionLayout() {
+        if !isMineData {
+            userOptionButton.snp.makeConstraints {
+                $0.centerY.equalTo(userImageView)
+                $0.trailing.equalTo(divideVotePostImageLineView.snp.trailing)
+            }
+        }
+    }
 
     private func updateEmptyLabelLayout() {
+        setOptionLayout()
+        
         let comments = commentData.value
         if comments.isEmpty && isLastPage {
             emptyLabel.frame = CGRect(x: 0, y: 15, width: commentTableView.bounds.width, height: 100)
@@ -299,6 +355,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func bindUI() {
         writerNameData.bind(with: self, onNext: { owner, arg in
             owner.userNameLabel.text = arg
+
         }).disposed(by: disposeBag)
         
         writerImageStringData.bind(with: self, onNext: { owner, arg in
@@ -455,7 +512,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func addView() {
         view.addSubviews(scrollView, whiteBackgroundView)
         scrollView.addSubview(contentView)
-        contentView.addSubviews(userImageView, userNameLabel,reportPostButton, titleLabel,
+        contentView.addSubviews(userImageView, userNameLabel,userOptionButton, titleLabel,
                                 divideVotePostImageLineView, contentLabel,
                                 firstVoteOptionLabel, secondVoteOptionLabel,
                                 firstPostImageView, secondPostImageView,
@@ -483,11 +540,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         userNameLabel.snp.makeConstraints {
             $0.centerY.equalTo(userImageView)
             $0.leading.equalTo(userImageView.snp.trailing).offset(9)
-        }
-        
-        reportPostButton.snp.makeConstraints {
-            $0.centerY.equalTo(userImageView)
-            $0.trailing.equalTo(divideVotePostImageLineView.snp.trailing)
         }
         
         titleLabel.snp.makeConstraints {

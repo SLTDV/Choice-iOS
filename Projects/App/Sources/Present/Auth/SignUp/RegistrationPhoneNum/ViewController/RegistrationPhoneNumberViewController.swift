@@ -58,7 +58,7 @@ extension RegistrationPhoneNumberViewController {
         LoadingIndicator.showLoading(text: "")
         
         guard phoneNumber.hasPrefix("010") else {
-            component.warningLabel.show(warning: "*전화번호 형식이 올바르지 않아요.")
+            component.warningLabel.show(warning: "*전화번호 형식이 올바르지 않아요. (ex.01011112222)")
             LoadingIndicator.hideLoading()
             return
         }
