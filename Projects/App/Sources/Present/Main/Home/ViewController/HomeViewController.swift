@@ -152,8 +152,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     
     private func configureDropDown() {
         let actinos: [(title: String, image: UIImage?, type: MenuOptionType)] = [
-            ("최신순으로", UIImage(systemName: "clock"), .findBestPostData),
-            ("인기순으로", UIImage(systemName: "heart"), .findNewestPostData)
+            ("최신순", UIImage(systemName: "clock"), .findBestPostData),
+            ("인기순", UIImage(systemName: "heart"), .findNewestPostData)
         ]
         
         let menuItems = actinos.map { action in
