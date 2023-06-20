@@ -95,7 +95,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         
         LoadingIndicator.showLoading(text: "")
         
-        viewModel.callToSignUp(phoneNumber: phoneNumber!, password: password!, nickname: trimmedNickName, profileImage: profileImage!) { isDuplicate in
+        viewModel.callToSignUp(phoneNumber: phoneNumber!, password: password!, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
             if isDuplicate {
                 self.viewModel.pushCompleteView()
                 self.warningLabel.hide()

@@ -7,4 +7,19 @@ final class DetailPostCoordiantor: BaseCoordinator {
         
         navigationController.pushViewController(vc, animated: true)
     }
+    
+    override func navigate(to step: ChoiceStep) {
+        switch step {
+        case .popVCIsRequired:
+            popVCIsRequired()
+        default:
+            return
+        }
+    }
+}
+
+extension DetailPostCoordiantor {
+    func popVCIsRequired() {
+        navigationController.popToRootViewController(animated: true)
+    }
 }

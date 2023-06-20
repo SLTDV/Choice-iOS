@@ -9,6 +9,7 @@ protocol CommentDataProtocol: AnyObject {
     var writerNameData: PublishSubject<String> { get set  }
     var writerImageStringData: PublishSubject<String?> { get set }
     var commentData: BehaviorRelay<[CommentList]> { get set }
+    var isMineData: Bool { get set }
 }
 
 final class DetailPostViewModel: BaseViewModel {
@@ -36,9 +37,9 @@ final class DetailPostViewModel: BaseViewModel {
             switch response.result {
             case .success(let postData):
                 completion(.success(postData.size))
-                print(postData.page, postData.size)
                 self?.delegate?.writerImageStringData.onNext(postData.image)
                 self?.delegate?.writerNameData.onNext(postData.writer)
+                self?.delegate?.isMineData = postData.isMine
                 var relay = self?.delegate?.commentData.value
                 relay?.append(contentsOf: postData.commentList)
                 self?.delegate?.commentData.accept(relay!)
@@ -125,4 +126,27 @@ final class DetailPostViewModel: BaseViewModel {
             }
         }
     }
+    
+    func requestToBlockUser(postIdx: Int, completion: @escaping (Bool) -> Void) {
+        let url = APIConstants.blockUserURL + "\(postIdx)"
+        AF.request(url,
+                   method: .post,
+                   encoding: URLEncoding.queryString,
+                   interceptor: JwtRequestInterceptor(jwtStore: container))
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+            switch response.result {
+            case .success:
+                completion(true)
+            case .failure(let error):
+                print("Erorr - BlockUser = \(error.localizedDescription)")
+                completion(false)
+            }
+        }
+    }
+    
+    func popToRootVC() {
+        coordinator.navigate(to: .popVCIsRequired)
+    }
+    
 }
