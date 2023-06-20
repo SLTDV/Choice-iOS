@@ -34,6 +34,8 @@ final class HomeViewModel: BaseViewModel {
         let page = URLQueryItem(name: "page", value: String(postRequest!.page))
         let size = URLQueryItem(name: "size", value: String(postRequest!.size))
         
+        print(page, size)
+        
         var components = URLComponents(string: url)
         components?.queryItems = [page, size]
         
@@ -45,6 +47,7 @@ final class HomeViewModel: BaseViewModel {
             switch response.result {
             case .success(let postData):
                 LoadingIndicator.hideLoading()
+                print(postData.size)
                 completion(.success(postData.size))
                 
                 var relay = self?.delegate?.postData.value
