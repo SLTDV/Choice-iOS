@@ -507,6 +507,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         setKeyboard()
         submitCommentButtonDidTap()
         configure(model: model.value)
+        addUserDidTakeScreenshotNotification()
     }
     
     override func addView() {

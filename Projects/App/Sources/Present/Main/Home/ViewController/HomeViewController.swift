@@ -197,6 +197,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
         navigationBarButtonDidTap()
         viewModel.requestPostData(type: sortType)
         configureRefreshControl()
+        addUserDidTakeScreenshotNotification()
     }
     
     override func viewWillAppear(_ animated: Bool) {
