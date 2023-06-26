@@ -484,6 +484,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     override func viewWillDisappear(_ animated: Bool) {
         self.commentTableView.removeObserver(self, forKeyPath: ContentSizeKey.key)
+        removeUserDidTakeScreenshotNotification()
     }
     
     override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {

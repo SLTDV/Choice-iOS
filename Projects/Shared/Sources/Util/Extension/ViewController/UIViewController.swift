@@ -11,6 +11,9 @@ public extension UIViewController {
         return footerView
     }
     
+    func removeUserDidTakeScreenshotNotification() {
+        NotificationCenter.default.removeObserver(self, name: UIApplication.userDidTakeScreenshotNotification, object: nil)
+    }
     
     func addUserDidTakeScreenshotNotification() {
         NotificationCenter.default.addObserver(
