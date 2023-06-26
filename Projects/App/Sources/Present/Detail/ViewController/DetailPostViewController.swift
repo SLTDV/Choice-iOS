@@ -480,6 +480,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: ContentSizeKey.key, options: .new, context: nil)
+        addUserDidTakeScreenshotNotification()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -508,7 +509,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         setKeyboard()
         submitCommentButtonDidTap()
         configure(model: model.value)
-        addUserDidTakeScreenshotNotification()
     }
     
     override func addView() {
