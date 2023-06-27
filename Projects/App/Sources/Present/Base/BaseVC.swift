@@ -16,7 +16,7 @@ class BaseVC<T: BaseViewModel>: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     @available(*, unavailable)
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,7 +41,7 @@ class BaseVC<T: BaseViewModel>: UIViewController {
     deinit{
         print("\(type(of: self)): \(#function)")
     }
-
+    
     func setup(){}
     func addView(){}
     func setLayout(){}
