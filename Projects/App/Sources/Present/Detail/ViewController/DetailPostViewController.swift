@@ -1,6 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Kingfisher
 import Shared
 
 enum ContentSizeKey {
@@ -268,8 +269,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         if let keyboardFrame:CGRect = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
             UIView.animate(withDuration: 0.3, animations: {
                 self.view.frame.origin.y -= keyboardFrame.size.height
-                }
-            )
+            })
         }
     }
     
@@ -281,8 +281,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         commentData.bind(to: commentTableView.rx.items(
             cellIdentifier: CommentCell.identifier,
             cellType: CommentCell.self)) { (row, data, cell) in
-            cell.configure(model: data)
-        }.disposed(by: disposeBag)
+                cell.configure(model: data)
+            }.disposed(by: disposeBag)
         
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
@@ -312,7 +312,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }
         }
     }
-
+    
     private func updateEmptyLabelLayout() {
         setOptionLayout()
         
@@ -355,7 +355,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func bindUI() {
         writerNameData.bind(with: self, onNext: { owner, arg in
             owner.userNameLabel.text = arg
-
+            
         }).disposed(by: disposeBag)
         
         writerImageStringData.bind(with: self, onNext: { owner, arg in
@@ -386,7 +386,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         enterCommentTextView.rx.didChange
             .bind(with: self, onNext: { owner, _ in
                 owner.setEnterTextViewAutoSize()
-
+                
                 if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 1 {
                     owner.submitCommentButton.isEnabled = true
                     owner.submitCommentButton.setTitleColor(.blue, for: .normal)
@@ -476,7 +476,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }
         }
     }
-
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.commentTableView.addObserver(self, forKeyPath: ContentSizeKey.key, options: .new, context: nil)
@@ -512,15 +512,22 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     override func addView() {
-        view.addSubviews(scrollView, whiteBackgroundView)
+        view.addSubviews(
+            scrollView, whiteBackgroundView
+        )
         scrollView.addSubview(contentView)
-        contentView.addSubviews(userImageView, userNameLabel,userOptionButton, titleLabel,
-                                divideVotePostImageLineView, contentLabel,
-                                firstVoteOptionLabel, secondVoteOptionLabel,
-                                firstPostImageView, secondPostImageView,
-                                firstVoteButton, secondVoteButton,
-                                divideCommentLineView, commentTableView)
-        whiteBackgroundView.addSubviews(enterCommentTextView, submitCommentButton)
+        contentView.addSubviews(
+            userImageView, userNameLabel,
+            userOptionButton, titleLabel,
+            divideVotePostImageLineView, contentLabel,
+            firstVoteOptionLabel, secondVoteOptionLabel,
+            firstPostImageView, secondPostImageView,
+            firstVoteButton, secondVoteButton,
+            divideCommentLineView, commentTableView
+        )
+        whiteBackgroundView.addSubviews(
+            enterCommentTextView, submitCommentButton
+        )
     }
     
     override func setLayout() {
@@ -640,7 +647,7 @@ extension DetailPostViewController {
         let maxHeight = 94.0
         let fixedWidth = enterCommentTextView.frame.size.width
         let size = enterCommentTextView.sizeThatFits(CGSize(width: fixedWidth, height: .infinity))
-
+        
         enterCommentTextView.isScrollEnabled = size.height > maxHeight
         enterCommentTextView.snp.updateConstraints {
             $0.height.equalTo(min(maxHeight, size.height))
