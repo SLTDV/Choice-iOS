@@ -202,6 +202,11 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     override func viewWillAppear(_ animated: Bool) {
         self.postTableView.reloadData()
         NotificationCenter.default.addObserver(self, selector: #selector(handleBlockButtonPressed), name: NSNotification.Name("BlockButtonPressed"), object: nil)
+        addUserDidTakeScreenshotNotification()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        removeUserDidTakeScreenshotNotification()
     }
 
     override func addView() {
