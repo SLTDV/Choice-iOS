@@ -1,6 +1,6 @@
 import ProjectDescription
 
-extension TargetDependency{
+extension TargetDependency {
     public struct SPM {}
 }
 
@@ -13,4 +13,5 @@ public extension TargetDependency.SPM {
     static let Alamofire = TargetDependency.external(name: "Alamofire")
     static let Swinject = TargetDependency.external(name: "Swinject")
     static let Lottie = TargetDependency.external(name: "Lottie")
+    static let GoogleMobileAds = TargetDependency.package(product: "GoogleMobileAds")
 }
