@@ -14,11 +14,15 @@ final class AddImageViewModel: BaseViewModel {
         self.content = content
     }
     
-    func createPost(firstImage: UIImage, secondImage: UIImage,
-                    firstVotingOption: String, secondVotingOtion: String) {
+    func createPost(
+        firstImage: UIImage,
+        secondImage: UIImage,
+        firstVotingOption: String,
+        secondVotingOtion: String
+    ) {
         var url = APIConstants.postImageUploadURL
         var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
-
+        
         AF.upload(multipartFormData: { multipartFormData in
             if let image = firstImage.pngData() {
                 multipartFormData.append(image, withName: "firstImage", fileName: "\(image).png", mimeType: "image/png")
@@ -26,14 +30,20 @@ final class AddImageViewModel: BaseViewModel {
             if let image = secondImage.pngData() {
                 multipartFormData.append(image, withName: "secondImage", fileName: "\(image).png", mimeType: "image/png")
             }
-        }, to: url, method: .post, headers: headers, interceptor: JwtRequestInterceptor(jwtStore: AppDelegate.container.resolve(JwtStore.self)!))
-        .validate().responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
+        }, to: url,
+           method: .post,
+           headers: headers,
+           interceptor: JwtRequestInterceptor(
+           jwtStore: AppDelegate.container.resolve(JwtStore.self)!)
+        )
+        .validate()
+        .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success(let data):
                 let decodeResponse = try? JSONDecoder().decode(AddPostModel.self, from: data)
                 let firstImageUrl = decodeResponse?.firstUploadImageUrl ?? ""
                 let secondImageUrl = decodeResponse?.secondUploadImageUrl ?? ""
-
+                
                 headers = ["Content-Type": "application/json"]
                 url = APIConstants.createPostURL
                 let params = [
@@ -56,6 +66,7 @@ final class AddImageViewModel: BaseViewModel {
                     switch response.result {
                     case .success:
                         LoadingIndicator.hideLoading()
+                        
                         self?.coordinator.navigate(to: .pushCompleteViewIsRequired)
                     case .failure(let error):
                         print("post error = \(String(describing: error.localizedDescription))")
