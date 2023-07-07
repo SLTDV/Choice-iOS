@@ -13,5 +13,6 @@ public extension TargetDependency.SPM {
     static let Alamofire = TargetDependency.external(name: "Alamofire")
     static let Swinject = TargetDependency.external(name: "Swinject")
     static let Lottie = TargetDependency.external(name: "Lottie")
-    static let GoogleMobileAds = TargetDependency.package(product: "GoogleMobileAds")
+    static let GoogleMobileAds = TargetDependency.external(name: "GoogleMobileAds")
+    
 }

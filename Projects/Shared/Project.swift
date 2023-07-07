@@ -5,7 +5,6 @@ let project = Project.makeModule(
     name: "Shared",
     product: .framework,
     packages: [
-        
     ],
     dependencies: [
         .SPM.SnapKit,
