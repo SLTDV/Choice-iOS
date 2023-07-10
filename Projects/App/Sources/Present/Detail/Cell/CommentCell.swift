@@ -1,7 +1,7 @@
 import UIKit
 import Then
 import SnapKit
-import Kingfisher
+import Shared
 
 final class CommentCell: UITableViewCell {
     static let identifier = "CommentCellIdentifier"
@@ -64,9 +64,9 @@ extension CommentCell {
     func configure(model: CommentList) {
         self.nicknameLabel.text = model.nickname
         self.contentLabel.text = model.content
-        guard model.profileImageUrl == nil else {
-            self.profileImageView.kf.setImage(with: URL(string: model.profileImageUrl!))
+        guard let profileImageUrl = URL(string: model.profileImageUrl ?? "") else {
             return
         }
+        profileImageView.image = Downsampling.optimization(imageAt: profileImageUrl, to: profileImageView.frame.size, scale: 1)
     }
 }

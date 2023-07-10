@@ -334,8 +334,9 @@ final class PostCell: UITableViewCell {
                 guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
-                owner.firstPostImageView.kf.setImage(with: firstImageUrl)
-                owner.secondPostImageView.kf.setImage(with: secondImageUrl)
+                
+                owner.firstPostImageView.image = Downsampling.optimization(imageAt: firstImageUrl, to: owner.firstPostImageView.frame.size, scale: 1)
+                owner.secondPostImageView.image = Downsampling.optimization(imageAt: secondImageUrl, to: owner.secondPostImageView.frame.size, scale: 1)
                 switch owner.type {
                 case .home:
                     owner.firstVoteButton.setTitle(model.firstVotingOption, for: .normal)

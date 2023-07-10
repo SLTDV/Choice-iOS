@@ -115,8 +115,12 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         
         imageData
             .compactMap { URL(string: $0!) }
-            .bind(with: self) { owner, arg in
-                owner.profileImageView.kf.setImage(with: arg)
+            .bind(with: self) { owner, url in
+                owner.profileImageView.image = Downsampling.optimization(
+                    imageAt: url,
+                    to: owner.profileImageView.frame.size,
+                    scale: 1
+                )
             }.disposed(by: disposeBag)
     }
     

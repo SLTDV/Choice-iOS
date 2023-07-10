@@ -1,7 +1,7 @@
 import UIKit
 
-class Downsampling {
-    func optimization(imageAt imageURL: URL, to pointSize: CGSize, scale: CGFloat) -> UIImage {
+public enum Downsampling {
+    public static func optimization(imageAt imageURL: URL, to pointSize: CGSize, scale: CGFloat) -> UIImage? {
         let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
         let imageSource = CGImageSourceCreateWithURL(imageURL as CFURL, imageSourceOptions)!
         
@@ -13,7 +13,8 @@ class Downsampling {
             kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels
         ] as [CFString : Any] as CFDictionary
         
-        let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions)!
-        return UIImage(cgImage: downsampledImage)
+        let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions)
+        let finalImage = downsampledImage != nil ? UIImage(cgImage: downsampledImage!) : nil
+        return finalImage
     }
 }
