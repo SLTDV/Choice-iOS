@@ -335,8 +335,17 @@ final class PostCell: UITableViewCell {
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
                 
-                owner.firstPostImageView.image = Downsampling.optimization(imageAt: firstImageUrl, to: owner.firstPostImageView.frame.size, scale: 1)
-                owner.secondPostImageView.image = Downsampling.optimization(imageAt: secondImageUrl, to: owner.secondPostImageView.frame.size, scale: 1)
+                Downsampling.optimization(imageAt: firstImageUrl, to: owner.firstPostImageView.frame.size, scale: 1) { image in
+                    if let image = image {
+                        owner.firstPostImageView.image = image
+                    }
+                }
+                
+                Downsampling.optimization(imageAt: secondImageUrl, to: owner.secondPostImageView.frame.size, scale: 1) { image in
+                    if let image = image {
+                        owner.secondPostImageView.image = image
+                    }
+                }
                 switch owner.type {
                 case .home:
                     owner.firstVoteButton.setTitle(model.firstVotingOption, for: .normal)
