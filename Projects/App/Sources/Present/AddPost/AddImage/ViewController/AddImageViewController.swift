@@ -140,9 +140,7 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
             LoadingIndicator.showLoading(text: "게시 중")
             
             viewModel.createPost(firstImage: firstImage, secondImage: secondImage,
-                                 firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion) { result in
-                
-            }
+                                 firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
         } else {
             alert.message = "주제는 1~8 글자만 입력 가능합니다."
             return present(alert, animated: true)

@@ -5,6 +5,7 @@ let project = Project.makeModule(
     name: "Shared",
     product: .framework,
     packages: [
+
     ],
     dependencies: [
         .SPM.SnapKit,
@@ -14,8 +15,7 @@ let project = Project.makeModule(
         .SPM.RxCocoa,
         .SPM.Alamofire,
         .SPM.Swinject,
-        .SPM.Lottie,
-        .SPM.GoogleMobileAds
+        .SPM.Lottie
     ],
     resources: ["Resources/**"]
 )

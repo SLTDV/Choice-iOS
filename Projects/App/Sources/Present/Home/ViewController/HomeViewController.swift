@@ -197,6 +197,10 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
         navigationBarButtonDidTap()
         viewModel.requestPostData(type: sortType)
         configureRefreshControl()
+        
+        
+//        let a = AdvertismentsViewController()
+//        a.presentInterstitial()
     }
     
     override func viewWillAppear(_ animated: Bool) {
