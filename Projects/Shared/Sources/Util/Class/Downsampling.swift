@@ -9,31 +9,36 @@ public enum Downsampling {
     ) {
         let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
         let maxDimensionInPixels = max(pointSize.width, pointSize.height) * scale
-        let downsampleOptions: [CFString: Any] = [
+        let downsampleOptions = [
             kCGImageSourceCreateThumbnailFromImageAlways: true,
             kCGImageSourceShouldCacheImmediately: true,
             kCGImageSourceCreateThumbnailWithTransform: true,
-            kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels
-        ]
+            kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels,
+        ] as [CFString : Any]
         
-        URLSession.shared.dataTask(with: imageURL) { data, response, error in
-            DispatchQueue.global().async {
-                if let error = error {
-                    print("Error! - \(error)")
-                }
-                
-                let imageSource = CGImageSourceCreateWithData(data! as CFData, imageSourceOptions)
-                guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource!, 0, downsampleOptions as CFDictionary) else {
-                    DispatchQueue.main.async {
-                        completion(nil)
-                    }
-                    return
-                }
-                
-                DispatchQueue.main.async {
-                    completion(UIImage(cgImage: downsampledImage))
-                }
+        let task = URLSession.shared.dataTask(with: imageURL) { data, response, error in
+            if let error = error {
+                print("Error! - \(error)")
             }
-        }.resume()
+            guard let data = data, let imageSource = CGImageSourceCreateWithData(data as CFData, imageSourceOptions) else {
+                DispatchQueue.main.async {
+                    completion(nil)
+                }
+                return
+            }
+            guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions as CFDictionary) else {
+                DispatchQueue.main.async {
+                    completion(nil)
+                }
+                return
+            }
+            
+            DispatchQueue.main.sync {
+                let downsampledUIImage = UIImage(cgImage: downsampledImage)
+                completion(downsampledUIImage)
+            }
+        }
+        
+        task.resume()
     }
 }
