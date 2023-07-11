@@ -111,7 +111,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                             owner.postTableView.tableFooterView = nil
                             switch result {
                             case .success(let size):
-                                if size != 3 {
+                                if size != 5 {
                                     owner.isLastPage = true
                                 } else {
                                     owner.postTableView.reloadData()
