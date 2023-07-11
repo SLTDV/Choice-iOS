@@ -327,25 +327,30 @@ final class PostCell: UITableViewCell {
         self.model.accept(model)
         
         self.model
-            .asDriver()
-            .drive(with: self) { owner, _ in
+            .asObservable()
+            .bind(with: self) { owner, _ in
                 let model = owner.model.value
                 guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
                 guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
                 
-                Downsampling.optimization(imageAt: firstImageUrl, to: owner.firstPostImageView.frame.size, scale: 1) { image in
-                    if let image = image {
-                        owner.firstPostImageView.image = image
+                DispatchQueue.main.async {
+                    Downsampling.optimization(imageAt: firstImageUrl, to: owner.firstPostImageView.frame.size, scale: 0.7) { image in
+                        if let image = image {
+                            print("first")
+                            owner.firstPostImageView.image = image
+                        }
+                    }
+                    
+                    Downsampling.optimization(imageAt: secondImageUrl, to: owner.secondPostImageView.frame.size, scale: 2) { image in
+                        if let image = image {
+                            print("second")
+                            owner.secondPostImageView.image = image
+                        }
                     }
                 }
                 
-                Downsampling.optimization(imageAt: secondImageUrl, to: owner.secondPostImageView.frame.size, scale: 1) { image in
-                    if let image = image {
-                        owner.secondPostImageView.image = image
-                    }
-                }
                 switch owner.type {
                 case .home:
                     owner.firstVoteButton.setTitle(model.firstVotingOption, for: .normal)
