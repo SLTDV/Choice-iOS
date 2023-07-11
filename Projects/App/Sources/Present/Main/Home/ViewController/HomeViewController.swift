@@ -11,7 +11,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     private let disposeBag = DisposeBag()
     var isLastPage = false
     
-    private var sortType: MenuOptionType = .findNewestPostData
+    private var sortType: MenuOptionType = .findBestPostData
     
     private let leftLogoImageView = UIImageView().then {
         $0.image = ChoiceAsset.Images.homeLogo.image
@@ -37,7 +37,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     
     private let dropdownButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.setTitle("최신순 ↓", for: .normal)
+        $0.setTitle("인기순 ↓", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
         $0.backgroundColor = .init(red: 0.94, green: 0.94, blue: 0.94, alpha: 1)
@@ -111,7 +111,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                             owner.postTableView.tableFooterView = nil
                             switch result {
                             case .success(let size):
-                                if size != 10 {
+                                if size != 5 {
                                     owner.isLastPage = true
                                 } else {
                                     owner.postTableView.reloadData()
@@ -152,8 +152,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     
     private func configureDropDown() {
         let actinos: [(title: String, image: UIImage?, type: MenuOptionType)] = [
-            ("최신순", UIImage(systemName: "clock"), .findNewestPostData),
-            ("인기순", UIImage(systemName: "heart"), .findBestPostData)
+            ("인기순", UIImage(systemName: "heart"), .findBestPostData),
+            ("최신순", UIImage(systemName: "clock"), .findNewestPostData)
         ]
         
         let menuItems = actinos.map { action in

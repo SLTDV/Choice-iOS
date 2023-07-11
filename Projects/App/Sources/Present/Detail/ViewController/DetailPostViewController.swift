@@ -360,7 +360,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         writerImageStringData.bind(with: self, onNext: { owner, arg in
             guard arg == nil else {
-                owner.userImageView.kf.setImage(with: URL(string: arg!))
+                Downsampling.optimization(imageAt: URL(string: arg!)!,
+                                          to: owner.userImageView.frame.size,
+                                          scale: 2) { image in
+                    if let image = image {
+                        owner.userImageView.image = image
+                    }
+                }
                 return
             }
         }).disposed(by: disposeBag)
@@ -410,13 +416,26 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         DispatchQueue.main.async { [weak self] in
-            self?.titleLabel.text = model.title
-            self?.contentLabel.text = model.content
-            self?.firstVoteOptionLabel.text = model.firstVotingOption
-            self?.secondVoteOptionLabel.text = model.secondVotingOption
-            self?.firstPostImageView.kf.setImage(with: firstImageUrl)
-            self?.secondPostImageView.kf.setImage(with: secondImageUrl)
-            self?.setVoteButtonLayout(with: model)
+            guard let self = self else { return }
+            self.titleLabel.text = model.title
+            self.contentLabel.text = model.content
+            self.firstVoteOptionLabel.text = model.firstVotingOption
+            self.secondVoteOptionLabel.text = model.secondVotingOption
+            
+            DispatchQueue.main.async {
+                Downsampling.optimization(imageAt: firstImageUrl,
+                                          to: self.firstPostImageView.frame.size,
+                                          scale: 2) { image in
+                    self.firstPostImageView.image = image
+                }
+                
+                Downsampling.optimization(imageAt: secondImageUrl,
+                                          to: self.secondPostImageView.frame.size,
+                                          scale: 2) { image in
+                    self.secondPostImageView.image = image
+                }
+            }
+            self.setVoteButtonLayout(with: model)
         }
     }
     

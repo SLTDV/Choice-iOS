@@ -1,6 +1,4 @@
-import Foundation
-
 struct PostRequest {
     var page: Int
-    var size: Int = 10
+    var size: Int = 5
 }
