@@ -120,7 +120,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
                 Downsampling.optimization(
                     imageAt: url,
                     to: owner.profileImageView.frame.size,
-                    scale: 4
+                    scale: 2
                 ) { image in
                     if let image = image {
                         owner.profileImageView.image = image
