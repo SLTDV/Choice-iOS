@@ -336,11 +336,11 @@ final class PostCell: UITableViewCell {
                 owner.contentLabel.text = model.content
                 
                 DispatchQueue.main.async {
-                    Downsampling.optimization(imageAt: firstImageUrl, to: owner.firstPostImageView.frame.size, scale: 1) { image in
+                    Downsampling.optimization(imageAt: firstImageUrl, to: owner.firstPostImageView.frame.size, scale: 2) { image in
                         owner.firstPostImageView.image = image
                     }
                     
-                    Downsampling.optimization(imageAt: secondImageUrl, to: owner.secondPostImageView.frame.size, scale: 1) { image in
+                    Downsampling.optimization(imageAt: secondImageUrl, to: owner.secondPostImageView.frame.size, scale: 2) { image in
                         owner.secondPostImageView.image = image
                     }
                 }

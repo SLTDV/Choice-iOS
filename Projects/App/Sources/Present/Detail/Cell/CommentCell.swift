@@ -67,7 +67,7 @@ extension CommentCell {
         guard let profileImageUrl = URL(string: model.profileImageUrl ?? "") else {
             return
         }
-        Downsampling.optimization(imageAt: profileImageUrl, to: profileImageView.frame.size, scale: 1) { [weak self] image in
+        Downsampling.optimization(imageAt: profileImageUrl, to: profileImageView.frame.size, scale: 4) { [weak self] image in
             if let image = image {
                 self?.profileImageView.image = image
             }

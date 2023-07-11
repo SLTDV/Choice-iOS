@@ -362,7 +362,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             guard arg == nil else {
                 Downsampling.optimization(imageAt: URL(string: arg!)!,
                                           to: owner.userImageView.frame.size,
-                                          scale: 1) { image in
+                                          scale: 4) { image in
                     if let image = image {
                         owner.userImageView.image = image
                     }
@@ -424,12 +424,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             
             Downsampling.optimization(imageAt: firstImageUrl,
                                       to: self.firstPostImageView.frame.size,
-                                      scale: 1) { image in
+                                      scale: 4) { image in
                 self.firstPostImageView.image = image
             }
             Downsampling.optimization(imageAt: secondImageUrl,
                                       to: self.secondPostImageView.frame.size,
-                                      scale: 1) { image in
+                                      scale: 4) { image in
                 self.secondPostImageView.image = image
             }
             self.setVoteButtonLayout(with: model)
