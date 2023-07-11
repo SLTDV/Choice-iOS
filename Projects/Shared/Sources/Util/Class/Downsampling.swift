@@ -23,7 +23,7 @@ public enum Downsampling {
             kCGImageSourceShouldCacheImmediately: false,
             kCGImageSourceCreateThumbnailWithTransform: true,
             kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels,
-        ] as CFDictionary
+        ] as [CFString : Any] as CFDictionary
         
         URLSession.shared.dataTask(with: imageURL) { data, response, error in
             if let error = error {
@@ -35,6 +35,7 @@ public enum Downsampling {
                 }
                 return
             }
+            
             guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions as CFDictionary) else {
                 DispatchQueue.main.async {
                     completion(nil)

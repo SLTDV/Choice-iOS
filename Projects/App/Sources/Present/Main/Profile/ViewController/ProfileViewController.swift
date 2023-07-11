@@ -114,6 +114,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
             .disposed(by: disposeBag)
         
         imageData
+            .observe(on: MainScheduler.instance)
             .compactMap { URL(string: $0!) }
             .bind(with: self) { owner, url in
                 Downsampling.optimization(

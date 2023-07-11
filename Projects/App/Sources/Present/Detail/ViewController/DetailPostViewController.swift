@@ -422,15 +422,18 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             self.firstVoteOptionLabel.text = model.firstVotingOption
             self.secondVoteOptionLabel.text = model.secondVotingOption
             
-            Downsampling.optimization(imageAt: firstImageUrl,
-                                      to: self.firstPostImageView.frame.size,
-                                      scale: 4) { image in
-                self.firstPostImageView.image = image
-            }
-            Downsampling.optimization(imageAt: secondImageUrl,
-                                      to: self.secondPostImageView.frame.size,
-                                      scale: 4) { image in
-                self.secondPostImageView.image = image
+            DispatchQueue.main.async {
+                Downsampling.optimization(imageAt: firstImageUrl,
+                                          to: self.firstPostImageView.frame.size,
+                                          scale: 2) { image in
+                    self.firstPostImageView.image = image
+                }
+                
+                Downsampling.optimization(imageAt: secondImageUrl,
+                                          to: self.secondPostImageView.frame.size,
+                                          scale: 2) { image in
+                    self.secondPostImageView.image = image
+                }
             }
             self.setVoteButtonLayout(with: model)
         }
