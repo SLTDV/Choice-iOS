@@ -114,9 +114,18 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
             .disposed(by: disposeBag)
         
         imageData
+            .observe(on: MainScheduler.instance)
             .compactMap { URL(string: $0!) }
-            .bind(with: self) { owner, arg in
-                owner.profileImageView.kf.setImage(with: arg)
+            .bind(with: self) { owner, url in
+                Downsampling.optimization(
+                    imageAt: url,
+                    to: owner.profileImageView.frame.size,
+                    scale: 2
+                ) { image in
+                    if let image = image {
+                        owner.profileImageView.image = image
+                    }
+                }
             }.disposed(by: disposeBag)
     }
     
