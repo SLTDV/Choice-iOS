@@ -1,26 +1,35 @@
 import UIKit
 
 public enum Downsampling {
+    private static let imageCache = NSCache<NSURL, UIImage>()
+    
     public static func optimization(
         imageAt imageURL: URL,
         to pointSize: CGSize,
         scale: CGFloat,
         completion: @escaping (UIImage?) -> Void
     ) {
-        let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        // 이미지 캐시 확인
+        if let cachedImage = imageCache.object(forKey: imageURL as NSURL) {
+            DispatchQueue.main.async {
+                completion(cachedImage)
+            }
+            return
+        }
+        
         let maxDimensionInPixels = max(pointSize.width, pointSize.height) * scale
         let downsampleOptions = [
             kCGImageSourceCreateThumbnailFromImageAlways: true,
-            kCGImageSourceShouldCacheImmediately: true,
+            kCGImageSourceShouldCacheImmediately: false,
             kCGImageSourceCreateThumbnailWithTransform: true,
             kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels,
-        ] as [CFString : Any]
+        ] as CFDictionary
         
-        let task = URLSession.shared.dataTask(with: imageURL) { data, response, error in
+        URLSession.shared.dataTask(with: imageURL) { data, response, error in
             if let error = error {
                 print("Error! - \(error)")
             }
-            guard let data = data, let imageSource = CGImageSourceCreateWithData(data as CFData, imageSourceOptions) else {
+            guard let data = data, let imageSource = CGImageSourceCreateWithData(data as CFData, nil) else {
                 DispatchQueue.main.async {
                     completion(nil)
                 }
@@ -33,12 +42,13 @@ public enum Downsampling {
                 return
             }
             
-            DispatchQueue.main.sync {
-                let downsampledUIImage = UIImage(cgImage: downsampledImage)
+            let downsampledUIImage = UIImage(cgImage: downsampledImage)
+            
+            imageCache.setObject(downsampledUIImage, forKey: imageURL as NSURL)
+            
+            DispatchQueue.main.async {
                 completion(downsampledUIImage)
             }
-        }
-        
-        task.resume()
+        }.resume()
     }
 }
