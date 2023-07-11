@@ -332,28 +332,16 @@ final class PostCell: UITableViewCell {
                 let model = owner.model.value
                 guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
                 guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-                var firstImage: UIImage?
-                var secondImage: UIImage?
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
                 
                 DispatchQueue.main.async {
-                    let dispatchGroup = DispatchGroup()
-                    dispatchGroup.enter()
                     Downsampling.optimization(imageAt: firstImageUrl, to: owner.firstPostImageView.frame.size, scale: 1) { image in
-                        firstImage = image
-                        dispatchGroup.leave()
+                        owner.firstPostImageView.image = image
                     }
                     
-                    dispatchGroup.enter()
                     Downsampling.optimization(imageAt: secondImageUrl, to: owner.secondPostImageView.frame.size, scale: 1) { image in
-                        secondImage = image
-                        dispatchGroup.leave()
-                    }
-                    
-                    dispatchGroup.notify(queue: .main) {
-                        owner.firstPostImageView.image = firstImage
-                        owner.secondPostImageView.image = secondImage
+                        owner.secondPostImageView.image = image
                     }
                 }
                 
