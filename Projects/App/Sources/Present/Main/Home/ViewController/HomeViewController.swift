@@ -105,7 +105,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                 }
                 if yOffset > (contentHeight-frameHeight) {
                     owner.postTableView.tableFooterView = owner.createSpinnerFooter()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                         owner.postTableView.performBatchUpdates(nil, completion: nil)
                         owner.viewModel.requestPostData(type: owner.sortType) { result in
                             owner.postTableView.tableFooterView = nil

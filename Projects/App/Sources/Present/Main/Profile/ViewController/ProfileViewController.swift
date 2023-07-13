@@ -102,7 +102,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
                 cell.delegate = self
                 cell.separatorInset = UIEdgeInsets.zero
             }.disposed(by: disposeBag)
-
+        
         postTableView.rx.modelSelected(PostList.self)
             .asDriver()
             .drive(with: self) { owner, post in
@@ -122,9 +122,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
                     to: owner.profileImageView.frame.size,
                     scale: 2
                 ) { image in
-                    if let image = image {
-                        owner.profileImageView.image = image
-                    }
+                    owner.profileImageView.image = image
                 }
             }.disposed(by: disposeBag)
     }

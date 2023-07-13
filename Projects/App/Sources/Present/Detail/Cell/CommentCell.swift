@@ -5,7 +5,7 @@ import Shared
 
 final class CommentCell: UITableViewCell {
     static let identifier = "CommentCellIdentifier"
-
+    
     private let profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.crop.circle.fill")
         $0.tintColor = .black
@@ -39,19 +39,19 @@ final class CommentCell: UITableViewCell {
     private func addView() {
         contentView.addSubviews(profileImageView, nicknameLabel, contentLabel)
     }
-
+    
     private func setLayout() {
         profileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
             $0.leading.equalToSuperview().inset(30)
             $0.size.equalTo(25)
         }
-
+        
         nicknameLabel.snp.makeConstraints {
             $0.centerY.equalTo(profileImageView)
             $0.leading.equalTo(profileImageView.snp.trailing).offset(8)
         }
-
+        
         contentLabel.snp.makeConstraints {
             $0.top.equalTo(nicknameLabel.snp.bottom).offset(15)
             $0.leading.trailing.equalToSuperview().inset(33)
@@ -68,9 +68,7 @@ extension CommentCell {
             return
         }
         Downsampling.optimization(imageAt: profileImageUrl, to: profileImageView.frame.size, scale: 2) { [weak self] image in
-            if let image = image {
-                self?.profileImageView.image = image
-            }
+            self?.profileImageView.image = image
         }
     }
 }

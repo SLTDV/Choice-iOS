@@ -327,44 +327,43 @@ final class PostCell: UITableViewCell {
         self.model.accept(model)
         
         self.model
-            .asDriver()
-            .drive(with: self) { owner, _ in
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .bind(with: self) { owner, _ in
                 let model = owner.model.value
                 guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
                 guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
-                var firstImage: UIImage?
-                var secondImage: UIImage?
                 
-                owner.firstPostImageView.image = nil
-                owner.secondPostImageView.image = nil
-                
-                let dispatchGroup = DispatchGroup()
-                dispatchGroup.enter()
                 DispatchQueue.main.async {
                     Downsampling.optimization(imageAt: firstImageUrl, to: owner.firstPostImageView.frame.size, scale: 2) { image in
-                        firstImage = image
-                        dispatchGroup.leave()
+                        owner.firstPostImageView.image = image
                     }
-                }
-                
-                dispatchGroup.enter()
-                DispatchQueue.main.async {
-                    Downsampling.optimization(imageAt: secondImageUrl, to: owner.secondPostImageView.frame.size, scale: 2) { image in
-                        secondImage = image
-                        dispatchGroup.leave()
-                    }
-                }
-                
-                dispatchGroup.notify(queue: .main) {
-                    print("first = \(firstImage)")
-                    print("second = \(secondImage)")
-                    owner.firstPostImageView.image = firstImage
-                    owner.secondPostImageView.image = secondImage
-                    print("로딩 끝")
-                }
                     
+                    Downsampling.optimization(imageAt: secondImageUrl, to: owner.secondPostImageView.frame.size, scale: 2) { image in
+                        owner.secondPostImageView.image = image
+                    }
+                }
+//                DispatchQueue.main.async {
+//                    Downsampling.optimization(imageAt: firstImageUrl, to: firstImageSize, scale: 2) { image in
+//                        guard let image = image else {
+//                            print("if")
+//                            owner.firstPostImageView.image = placeholderImage
+//                            return
+//                        }
+//                            owner.firstPostImageView.image = image
+//                        }
+//
+//                    Downsampling.optimization(imageAt: secondImageUrl, to: secondImageSize, scale: 2) { image in
+//                        guard let image = image else {
+//                            print("if")
+//                            owner.secondPostImageView.image = placeholderImage
+//                            return
+//                        }
+//                        owner.secondPostImageView.image = image
+//                    }
+//                }
+        
                 
                 switch owner.type {
                 case .home:
