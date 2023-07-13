@@ -11,7 +11,6 @@ public enum Downsampling {
     ) {
         // 이미지 캐시 확인
         DispatchQueue.global().async {
-            
             if let cachedImage = imageCache.object(
                 forKey: imageURL as NSURL
             ) {
@@ -36,6 +35,7 @@ public enum Downsampling {
                 if let error = error {
                     print("Error! - \(error)")
                 }
+                
                 guard let data = data,
                       let imageSource = CGImageSourceCreateWithData(
                         data as CFData, nil
@@ -57,11 +57,9 @@ public enum Downsampling {
                     return
                 }
                 
-                let downsampledUIImage = UIImage(
-                    data: UIImage(
-                        cgImage: downsampledImage
-                    ).jpegData(compressionQuality: 0.7)!
-                )
+                let downsampledUIImage = UIImage(data: UIImage(
+                    cgImage: downsampledImage
+                ).jpegData(compressionQuality: 0.7)!)
                 
                 imageCache.setObject(
                     downsampledUIImage!,

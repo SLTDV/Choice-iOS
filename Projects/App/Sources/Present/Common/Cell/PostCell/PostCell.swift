@@ -327,7 +327,7 @@ final class PostCell: UITableViewCell {
         self.model.accept(model)
         
         self.model
-            .throttle(.seconds(5), scheduler: MainScheduler.instance)
+            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .bind(with: self) { owner, _ in
                 let model = owner.model.value
                 let firstUniqueImageUrl = Downsampling.generateUniqueImageURL(imageURL: model.firstImageUrl, postID: model.idx, imageIndex: 0)
