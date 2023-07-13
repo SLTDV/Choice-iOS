@@ -43,13 +43,18 @@ public enum Downsampling {
                 return
             }
             
-            let downsampledUIImage = UIImage(cgImage: downsampledImage)
+            let downsampledUIImage = UIImage(data: UIImage(cgImage: downsampledImage).jpegData(compressionQuality: 0.8)!)
             
-            imageCache.setObject(downsampledUIImage, forKey: imageURL as NSURL)
+            imageCache.setObject(downsampledUIImage!, forKey: imageURL as NSURL)
             
             DispatchQueue.main.async {
                 completion(downsampledUIImage)
             }
         }.resume()
+    }
+    
+    public static func generateUniqueImageURL(imageURL baseURL: String, postID: Int, imageIndex: Int) -> URL? {
+        let urlString = "\(baseURL)?postID=\(postID)&imageIndex=\(imageIndex)"
+        return URL(string: urlString)
     }
 }

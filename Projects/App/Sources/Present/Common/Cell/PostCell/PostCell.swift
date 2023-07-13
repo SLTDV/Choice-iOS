@@ -327,20 +327,35 @@ final class PostCell: UITableViewCell {
         self.model.accept(model)
         
         self.model
-            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+            .throttle(.seconds(5), scheduler: MainScheduler.instance)
             .bind(with: self) { owner, _ in
                 let model = owner.model.value
                 guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
                 guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
+                let firstUniqueImageUrl = Downsampling.generateUniqueImageURL(imageURL: model.firstImageUrl, postID: model.idx, imageIndex: 0)
+                let secondUniqueImageUrl = Downsampling.generateUniqueImageURL(imageURL: model.secondImageUrl, postID: model.idx, imageIndex: 1)
+                print("firstUniqueImageUrl = \(firstUniqueImageUrl)")
+                print("secondUniqueImageUrl = \(secondUniqueImageUrl)")
+                
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
+                let firstImageView = owner.firstPostImageView.frame.size
+                let secondImageView = owner.secondPostImageView.frame.size
                 
                 DispatchQueue.main.async {
-                    Downsampling.optimization(imageAt: firstImageUrl, to: owner.firstPostImageView.frame.size, scale: 2) { image in
+                    Downsampling.optimization(imageAt: firstUniqueImageUrl!, to: owner.firstPostImageView.frame.size, scale: 2) { image in
+                        guard let image = image else {
+                            owner.firstPostImageView.image = UIImage(systemName: "person")
+                            return
+                        }
                         owner.firstPostImageView.image = image
                     }
                     
-                    Downsampling.optimization(imageAt: secondImageUrl, to: owner.secondPostImageView.frame.size, scale: 2) { image in
+                    Downsampling.optimization(imageAt: secondUniqueImageUrl!, to: owner.secondPostImageView.frame.size, scale: 2) { image in
+                        guard let image = image else {
+                            owner.secondPostImageView.image = UIImage(systemName: "person")
+                            return
+                        }
                         owner.secondPostImageView.image = image
                     }
                 }
