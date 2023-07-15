@@ -73,8 +73,8 @@ public enum Downsampling {
         }
     }
     
-    public static func generateUniqueImageURL(imageURL baseURL: String, postID: Int, imageIndex: Int) -> URL? {
-        let urlString = "\(baseURL)?postID=\(postID)&imageIndex=\(imageIndex)"
-        return URL(string: urlString)
-    }
+//    public static func generateUniqueImageURL(imageURL baseURL: String, postID: Int, imageIndex: Int) -> URL? {
+//        let urlString = "\(baseURL)?postID=\(postID)&imageIndex=\(imageIndex)"
+//        return URL(string: urlString)
+//    }
 }

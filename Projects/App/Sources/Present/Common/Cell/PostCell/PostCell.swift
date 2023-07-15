@@ -281,15 +281,13 @@ final class PostCell: UITableViewCell {
         firstPostImageView.snp.remakeConstraints {
             $0.top.equalTo(firstVoteOptionLabel.snp.bottom).offset(10)
             $0.leading.equalToSuperview().inset(20)
-            $0.width.equalTo(160)
-            $0.height.equalTo(160)
+            $0.size.equalTo(160)
         }
         
         secondPostImageView.snp.remakeConstraints {
             $0.top.equalTo(secondVoteOptionLabel.snp.bottom).offset(10)
             $0.trailing.equalToSuperview().inset(20)
-            $0.width.equalTo(160)
-            $0.height.equalTo(160)
+            $0.size.equalTo(160)
         }
     }
     
@@ -325,17 +323,20 @@ final class PostCell: UITableViewCell {
         self.model.accept(model)
         
         self.model
-            .throttle(.seconds(1), scheduler: MainScheduler.instance)
+//            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .bind(with: self) { owner, _ in
                 let model = owner.model.value
-                let firstUniqueImageUrl = Downsampling.generateUniqueImageURL(imageURL: model.firstImageUrl, postID: model.idx, imageIndex: 0)
-                let secondUniqueImageUrl = Downsampling.generateUniqueImageURL(imageURL: model.secondImageUrl, postID: model.idx, imageIndex: 1)
+//                let firstUniqueImageUrl = Downsampling.generateUniqueImageURL(imageURL: model.firstImageUrl, postID: model.idx, imageIndex: 0)
+//                let secondUniqueImageUrl = Downsampling.generateUniqueImageURL(imageURL: model.secondImageUrl, postID: model.idx, imageIndex: 1)
                 
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
                 
+                owner.firstPostImageView.image = nil
+                owner.secondPostImageView.image = nil
+                
                 DispatchQueue.main.async {
-                    Downsampling.optimization(imageAt: firstUniqueImageUrl!, to: owner.firstPostImageView.frame.size, scale: 2) { image in
+                    Downsampling.optimization(imageAt: URL(string: model.firstImageUrl)!, to: owner.firstPostImageView.frame.size, scale: 2) { image in
                         guard let image = image else {
                             owner.firstPostImageView.image = UIImage(systemName: "person")
                             return
@@ -343,7 +344,7 @@ final class PostCell: UITableViewCell {
                         owner.firstPostImageView.image = image
                     }
                     
-                    Downsampling.optimization(imageAt: secondUniqueImageUrl!, to: owner.secondPostImageView.frame.size, scale: 2) { image in
+                    Downsampling.optimization(imageAt: URL(string: model.secondImageUrl)!, to: owner.secondPostImageView.frame.size, scale: 2) { image in
                         guard let image = image else {
                             owner.secondPostImageView.image = UIImage(systemName: "person")
                             return
