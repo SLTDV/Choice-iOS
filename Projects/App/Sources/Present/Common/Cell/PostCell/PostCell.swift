@@ -332,10 +332,11 @@ final class PostCell: UITableViewCell {
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
                 
-                owner.firstPostImageView.image = nil
-                owner.secondPostImageView.image = nil
                 
                 DispatchQueue.main.async {
+                    owner.firstPostImageView.image = nil
+                    owner.secondPostImageView.image = nil
+                    
                     Downsampling.optimization(imageAt: URL(string: model.firstImageUrl)!, to: owner.firstPostImageView.frame.size, scale: 2) { image in
                         guard let image = image else {
                             owner.firstPostImageView.image = UIImage(systemName: "person")
