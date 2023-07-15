@@ -188,29 +188,27 @@ final class PostCell: UITableViewCell {
         
         firstPostImageView.snp.makeConstraints {
             $0.top.equalTo(contentLabel.snp.bottom).offset(24)
-            $0.leading.equalToSuperview().inset(20)
-            $0.width.equalTo(160)
-            $0.height.equalTo(160)
+            $0.leading.equalToSuperview().inset(15)
+            $0.size.equalTo(165)
         }
         
         secondPostImageView.snp.makeConstraints {
             $0.top.equalTo(contentLabel.snp.bottom).offset(24)
-            $0.trailing.equalToSuperview().inset(20)
-            $0.width.equalTo(160)
-            $0.height.equalTo(160)
+            $0.trailing.equalToSuperview().inset(15)
+            $0.size.equalTo(165)
         }
         
         firstVoteButton.snp.makeConstraints {
             $0.top.equalTo(firstPostImageView.snp.bottom).offset(26)
             $0.centerX.equalTo(firstPostImageView)
-            $0.width.equalTo(144)
+            $0.width.equalTo(150)
             $0.height.equalTo(68)
         }
         
         secondVoteButton.snp.makeConstraints {
             $0.top.equalTo(secondPostImageView.snp.bottom).offset(26)
             $0.centerX.equalTo(secondPostImageView)
-            $0.width.equalTo(144)
+            $0.width.equalTo(150)
             $0.height.equalTo(68)
         }
         
