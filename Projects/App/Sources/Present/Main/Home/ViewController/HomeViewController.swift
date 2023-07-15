@@ -4,8 +4,7 @@ import RxCocoa
 import Shared
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
-                                PostVoteButtonDidTapDelegate {
-    
+                                PostVoteButtonDidTapDelegate, FailedImageLoadingDelegate {
     // MARK: - Properties
     var postData = BehaviorRelay<[PostList]>(value: [])
     private let disposeBag = DisposeBag()
@@ -83,6 +82,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                 cell.setType(type: .home)
                 cell.configure(with: data)
                 cell.postVoteButtonDelegate = self
+                cell.failedImageLoadingDelegate = self
                 cell.disposeBag = self.disposeBag
                 cell.separatorInset = UIEdgeInsets.zero
             }.disposed(by: disposeBag)
@@ -124,10 +124,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                     }
                 }
             }).disposed(by: disposeBag)
-    }
-    
-    func postVoteButtonDidTap(idx: Int, choice: Int) {
-        viewModel.requestVote(idx: idx, choice: choice)
     }
     
     private func sortTableViewData(type: MenuOptionType) {
@@ -233,5 +229,19 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
         }
+    }
+}
+
+extension HomeViewController {
+    func postVoteButtonDidTap(idx: Int, choice: Int) {
+        viewModel.requestVote(idx: idx, choice: choice)
+    }
+    
+    func failedImageLoading() {
+        let alert = UIAlertController(title: "이미지 로딩 실패!", message: "네트워크 상태를 확인해주세요.", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "확인", style: .cancel)
+        
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
     }
 }

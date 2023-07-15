@@ -15,6 +15,10 @@ protocol PostVoteButtonDidTapDelegate: AnyObject {
     func postVoteButtonDidTap(idx: Int, choice: Int)
 }
 
+protocol FailedImageLoadingDelegate: AnyObject {
+    func failedImageLoading()
+}
+
 final class PostCell: UITableViewCell {
     // MARK: - Properties
     var model = BehaviorRelay<PostList>(value: PostList(idx: 0,
@@ -31,6 +35,7 @@ final class PostCell: UITableViewCell {
                                                         commentCount: 0))
     var delegate: PostTableViewCellButtonDelegate?
     var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
+    var failedImageLoadingDelegate: FailedImageLoadingDelegate?
     var type: ViewControllerType = .home
     var disposeBag = DisposeBag()
     
@@ -333,19 +338,19 @@ final class PostCell: UITableViewCell {
                     owner.secondPostImageView.image = nil
                     
                     Downsampling.optimization(imageAt: URL(string: model.firstImageUrl)!, to: owner.firstPostImageView.frame.size, scale: 2) { image in
-                        guard let image = image else {
-                            owner.firstPostImageView.image = UIImage(systemName: "person")
-                            return
+                        if let image = image {
+                            owner.firstPostImageView.image = image
+                        } else {
+                            owner.failedImageLoadingDelegate?.failedImageLoading()
                         }
-                        owner.firstPostImageView.image = image
                     }
                     
                     Downsampling.optimization(imageAt: URL(string: model.secondImageUrl)!, to: owner.secondPostImageView.frame.size, scale: 2) { image in
-                        guard let image = image else {
-                            owner.secondPostImageView.image = UIImage(systemName: "person")
-                            return
+                        if let image = image {
+                            owner.secondPostImageView.image = image
+                        } else {
+                            owner.failedImageLoadingDelegate?.failedImageLoading()
                         }
-                        owner.secondPostImageView.image = image
                     }
                 }
                 
