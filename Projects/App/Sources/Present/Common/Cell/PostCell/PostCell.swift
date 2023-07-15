@@ -323,15 +323,10 @@ final class PostCell: UITableViewCell {
         self.model.accept(model)
         
         self.model
-//            .throttle(.seconds(1), scheduler: MainScheduler.instance)
             .bind(with: self) { owner, _ in
                 let model = owner.model.value
-//                let firstUniqueImageUrl = Downsampling.generateUniqueImageURL(imageURL: model.firstImageUrl, postID: model.idx, imageIndex: 0)
-//                let secondUniqueImageUrl = Downsampling.generateUniqueImageURL(imageURL: model.secondImageUrl, postID: model.idx, imageIndex: 1)
-                
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
-                
                 
                 DispatchQueue.main.async {
                     owner.firstPostImageView.image = nil
