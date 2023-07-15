@@ -21,6 +21,7 @@ protocol FailedImageLoadingDelegate: AnyObject {
 
 final class PostCell: UITableViewCell {
     // MARK: - Properties
+    var hasFailedImageLoading = false
     var model = BehaviorRelay<PostList>(value: PostList(idx: 0,
                                                         firstImageUrl: "",
                                                         secondImageUrl: "",
@@ -341,7 +342,10 @@ final class PostCell: UITableViewCell {
                         if let image = image {
                             owner.firstPostImageView.image = image
                         } else {
-                            owner.failedImageLoadingDelegate?.failedImageLoading()
+                            if !owner.hasFailedImageLoading {
+                                owner.hasFailedImageLoading = true
+                                owner.failedImageLoadingDelegate?.failedImageLoading()
+                            }
                         }
                     }
                     
@@ -349,7 +353,10 @@ final class PostCell: UITableViewCell {
                         if let image = image {
                             owner.secondPostImageView.image = image
                         } else {
-                            owner.failedImageLoadingDelegate?.failedImageLoading()
+                            if !owner.hasFailedImageLoading {
+                                owner.hasFailedImageLoading = true
+                                owner.failedImageLoadingDelegate?.failedImageLoading()
+                            }
                         }
                     }
                 }
