@@ -10,7 +10,6 @@ public extension TargetDependency.SPM {
     static let Kingfisher = TargetDependency.external(name: "Kingfisher")
     static let RxSwift = TargetDependency.external(name: "RxSwift")
     static let RxCocoa = TargetDependency.external(name: "RxCocoa")
-    static let RxGesture = TargetDependency.external(name: "RxGesture")
     static let Alamofire = TargetDependency.external(name: "Alamofire")
     static let Swinject = TargetDependency.external(name: "Swinject")
     static let Lottie = TargetDependency.external(name: "Lottie")

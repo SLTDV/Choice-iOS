@@ -11,7 +11,6 @@ let project = Project.makeModule(
         .SPM.Kingfisher,
         .SPM.RxSwift,
         .SPM.RxCocoa,
-        .SPM.RxGesture,
         .SPM.Alamofire,
         .SPM.Swinject,
         .SPM.Lottie

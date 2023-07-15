@@ -24,11 +24,7 @@ let dependencies = Dependencies(
                 requirement: .upToNextMajor(from: "2.8.3")),
             .remote(
                 url: "https://github.com/airbnb/lottie-spm.git",
-                requirement: .upToNextMajor(from: "4.2.0")),
-            .remote(
-                url: "https://github.com/RxSwiftCommunity/RxGesture",
-                requirement: .upToNextMajor(from: "4.0.4"))
-            
+                requirement: .upToNextMajor(from: "4.2.0"))
         ],
     platforms: [.iOS]
 )
