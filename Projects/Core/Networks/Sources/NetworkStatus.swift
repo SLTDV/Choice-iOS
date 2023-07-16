@@ -1,7 +1,7 @@
 import Network
 import UIKit
 
-public protocol showNetworkChangeAlertProtocol: AnyObject {
+public protocol ShowNetworkChangeAlertProtocol: AnyObject {
     func failedNetworkConnectionAlert()
     func changedNetworkConnectionAlert()
 }
@@ -10,7 +10,7 @@ public class NetworksStatus {
     let monitor = NWPathMonitor()
     var previousNWInterfaceType: NWInterface.InterfaceType?
     var isInitialNetworkChange = true
-    public weak var delegate: showNetworkChangeAlertProtocol?
+    public weak var delegate: ShowNetworkChangeAlertProtocol?
     
     public static let shared = NetworksStatus()
     
