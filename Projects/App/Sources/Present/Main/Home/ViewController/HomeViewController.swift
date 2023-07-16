@@ -2,13 +2,16 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Shared
+import Networks
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
-                                PostVoteButtonDidTapDelegate, FailedImageLoadingDelegate {
+                                PostVoteButtonDidTapDelegate, FailedImageLoadingDelegate,
+                                showNetworkChangeAlertProtocol {
     // MARK: - Properties
     var postData = BehaviorRelay<[PostList]>(value: [])
     private let disposeBag = DisposeBag()
     var isLastPage = false
+    var networkStatus = NetworksStatus.shared
     
     private var sortType: MenuOptionType = .findBestPostData
     
@@ -189,6 +192,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
         configureDropDown()
         
         viewModel.delegate = self
+        networkStatus.delegate = self
         bindTableView()
         navigationBarButtonDidTap()
         viewModel.requestPostData(type: sortType)
@@ -243,5 +247,29 @@ extension HomeViewController {
         
         alert.addAction(cancelAction)
         present(alert, animated: true)
+    }
+    
+    func failedNetworkConnectionAlert() {
+        let alert = UIAlertController(title: "네트워크 연결 실패!", message: "네트워크 연결에 실패했습니다. 앱을 다시 실행해주세요.", preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "확인", style: .cancel)
+        alert.addAction(cancelAction)
+        
+        DispatchQueue.main.async {
+            
+            self.present(alert, animated: true)
+        }
+    }
+    
+    func changedNetworkConnectionAlert() {
+        let alert = UIAlertController(title: "네트워크 변경 감지!", message: "네트워크 변경이 감지되었습니다. 앱을 다시 실행해주세요.", preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "확인", style: .cancel)
+        alert.addAction(cancelAction)
+        
+        DispatchQueue.main.async {
+            
+            self.present(alert, animated: true)
+        }
     }
 }

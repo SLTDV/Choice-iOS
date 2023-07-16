@@ -1,33 +1,57 @@
 import Network
 import UIKit
 
-public class NetworksStatus: UIViewController {
+public protocol showNetworkChangeAlertProtocol: AnyObject {
+    func failedNetworkConnectionAlert()
+    func changedNetworkConnectionAlert()
+}
+
+public class NetworksStatus {
     let monitor = NWPathMonitor()
+    var previousNWInterfaceType: NWInterface.InterfaceType?
+    var isInitialNetworkChange = true
+    public weak var delegate: showNetworkChangeAlertProtocol?
+    
     public static let shared = NetworksStatus()
     
     public func startMonitoring() {
         monitor.start(queue: DispatchQueue.global())
         monitor.pathUpdateHandler = { [weak self] path in
-            if path.status == .satisfied {
-                if path.usesInterfaceType(.wifi) {
-                    print("wifi mode")
-                } else if path.usesInterfaceType(.cellular) {
-                    print("cellular mode")
-                } else if path.usesInterfaceType(.wiredEthernet) {
-                    print("ethernet mode")
-                }
-            } else {
-                print("not connected")
-            }
+            self?.checkNetworkStatusChange(newStatus: path)
         }
     }
     
-    private func showChangedNetworkAlert() {
-        let alert = UIAlertController(title: "네트워크 변경 감지!", message: "네트워크 변경이 감지되었습니다. 앱을 다시 실행해주세요.", preferredStyle: .alert)
+    private func checkNetworkStatusChange(newStatus: NWPath) {
+        guard let previousNWInterfaceType = previousNWInterfaceType else {
+            if newStatus.status == .satisfied {
+                if newStatus.usesInterfaceType(.wifi) {
+                    self.previousNWInterfaceType = .wifi
+                    print("wifi mode")
+                } else if newStatus.usesInterfaceType(.cellular) {
+                    self.previousNWInterfaceType = .cellular
+                    print("cellular mode")
+                } else if newStatus.usesInterfaceType(.wiredEthernet) {
+                    self.previousNWInterfaceType = .wiredEthernet
+                    print("ethernet mode")
+                }
+            } else {
+                delegate?.failedNetworkConnectionAlert()
+            }
+            return
+        }
         
-        let cancelAction = UIAlertAction(title: "확인", style: .cancel)
+        if isInitialNetworkChange {
+            isInitialNetworkChange = false
+            return
+        }
         
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
+        if newStatus.status != .satisfied {
+            delegate?.failedNetworkConnectionAlert()
+        } else {
+            if previousNWInterfaceType != .other {
+                print("other!!!")
+                delegate?.changedNetworkConnectionAlert()
+            }
+        }
     }
 }
