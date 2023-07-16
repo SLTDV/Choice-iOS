@@ -1,16 +1,14 @@
 import Network
+import UIKit
 
-public class NetworksStatus {
+public class NetworksStatus: UIViewController {
     let monitor = NWPathMonitor()
     public static let shared = NetworksStatus()
-    
-    private init() {}
     
     public func startMonitoring() {
         monitor.start(queue: DispatchQueue.global())
         monitor.pathUpdateHandler = { [weak self] path in
             if path.status == .satisfied {
-                print("connected")
                 if path.usesInterfaceType(.wifi) {
                     print("wifi mode")
                 } else if path.usesInterfaceType(.cellular) {
@@ -22,5 +20,14 @@ public class NetworksStatus {
                 print("not connected")
             }
         }
+    }
+    
+    private func showChangedNetworkAlert() {
+        let alert = UIAlertController(title: "네트워크 변경 감지!", message: "네트워크 변경이 감지되었습니다. 앱을 다시 실행해주세요.", preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "확인", style: .cancel)
+        
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
     }
 }
