@@ -5,7 +5,7 @@ import Shared
 import Networks
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
-                                PostVoteButtonHandlerProtocol, FailedImageLoadingHandlerProtocol,
+                                PostVoteButtonHandlerProtocol, ImageLoadingFailureHandlerProtocol,
                                 NetworkConnectionHandlerProtocol {
     // MARK: - Properties
     var postData = BehaviorRelay<[PostList]>(value: [])

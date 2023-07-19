@@ -15,7 +15,7 @@ protocol PostVoteButtonHandlerProtocol: AnyObject {
     func postVoteButtonDidTap(idx: Int, choice: Int)
 }
 
-protocol FailedImageLoadingHandlerProtocol: AnyObject {
+protocol ImageLoadingFailureHandlerProtocol: AnyObject {
     func showAlertOnFailedImageLoading()
 }
 
@@ -36,7 +36,7 @@ final class PostCell: UITableViewCell {
                                                         commentCount: 0))
     var removeCellDelegate: RemoveTableViewCellHandlerProtocol?
     var postVoteButtonDelegate: PostVoteButtonHandlerProtocol?
-    var failedImageLoadingDelegate: FailedImageLoadingHandlerProtocol?
+    var failedImageLoadingDelegate: ImageLoadingFailureHandlerProtocol?
     var type: ViewControllerType = .home
     var disposeBag = DisposeBag()
     
