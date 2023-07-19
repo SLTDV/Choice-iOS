@@ -25,7 +25,6 @@ let dependencies = Dependencies(
             .remote(
                 url: "https://github.com/airbnb/lottie-spm.git",
                 requirement: .upToNextMajor(from: "4.2.0"))
-            
         ],
     platforms: [.iOS]
 )

@@ -7,16 +7,21 @@ import RxSwift
 import RxCocoa
 
 // MARK: - Protocol
-protocol PostTableViewCellButtonDelegate: AnyObject {
+protocol RemoveTableViewCellHandlerProtocol: AnyObject {
     func removePostButtonDidTap(postIdx: Int)
 }
 
-protocol PostVoteButtonDidTapDelegate: AnyObject {
+protocol PostVoteButtonHandlerProtocol: AnyObject {
     func postVoteButtonDidTap(idx: Int, choice: Int)
+}
+
+protocol ImageLoadingFailureHandlerProtocol: AnyObject {
+    func showAlertOnFailedImageLoading()
 }
 
 final class PostCell: UITableViewCell {
     // MARK: - Properties
+    var hasFailedImageLoading = false
     var model = BehaviorRelay<PostList>(value: PostList(idx: 0,
                                                         firstImageUrl: "",
                                                         secondImageUrl: "",
@@ -29,8 +34,9 @@ final class PostCell: UITableViewCell {
                                                         votingState: 0,
                                                         participants: 0,
                                                         commentCount: 0))
-    var delegate: PostTableViewCellButtonDelegate?
-    var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
+    var removeCellDelegate: RemoveTableViewCellHandlerProtocol?
+    var postVoteButtonDelegate: PostVoteButtonHandlerProtocol?
+    var failedImageLoadingDelegate: ImageLoadingFailureHandlerProtocol?
     var type: ViewControllerType = .home
     var disposeBag = DisposeBag()
     
@@ -157,7 +163,7 @@ final class PostCell: UITableViewCell {
     }
     
     func removePostButtonDidTap(postIdx: Int) {
-        delegate?.removePostButtonDidTap(postIdx: postIdx)
+        removeCellDelegate?.removePostButtonDidTap(postIdx: postIdx)
     }
     
     private func addView() {
@@ -188,29 +194,27 @@ final class PostCell: UITableViewCell {
         
         firstPostImageView.snp.makeConstraints {
             $0.top.equalTo(contentLabel.snp.bottom).offset(24)
-            $0.leading.equalToSuperview().inset(20)
-            $0.width.equalTo(160)
-            $0.height.equalTo(160)
+            $0.leading.equalToSuperview().inset(15)
+            $0.size.equalTo(165)
         }
         
         secondPostImageView.snp.makeConstraints {
             $0.top.equalTo(contentLabel.snp.bottom).offset(24)
-            $0.trailing.equalToSuperview().inset(20)
-            $0.width.equalTo(160)
-            $0.height.equalTo(160)
+            $0.trailing.equalToSuperview().inset(15)
+            $0.size.equalTo(165)
         }
         
         firstVoteButton.snp.makeConstraints {
             $0.top.equalTo(firstPostImageView.snp.bottom).offset(26)
             $0.centerX.equalTo(firstPostImageView)
-            $0.width.equalTo(144)
+            $0.width.equalTo(150)
             $0.height.equalTo(68)
         }
         
         secondVoteButton.snp.makeConstraints {
             $0.top.equalTo(secondPostImageView.snp.bottom).offset(26)
             $0.centerX.equalTo(secondPostImageView)
-            $0.width.equalTo(144)
+            $0.width.equalTo(150)
             $0.height.equalTo(68)
         }
         
@@ -283,15 +287,13 @@ final class PostCell: UITableViewCell {
         firstPostImageView.snp.remakeConstraints {
             $0.top.equalTo(firstVoteOptionLabel.snp.bottom).offset(10)
             $0.leading.equalToSuperview().inset(20)
-            $0.width.equalTo(160)
-            $0.height.equalTo(160)
+            $0.size.equalTo(160)
         }
         
         secondPostImageView.snp.remakeConstraints {
             $0.top.equalTo(secondVoteOptionLabel.snp.bottom).offset(10)
             $0.trailing.equalToSuperview().inset(20)
-            $0.width.equalTo(160)
-            $0.height.equalTo(160)
+            $0.size.equalTo(160)
         }
     }
     
@@ -327,21 +329,35 @@ final class PostCell: UITableViewCell {
         self.model.accept(model)
         
         self.model
-            .asDriver()
-            .drive(with: self) { owner, _ in
+            .bind(with: self) { owner, _ in
                 let model = owner.model.value
-                guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
-                guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
                 
                 DispatchQueue.main.async {
-                    Downsampling.optimization(imageAt: firstImageUrl, to: owner.firstPostImageView.frame.size, scale: 2) { image in
-                        owner.firstPostImageView.image = image
+                    owner.firstPostImageView.image = nil
+                    owner.secondPostImageView.image = nil
+                    
+                    Downsampling.optimization(imageAt: URL(string: model.firstImageUrl)!, to: owner.firstPostImageView.frame.size, scale: 2) { image in
+                        if let image = image {
+                            owner.firstPostImageView.image = image
+                        } else {
+                            if !owner.hasFailedImageLoading {
+                                owner.hasFailedImageLoading = true
+                                owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
+                            }
+                        }
                     }
                     
-                    Downsampling.optimization(imageAt: secondImageUrl, to: owner.secondPostImageView.frame.size, scale: 2) { image in
-                        owner.secondPostImageView.image = image
+                    Downsampling.optimization(imageAt: URL(string: model.secondImageUrl)!, to: owner.secondPostImageView.frame.size, scale: 2) { image in
+                        if let image = image {
+                            owner.secondPostImageView.image = image
+                        } else {
+                            if !owner.hasFailedImageLoading {
+                                owner.hasFailedImageLoading = true
+                                owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
+                            }
+                        }
                     }
                 }
                 
