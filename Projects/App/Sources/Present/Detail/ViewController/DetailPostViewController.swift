@@ -363,9 +363,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 Downsampling.optimization(imageAt: URL(string: arg!)!,
                                           to: owner.userImageView.frame.size,
                                           scale: 2) { image in
-                    if let image = image {
-                        owner.userImageView.image = image
-                    }
+                    owner.userImageView.image = image
                 }
                 return
             }
