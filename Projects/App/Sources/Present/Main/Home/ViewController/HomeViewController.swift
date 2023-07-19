@@ -2,7 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Shared
-import Networks
+import NetworksMonitor
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                                 PostVoteButtonHandlerProtocol, ImageLoadingFailureHandlerProtocol,
