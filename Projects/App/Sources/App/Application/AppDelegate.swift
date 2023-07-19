@@ -3,7 +3,6 @@ import Swinject
 import JwtStore
 import Shared
 import RxSwift
-import RxCocoa
 import Networks
 
 @main
@@ -41,8 +40,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) {
         let monitor = NetworksStatus.shared
         monitor.stopMonitoring()
-        
-        
     }
     
     func application(
