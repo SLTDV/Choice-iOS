@@ -38,7 +38,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(
         _ application: UIApplication,
         didDiscardSceneSessions sceneSessions: Set<UISceneSession>
-    ) {}
+    ) {
+        let monitor = NetworksStatus.shared
+        monitor.stopMonitoring()
+        
+        
+    }
     
     func application(
         _ application: UIApplication,

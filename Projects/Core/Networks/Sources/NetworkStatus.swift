@@ -9,6 +9,7 @@ public protocol ShowNetworkChangeAlertProtocol: AnyObject {
 public class NetworksStatus {
     let monitor = NWPathMonitor()
     var previousNWInterfaceType: NWInterface.InterfaceType?
+    var currentNWInterfaceType: NWInterface.InterfaceType?
     var isInitialNetworkChange = true
     public weak var delegate: ShowNetworkChangeAlertProtocol?
     
@@ -17,41 +18,49 @@ public class NetworksStatus {
     public func startMonitoring() {
         monitor.start(queue: DispatchQueue.global())
         monitor.pathUpdateHandler = { [weak self] path in
+            print("update!!")
             self?.checkNetworkStatusChange(newStatus: path)
         }
     }
     
+    public func stopMonitoring() {
+        monitor.cancel()
+    }
+    
     private func checkNetworkStatusChange(newStatus: NWPath) {
-        guard let previousNWInterfaceType = previousNWInterfaceType else {
-            if newStatus.status == .satisfied {
-                if newStatus.usesInterfaceType(.wifi) {
-                    self.previousNWInterfaceType = .wifi
-                    print("wifi mode")
-                } else if newStatus.usesInterfaceType(.cellular) {
-                    self.previousNWInterfaceType = .cellular
-                    print("cellular mode")
-                } else if newStatus.usesInterfaceType(.wiredEthernet) {
-                    self.previousNWInterfaceType = .wiredEthernet
-                    print("ethernet mode")
-                }
-            } else {
-                delegate?.failedNetworkConnectionAlert()
+        if newStatus.status == .satisfied {
+            if newStatus.usesInterfaceType(.wifi) {
+                self.currentNWInterfaceType = .wifi
+                print("wifi mode")
+            } else if newStatus.usesInterfaceType(.cellular) {
+                self.currentNWInterfaceType = .cellular
+                print("cellular mode")
+            } else if newStatus.usesInterfaceType(.wiredEthernet) {
+                self.currentNWInterfaceType = .wiredEthernet
+                print("ethernet mode")
             }
+        } else {
+            delegate?.failedNetworkConnectionAlert()
             return
         }
         
+        //앱 시작인가
         if isInitialNetworkChange {
             isInitialNetworkChange = false
+            previousNWInterfaceType = currentNWInterfaceType
             return
         }
         
+        
+        print("pre = \(previousNWInterfaceType)")
+        print("current = \(currentNWInterfaceType)")
         if newStatus.status != .satisfied {
             delegate?.failedNetworkConnectionAlert()
         } else {
-            if previousNWInterfaceType != .other {
-                print("other!!!")
+            if previousNWInterfaceType != currentNWInterfaceType {
                 delegate?.changedNetworkConnectionAlert()
             }
         }
+        previousNWInterfaceType = currentNWInterfaceType
     }
 }
