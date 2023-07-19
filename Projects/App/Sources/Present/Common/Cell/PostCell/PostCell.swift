@@ -7,16 +7,16 @@ import RxSwift
 import RxCocoa
 
 // MARK: - Protocol
-protocol PostTableViewCellButtonDelegate: AnyObject {
+protocol RemoveTableViewCellHandlerProtocol: AnyObject {
     func removePostButtonDidTap(postIdx: Int)
 }
 
-protocol PostVoteButtonDidTapDelegate: AnyObject {
+protocol PostVoteButtonHandlerProtocol: AnyObject {
     func postVoteButtonDidTap(idx: Int, choice: Int)
 }
 
-protocol FailedImageLoadingDelegate: AnyObject {
-    func failedImageLoading()
+protocol FailedImageLoadingHandlerProtocol: AnyObject {
+    func showAlertOnFailedImageLoading()
 }
 
 final class PostCell: UITableViewCell {
@@ -34,9 +34,9 @@ final class PostCell: UITableViewCell {
                                                         votingState: 0,
                                                         participants: 0,
                                                         commentCount: 0))
-    var delegate: PostTableViewCellButtonDelegate?
-    var postVoteButtonDelegate: PostVoteButtonDidTapDelegate?
-    var failedImageLoadingDelegate: FailedImageLoadingDelegate?
+    var removeCellDelegate: RemoveTableViewCellHandlerProtocol?
+    var postVoteButtonDelegate: PostVoteButtonHandlerProtocol?
+    var failedImageLoadingDelegate: FailedImageLoadingHandlerProtocol?
     var type: ViewControllerType = .home
     var disposeBag = DisposeBag()
     
@@ -163,7 +163,7 @@ final class PostCell: UITableViewCell {
     }
     
     func removePostButtonDidTap(postIdx: Int) {
-        delegate?.removePostButtonDidTap(postIdx: postIdx)
+        removeCellDelegate?.removePostButtonDidTap(postIdx: postIdx)
     }
     
     private func addView() {
@@ -344,7 +344,7 @@ final class PostCell: UITableViewCell {
                         } else {
                             if !owner.hasFailedImageLoading {
                                 owner.hasFailedImageLoading = true
-                                owner.failedImageLoadingDelegate?.failedImageLoading()
+                                owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
                             }
                         }
                     }
@@ -355,7 +355,7 @@ final class PostCell: UITableViewCell {
                         } else {
                             if !owner.hasFailedImageLoading {
                                 owner.hasFailedImageLoading = true
-                                owner.failedImageLoadingDelegate?.failedImageLoading()
+                                owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
                             }
                         }
                     }

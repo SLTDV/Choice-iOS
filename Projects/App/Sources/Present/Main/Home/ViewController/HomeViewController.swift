@@ -5,8 +5,8 @@ import Shared
 import Networks
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
-                                PostVoteButtonDidTapDelegate, FailedImageLoadingDelegate,
-                                ShowNetworkChangeAlertProtocol {
+                                PostVoteButtonHandlerProtocol, FailedImageLoadingHandlerProtocol,
+                                NetworkConnectionHandlerProtocol {
     // MARK: - Properties
     var postData = BehaviorRelay<[PostList]>(value: [])
     private let disposeBag = DisposeBag()
@@ -241,7 +241,7 @@ extension HomeViewController {
         viewModel.requestVote(idx: idx, choice: choice)
     }
     
-    func failedImageLoading() {
+    func showAlertOnFailedImageLoading() {
         let alert = UIAlertController(title: "이미지 로딩 실패!", message: "네트워크 상태를 확인해주세요.", preferredStyle: .alert)
         let cancelAction = UIAlertAction(title: "확인", style: .cancel)
         
@@ -249,7 +249,7 @@ extension HomeViewController {
         present(alert, animated: true)
     }
     
-    func failedNetworkConnectionAlert() {
+    func showAlertOnNetworkDisConnect() {
         let alert = UIAlertController(title: "네트워크 연결 실패!", message: "네트워크 연결에 실패했습니다. 앱을 다시 실행해주세요.", preferredStyle: .alert)
         
         let cancelAction = UIAlertAction(title: "확인", style: .cancel) { [weak self] _ in
@@ -263,7 +263,7 @@ extension HomeViewController {
         }
     }
     
-    func changedNetworkConnectionAlert() {
+    func showAlertOnNetworkChange() {
         let alert = UIAlertController(title: "네트워크 변경 감지!", message: "네트워크 변경이 감지되었습니다. 앱을 다시 실행해주세요.", preferredStyle: .alert)
         
         let cancelAction = UIAlertAction(title: "확인", style: .cancel) { [weak self] _ in

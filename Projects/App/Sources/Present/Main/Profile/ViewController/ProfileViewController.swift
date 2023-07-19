@@ -99,7 +99,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
                                              cellType: PostCell.self)) { (row, data, cell) in
                 cell.setType(type: .profile)
                 cell.configure(with: data)
-                cell.delegate = self
+                cell.removeCellDelegate = self
                 cell.separatorInset = UIEdgeInsets.zero
             }.disposed(by: disposeBag)
         
@@ -279,7 +279,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
     }
 }
 
-extension ProfileViewController: PostTableViewCellButtonDelegate {
+extension ProfileViewController: RemoveTableViewCellHandlerProtocol {
     func removePostButtonDidTap(postIdx: Int) {
         let alert = UIAlertController(title: "게시물 삭제", message: "삭제 하시겠습니까?", preferredStyle: .alert)
         let okayAction = UIAlertAction(title: "삭제", style: .destructive) { _ in
