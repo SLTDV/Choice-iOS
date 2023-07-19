@@ -2,7 +2,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
-    name: "Networks",
+    name: "NetworksMonitor",
     product: .staticFramework,
     dependencies: [
         TargetDependency.project(

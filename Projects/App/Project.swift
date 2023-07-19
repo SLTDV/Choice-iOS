@@ -13,8 +13,8 @@ let project = Project.makeModule(
             target: "JwtStore",
             path: .relativeToRoot("Projects/Core/JwtStore")),
         TargetDependency.project(
-            target: "Networks",
-            path: .relativeToRoot("Projects/Core/Networks"))
+            target: "NetworksMonitor",
+            path: .relativeToRoot("Projects/Core/NetworksMonitor"))
     ],
     resources: ["Resources/**"],
     infoPlist: .file(path: "Support/Info.plist")

@@ -3,7 +3,7 @@ import Swinject
 import JwtStore
 import Shared
 import RxSwift
-import Networks
+import NetworksMonitor
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
