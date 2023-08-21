@@ -182,7 +182,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func presentReportPostAlert() {
-        AlertHelper.showAlert(
+        AlertHelper.shared.showAlert(
             title: "게시물 신고",
             message: """
                     해당 게시물이 불쾌감을 줬다면 신고해주세요.
@@ -195,7 +195,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func presentBlockUserAlert() {
-        AlertHelper.showAlert(
+        AlertHelper.shared.showAlert(
             title: "차단하기",
             message: """
                      해당 사용자를 차단할 수 있습니다.
