@@ -230,37 +230,34 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         
-        viewModel.requestToReportPost(postIdx: self.model.value.idx) { result in
-            switch result {
-            case .success:
+        viewModel.requestToReportPost(postIdx: self.model.value.idx)
+            .subscribe(onNext: {
                 alert.title = "완료"
                 alert.message = "신고가 접수되었습니다"
-            case .failure:
+            },onError: {_ in
                 alert.title = "실패"
                 alert.message = "이미 신고한 게시물입니다"
-            }
-            self.present(alert, animated: true)
-        }
+            }, onCompleted: {
+                self.present(alert, animated: true)
+            }).disposed(by: disposeBag)
     }
     
     private func blockUserAlert() {
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         
-        viewModel.requestToBlockUser(postIdx: self.model.value.idx) { [weak self] result in
-            switch result {
-            case .success:
+        viewModel.requestToBlockUser(postIdx: self.model.value.idx)
+            .subscribe(onNext: {
                 alert.title = "완료"
                 alert.message = "차단이 완료되었습니다."
-                self?.viewModel.popToRootVC()
+                self.viewModel.popToRootVC()
                 NotificationCenter.default.post(name: NSNotification.Name("BlockButtonPressed"), object: nil)
-            case .failure:
+            }, onError: { _ in
                 alert.title = "실패"
                 alert.message = "차단이 완료되었습니다."
-            }
-            
-            self?.present(alert, animated: true)
-        }
+            }, onCompleted: {
+                self.present(alert, animated: true)
+            }).disposed(by: disposeBag)
     }
     
     private func keyboardUp(_ notification: Notification) {

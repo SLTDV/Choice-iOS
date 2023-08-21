@@ -95,6 +95,7 @@ final class DetailPostViewModel: BaseViewModel {
                 case .success:
                     observer.onNext(())
                 case .failure(let error):
+                    print("Error - CreateComment - \(error.localizedDescription)")
                     observer.onError(error)
                 }
             }
@@ -116,45 +117,56 @@ final class DetailPostViewModel: BaseViewModel {
                 case .success:
                     observer.onNext(())
                 case .failure(let error):
-                    observer.onError(error)
+                    print("Error - DeleteComment - \(error.localizedDescription)")
                 }
             }
             return Disposables.create()
         }
     }
     
-    func requestToReportPost(postIdx: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+    func requestToReportPost(postIdx: Int) -> Observable<Void> {
         let url = APIConstants.reportPostURL + "\(postIdx)"
-        AF.request(url,
-                   method: .post,
-                   encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor(jwtStore: container))
-        .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
-            switch response.result {
-            case .success:
-                completion(.success(()))
-            case .failure(let error):
-                completion(.failure(error))
+        
+        return Observable.create { (observer) -> Disposable in
+            AF.request(url,
+                       method: .post,
+                       encoding: URLEncoding.queryString,
+                       interceptor: JwtRequestInterceptor(jwtStore: self.container))
+            .validate()
+            .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+                switch response.result {
+                case .success:
+                    observer.onNext(())
+                    observer.onCompleted()
+                case .failure(let error):
+                    observer.onError(error)
+                    print("Error - ReportPost - \(error.localizedDescription)")
+                }
             }
+            return Disposables.create()
         }
     }
     
-    func requestToBlockUser(postIdx: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+    func requestToBlockUser(postIdx: Int) -> Observable<Void> {
         let url = APIConstants.blockUserURL + "\(postIdx)"
-        AF.request(url,
-                   method: .post,
-                   encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor(jwtStore: container))
-        .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
-            switch response.result {
-            case .success:
-                completion(.success(()))
-            case .failure(let error):
-                print("Erorr - BlockUser = \(error.localizedDescription)")
-                completion(.failure(error))
+        
+        return Observable.create { observer -> Disposable in
+            AF.request(url,
+                       method: .post,
+                       encoding: URLEncoding.queryString,
+                       interceptor: JwtRequestInterceptor(jwtStore: self.container))
+            .validate()
+            .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+                switch response.result {
+                case .success:
+                    observer.onNext(())
+                    observer.onCompleted()
+                case .failure(let error):
+                    observer.onError(error)
+                    print("Erorr - BlockUser = \(error.localizedDescription)")
+                }
             }
+            return Disposables.create()
         }
     }
     
