@@ -356,7 +356,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         writerImageStringData
             .observe(on: MainScheduler.instance)
-            .compactMap { URL(string: $0!) }
+            .compactMap { URL(string: $0 ?? "") }
             .bind(with: self) { owner, arg in
                 Downsampling.optimization(imageAt: arg,
                                           to: owner.userImageView.frame.size,
