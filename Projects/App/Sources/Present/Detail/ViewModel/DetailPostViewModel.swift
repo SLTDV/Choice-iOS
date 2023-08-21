@@ -93,7 +93,7 @@ final class DetailPostViewModel: BaseViewModel {
         }
     }
     
-    func requestToDeleteComment(postIdx: Int, commentIdx: Int, completion: @escaping (Result<Void, Error>) -> ()) {
+    func requestToDeleteComment(postIdx: Int, commentIdx: Int, completion: @escaping (Result<Void, Error>) -> Void) {
         let url = APIConstants.deleteCommentURL + "\(postIdx)/" + "\(commentIdx)"
         AF.request(url,
                    method: .delete,
@@ -110,7 +110,7 @@ final class DetailPostViewModel: BaseViewModel {
         }
     }
     
-    func requestToReportPost(postIdx: Int, completion: @escaping (Bool) -> Void) {
+    func requestToReportPost(postIdx: Int, completion: @escaping (Result<Void, Error>) -> Void) {
         let url = APIConstants.reportPostURL + "\(postIdx)"
         AF.request(url,
                    method: .post,
@@ -120,14 +120,14 @@ final class DetailPostViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
-                completion(true)
-            case .failure(_):
-                completion(false)
+                completion(.success(()))
+            case .failure(let error):
+                completion(.failure(error))
             }
         }
     }
     
-    func requestToBlockUser(postIdx: Int, completion: @escaping (Bool) -> Void) {
+    func requestToBlockUser(postIdx: Int, completion: @escaping (Result<Void, Error>) -> Void) {
         let url = APIConstants.blockUserURL + "\(postIdx)"
         AF.request(url,
                    method: .post,
@@ -137,10 +137,10 @@ final class DetailPostViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
-                completion(true)
+                completion(.success(()))
             case .failure(let error):
                 print("Erorr - BlockUser = \(error.localizedDescription)")
-                completion(false)
+                completion(.failure(error))
             }
         }
     }

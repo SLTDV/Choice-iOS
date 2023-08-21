@@ -230,11 +230,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         
-        viewModel.requestToReportPost(postIdx: self.model.value.idx) { isVaild in
-            if isVaild {
+        viewModel.requestToReportPost(postIdx: self.model.value.idx) { result in
+            switch result {
+            case .success:
                 alert.title = "완료"
                 alert.message = "신고가 접수되었습니다"
-            } else {
+            case .failure:
                 alert.title = "실패"
                 alert.message = "이미 신고한 게시물입니다"
             }
@@ -248,12 +249,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         viewModel.requestToBlockUser(postIdx: self.model.value.idx) { [weak self] result in
             switch result {
-            case true:
+            case .success:
                 alert.title = "완료"
                 alert.message = "차단이 완료되었습니다."
                 self?.viewModel.popToRootVC()
                 NotificationCenter.default.post(name: NSNotification.Name("BlockButtonPressed"), object: nil)
-            case false:
+            case .failure:
                 alert.title = "실패"
                 alert.message = "차단이 완료되었습니다."
             }
