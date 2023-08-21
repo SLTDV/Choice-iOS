@@ -661,11 +661,11 @@ extension DetailPostViewController {
         viewModel.requestToCreateComment(idx: model.value.idx, content: content) { [weak self] result in
             switch result {
             case .success(()):
-                self?.viewModel.requestCommentData(idx: (self?.model.value.idx)!)
+                self?.commentData.accept([])
+                self?.loadMoreComments()
                 self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
                 self?.enterCommentTextView.text = nil
                 self?.enterCommentTextView.resignFirstResponder()
-                self?.commentData.accept([])
                 self?.isLastPage = false
                 self?.setDefaultSubmitButton()
             case .failure(let error):

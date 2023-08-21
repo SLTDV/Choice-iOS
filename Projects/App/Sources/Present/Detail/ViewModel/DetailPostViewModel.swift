@@ -17,7 +17,7 @@ final class DetailPostViewModel: BaseViewModel {
     var commentCurrentPage = -1
     private let container = AppDelegate.container.resolve(JwtStore.self)!
     
-    func requestCommentData(idx: Int) -> Observable<Int> {
+    func requestCommentData(idx: Int) -> Observable<Int?> {
         let url = APIConstants.detailPostURL + "\(idx)"
         
         commentCurrentPage += 1
@@ -99,20 +99,26 @@ final class DetailPostViewModel: BaseViewModel {
         }
     }
     
-    func requestToDeleteComment(postIdx: Int, commentIdx: Int, completion: @escaping (Result<Void, Error>) -> Void) {
+    func requestToDeleteComment(postIdx: Int, commentIdx: Int) -> Observable<Void> {
         let url = APIConstants.deleteCommentURL + "\(postIdx)/" + "\(commentIdx)"
-        AF.request(url,
-                   method: .delete,
-                   encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor(jwtStore: container))
-        .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
-            switch response.result {
-            case .success:
-                completion(.success(()))
-            case .failure(let error):
-                completion(.failure(error))
+        
+        return Observable.create { [weak self] observer -> Disposable in
+            AF.request(url,
+                       method: .delete,
+                       encoding: URLEncoding.queryString,
+                       interceptor: JwtRequestInterceptor(jwtStore: self!.container))
+            .validate()
+            .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+                switch response.result {
+                case .success:
+                    observer.onCompleted()
+                case .failure(let error):
+                    observer.onError(error)
+                }
             }
+            
+            
+            return Disposables.create()
         }
     }
     
