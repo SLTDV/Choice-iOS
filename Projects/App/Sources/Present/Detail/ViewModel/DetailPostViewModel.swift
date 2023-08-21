@@ -17,7 +17,7 @@ final class DetailPostViewModel: BaseViewModel {
     var commentCurrentPage = -1
     private let container = AppDelegate.container.resolve(JwtStore.self)!
     
-    func requestCommentData(idx: Int, completion: @escaping (Result<Int, Error>) -> Void = { _ in }) {
+    func requestCommentData(idx: Int) -> Observable<Int> {
         let url = APIConstants.detailPostURL + "\(idx)"
         
         commentCurrentPage += 1
@@ -28,24 +28,30 @@ final class DetailPostViewModel: BaseViewModel {
         var components = URLComponents(string: url)
         components?.queryItems = [page, size]
         
-        AF.request(components!,
-                   method: .get,
-                   encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor(jwtStore: container))
-        .validate()
-        .responseDecodable(of: CommentModel.self) { [weak self] response in
-            switch response.result {
-            case .success(let postData):
-                completion(.success(postData.size))
-                self?.delegate?.writerImageStringData.onNext(postData.image)
-                self?.delegate?.writerNameData.onNext(postData.writer)
-                self?.delegate?.isMineData = postData.isMine
-                var relay = self?.delegate?.commentData.value
-                relay?.append(contentsOf: postData.commentList)
-                self?.delegate?.commentData.accept(relay!)
-            case .failure(let error):
-                print("comment = \(error.localizedDescription)")
+        return Observable.create { [weak self] (observer) -> Disposable in
+            AF.request(components!,
+                       method: .get,
+                       encoding: URLEncoding.queryString,
+                       interceptor: JwtRequestInterceptor(jwtStore: self!.container))
+            .validate()
+            .responseDecodable(of: CommentModel.self) { [weak self] response in
+                switch response.result {
+                case .success(let postData):
+                    observer.onNext(postData.size)
+                    self?.delegate?.writerImageStringData.onNext(postData.image)
+                    self?.delegate?.writerNameData.onNext(postData.writer)
+                    self?.delegate?.isMineData = postData.isMine
+                    var relay = self?.delegate?.commentData.value
+                    relay?.append(contentsOf: postData.commentList)
+                    self?.delegate?.commentData.accept(relay!)
+                    observer.onCompleted()
+                case .failure(let error):
+                    observer.onError(error)
+                    print("comment = \(error.localizedDescription)")
+                }
             }
+            
+            return Disposables.create()
         }
     }
     

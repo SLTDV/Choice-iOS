@@ -331,22 +331,15 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             guard let self = self else { return }
             
             self.commentTableView.performBatchUpdates(nil, completion: nil)
-            self.viewModel.requestCommentData(idx: self.model.value.idx) { [weak self] result in
-                guard let self = self else { return }
-                
-                self.commentTableView.tableFooterView = nil
-                
-                switch result {
-                case .success(let size):
+            viewModel.requestCommentData(idx: self.model.value.idx)
+                .bind(with: self) { owner, size in
+                    owner.commentTableView.tableFooterView = nil
                     if size != 10 {
                         self.isLastPage = true
                     } else {
                         self.commentTableView.reloadData()
                     }
-                case .failure(let error):
-                    print("comment pagination error = \(error.localizedDescription)")
-                }
-            }
+                }.disposed(by: disposeBag)
         }
     }
     
