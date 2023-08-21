@@ -9,7 +9,6 @@ public protocol CustomAlertProtocl {
 
 public class AlertHelper: CustomAlertProtocl {
     public static var shared: CustomAlertProtocl = AlertHelper()
-    var alertControl = UIAlertController(title: "", message: "", preferredStyle: .alert)
     
     private init() {}
     
