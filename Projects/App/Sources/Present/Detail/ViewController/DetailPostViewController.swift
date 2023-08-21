@@ -4,7 +4,7 @@ import RxCocoa
 import Kingfisher
 import Shared
 
-enum CommectPlaceHolder {
+enum CommentPlaceHolder {
     static var text = "댓글을 입력해주세요."
 }
 
