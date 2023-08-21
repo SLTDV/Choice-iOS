@@ -4,6 +4,10 @@ import RxCocoa
 import Kingfisher
 import Shared
 
+enum CommectPlaceHolder {
+    static var text = "댓글을 입력해주세요."
+}
+
 enum ContentSizeKey {
     static let key = "contentSize"
 }
@@ -121,7 +125,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let enterCommentTextView = UITextView().then {
         $0.textContainerInset = UIEdgeInsets(top: 13, left: 14, bottom: 14, right: 50)
-        $0.text = "댓글을 입력해주세요."
+        $0.text = CommectPlaceHolder.text
         $0.isScrollEnabled = false
         $0.font = .systemFont(ofSize: 14)
         $0.textColor = .lightGray
@@ -370,21 +374,20 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }).disposed(by: disposeBag)
         
         enterCommentTextView.rx.didBeginEditing
+            .filter { self.enterCommentTextView.text == CommectPlaceHolder.text }
             .bind(with: self, onNext: { owner, _ in
-                if owner.enterCommentTextView.text == "댓글을 입력해주세요." {
-                    owner.enterCommentTextView.text = ""
-                    owner.enterCommentTextView.textColor = UIColor.black
-                }
+                owner.enterCommentTextView.text = ""
+                owner.enterCommentTextView.textColor = UIColor.black
             }).disposed(by: disposeBag)
         
         enterCommentTextView.rx.didEndEditing
+            .map { self.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { $0.isEmpty }
             .bind(with: self, onNext: { owner, _ in
-                if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
                     owner.setEnterTextViewAutoSize()
-                    owner.enterCommentTextView.text = "댓글을 입력해주세요."
+                owner.enterCommentTextView.text = CommectPlaceHolder.text
                     owner.enterCommentTextView.textColor = UIColor.lightGray
                     owner.setDefaultSubmitButton()
-                }
             }).disposed(by: disposeBag)
         
         enterCommentTextView.rx.didChange
