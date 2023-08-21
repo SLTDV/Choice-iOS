@@ -1,14 +1,14 @@
 import UIKit
 
-public protocol CustomAlertProtocl {
+public protocol CustomAlertProtocol {
     typealias Action = () -> ()
     
-    static var shared: CustomAlertProtocl { get }
+    static var shared: CustomAlertProtocol { get }
     static func showAlert(title: String, message: String, actionTitle: String, onConfirm: @escaping Action, vc viewController: UIViewController)
 }
 
-public class AlertHelper: CustomAlertProtocl {
-    public static var shared: CustomAlertProtocl = AlertHelper()
+public class AlertHelper: CustomAlertProtocol {
+    public static var shared: CustomAlertProtocol = AlertHelper()
     
     private init() {}
     
