@@ -357,21 +357,20 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func bindUI() {
-        writerNameData.bind(with: self, onNext: { owner, arg in
-            owner.userNameLabel.text = arg
-            
-        }).disposed(by: disposeBag)
+        writerNameData
+            .bind(to: userNameLabel.rx.text)
+            .disposed(by: disposeBag)
         
-        writerImageStringData.bind(with: self, onNext: { owner, arg in
-            guard arg == nil else {
+        writerImageStringData
+            .observe(on: MainScheduler.instance)
+            .compactMap { $0 }
+            .bind(with: self) { owner, arg in
                 Downsampling.optimization(imageAt: URL(string: arg!)!,
                                           to: owner.userImageView.frame.size,
                                           scale: 2) { image in
                     owner.userImageView.image = image
                 }
-                return
-            }
-        }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         enterCommentTextView.rx.didBeginEditing
             .filter { self.enterCommentTextView.text == CommectPlaceHolder.text }
@@ -384,10 +383,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             .map { self.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { $0.isEmpty }
             .bind(with: self, onNext: { owner, _ in
-                    owner.setEnterTextViewAutoSize()
+                owner.setEnterTextViewAutoSize()
                 owner.enterCommentTextView.text = CommectPlaceHolder.text
-                    owner.enterCommentTextView.textColor = UIColor.lightGray
-                    owner.setDefaultSubmitButton()
+                owner.enterCommentTextView.textColor = UIColor.lightGray
+                owner.setDefaultSubmitButton()
             }).disposed(by: disposeBag)
         
         enterCommentTextView.rx.didChange
@@ -416,14 +415,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func configure(model: PostList) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
+//        DispatchQueue.main.async { [weak self] in
+//            guard let self = self else { return }
             self.titleLabel.text = model.title
             self.contentLabel.text = model.content
             self.firstVoteOptionLabel.text = model.firstVotingOption
             self.secondVoteOptionLabel.text = model.secondVotingOption
             
-            DispatchQueue.main.async {
+//            DispatchQueue.main.async {
                 Downsampling.optimization(imageAt: firstImageUrl,
                                           to: self.firstPostImageView.frame.size,
                                           scale: 2) { image in
@@ -435,9 +434,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                                           scale: 2) { image in
                     self.secondPostImageView.image = image
                 }
-            }
+//            }
             self.setVoteButtonLayout(with: model)
-        }
+//        }
     }
     
     private func updateVotingStateWithLayout(_ votingState: Int) {
@@ -678,18 +677,16 @@ extension DetailPostViewController {
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         viewModel.commentCurrentPage = -1
-        viewModel.requestToCreateComment(idx: model.value.idx, content: content) { result in
+        viewModel.requestToCreateComment(idx: model.value.idx, content: content) { [weak self] result in
             switch result {
             case .success(()):
-                DispatchQueue.main.async { [weak self] in
-                    self?.viewModel.requestCommentData(idx: (self?.model.value.idx)!)
-                    self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-                    self?.enterCommentTextView.text = nil
-                    self?.enterCommentTextView.resignFirstResponder()
-                    self?.commentData.accept([])
-                    self?.isLastPage = false
-                    self?.setDefaultSubmitButton()
-                }
+                self?.viewModel.requestCommentData(idx: (self?.model.value.idx)!)
+                self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                self?.enterCommentTextView.text = nil
+                self?.enterCommentTextView.resignFirstResponder()
+                self?.commentData.accept([])
+                self?.isLastPage = false
+                self?.setDefaultSubmitButton()
             case .failure(let error):
                 print("post error = \(String(describing: error.localizedDescription))")
             }
