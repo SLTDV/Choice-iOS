@@ -44,7 +44,6 @@ final class DetailPostViewModel: BaseViewModel {
                     var relay = self?.delegate?.commentData.value
                     relay?.append(contentsOf: postData.commentList)
                     self?.delegate?.commentData.accept(relay!)
-                    observer.onCompleted()
                 case .failure(let error):
                     observer.onError(error)
                     print("comment = \(error.localizedDescription)")
@@ -70,32 +69,36 @@ final class DetailPostViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
-                print("success")
+                break
             case .failure(let error):
                 print("vote error = \(error.localizedDescription)")
             }
         }
     }
     
-    func requestToCreateComment(idx: Int, content: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    func requestToCreateComment(idx: Int, content: String) -> Observable<Void> {
         let url = APIConstants.createCommentURL + "\(idx)"
         let params = [
             "content" : content
         ] as Dictionary
         
-        AF.request(url,
-                   method: .post,
-                   parameters: params,
-                   encoding: JSONEncoding.default,
-                   interceptor: JwtRequestInterceptor(jwtStore: container))
-        .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
-            switch response.result {
-            case .success:
-                completion(.success(()))
-            case .failure(let error):
-                completion(.failure((error)))
+        return Observable.create { observer -> Disposable in
+            
+            AF.request(url,
+                       method: .post,
+                       parameters: params,
+                       encoding: JSONEncoding.default,
+                       interceptor: JwtRequestInterceptor(jwtStore: self.container))
+            .validate()
+            .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+                switch response.result {
+                case .success:
+                    observer.onNext(())
+                case .failure(let error):
+                    observer.onError(error)
+                }
             }
+            return Disposables.create()
         }
     }
     
@@ -111,13 +114,11 @@ final class DetailPostViewModel: BaseViewModel {
             .responseData(emptyResponseCodes: [200, 201, 204]) { response in
                 switch response.result {
                 case .success:
-                    observer.onCompleted()
+                    observer.onNext(())
                 case .failure(let error):
                     observer.onError(error)
                 }
             }
-            
-            
             return Disposables.create()
         }
     }

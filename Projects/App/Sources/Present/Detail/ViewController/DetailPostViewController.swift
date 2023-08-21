@@ -658,21 +658,19 @@ extension DetailPostViewController {
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         viewModel.commentCurrentPage = -1
-        viewModel.requestToCreateComment(idx: model.value.idx, content: content) { [weak self] result in
-            switch result {
-            case .success(()):
-                self?.commentData.accept([])
-                self?.loadMoreComments()
-                self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-                self?.enterCommentTextView.text = nil
-                self?.enterCommentTextView.resignFirstResponder()
-                self?.isLastPage = false
-                self?.setDefaultSubmitButton()
-            case .failure(let error):
-                print("post error = \(String(describing: error.localizedDescription))")
-            }
-            LoadingIndicator.hideLoading()
-        }
+        viewModel.requestToCreateComment(idx: model.value.idx, content: content)
+            .bind(with: self) { owner, _ in
+                owner.commentData.accept([])
+                owner.loadMoreComments()
+                owner.isLastPage = false
+                DispatchQueue.main.async {
+                    owner.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                    owner.enterCommentTextView.text = nil
+                    owner.enterCommentTextView.resignFirstResponder()
+                    owner.setDefaultSubmitButton()
+                    LoadingIndicator.hideLoading()
+                }
+            }.disposed(by: disposeBag)
     }
     
     private func submitCommentButtonDidTap() {
@@ -691,25 +689,21 @@ extension DetailPostViewController: UITableViewDelegate {
         let commentModel = commentData.value[indexPath.row]
         
         lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
-            self.viewModel.requestToDeleteComment(postIdx: self.model.value.idx,
-                                                  commentIdx: commentModel.idx) { [weak self] result in
-                switch result {
-                case .success(()):
-                    LoadingIndicator.showLoading(text: "")
-                    var arr = self?.commentData.value
-                    arr?.remove(at: indexPath.row)
-                    self?.commentData.accept(arr!)
-                    DispatchQueue.main.async {
-                        self?.commentTableView.reloadRows(
-                            at: [indexPath],
-                            with: .automatic
-                        )
-                    }
-                    LoadingIndicator.hideLoading()
-                case .failure(let error):
-                    print("Delete Faield = \(error.localizedDescription)")
+            self.viewModel.requestToDeleteComment(
+                postIdx: self.model.value.idx,
+                commentIdx: commentModel.idx
+            ).bind(with: self) { owner, result in
+                LoadingIndicator.showLoading(text: "")
+                var arr = owner.commentData.value
+                arr.remove(at: indexPath.row)
+                owner.commentData.accept(arr)
+                DispatchQueue.main.async {
+                    owner.commentTableView.reloadRows(
+                        at: [indexPath],
+                        with: .automatic
+                    )
                 }
-            }
+            }.disposed(by: self.disposeBag)
         })
         deleteContextual.image = UIImage(systemName: "trash")
         
