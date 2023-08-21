@@ -139,8 +139,9 @@ final class DetailPostViewModel: BaseViewModel {
                     observer.onNext(())
                     observer.onCompleted()
                 case .failure(let error):
-                    observer.onError(error)
                     print("Error - ReportPost - \(error.localizedDescription)")
+                    observer.onError(error)
+                    observer.onCompleted()
                 }
             }
             return Disposables.create()
@@ -162,8 +163,9 @@ final class DetailPostViewModel: BaseViewModel {
                     observer.onNext(())
                     observer.onCompleted()
                 case .failure(let error):
-                    observer.onError(error)
                     print("Erorr - BlockUser = \(error.localizedDescription)")
+                    observer.onError(error)
+                    observer.onCompleted()
                 }
             }
             return Disposables.create()
