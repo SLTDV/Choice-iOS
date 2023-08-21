@@ -130,7 +130,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let enterCommentTextView = UITextView().then {
         $0.textContainerInset = UIEdgeInsets(top: 13, left: 14, bottom: 14, right: 50)
-        $0.text = CommectPlaceHolder.text
+        $0.text = CommentPlaceHolder.text
         $0.isScrollEnabled = false
         $0.font = .systemFont(ofSize: 14)
         $0.textColor = .lightGray
@@ -366,7 +366,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }.disposed(by: disposeBag)
         
         enterCommentTextView.rx.didBeginEditing
-            .filter { self.enterCommentTextView.text == CommectPlaceHolder.text }
+            .filter { self.enterCommentTextView.text == CommentPlaceHolder.text }
             .bind(with: self, onNext: { owner, _ in
                 owner.enterCommentTextView.text = ""
                 owner.enterCommentTextView.textColor = UIColor.black
@@ -377,7 +377,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             .filter { $0.isEmpty }
             .bind(with: self, onNext: { owner, _ in
                 owner.setEnterTextViewAutoSize()
-                owner.enterCommentTextView.text = CommectPlaceHolder.text
+                owner.enterCommentTextView.text = CommentPlaceHolder.text
                 owner.enterCommentTextView.textColor = UIColor.lightGray
                 owner.setDefaultSubmitButton()
             }).disposed(by: disposeBag)
