@@ -237,7 +237,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             },onError: {_ in
                 alert.title = "실패"
                 alert.message = "이미 신고한 게시물입니다"
-            }, onCompleted: {
+            }, onDisposed: {
                 self.present(alert, animated: true)
             }).disposed(by: disposeBag)
     }
@@ -255,7 +255,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }, onError: { _ in
                 alert.title = "실패"
                 alert.message = "차단이 완료되었습니다."
-            }, onCompleted: {
+            }, onDisposed: {
                 self.present(alert, animated: true)
             }).disposed(by: disposeBag)
     }
