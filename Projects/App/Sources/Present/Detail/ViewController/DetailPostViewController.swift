@@ -4,6 +4,10 @@ import RxCocoa
 import Kingfisher
 import Shared
 
+enum CommentPlaceHolder {
+    static var text = "댓글을 입력해주세요."
+}
+
 enum ContentSizeKey {
     static let key = "contentSize"
 }
@@ -52,13 +56,18 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private lazy var userOptionButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.menu = UIMenu(title: "신고 & 차단", children: [UIAction(
-            title: "게시물 신고",
-            attributes: .destructive,
-            handler: { _ in self.reportPostButtonDidTap()
-            }), UIAction(title: "차단하기",
-                         attributes: .destructive,
-                         handler: { _ in self.blockUserButtonDidTap()})])
+        $0.menu = UIMenu(
+            title: "신고 & 차단",
+            children: [UIAction(
+                title: "게시물 신고",
+                attributes: .destructive,
+                handler: { _ in self.presentReportPostAlert() }
+            ), UIAction(
+                title: "차단하기",
+                attributes: .destructive,
+                handler: { _ in self.presentBlockUserAlert()}
+            )]
+        )
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
     }
@@ -121,7 +130,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let enterCommentTextView = UITextView().then {
         $0.textContainerInset = UIEdgeInsets(top: 13, left: 14, bottom: 14, right: 50)
-        $0.text = "댓글을 입력해주세요."
+        $0.text = CommentPlaceHolder.text
         $0.isScrollEnabled = false
         $0.font = .systemFont(ofSize: 14)
         $0.textColor = .lightGray
@@ -172,42 +181,31 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.endEditing(true)
     }
     
-    private func reportPostButtonDidTap() {
-        let alert = UIAlertController(title: "게시물 신고",
-                                      message: """
-                                      해당 게시물이 불쾌감을 줬다면 신고해주세요.
-                                      신고가 누적되면 필터링을 통해 게시물이
-                                      삭제될 수 있습니다. (중복 불가능)
-                                      """,
-                                      preferredStyle: .alert)
-        let okayAction = UIAlertAction(title: "신고", style: .destructive) { _ in
-            self.reportPostAlert()
-        }
-        let cancelAction = UIAlertAction(title: "취소", style: .default)
-        
-        alert.addAction(cancelAction)
-        alert.addAction(okayAction)
-        
-        self.present(alert, animated: true)
+    private func presentReportPostAlert() {
+        AlertHelper.showAlert(
+            title: "게시물 신고",
+            message: """
+                    해당 게시물이 불쾌감을 줬다면 신고해주세요.
+                    신고가 누적되면 필터링을 통해 게시물이
+                    삭제될 수 있습니다. (중복 불가능)
+                    """,
+            actionTitle: "신고", onConfirm: {
+                self.reportPostAlert()
+            }, vc: self)
     }
     
-    private func blockUserButtonDidTap() {
-        let alert = UIAlertController(title: "차단하기",
-                                      message: """
-                                      해당 사용자를 차단할 수 있습니다.
-                                      차단하면 해당 사용자의 게시물은
-                                      보이지 않습니다.
-                                      """,
-                                      preferredStyle: .alert)
-        let okayAction = UIAlertAction(title: "차단", style: .destructive) { _ in
-            self.blockUserAlert()
-        }
-        let cancelAction = UIAlertAction(title: "취소", style: .default)
-        
-        alert.addAction(cancelAction)
-        alert.addAction(okayAction)
-        
-        self.present(alert, animated: true)
+    private func presentBlockUserAlert() {
+        AlertHelper.showAlert(
+            title: "차단하기",
+            message: """
+                     해당 사용자를 차단할 수 있습니다.
+                     차단하면 해당 사용자의 게시물은
+                     보이지 않습니다.
+                     """,
+            actionTitle: "차단",
+            onConfirm: {
+                self.blockUserAlert()
+            }, vc: self)
     }
     
     func setKeyboard() {
@@ -240,7 +238,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 alert.title = "실패"
                 alert.message = "이미 신고한 게시물입니다"
             }
-            
             self.present(alert, animated: true)
         }
     }
@@ -353,38 +350,36 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func bindUI() {
-        writerNameData.bind(with: self, onNext: { owner, arg in
-            owner.userNameLabel.text = arg
-            
-        }).disposed(by: disposeBag)
+        writerNameData
+            .bind(to: userNameLabel.rx.text)
+            .disposed(by: disposeBag)
         
-        writerImageStringData.bind(with: self, onNext: { owner, arg in
-            guard arg == nil else {
-                Downsampling.optimization(imageAt: URL(string: arg!)!,
+        writerImageStringData
+            .observe(on: MainScheduler.instance)
+            .compactMap { URL(string: $0 ?? "") }
+            .bind(with: self) { owner, arg in
+                Downsampling.optimization(imageAt: arg,
                                           to: owner.userImageView.frame.size,
                                           scale: 2) { image in
                     owner.userImageView.image = image
                 }
-                return
-            }
-        }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         enterCommentTextView.rx.didBeginEditing
+            .filter { self.enterCommentTextView.text == CommentPlaceHolder.text }
             .bind(with: self, onNext: { owner, _ in
-                if owner.enterCommentTextView.text == "댓글을 입력해주세요." {
-                    owner.enterCommentTextView.text = ""
-                    owner.enterCommentTextView.textColor = UIColor.black
-                }
+                owner.enterCommentTextView.text = ""
+                owner.enterCommentTextView.textColor = UIColor.black
             }).disposed(by: disposeBag)
         
         enterCommentTextView.rx.didEndEditing
+            .map { self.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { $0.isEmpty }
             .bind(with: self, onNext: { owner, _ in
-                if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-                    owner.setEnterTextViewAutoSize()
-                    owner.enterCommentTextView.text = "댓글을 입력해주세요."
-                    owner.enterCommentTextView.textColor = UIColor.lightGray
-                    owner.setDefaultSubmitButton()
-                }
+                owner.setEnterTextViewAutoSize()
+                owner.enterCommentTextView.text = CommentPlaceHolder.text
+                owner.enterCommentTextView.textColor = UIColor.lightGray
+                owner.setDefaultSubmitButton()
             }).disposed(by: disposeBag)
         
         enterCommentTextView.rx.didChange
@@ -413,28 +408,22 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func configure(model: PostList) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.titleLabel.text = model.title
-            self.contentLabel.text = model.content
-            self.firstVoteOptionLabel.text = model.firstVotingOption
-            self.secondVoteOptionLabel.text = model.secondVotingOption
-            
-            DispatchQueue.main.async {
-                Downsampling.optimization(imageAt: firstImageUrl,
-                                          to: self.firstPostImageView.frame.size,
-                                          scale: 2) { image in
-                    self.firstPostImageView.image = image
-                }
-                
-                Downsampling.optimization(imageAt: secondImageUrl,
-                                          to: self.secondPostImageView.frame.size,
-                                          scale: 2) { image in
-                    self.secondPostImageView.image = image
-                }
-            }
-            self.setVoteButtonLayout(with: model)
+        self.titleLabel.text = model.title
+        self.contentLabel.text = model.content
+        self.firstVoteOptionLabel.text = model.firstVotingOption
+        self.secondVoteOptionLabel.text = model.secondVotingOption
+        Downsampling.optimization(imageAt: firstImageUrl,
+                                  to: self.firstPostImageView.frame.size,
+                                  scale: 2) { image in
+            self.firstPostImageView.image = image
         }
+        
+        Downsampling.optimization(imageAt: secondImageUrl,
+                                  to: self.secondPostImageView.frame.size,
+                                  scale: 2) { image in
+            self.secondPostImageView.image = image
+        }
+        self.setVoteButtonLayout(with: model)
     }
     
     private func updateVotingStateWithLayout(_ votingState: Int) {
@@ -675,18 +664,16 @@ extension DetailPostViewController {
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         viewModel.commentCurrentPage = -1
-        viewModel.requestToCreateComment(idx: model.value.idx, content: content) { result in
+        viewModel.requestToCreateComment(idx: model.value.idx, content: content) { [weak self] result in
             switch result {
             case .success(()):
-                DispatchQueue.main.async { [weak self] in
-                    self?.viewModel.requestCommentData(idx: (self?.model.value.idx)!)
-                    self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-                    self?.enterCommentTextView.text = nil
-                    self?.enterCommentTextView.resignFirstResponder()
-                    self?.commentData.accept([])
-                    self?.isLastPage = false
-                    self?.setDefaultSubmitButton()
-                }
+                self?.viewModel.requestCommentData(idx: (self?.model.value.idx)!)
+                self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                self?.enterCommentTextView.text = nil
+                self?.enterCommentTextView.resignFirstResponder()
+                self?.commentData.accept([])
+                self?.isLastPage = false
+                self?.setDefaultSubmitButton()
             case .failure(let error):
                 print("post error = \(String(describing: error.localizedDescription))")
             }
