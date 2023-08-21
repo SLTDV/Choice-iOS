@@ -177,41 +177,30 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func presentReportPostAlert() {
-        let alert = UIAlertController(title: "게시물 신고",
-                                      message: """
-                                      해당 게시물이 불쾌감을 줬다면 신고해주세요.
-                                      신고가 누적되면 필터링을 통해 게시물이
-                                      삭제될 수 있습니다. (중복 불가능)
-                                      """,
-                                      preferredStyle: .alert)
-        let okayAction = UIAlertAction(title: "신고", style: .destructive) { _ in
-            self.reportPostAlert()
-        }
-        let cancelAction = UIAlertAction(title: "취소", style: .default)
-        
-        alert.addAction(cancelAction)
-        alert.addAction(okayAction)
-        
-        self.present(alert, animated: true)
+        AlertHelper.showAlert(
+            title: "게시물 신고",
+            message: """
+                    해당 게시물이 불쾌감을 줬다면 신고해주세요.
+                    신고가 누적되면 필터링을 통해 게시물이
+                    삭제될 수 있습니다. (중복 불가능)
+                    """,
+            actionTitle: "신고", onConfirm: {
+                self.reportPostAlert()
+            }, vc: self)
     }
     
     private func presentBlockUserAlert() {
-        let alert = UIAlertController(title: "차단하기",
-                                      message: """
-                                      해당 사용자를 차단할 수 있습니다.
-                                      차단하면 해당 사용자의 게시물은
-                                      보이지 않습니다.
-                                      """,
-                                      preferredStyle: .alert)
-        let okayAction = UIAlertAction(title: "차단", style: .destructive) { _ in
-            self.blockUserAlert()
-        }
-        let cancelAction = UIAlertAction(title: "취소", style: .default)
-        
-        alert.addAction(cancelAction)
-        alert.addAction(okayAction)
-        
-        self.present(alert, animated: true)
+        AlertHelper.showAlert(
+            title: "차단하기",
+            message: """
+                     해당 사용자를 차단할 수 있습니다.
+                     차단하면 해당 사용자의 게시물은
+                     보이지 않습니다.
+                     """,
+            actionTitle: "차단",
+            onConfirm: {
+                self.blockUserAlert()
+            }, vc: self)
     }
     
     func setKeyboard() {
