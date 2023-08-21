@@ -56,13 +56,18 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private lazy var userOptionButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.menu = UIMenu(title: "신고 & 차단", children: [UIAction(
-            title: "게시물 신고",
-            attributes: .destructive,
-            handler: { _ in self.presentReportPostAlert()
-            }), UIAction(title: "차단하기",
-                         attributes: .destructive,
-                         handler: { _ in self.presentBlockUserAlert()})])
+        $0.menu = UIMenu(
+            title: "신고 & 차단",
+            children: [UIAction(
+                title: "게시물 신고",
+                attributes: .destructive,
+                handler: { _ in self.presentReportPostAlert() }
+            ), UIAction(
+                title: "차단하기",
+                attributes: .destructive,
+                handler: { _ in self.presentBlockUserAlert()}
+            )]
+        )
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
     }
