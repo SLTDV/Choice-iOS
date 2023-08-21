@@ -244,7 +244,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 alert.title = "실패"
                 alert.message = "이미 신고한 게시물입니다"
             }
-            
             self.present(alert, animated: true)
         }
     }
