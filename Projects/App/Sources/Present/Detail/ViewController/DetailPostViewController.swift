@@ -324,20 +324,18 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func loadMoreComments() {
         commentTableView.tableFooterView = createSpinnerFooter()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) { [weak self] in
-            guard let self = self else { return }
-            
-            self.commentTableView.performBatchUpdates(nil, completion: nil)
-            viewModel.requestCommentData(idx: self.model.value.idx)
-                .bind(with: self) { owner, size in
-                    owner.commentTableView.tableFooterView = nil
-                    if size != 10 {
-                        self.isLastPage = true
-                    } else {
-                        self.commentTableView.reloadData()
-                    }
-                }.disposed(by: disposeBag)
-        }
+        
+        self.commentTableView.performBatchUpdates(nil, completion: nil)
+        viewModel.requestCommentData(idx: self.model.value.idx)
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, size in
+                owner.commentTableView.tableFooterView = nil
+                if size != 10 {
+                    self.isLastPage = true
+                } else {
+                    self.commentTableView.reloadData()
+                }
+            }.disposed(by: disposeBag)
     }
     
     private func bindUI() {
@@ -700,6 +698,7 @@ extension DetailPostViewController: UITableViewDelegate {
                         with: .automatic
                     )
                 }
+                LoadingIndicator.hideLoading()
             }.disposed(by: self.disposeBag)
         })
         deleteContextual.image = UIImage(systemName: "trash")
