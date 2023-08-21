@@ -59,10 +59,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.menu = UIMenu(title: "신고 & 차단", children: [UIAction(
             title: "게시물 신고",
             attributes: .destructive,
-            handler: { _ in self.reportPostButtonDidTap()
+            handler: { _ in self.presentReportPostAlert()
             }), UIAction(title: "차단하기",
                          attributes: .destructive,
-                         handler: { _ in self.blockUserButtonDidTap()})])
+                         handler: { _ in self.presentBlockUserAlert()})])
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
     }
@@ -176,7 +176,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.endEditing(true)
     }
     
-    private func reportPostButtonDidTap() {
+    private func presentReportPostAlert() {
         let alert = UIAlertController(title: "게시물 신고",
                                       message: """
                                       해당 게시물이 불쾌감을 줬다면 신고해주세요.
@@ -195,7 +195,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.present(alert, animated: true)
     }
     
-    private func blockUserButtonDidTap() {
+    private func presentBlockUserAlert() {
         let alert = UIAlertController(title: "차단하기",
                                       message: """
                                       해당 사용자를 차단할 수 있습니다.
@@ -415,28 +415,22 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func configure(model: PostList) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-//        DispatchQueue.main.async { [weak self] in
-//            guard let self = self else { return }
-            self.titleLabel.text = model.title
-            self.contentLabel.text = model.content
-            self.firstVoteOptionLabel.text = model.firstVotingOption
-            self.secondVoteOptionLabel.text = model.secondVotingOption
-            
-//            DispatchQueue.main.async {
-                Downsampling.optimization(imageAt: firstImageUrl,
-                                          to: self.firstPostImageView.frame.size,
-                                          scale: 2) { image in
-                    self.firstPostImageView.image = image
-                }
-                
-                Downsampling.optimization(imageAt: secondImageUrl,
-                                          to: self.secondPostImageView.frame.size,
-                                          scale: 2) { image in
-                    self.secondPostImageView.image = image
-                }
-//            }
-            self.setVoteButtonLayout(with: model)
-//        }
+        self.titleLabel.text = model.title
+        self.contentLabel.text = model.content
+        self.firstVoteOptionLabel.text = model.firstVotingOption
+        self.secondVoteOptionLabel.text = model.secondVotingOption
+        Downsampling.optimization(imageAt: firstImageUrl,
+                                  to: self.firstPostImageView.frame.size,
+                                  scale: 2) { image in
+            self.firstPostImageView.image = image
+        }
+        
+        Downsampling.optimization(imageAt: secondImageUrl,
+                                  to: self.secondPostImageView.frame.size,
+                                  scale: 2) { image in
+            self.secondPostImageView.image = image
+        }
+        self.setVoteButtonLayout(with: model)
     }
     
     private func updateVotingStateWithLayout(_ votingState: Int) {
