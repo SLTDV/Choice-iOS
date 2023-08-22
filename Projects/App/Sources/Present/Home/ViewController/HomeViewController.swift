@@ -11,39 +11,50 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                                 PostVoteButtonHandlerProtocol, ImageLoadingFailureHandlerProtocol,
                                 NetworkConnectionHandlerProtocol {
     // MARK: - Properties
-    private var rewardedAd: GADRewardedAd? = nil
+    private var interstitial: GADInterstitialAd? = nil
     
     func requestIDFA() {
+        //apple id 연령이 어리면 추적 설정을 킬 수가 없어서
         ATTrackingManager.requestTrackingAuthorization { status in
-            self.loadRewardedAd()
-            self.show()
+            switch status {
+            case .authorized:
+                self.loadRewardedAd()
+                return
+            case .denied:
+                print("denied")
+            case .notDetermined:
+                print("notDetermined")
+            case .restricted:
+                print("restricted")
+            default:
+                return
+            }
         }
+        
+        self.loadRewardedAd()
     }
     
     func loadRewardedAd() {
         let request = GADRequest()
-//        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers =
-//            [ "7c0c10bdd48b646bd49c132a3e20a908" ]
-        GADRewardedAd.load(withAdUnitID: "ca-app-pub-5088279003431597/8886496224", request: request) { ad, error in
+        
+        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers =
+            nil
+        GADInterstitialAd.load(withAdUnitID: "ca-app-pub-5088279003431597/9843461422",
+                               request: request) { ad, error in
             if let error = error {
                 print("Failed to load rewarded ad with error: \(error.localizedDescription)")
                 return
             }
-            self.rewardedAd = ad
+            self.interstitial = ad
+            self.show()
             print("Rewarded ad loaded.")
         }
     }
     
     func show() {
-      if let ad = rewardedAd {
-        ad.present(fromRootViewController: self) {
-          let reward = ad.adReward
-          print("Reward received with currency \(reward.amount), amount \(reward.amount.doubleValue)")
-          // TODO: Reward the user.
+        if interstitial != nil {
+            interstitial?.present(fromRootViewController: self)
         }
-      } else {
-        print("Ad wasn't ready")
-      }
     }
     var postData = BehaviorRelay<[PostList]>(value: [])
     private let disposeBag = DisposeBag()
@@ -231,7 +242,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
         
         viewModel.delegate = self
         networkStatus.delegate = self
-        rewardedAd?.fullScreenContentDelegate = self
+        interstitial?.fullScreenContentDelegate = self
         bindTableView()
         navigationBarButtonDidTap()
         viewModel.requestPostData(type: sortType)
