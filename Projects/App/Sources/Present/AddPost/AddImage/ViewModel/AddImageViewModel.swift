@@ -18,7 +18,8 @@ final class AddImageViewModel: BaseViewModel {
         firstImage: UIImage,
         secondImage: UIImage,
         firstVotingOption: String,
-        secondVotingOtion: String
+        secondVotingOtion: String,
+        completion: @escaping () -> Void
     ) {
         var url = APIConstants.postImageUploadURL
         var headers: HTTPHeaders = ["Content-Type" : "multipart/form-data"]
@@ -62,12 +63,11 @@ final class AddImageViewModel: BaseViewModel {
                            headers: headers,
                            interceptor: JwtRequestInterceptor(jwtStore: AppDelegate.container.resolve(JwtStore.self)!))
                 .validate()
-                .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
+                .responseData(emptyResponseCodes: [200, 201, 204]) { response in
                     switch response.result {
                     case .success:
                         LoadingIndicator.hideLoading()
-                        
-                        self?.coordinator.navigate(to: .pushCompleteViewIsRequired)
+                        completion()
                     case .failure(let error):
                         print("post error = \(String(describing: error.localizedDescription))")
                     }
@@ -76,5 +76,9 @@ final class AddImageViewModel: BaseViewModel {
                 print("upload error \(String(describing: error.localizedDescription))")
             }
         }
+    }
+    
+    func pushComplteView() {
+        coordinator.navigate(to: .pushCompleteViewIsRequired)
     }
 }

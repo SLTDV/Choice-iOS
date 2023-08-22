@@ -5,14 +5,10 @@ import AdSupport
 
 class AdvertismentsControl {
     private var interstitial: GADInterstitialAd? = nil
-    private var vc: UIViewController
+    static var shared = AdvertismentsControl()
+    var vc: UIViewController?
     
-    init(vc: UIViewController) {
-        self.vc = vc
-        loadRewardedAd()
-    }
-    
-    func loadRewardedAd() {
+    func loadRewardedAd(vc: UIViewController) {
         let request = GADRequest()
         
         GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers =
@@ -24,12 +20,12 @@ class AdvertismentsControl {
                 return
             }
             self.interstitial = ad
-            self.show()
+            self.show(vc: vc)
             print("Rewarded ad loaded.")
         }
     }
     
-    func show() {
+    func show(vc: UIViewController) {
         if interstitial != nil {
             interstitial?.present(fromRootViewController: vc)
         }
