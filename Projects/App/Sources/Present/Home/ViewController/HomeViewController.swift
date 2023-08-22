@@ -13,27 +13,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     // MARK: - Properties
     private var interstitial: GADInterstitialAd? = nil
     
-    func requestIDFA() {
-        //apple id 연령이 어리면 추적 설정을 킬 수가 없어서
-        ATTrackingManager.requestTrackingAuthorization { status in
-            switch status {
-            case .authorized:
-                self.loadRewardedAd()
-                return
-            case .denied:
-                print("denied")
-            case .notDetermined:
-                print("notDetermined")
-            case .restricted:
-                print("restricted")
-            default:
-                return
-            }
-        }
-        
-        self.loadRewardedAd()
-    }
-    
     func loadRewardedAd() {
         let request = GADRequest()
         
@@ -115,8 +94,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
         profileButton.rx.tap
             .throttle(.seconds(2), latest: false, scheduler: MainScheduler.instance)
             .bind(with: self) { owner, _ in
-                owner.requestIDFA()
-//                owner.viewModel.pushProfileVC()
+                owner.viewModel.pushProfileVC()
             }.disposed(by: disposeBag)
         
         addPostButton.rx.tap
@@ -248,9 +226,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
         viewModel.requestPostData(type: sortType)
         configureRefreshControl()
         
-        
-//        let a = AdvertismentsViewController()
-//        a.presentInterstitial()
+        loadRewardedAd()
     }
     
     override func viewWillAppear(_ animated: Bool) {
