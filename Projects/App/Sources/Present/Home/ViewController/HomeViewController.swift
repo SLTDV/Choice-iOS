@@ -11,30 +11,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                                 PostVoteButtonHandlerProtocol, ImageLoadingFailureHandlerProtocol,
                                 NetworkConnectionHandlerProtocol {
     // MARK: - Properties
-    private var interstitial: GADInterstitialAd? = nil
-    
-    func loadRewardedAd() {
-        let request = GADRequest()
-        
-        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers =
-            nil
-        GADInterstitialAd.load(withAdUnitID: "ca-app-pub-5088279003431597/9843461422",
-                               request: request) { ad, error in
-            if let error = error {
-                print("Failed to load rewarded ad with error: \(error.localizedDescription)")
-                return
-            }
-            self.interstitial = ad
-            self.show()
-            print("Rewarded ad loaded.")
-        }
-    }
-    
-    func show() {
-        if interstitial != nil {
-            interstitial?.present(fromRootViewController: self)
-        }
-    }
     var postData = BehaviorRelay<[PostList]>(value: [])
     private let disposeBag = DisposeBag()
     var isLastPage = false
@@ -220,13 +196,12 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
         
         viewModel.delegate = self
         networkStatus.delegate = self
-        interstitial?.fullScreenContentDelegate = self
         bindTableView()
         navigationBarButtonDidTap()
         viewModel.requestPostData(type: sortType)
         configureRefreshControl()
         
-        loadRewardedAd()
+
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -312,23 +287,5 @@ extension HomeViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             exit(0)
         }
-    }
-}
-
-
-extension HomeViewController: GADFullScreenContentDelegate {
-    /// Tells the delegate that the ad failed to present full screen content.
-    func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
-      print("Ad did fail to present full screen content.")
-    }
-
-    /// Tells the delegate that the ad will present full screen content.
-    func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-      print("Ad will present full screen content.")
-    }
-
-    /// Tells the delegate that the ad dismissed full screen content.
-    func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
-      print("Ad did dismiss full screen content.")
     }
 }
