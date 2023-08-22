@@ -17,7 +17,7 @@ final class DetailPostViewModel: BaseViewModel {
     var commentCurrentPage = -1
     private let container = AppDelegate.container.resolve(JwtStore.self)!
     
-    func requestCommentData(idx: Int, completion: @escaping (Result<Int, Error>) -> Void = { _ in }) {
+    func requestCommentData(idx: Int) -> Observable<Int?> {
         let url = APIConstants.detailPostURL + "\(idx)"
         
         commentCurrentPage += 1
@@ -28,24 +28,29 @@ final class DetailPostViewModel: BaseViewModel {
         var components = URLComponents(string: url)
         components?.queryItems = [page, size]
         
-        AF.request(components!,
-                   method: .get,
-                   encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor(jwtStore: container))
-        .validate()
-        .responseDecodable(of: CommentModel.self) { [weak self] response in
-            switch response.result {
-            case .success(let postData):
-                completion(.success(postData.size))
-                self?.delegate?.writerImageStringData.onNext(postData.image)
-                self?.delegate?.writerNameData.onNext(postData.writer)
-                self?.delegate?.isMineData = postData.isMine
-                var relay = self?.delegate?.commentData.value
-                relay?.append(contentsOf: postData.commentList)
-                self?.delegate?.commentData.accept(relay!)
-            case .failure(let error):
-                print("comment = \(error.localizedDescription)")
+        return Observable.create { [weak self] (observer) -> Disposable in
+            AF.request(components!,
+                       method: .get,
+                       encoding: URLEncoding.queryString,
+                       interceptor: JwtRequestInterceptor(jwtStore: self!.container))
+            .validate()
+            .responseDecodable(of: CommentModel.self) { [weak self] response in
+                switch response.result {
+                case .success(let postData):
+                    observer.onNext(postData.size)
+                    self?.delegate?.writerImageStringData.onNext(postData.image)
+                    self?.delegate?.writerNameData.onNext(postData.writer)
+                    self?.delegate?.isMineData = postData.isMine
+                    var relay = self?.delegate?.commentData.value
+                    relay?.append(contentsOf: postData.commentList)
+                    self?.delegate?.commentData.accept(relay!)
+                case .failure(let error):
+                    observer.onError(error)
+                    print("comment = \(error.localizedDescription)")
+                }
             }
+            
+            return Disposables.create()
         }
     }
     
@@ -64,84 +69,102 @@ final class DetailPostViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
-                print("success")
+                break
             case .failure(let error):
                 print("vote error = \(error.localizedDescription)")
             }
         }
     }
     
-    func requestToCreateComment(idx: Int, content: String, completion: @escaping (Result<Void, Error>) -> Void) {
+    func requestToCreateComment(idx: Int, content: String) -> Observable<Void> {
         let url = APIConstants.createCommentURL + "\(idx)"
         let params = [
             "content" : content
         ] as Dictionary
         
-        AF.request(url,
-                   method: .post,
-                   parameters: params,
-                   encoding: JSONEncoding.default,
-                   interceptor: JwtRequestInterceptor(jwtStore: container))
-        .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
-            switch response.result {
-            case .success:
-                completion(.success(()))
-            case .failure(let error):
-                completion(.failure((error)))
+        return Observable.create { observer -> Disposable in
+            
+            AF.request(url,
+                       method: .post,
+                       parameters: params,
+                       encoding: JSONEncoding.default,
+                       interceptor: JwtRequestInterceptor(jwtStore: self.container))
+            .validate()
+            .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+                switch response.result {
+                case .success:
+                    observer.onNext(())
+                case .failure(let error):
+                    print("Error - CreateComment - \(error.localizedDescription)")
+                    observer.onError(error)
+                }
             }
+            return Disposables.create()
         }
     }
     
-    func requestToDeleteComment(postIdx: Int, commentIdx: Int, completion: @escaping (Result<Void, Error>) -> ()) {
+    func requestToDeleteComment(postIdx: Int, commentIdx: Int) -> Observable<Void> {
         let url = APIConstants.deleteCommentURL + "\(postIdx)/" + "\(commentIdx)"
-        AF.request(url,
-                   method: .delete,
-                   encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor(jwtStore: container))
-        .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
-            switch response.result {
-            case .success:
-                completion(.success(()))
-            case .failure(let error):
-                completion(.failure(error))
+        
+        return Observable.create { [weak self] observer -> Disposable in
+            AF.request(url,
+                       method: .delete,
+                       encoding: URLEncoding.queryString,
+                       interceptor: JwtRequestInterceptor(jwtStore: self!.container))
+            .validate()
+            .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+                switch response.result {
+                case .success:
+                    observer.onNext(())
+                case .failure(let error):
+                    print("Error - DeleteComment - \(error.localizedDescription)")
+                }
             }
+            return Disposables.create()
         }
     }
     
-    func requestToReportPost(postIdx: Int, completion: @escaping (Bool) -> Void) {
+    func requestToReportPost(postIdx: Int) -> Observable<Void> {
         let url = APIConstants.reportPostURL + "\(postIdx)"
-        AF.request(url,
-                   method: .post,
-                   encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor(jwtStore: container))
-        .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
-            switch response.result {
-            case .success:
-                completion(true)
-            case .failure(_):
-                completion(false)
+        
+        return Observable.create { (observer) -> Disposable in
+            AF.request(url,
+                       method: .post,
+                       encoding: URLEncoding.queryString,
+                       interceptor: JwtRequestInterceptor(jwtStore: self.container))
+            .validate()
+            .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+                switch response.result {
+                case .success:
+                    observer.onNext(())
+                case .failure(let error):
+                    print("Error - ReportPost - \(error.localizedDescription)")
+                    observer.onError(error)
+                }
             }
+            return Disposables.create()
         }
     }
     
-    func requestToBlockUser(postIdx: Int, completion: @escaping (Bool) -> Void) {
+    func requestToBlockUser(postIdx: Int) -> Observable<Void> {
         let url = APIConstants.blockUserURL + "\(postIdx)"
-        AF.request(url,
-                   method: .post,
-                   encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor(jwtStore: container))
-        .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
-            switch response.result {
-            case .success:
-                completion(true)
-            case .failure(let error):
-                print("Erorr - BlockUser = \(error.localizedDescription)")
-                completion(false)
+        
+        return Observable.create { observer -> Disposable in
+            AF.request(url,
+                       method: .post,
+                       encoding: URLEncoding.queryString,
+                       interceptor: JwtRequestInterceptor(jwtStore: self.container))
+            .validate()
+            .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+                switch response.result {
+                case .success:
+                    observer.onNext(())
+                case .failure(let error):
+                    print("Erorr - BlockUser = \(error.localizedDescription)")
+                    observer.onError(error)
+                }
             }
+            return Disposables.create()
         }
     }
     
