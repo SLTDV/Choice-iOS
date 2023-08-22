@@ -2,16 +2,18 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Shared
+import NetworksMonitor
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
-                                PostVoteButtonDidTapDelegate {
-    
+                                PostVoteButtonHandlerProtocol, ImageLoadingFailureHandlerProtocol,
+                                NetworkConnectionHandlerProtocol {
     // MARK: - Properties
     var postData = BehaviorRelay<[PostList]>(value: [])
     private let disposeBag = DisposeBag()
     var isLastPage = false
+    var networkStatus = NetworksStatus.shared
     
-    private var sortType: MenuOptionType = .findNewestPostData
+    private var sortType: MenuOptionType = .findBestPostData
     
     private let leftLogoImageView = UIImageView().then {
         $0.image = ChoiceAsset.Images.homeLogo.image
@@ -37,7 +39,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     
     private let dropdownButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.setTitle("최신순 ↓", for: .normal)
+        $0.setTitle("인기순 ↓", for: .normal)
         $0.setTitleColor(.black, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 12, weight: .semibold)
         $0.backgroundColor = .init(red: 0.94, green: 0.94, blue: 0.94, alpha: 1)
@@ -83,6 +85,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                 cell.setType(type: .home)
                 cell.configure(with: data)
                 cell.postVoteButtonDelegate = self
+                cell.failedImageLoadingDelegate = self
                 cell.disposeBag = self.disposeBag
                 cell.separatorInset = UIEdgeInsets.zero
             }.disposed(by: disposeBag)
@@ -105,13 +108,13 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                 }
                 if yOffset > (contentHeight-frameHeight) {
                     owner.postTableView.tableFooterView = owner.createSpinnerFooter()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                         owner.postTableView.performBatchUpdates(nil, completion: nil)
                         owner.viewModel.requestPostData(type: owner.sortType) { result in
                             owner.postTableView.tableFooterView = nil
                             switch result {
                             case .success(let size):
-                                if size != 10 {
+                                if size != 5 {
                                     owner.isLastPage = true
                                 } else {
                                     owner.postTableView.reloadData()
@@ -124,10 +127,6 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                     }
                 }
             }).disposed(by: disposeBag)
-    }
-    
-    func postVoteButtonDidTap(idx: Int, choice: Int) {
-        viewModel.requestVote(idx: idx, choice: choice)
     }
     
     private func sortTableViewData(type: MenuOptionType) {
@@ -152,8 +151,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     
     private func configureDropDown() {
         let actinos: [(title: String, image: UIImage?, type: MenuOptionType)] = [
-            ("최신순", UIImage(systemName: "clock"), .findNewestPostData),
-            ("인기순", UIImage(systemName: "heart"), .findBestPostData)
+            ("인기순", UIImage(systemName: "heart"), .findBestPostData),
+            ("최신순", UIImage(systemName: "clock"), .findNewestPostData)
         ]
         
         let menuItems = actinos.map { action in
@@ -193,6 +192,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
         configureDropDown()
         
         viewModel.delegate = self
+        networkStatus.delegate = self
         bindTableView()
         navigationBarButtonDidTap()
         viewModel.requestPostData(type: sortType)
@@ -236,6 +236,55 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
             $0.top.equalTo(dropdownButton.snp.bottom).offset(20)
             $0.leading.trailing.equalToSuperview()
             $0.bottom.equalToSuperview()
+        }
+    }
+}
+
+extension HomeViewController {
+    func postVoteButtonDidTap(idx: Int, choice: Int) {
+        viewModel.requestVote(idx: idx, choice: choice)
+    }
+    
+    func showAlertOnFailedImageLoading() {
+        let alert = UIAlertController(title: "이미지 로딩 실패!", message: "네트워크 상태를 확인해주세요.", preferredStyle: .alert)
+        let cancelAction = UIAlertAction(title: "확인", style: .cancel)
+        
+        alert.addAction(cancelAction)
+        present(alert, animated: true)
+    }
+    
+    func showAlertOnNetworkDisConnect() {
+        let alert = UIAlertController(title: "네트워크 연결 실패!", message: "네트워크 연결에 실패했습니다. 앱을 다시 실행해주세요.", preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "확인", style: .cancel) { [weak self] _ in
+            self?.closedApp()
+        }
+        alert.addAction(cancelAction)
+        
+        DispatchQueue.main.async {
+            
+            self.present(alert, animated: true)
+        }
+    }
+    
+    func showAlertOnNetworkChange() {
+        let alert = UIAlertController(title: "네트워크 변경 감지!", message: "네트워크 변경이 감지되었습니다. 앱을 다시 실행해주세요.", preferredStyle: .alert)
+        
+        let cancelAction = UIAlertAction(title: "확인", style: .cancel) { [weak self] _ in
+            self?.closedApp()
+        }
+        alert.addAction(cancelAction)
+        
+        DispatchQueue.main.async {
+            
+            self.present(alert, animated: true)
+        }
+    }
+    
+    private func closedApp() {
+        UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            exit(0)
         }
     }
 }

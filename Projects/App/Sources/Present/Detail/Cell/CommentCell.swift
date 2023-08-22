@@ -1,11 +1,11 @@
 import UIKit
 import Then
 import SnapKit
-import Kingfisher
+import Shared
 
 final class CommentCell: UITableViewCell {
     static let identifier = "CommentCellIdentifier"
-
+    
     private let profileImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.crop.circle.fill")
         $0.tintColor = .black
@@ -39,19 +39,19 @@ final class CommentCell: UITableViewCell {
     private func addView() {
         contentView.addSubviews(profileImageView, nicknameLabel, contentLabel)
     }
-
+    
     private func setLayout() {
         profileImageView.snp.makeConstraints {
             $0.top.equalToSuperview().inset(10)
             $0.leading.equalToSuperview().inset(30)
             $0.size.equalTo(25)
         }
-
+        
         nicknameLabel.snp.makeConstraints {
             $0.centerY.equalTo(profileImageView)
             $0.leading.equalTo(profileImageView.snp.trailing).offset(8)
         }
-
+        
         contentLabel.snp.makeConstraints {
             $0.top.equalTo(nicknameLabel.snp.bottom).offset(15)
             $0.leading.trailing.equalToSuperview().inset(33)
@@ -64,9 +64,13 @@ extension CommentCell {
     func configure(model: CommentList) {
         self.nicknameLabel.text = model.nickname
         self.contentLabel.text = model.content
-        guard model.profileImageUrl == nil else {
-            self.profileImageView.kf.setImage(with: URL(string: model.profileImageUrl!))
+        guard let profileImageUrl = URL(string: model.profileImageUrl ?? "") else {
             return
+        }
+        Downsampling.optimization(imageAt: profileImageUrl,
+                                  to: profileImageView.frame.size,
+                                  scale: 2) { [weak self] image in
+            self?.profileImageView.image = image
         }
     }
 }
