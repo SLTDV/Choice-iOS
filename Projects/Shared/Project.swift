@@ -15,8 +15,7 @@ let project = Project.makeModule(
         .SPM.RxCocoa,
         .SPM.Alamofire,
         .SPM.Swinject,
-        .SPM.Lottie,
-        .SPM.GoogleMobileAds
+        .SPM.Lottie
     ],
     resources: ["Resources/**"]
 )

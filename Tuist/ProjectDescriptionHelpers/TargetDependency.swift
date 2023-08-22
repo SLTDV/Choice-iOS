@@ -14,5 +14,4 @@ public extension TargetDependency.SPM {
     static let Swinject = TargetDependency.external(name: "Swinject")
     static let Lottie = TargetDependency.external(name: "Lottie")
     static let GoogleMobileAds = TargetDependency.external(name: "GoogleMobileAds")
-    
 }

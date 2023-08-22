@@ -3,11 +3,48 @@ import RxSwift
 import RxCocoa
 import Shared
 import NetworksMonitor
+import GoogleMobileAds
+import AppTrackingTransparency
+import AdSupport
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                                 PostVoteButtonHandlerProtocol, ImageLoadingFailureHandlerProtocol,
                                 NetworkConnectionHandlerProtocol {
     // MARK: - Properties
+    private var rewardedAd: GADRewardedAd? = nil
+    
+    func requestIDFA() {
+        ATTrackingManager.requestTrackingAuthorization { status in
+            self.loadRewardedAd()
+            self.show()
+        }
+    }
+    
+    func loadRewardedAd() {
+        let request = GADRequest()
+//        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers =
+//            [ "7c0c10bdd48b646bd49c132a3e20a908" ]
+        GADRewardedAd.load(withAdUnitID: "ca-app-pub-5088279003431597/8886496224", request: request) { ad, error in
+            if let error = error {
+                print("Failed to load rewarded ad with error: \(error.localizedDescription)")
+                return
+            }
+            self.rewardedAd = ad
+            print("Rewarded ad loaded.")
+        }
+    }
+    
+    func show() {
+      if let ad = rewardedAd {
+        ad.present(fromRootViewController: self) {
+          let reward = ad.adReward
+          print("Reward received with currency \(reward.amount), amount \(reward.amount.doubleValue)")
+          // TODO: Reward the user.
+        }
+      } else {
+        print("Ad wasn't ready")
+      }
+    }
     var postData = BehaviorRelay<[PostList]>(value: [])
     private let disposeBag = DisposeBag()
     var isLastPage = false
@@ -67,7 +104,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
         profileButton.rx.tap
             .throttle(.seconds(2), latest: false, scheduler: MainScheduler.instance)
             .bind(with: self) { owner, _ in
-                owner.viewModel.pushProfileVC()
+                owner.requestIDFA()
+//                owner.viewModel.pushProfileVC()
             }.disposed(by: disposeBag)
         
         addPostButton.rx.tap
@@ -193,6 +231,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
         
         viewModel.delegate = self
         networkStatus.delegate = self
+        rewardedAd?.fullScreenContentDelegate = self
         bindTableView()
         navigationBarButtonDidTap()
         viewModel.requestPostData(type: sortType)
@@ -286,5 +325,23 @@ extension HomeViewController {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
             exit(0)
         }
+    }
+}
+
+
+extension HomeViewController: GADFullScreenContentDelegate {
+    /// Tells the delegate that the ad failed to present full screen content.
+    func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+      print("Ad did fail to present full screen content.")
+    }
+
+    /// Tells the delegate that the ad will present full screen content.
+    func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+      print("Ad will present full screen content.")
+    }
+
+    /// Tells the delegate that the ad dismissed full screen content.
+    func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+      print("Ad did dismiss full screen content.")
     }
 }
