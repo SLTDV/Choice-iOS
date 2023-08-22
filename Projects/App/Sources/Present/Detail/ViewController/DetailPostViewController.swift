@@ -17,20 +17,19 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     var writerImageStringData = PublishSubject<String?>()
     var isMineData = false
     var commentData = BehaviorRelay<[CommentList]>(value: [])
-    private var model = BehaviorRelay<PostList>(
-        value: PostList(
-            idx: 0,
-            firstImageUrl: "",
-            secondImageUrl: "",
-            title: "",
-            content: "",
-            firstVotingOption: "",
-            secondVotingOption: "",
-            firstVotingCount: 0,
-            secondVotingCount: 0,
-            votingState: 0,
-            participants: 0,
-            commentCount: 0)
+    private var model = BehaviorRelay<PostList>(value: PostList(
+        idx: 0,
+        firstImageUrl: "",
+        secondImageUrl: "",
+        title: "",
+        content: "",
+        firstVotingOption: "",
+        secondVotingOption: "",
+        firstVotingCount: 0,
+        secondVotingCount: 0,
+        votingState: 0,
+        participants: 0,
+        commentCount: 0)
     )
     var isLastPage = false
     var type: ViewControllerType?
@@ -163,7 +162,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.numberOfLines = 0
     }
     
-    private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
+    private lazy var tapGestureRecognizer = UITapGestureRecognizer(
+        target: self,
+        action: #selector(tapMethod(_:))
+    )
     
     init(viewModel: DetailPostViewModel, model: PostList, type: ViewControllerType) {
         super.init(viewModel: viewModel)
@@ -189,7 +191,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                     신고가 누적되면 필터링을 통해 게시물이
                     삭제될 수 있습니다. (중복 불가능)
                     """,
-            actionTitle: "신고", onConfirm: {
+            actionTitle: "신고",
+            onConfirm: {
                 self.reportPostAlert()
             }, vc: self)
     }
@@ -209,19 +212,19 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     func setKeyboard() {
-        let keyboardWillShow = NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
-        let keyboardWillHide =
-        NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
+        let notiCenter = NotificationCenter.default.rx
+        let keyboardWillShow = notiCenter.notification(UIResponder.keyboardWillShowNotification)
+        let keyboardWillHide = notiCenter.notification(UIResponder.keyboardWillHideNotification)
         
         keyboardWillShow
-            .asDriver(onErrorRecover: { _ in .never()})
-            .drive(with: self) { owner, noti in
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, noti in
                 owner.keyboardUp(noti)
             }.disposed(by: disposeBag)
         
         keyboardWillHide
-            .asDriver(onErrorRecover: { _ in .never()})
-            .drive(with: self) { owner, noti in
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, _ in
                 owner.keyboardDown()
             }.disposed(by: disposeBag)
     }
@@ -261,7 +264,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func keyboardUp(_ notification: Notification) {
-        if let keyboardFrame:CGRect = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+        if let keyboardFrame: CGRect = notification.userInfo?[
+            UIResponder.keyboardFrameEndUserInfoKey
+        ] as? CGRect {
             UIView.animate(withDuration: 0.3, animations: {
                 self.view.frame.origin.y -= keyboardFrame.size.height
             })
@@ -310,9 +315,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func updateEmptyLabelLayout() {
         setOptionLayout()
-        
-        let comments = commentData.value
-        if comments.isEmpty && isLastPage {
+
+        if commentData.value.isEmpty && isLastPage {
             emptyLabel.frame = CGRect(x: 0, y: 15, width: commentTableView.bounds.width, height: 100)
             commentTableView.tableHeaderView = emptyLabel
             commentTableView.separatorStyle = .none
