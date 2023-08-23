@@ -145,7 +145,7 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
                 firstVotingOption: firstVotingOption,
                 secondVotingOtion: secondVotingOtion
             ) {
-                AdvertismentsControl.shared.loadRewardedAd(vc: self)
+                AdvertisementsControl.shared.loadRewardedAd(vc: self)
 //                self.viewModel.pushComplteView()
             }
         } else {

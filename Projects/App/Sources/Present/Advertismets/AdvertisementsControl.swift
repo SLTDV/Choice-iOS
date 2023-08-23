@@ -3,9 +3,16 @@ import GoogleMobileAds
 import AppTrackingTransparency
 import AdSupport
 
-class AdvertismentsControl {
-    private var interstitial: GADInterstitialAd? = nil
-    static var shared = AdvertismentsControl()
+protocol AdvertisementsHandlerProtocol {
+    var interstitial: GADInterstitialAd? { set get }
+    static var shared: AdvertisementsHandlerProtocol { get }
+    
+    func loadRewardedAd(vc: UIViewController)
+}
+
+class AdvertisementsControl: AdvertisementsHandlerProtocol {
+    internal var interstitial: GADInterstitialAd?
+    static var shared: AdvertisementsHandlerProtocol = AdvertisementsControl()
     
     func loadRewardedAd(vc: UIViewController) {
         let request = GADRequest()
@@ -20,7 +27,6 @@ class AdvertismentsControl {
             }
             self.interstitial = ad
             self.show(vc: vc)
-            print("Rewarded ad loaded.")
         }
     }
     
