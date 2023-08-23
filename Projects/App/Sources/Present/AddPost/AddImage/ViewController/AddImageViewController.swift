@@ -3,7 +3,6 @@ import RxSwift
 import RxCocoa
 import Shared
 import GoogleMobileAds
-//import AdSupport
 
 enum PickerKey {
     static let first = "first"
