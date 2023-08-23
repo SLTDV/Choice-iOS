@@ -6,7 +6,6 @@ import AdSupport
 class AdvertismentsControl {
     private var interstitial: GADInterstitialAd? = nil
     static var shared = AdvertismentsControl()
-    var vc: UIViewController?
     
     func loadRewardedAd(vc: UIViewController) {
         let request = GADRequest()

@@ -21,7 +21,7 @@
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-5088279003431597~8818213465</string>
 	<key>GADIsAdManagerApp</key>
-	<string>1</string>
+	<true/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>UIApplicationSceneManifest</key>
