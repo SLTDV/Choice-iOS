@@ -2,6 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Shared
+import GoogleMobileAds
 
 enum PickerKey {
     static let first = "first"
@@ -126,7 +127,7 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
     private func checkContents() {
         let alert = UIAlertController(title: "실패", message: "대표사진을 모두 등록해주세요.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
-
+        
         guard let firstImage = addFirstImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let secondImage = addSecondImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let firstVotingOption = firstSetTopicButton.titleLabel?.text?.trimmingCharacters(in: .whitespaces) else { return }
@@ -139,8 +140,14 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
         if (1...8).contains(firstVotingOption.count) && (1...8).contains(secondVotingOtion.count) {
             LoadingIndicator.showLoading(text: "게시 중")
             
-            viewModel.createPost(firstImage: firstImage, secondImage: secondImage,
-                                 firstVotingOption: firstVotingOption, secondVotingOtion: secondVotingOtion)
+            viewModel.createPost(
+                firstImage: firstImage,
+                secondImage: secondImage,
+                firstVotingOption: firstVotingOption,
+                secondVotingOtion: secondVotingOtion
+            ) {
+                AdvertisementsControl.shared.loadRewardedAd(vc: self)
+            }
         } else {
             alert.message = "주제는 1~8 글자만 입력 가능합니다."
             return present(alert, animated: true)
@@ -227,7 +234,24 @@ extension AddImageViewController: UIImagePickerControllerDelegate, UINavigationC
         default:
             return
         }
-        
         picker.dismiss(animated: true, completion: nil)
+    }
+}
+
+extension AddImageViewController: GADFullScreenContentDelegate {
+    /// 광고를 표시하지 못 했을 때
+    func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+        LoadingIndicator.hideLoading()
+        viewModel.pushComplteView()
+    }
+    
+    /// 광고 view 가 viewWillAppear 일 때
+    func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+        LoadingIndicator.hideLoading()
+    }
+    
+    /// 광고 view 가 dismiss 될 때
+    func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+        viewModel.pushComplteView()
     }
 }

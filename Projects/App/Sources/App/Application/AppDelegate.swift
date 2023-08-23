@@ -4,6 +4,7 @@ import JwtStore
 import Shared
 import RxSwift
 import NetworksMonitor
+import GoogleMobileAds
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -15,6 +16,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
+        
         assembler = Assembler([
             JwtStoreAssembly()
         ], container: AppDelegate.container)

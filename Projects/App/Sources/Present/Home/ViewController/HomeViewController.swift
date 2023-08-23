@@ -3,6 +3,9 @@ import RxSwift
 import RxCocoa
 import Shared
 import NetworksMonitor
+import GoogleMobileAds
+import AppTrackingTransparency
+import AdSupport
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                                 PostVoteButtonHandlerProtocol, ImageLoadingFailureHandlerProtocol,
