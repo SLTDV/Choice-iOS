@@ -59,10 +59,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     // MARK: - Function
     @objc func handleBlockButtonPressed() {
         sortTableViewData(type: sortType)
-        DispatchQueue.main.async {
-            self.postTableView.reloadData()
-            self.postData.accept([])
-        }
+        self.postData.accept([])
+        self.postTableView.reloadData()
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("BlockButtonPressed"), object: nil)
     }
     
