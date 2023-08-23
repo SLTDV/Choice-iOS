@@ -1,6 +1,5 @@
 import Foundation
 import GoogleMobileAds
-import AppTrackingTransparency
 import AdSupport
 
 protocol AdvertisementsHandlerProtocol {
@@ -10,7 +9,7 @@ protocol AdvertisementsHandlerProtocol {
     func loadRewardedAd(vc: UIViewController)
 }
 
-class AdvertisementsControl: AdvertisementsHandlerProtocol {
+final class AdvertisementsControl: AdvertisementsHandlerProtocol {
     internal var interstitial: GADInterstitialAd?
     static var shared: AdvertisementsHandlerProtocol = AdvertisementsControl()
     
@@ -19,18 +18,23 @@ class AdvertisementsControl: AdvertisementsHandlerProtocol {
         
         GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers =
             nil
-        GADInterstitialAd.load(withAdUnitID: "ca-app-pub-5088279003431597/9843461422",
-                               request: request) { ad, error in
-            if let error = error {
-                print("Failed to load rewarded ad with error: \(error.localizedDescription)")
-                return
+        DispatchQueue.global().async {
+            GADInterstitialAd.load(withAdUnitID: "ca-app-pub-5088279003431597/9843461422",
+                                   request: request) { ad, error in
+                if let error = error {
+                    print("Failed to load rewarded ad with error: \(error.localizedDescription)")
+                    return
+                }
+                self.interstitial = ad
+                self.interstitial?.fullScreenContentDelegate = vc as? any GADFullScreenContentDelegate
+                DispatchQueue.main.async {
+                    self.show(vc: vc)
+                }
             }
-            self.interstitial = ad
-            self.show(vc: vc)
         }
     }
     
-    func show(vc: UIViewController) {
+    private func show(vc: UIViewController) {
         if interstitial != nil {
             interstitial?.present(fromRootViewController: vc)
         }

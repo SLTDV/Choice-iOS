@@ -2,6 +2,8 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Shared
+import GoogleMobileAds
+//import AdSupport
 
 enum PickerKey {
     static let first = "first"
@@ -146,7 +148,6 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
                 secondVotingOtion: secondVotingOtion
             ) {
                 AdvertisementsControl.shared.loadRewardedAd(vc: self)
-//                self.viewModel.pushComplteView()
             }
         } else {
             alert.message = "주제는 1~8 글자만 입력 가능합니다."
@@ -236,5 +237,23 @@ extension AddImageViewController: UIImagePickerControllerDelegate, UINavigationC
         }
         
         picker.dismiss(animated: true, completion: nil)
+    }
+}
+
+extension AddImageViewController: GADFullScreenContentDelegate {
+    /// 광고를 표시하지 못 했을 때
+    func ad(_ ad: GADFullScreenPresentingAd, didFailToPresentFullScreenContentWithError error: Error) {
+        LoadingIndicator.hideLoading()
+        viewModel.pushComplteView()
+    }
+    
+    /// 광고 view 가 viewWillAppear 일 때
+    func adWillPresentFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+        LoadingIndicator.hideLoading()
+    }
+    
+    /// 광고 view 가 dismiss 될 때
+    func adDidDismissFullScreenContent(_ ad: GADFullScreenPresentingAd) {
+        viewModel.pushComplteView()
     }
 }

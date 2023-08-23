@@ -66,7 +66,6 @@ final class AddImageViewModel: BaseViewModel {
                 .responseData(emptyResponseCodes: [200, 201, 204]) { response in
                     switch response.result {
                     case .success:
-                        LoadingIndicator.hideLoading()
                         completion()
                     case .failure(let error):
                         print("post error = \(String(describing: error.localizedDescription))")
