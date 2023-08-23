@@ -4,9 +4,7 @@ import ProjectDescriptionHelpers
 let project = Project.makeModule(
     name: "Shared",
     product: .framework,
-    packages: [
-
-    ],
+    packages: [],
     dependencies: [
         .SPM.SnapKit,
         .SPM.Then,
