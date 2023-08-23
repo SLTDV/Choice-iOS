@@ -128,7 +128,7 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
     private func checkContents() {
         let alert = UIAlertController(title: "실패", message: "대표사진을 모두 등록해주세요.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
-
+        
         guard let firstImage = addFirstImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let secondImage = addSecondImageButton.imageView?.image else { return present(alert, animated: true) }
         guard let firstVotingOption = firstSetTopicButton.titleLabel?.text?.trimmingCharacters(in: .whitespaces) else { return }
@@ -235,7 +235,6 @@ extension AddImageViewController: UIImagePickerControllerDelegate, UINavigationC
         default:
             return
         }
-        
         picker.dismiss(animated: true, completion: nil)
     }
 }
