@@ -7,7 +7,7 @@ public protocol CustomAlertProtocol {
     func showAlert(title: String,
                    message: String,
                    acceptButtonTitle: String?,
-                   cancelButtonTitle: String?,
+                   cancelButtonTitle: String,
                    cancelButtonAction: Action?,
                    acceptButtonAction: Action?,
                    vc viewController: UIViewController)
@@ -28,7 +28,7 @@ public class AlertHelper: CustomAlertProtocol {
     public func showAlert(title: String,
                           message: String,
                           acceptButtonTitle: String?,
-                          cancelButtonTitle: String?,
+                          cancelButtonTitle: String,
                           cancelButtonAction: Action?,
                           acceptButtonAction: Action?,
                           vc viewController: UIViewController) {
@@ -38,12 +38,10 @@ public class AlertHelper: CustomAlertProtocol {
             addAction(to: alertControl, title: actionTitle, style: .destructive, handler: customAction)
         }
         
-        if let cancelTitle = cancelButtonTitle {
-            if let cancelAction = cancelButtonAction {
-                addAction(to: alertControl, title: cancelTitle, style: .destructive, handler: cancelAction)
-            } else {
-                addAction(to: alertControl, title: cancelTitle, style: .cancel, handler: nil)
-            }
+        if let cancelAction = cancelButtonAction {
+            addAction(to: alertControl, title: cancelButtonTitle, style: .destructive, handler: cancelAction)
+        } else {
+            addAction(to: alertControl, title: cancelButtonTitle, style: .cancel, handler: nil)
         }
         
         DispatchQueue.main.async {
