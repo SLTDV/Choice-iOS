@@ -329,6 +329,7 @@ final class PostCell: UITableViewCell {
         self.model.accept(model)
         
         self.model
+            .filter { _ in self.hasFailedImageLoading == false }
             .compactMap {
                 guard
                 let firstUrl = URL(string: $0.firstImageUrl),
@@ -338,8 +339,8 @@ final class PostCell: UITableViewCell {
                 }
                 return (firstUrl, secondUrl)
             }
-            .bind(with: self) { (owner, url: (URL?, URL?)) in
-                let (firstUrl, secondUrl) = url
+            .bind(with: self) { (owner, url: (URL, URL)) in
+                let (firstImageUrl, secondImageUrl) = url
                 let model = owner.model.value
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
@@ -347,25 +348,25 @@ final class PostCell: UITableViewCell {
                     owner.firstPostImageView.image = nil
                     owner.secondPostImageView.image = nil
                     
-                    Downsampling.optimization(imageAt: URL(string: model.firstImageUrl)!, to: owner.firstPostImageView.frame.size, scale: 2) { image in
+                    Downsampling.optimization(imageAt: firstImageUrl,
+                                              to: owner.firstPostImageView.frame.size,
+                                              scale: 2) { image in
                         if let image = image {
                             owner.firstPostImageView.image = image
                         } else {
-                            if !owner.hasFailedImageLoading {
-                                owner.hasFailedImageLoading = true
-                                owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
-                            }
+                            owner.hasFailedImageLoading = true
+                            owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
                         }
                     }
                     
-                    Downsampling.optimization(imageAt: URL(string: model.secondImageUrl)!, to: owner.secondPostImageView.frame.size, scale: 2) { image in
+                    Downsampling.optimization(imageAt: secondImageUrl,
+                                              to: owner.secondPostImageView.frame.size,
+                                              scale: 2) { image in
                         if let image = image {
                             owner.secondPostImageView.image = image
                         } else {
-                            if !owner.hasFailedImageLoading {
-                                owner.hasFailedImageLoading = true
-                                owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
-                            }
+                            owner.hasFailedImageLoading = true
+                            owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
                         }
                     }
                 }
