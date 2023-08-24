@@ -18,6 +18,13 @@ public class AlertHelper: CustomAlertProtocol {
     
     private init() {}
     
+    private func addAction(to alertControl: UIAlertController, title: String, style: UIAlertAction.Style, handler: Action?) {
+        let action = UIAlertAction(title: title, style: style) { _ in
+            handler?()
+        }
+        alertControl.addAction(action)
+    }
+    
     public func showAlert(title: String,
                           message: String,
                           actionTitle: String?,
@@ -28,21 +35,14 @@ public class AlertHelper: CustomAlertProtocol {
         let alertControl = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
         if let actionTitle = actionTitle, let customAction = customAction {
-            let eventAction = UIAlertAction(title: actionTitle, style: .destructive) { _ in
-                customAction()
-            }
-            alertControl.addAction(eventAction)
+            addAction(to: alertControl, title: actionTitle, style: .destructive, handler: customAction)
         }
         
         if let cancelTitle = cancelTitle {
             if let cancelAction = cancelAction {
-                let eventAction = UIAlertAction(title: cancelTitle, style: .destructive) { _ in
-                    cancelAction()
-                }
-                alertControl.addAction(eventAction)
+                addAction(to: alertControl, title: cancelTitle, style: .destructive, handler: cancelAction)
             } else {
-                let eventAction = UIAlertAction(title: cancelTitle, style: .cancel)
-                alertControl.addAction(eventAction)
+                addAction(to: alertControl, title: cancelTitle, style: .cancel, handler: nil)
             }
         }
         
