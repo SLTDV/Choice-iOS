@@ -191,10 +191,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                     신고가 누적되면 필터링을 통해 게시물이
                     삭제될 수 있습니다. (중복 불가능)
                     """,
-            actionTitle: "신고",
-            onConfirm: {
-                self.reportPostAlert()
-            }, vc: self)
+            acceptTitle: "신고",
+            acceptAction: { [weak self] in
+                self?.reportPostAlert()
+            },
+            cancelTitle: "취소",
+            cancelAction: nil,
+            vc: self)
     }
     
     private func presentBlockUserAlert() {
@@ -205,10 +208,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                      차단하면 해당 사용자의 게시물은
                      보이지 않습니다.
                      """,
-            actionTitle: "차단",
-            onConfirm: {
-                self.blockUserAlert()
-            }, vc: self)
+            acceptTitle: "차단",
+            acceptAction: { [weak self] in
+                self?.blockUserAlert()
+            },
+            cancelTitle: "취소",
+            cancelAction: nil,
+            vc: self)
     }
     
     func setKeyboard() {

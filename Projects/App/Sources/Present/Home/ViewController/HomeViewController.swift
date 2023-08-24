@@ -245,39 +245,40 @@ extension HomeViewController {
     }
     
     func showAlertOnFailedImageLoading() {
-        let alert = UIAlertController(title: "이미지 로딩 실패!", message: "네트워크 상태를 확인해주세요.", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "확인", style: .cancel)
-        
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
+        AlertHelper.shared.showAlert(
+            title: "이미지 로딩 실패!",
+            message: "네트워크 상태를 확인해주세요.",
+            acceptTitle: nil,
+            acceptAction: nil,
+            cancelTitle: "확인",
+            cancelAction: nil,
+            vc: self)
     }
     
     func showAlertOnNetworkDisConnect() {
-        let alert = UIAlertController(title: "네트워크 연결 실패!", message: "네트워크 연결에 실패했습니다. 앱을 다시 실행해주세요.", preferredStyle: .alert)
-        
-        let cancelAction = UIAlertAction(title: "확인", style: .cancel) { [weak self] _ in
-            self?.closedApp()
-        }
-        alert.addAction(cancelAction)
-        
-        DispatchQueue.main.async {
-            
-            self.present(alert, animated: true)
-        }
+        AlertHelper.shared.showAlert(
+            title: "네트워크 연결 실패!",
+            message: "네트워크 연결에 실패했습니다. 앱을 다시 실행해주세요.",
+            acceptTitle: nil,
+            acceptAction: nil,
+            cancelTitle: "확인",
+            cancelAction: { [weak self] in
+                self?.closedApp()
+            },
+            vc: self)
     }
     
     func showAlertOnNetworkChange() {
-        let alert = UIAlertController(title: "네트워크 변경 감지!", message: "네트워크 변경이 감지되었습니다. 앱을 다시 실행해주세요.", preferredStyle: .alert)
-        
-        let cancelAction = UIAlertAction(title: "확인", style: .cancel) { [weak self] _ in
-            self?.closedApp()
-        }
-        alert.addAction(cancelAction)
-        
-        DispatchQueue.main.async {
-            
-            self.present(alert, animated: true)
-        }
+        AlertHelper.shared.showAlert(
+            title: "네트워크 변경 감지!",
+            message: "네트워크 변경이 감지되었습니다. 앱을 다시 실행해주세요.",
+            acceptTitle: nil,
+            acceptAction: nil,
+            cancelTitle: "확인",
+            cancelAction: { [weak self] in
+                self?.closedApp()
+            },
+            vc: self)
     }
     
     private func closedApp() {
