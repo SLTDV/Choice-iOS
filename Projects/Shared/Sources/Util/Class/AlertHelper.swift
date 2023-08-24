@@ -6,10 +6,10 @@ public protocol CustomAlertProtocol {
     static var shared: CustomAlertProtocol { get }
     func showAlert(title: String,
                    message: String,
-                   actionTitle: String?,
-                   cancelTitle: String?,
-                   cancelAction: Action?,
-                   customAction: Action?,
+                   acceptButtonTitle: String?,
+                   cancelButtonTitle: String?,
+                   cancelButtonAction: Action?,
+                   acceptButtonAction: Action?,
                    vc viewController: UIViewController)
 }
 
@@ -27,19 +27,19 @@ public class AlertHelper: CustomAlertProtocol {
     
     public func showAlert(title: String,
                           message: String,
-                          actionTitle: String?,
-                          cancelTitle: String?,
-                          cancelAction: Action?,
-                          customAction: Action?,
+                          acceptButtonTitle: String?,
+                          cancelButtonTitle: String?,
+                          cancelButtonAction: Action?,
+                          acceptButtonAction: Action?,
                           vc viewController: UIViewController) {
         let alertControl = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
-        if let actionTitle = actionTitle, let customAction = customAction {
+        if let actionTitle = acceptButtonTitle, let customAction = acceptButtonAction {
             addAction(to: alertControl, title: actionTitle, style: .destructive, handler: customAction)
         }
         
-        if let cancelTitle = cancelTitle {
-            if let cancelAction = cancelAction {
+        if let cancelTitle = cancelButtonTitle {
+            if let cancelAction = cancelButtonAction {
                 addAction(to: alertControl, title: cancelTitle, style: .destructive, handler: cancelAction)
             } else {
                 addAction(to: alertControl, title: cancelTitle, style: .cancel, handler: nil)
