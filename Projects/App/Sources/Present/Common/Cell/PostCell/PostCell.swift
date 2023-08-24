@@ -329,11 +329,20 @@ final class PostCell: UITableViewCell {
         self.model.accept(model)
         
         self.model
-            .bind(with: self) { owner, _ in
+            .compactMap {
+                guard
+                let firstUrl = URL(string: $0.firstImageUrl),
+                let secondUrl = URL(string: $0.secondImageUrl)
+                else {
+                    return nil
+                }
+                return (firstUrl, secondUrl)
+            }
+            .bind(with: self) { (owner, url: (URL?, URL?)) in
+                let (firstUrl, secondUrl) = url
                 let model = owner.model.value
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
-                
                 DispatchQueue.main.async {
                     owner.firstPostImageView.image = nil
                     owner.secondPostImageView.image = nil
@@ -374,7 +383,6 @@ final class PostCell: UITableViewCell {
                 }
                 owner.participantsCountLabel.text = "참여자 \(model.participants)명"
                 owner.commentCountLabel.text = "댓글 \(model.commentCount)개"
-                
             }.disposed(by: disposeBag)
     }
     
