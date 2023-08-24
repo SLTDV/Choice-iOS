@@ -34,8 +34,8 @@ public class AlertHelper: CustomAlertProtocol {
                           vc viewController: UIViewController) {
         let alertControl = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
-        if let actionTitle = acceptButtonTitle, let customAction = acceptButtonAction {
-            addAction(to: alertControl, title: actionTitle, style: .destructive, handler: customAction)
+        if let actionButtonTitle = acceptButtonTitle, let acceptButtonAction = acceptButtonAction {
+            addAction(to: alertControl, title: actionButtonTitle, style: .destructive, handler: acceptButtonAction)
         }
         
         if let cancelAction = cancelButtonAction {
