@@ -191,12 +191,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                     신고가 누적되면 필터링을 통해 게시물이
                     삭제될 수 있습니다. (중복 불가능)
                     """,
-            acceptButtonTitle: "신고",
-            acceptButtonAction: { [weak self] in
+            acceptTitle: "신고",
+            acceptAction: { [weak self] in
                 self?.reportPostAlert()
             },
-            cancelButtonTitle: "취소",
-            cancelButtonAction: nil,
+            cancelTitle: "취소",
+            cancelAction: nil,
             vc: self)
     }
     
@@ -208,12 +208,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                      차단하면 해당 사용자의 게시물은
                      보이지 않습니다.
                      """,
-            acceptButtonTitle: "차단",
-            acceptButtonAction: { [weak self] in
+            acceptTitle: "차단",
+            acceptAction: { [weak self] in
                 self?.blockUserAlert()
             },
-            cancelButtonTitle: "취소",
-            cancelButtonAction: nil,
+            cancelTitle: "취소",
+            cancelAction: nil,
             vc: self)
     }
     

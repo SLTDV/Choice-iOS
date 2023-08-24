@@ -6,10 +6,10 @@ public protocol CustomAlertProtocol {
     static var shared: CustomAlertProtocol { get }
     func showAlert(title: String,
                    message: String,
-                   acceptButtonTitle: String?,
-                   acceptButtonAction: Action?,
-                   cancelButtonTitle: String,
-                   cancelButtonAction: Action?,
+                   acceptTitle: String?,
+                   acceptAction: Action?,
+                   cancelTitle: String,
+                   cancelAction: Action?,
                    vc viewController: UIViewController)
 }
 
@@ -27,21 +27,21 @@ public class AlertHelper: CustomAlertProtocol {
     
     public func showAlert(title: String,
                           message: String,
-                          acceptButtonTitle: String?,
-                          acceptButtonAction: Action?,
-                          cancelButtonTitle: String,
-                          cancelButtonAction: Action?,
+                          acceptTitle: String?,
+                          acceptAction: Action?,
+                          cancelTitle: String,
+                          cancelAction: Action?,
                           vc viewController: UIViewController) {
         let alertControl = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
-        if let actionButtonTitle = acceptButtonTitle, let acceptButtonAction = acceptButtonAction {
-            addAction(to: alertControl, title: actionButtonTitle, style: .destructive, handler: acceptButtonAction)
+        if let actionTitle = acceptTitle, let acceptAction = acceptAction {
+            addAction(to: alertControl, title: actionTitle, style: .destructive, handler: acceptAction)
         }
         
-        if let cancelAction = cancelButtonAction {
-            addAction(to: alertControl, title: cancelButtonTitle, style: .destructive, handler: cancelAction)
+        if let cancelAction = cancelAction {
+            addAction(to: alertControl, title: cancelTitle, style: .destructive, handler: cancelAction)
         } else {
-            addAction(to: alertControl, title: cancelButtonTitle, style: .cancel, handler: nil)
+            addAction(to: alertControl, title: cancelTitle, style: .cancel, handler: nil)
         }
         
         DispatchQueue.main.async {
