@@ -192,9 +192,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                     삭제될 수 있습니다. (중복 불가능)
                     """,
             actionTitle: "신고",
-            onConfirm: {
-                self.reportPostAlert()
-            }, vc: self)
+            cancelTitle: "취소",
+            cancelAction: nil,
+            customAction: { [weak self] in
+                self?.reportPostAlert()
+            },
+            vc: self)
     }
     
     private func presentBlockUserAlert() {
@@ -206,9 +209,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                      보이지 않습니다.
                      """,
             actionTitle: "차단",
-            onConfirm: {
-                self.blockUserAlert()
-            }, vc: self)
+            cancelTitle: "취소",
+            cancelAction: nil,
+            customAction: { [weak self] in
+                self?.blockUserAlert()
+            },
+            vc: self)
     }
     
     func setKeyboard() {
