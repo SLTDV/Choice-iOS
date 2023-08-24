@@ -4,7 +4,13 @@ public protocol CustomAlertProtocol {
     typealias Action = () -> ()
     
     static var shared: CustomAlertProtocol { get }
-    func showAlert(title: String, message: String, actionTitle: String, onConfirm: @escaping Action, vc viewController: UIViewController)
+    func showAlert(title: String,
+                   message: String,
+                   acceptTitle: String?,
+                   acceptAction: Action?,
+                   cancelTitle: String,
+                   cancelAction: Action?,
+                   vc viewController: UIViewController)
 }
 
 public class AlertHelper: CustomAlertProtocol {
@@ -12,16 +18,34 @@ public class AlertHelper: CustomAlertProtocol {
     
     private init() {}
     
-    public func showAlert(title: String, message: String, actionTitle: String, onConfirm: @escaping Action, vc viewController: UIViewController) {
-        let alertControl = UIAlertController(title: title, message: message, preferredStyle: .alert)
-        let eventAction = UIAlertAction(title: actionTitle, style: .destructive) { _ in
-            onConfirm()
+    private func addAction(to alertControl: UIAlertController, title: String, style: UIAlertAction.Style, handler: Action?) {
+        let action = UIAlertAction(title: title, style: style) { _ in
+            handler?()
         }
-        let cancelAction = UIAlertAction(title: "취소", style: .cancel)
+        alertControl.addAction(action)
+    }
+    
+    public func showAlert(title: String,
+                          message: String,
+                          acceptTitle: String?,
+                          acceptAction: Action?,
+                          cancelTitle: String,
+                          cancelAction: Action?,
+                          vc viewController: UIViewController) {
+        let alertControl = UIAlertController(title: title, message: message, preferredStyle: .alert)
         
-        alertControl.addAction(eventAction)
-        alertControl.addAction(cancelAction)
+        if let actionTitle = acceptTitle, let acceptAction = acceptAction {
+            addAction(to: alertControl, title: actionTitle, style: .destructive, handler: acceptAction)
+        }
         
-        viewController.present(alertControl, animated: true)
+        if let cancelAction = cancelAction {
+            addAction(to: alertControl, title: cancelTitle, style: .destructive, handler: cancelAction)
+        } else {
+            addAction(to: alertControl, title: cancelTitle, style: .cancel, handler: nil)
+        }
+        
+        DispatchQueue.main.async {
+            viewController.present(alertControl, animated: true)
+        }
     }
 }
