@@ -249,9 +249,9 @@ extension HomeViewController {
             title: "이미지 로딩 실패!",
             message: "네트워크 상태를 확인해주세요.",
             acceptButtonTitle: nil,
+            acceptButtonAction: nil,
             cancelButtonTitle: "확인",
             cancelButtonAction: nil,
-            acceptButtonAction: nil,
             vc: self)
     }
     
@@ -260,11 +260,11 @@ extension HomeViewController {
             title: "네트워크 연결 실패!",
             message: "네트워크 연결에 실패했습니다. 앱을 다시 실행해주세요.",
             acceptButtonTitle: nil,
+            acceptButtonAction: nil,
             cancelButtonTitle: "확인",
             cancelButtonAction: { [weak self] in
                 self?.closedApp()
             },
-            acceptButtonAction: nil,
             vc: self)
     }
     
@@ -273,11 +273,11 @@ extension HomeViewController {
             title: "네트워크 변경 감지!",
             message: "네트워크 변경이 감지되었습니다. 앱을 다시 실행해주세요.",
             acceptButtonTitle: nil,
+            acceptButtonAction: nil,
             cancelButtonTitle: "확인",
             cancelButtonAction: { [weak self] in
                 self?.closedApp()
             },
-            acceptButtonAction: nil,
             vc: self)
     }
     

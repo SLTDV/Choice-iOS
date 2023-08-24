@@ -7,9 +7,9 @@ public protocol CustomAlertProtocol {
     func showAlert(title: String,
                    message: String,
                    acceptButtonTitle: String?,
+                   acceptButtonAction: Action?,
                    cancelButtonTitle: String,
                    cancelButtonAction: Action?,
-                   acceptButtonAction: Action?,
                    vc viewController: UIViewController)
 }
 
@@ -28,9 +28,9 @@ public class AlertHelper: CustomAlertProtocol {
     public func showAlert(title: String,
                           message: String,
                           acceptButtonTitle: String?,
+                          acceptButtonAction: Action?,
                           cancelButtonTitle: String,
                           cancelButtonAction: Action?,
-                          acceptButtonAction: Action?,
                           vc viewController: UIViewController) {
         let alertControl = UIAlertController(title: title, message: message, preferredStyle: .alert)
         

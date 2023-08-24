@@ -192,11 +192,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                     삭제될 수 있습니다. (중복 불가능)
                     """,
             acceptButtonTitle: "신고",
-            cancelButtonTitle: "취소",
-            cancelButtonAction: nil,
             acceptButtonAction: { [weak self] in
                 self?.reportPostAlert()
             },
+            cancelButtonTitle: "취소",
+            cancelButtonAction: nil,
             vc: self)
     }
     
@@ -209,11 +209,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                      보이지 않습니다.
                      """,
             acceptButtonTitle: "차단",
-            cancelButtonTitle: "취소",
-            cancelButtonAction: nil,
             acceptButtonAction: { [weak self] in
                 self?.blockUserAlert()
             },
+            cancelButtonTitle: "취소",
+            cancelButtonAction: nil,
             vc: self)
     }
     
