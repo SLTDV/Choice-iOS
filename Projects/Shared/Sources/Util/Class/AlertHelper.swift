@@ -34,14 +34,16 @@ public class AlertHelper: CustomAlertProtocol {
             alertControl.addAction(eventAction)
         }
         
-        if let cancelTitle = cancelTitle, let cancelAction = cancelAction {
-            let eventAction = UIAlertAction(title: cancelTitle, style: .destructive) { _ in
-                cancelAction()
+        if let cancelTitle = cancelTitle {
+            if let cancelAction = cancelAction {
+                let eventAction = UIAlertAction(title: cancelTitle, style: .destructive) { _ in
+                    cancelAction()
+                }
+                alertControl.addAction(eventAction)
+            } else {
+                let eventAction = UIAlertAction(title: cancelTitle, style: .cancel)
+                alertControl.addAction(eventAction)
             }
-            alertControl.addAction(eventAction)
-        } else {
-            let eventAction = UIAlertAction(title: "취소", style: .cancel)
-            alertControl.addAction(eventAction)
         }
         
         DispatchQueue.main.async {
