@@ -240,6 +240,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         
         viewModel.requestToReportPost(postIdx: self.model.value.idx)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: {
                 alert.title = "완료"
                 alert.message = "신고가 접수되었습니다"
@@ -256,6 +257,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         
         viewModel.requestToBlockUser(postIdx: self.model.value.idx)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: {
                 alert.title = "완료"
                 alert.message = "차단이 완료되었습니다."
@@ -484,7 +486,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func setVoteButtonTitles(firstTitle: String, secondTitle: String) {
         firstVoteButton.setTitle(firstTitle, for: .normal)
-        firstVoteButton.setTitle(secondTitle, for: .normal)
+        secondVoteButton.setTitle(secondTitle, for: .normal)
     }
     
     override func viewWillAppear(_ animated: Bool) {
