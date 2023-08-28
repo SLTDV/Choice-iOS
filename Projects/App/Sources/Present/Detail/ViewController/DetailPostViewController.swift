@@ -292,14 +292,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
-            .bind(with: self, onNext: { owner, _ in
+            .bind(with: self, onNext: { owner, contentOffset in
                 if owner.isLastPage {
                     owner.updateEmptyLabelLayout()
                     return
                 }
                 
                 let contentHeight = owner.scrollView.contentSize.height
-                let yOffset = owner.scrollView.contentOffset.y
+                let yOffset = contentOffset.y
                 let frameHeight = owner.scrollView.frame.size.height
                 let shouldLoadMore = yOffset > (contentHeight-frameHeight) - 100
                 
@@ -459,8 +459,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             firstVotingCount: Double(model.firstVotingCount),
             secondVotingCount: Double(model.secondVotingCount)
         )
-        firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
-        secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
+        setVoteButtonTitles(firstTitle: "\(data.0)%(\(data.2)명)", secondTitle: "\(data.1)%(\(data.3)명)")
         setVoteButtonLayout(voting: model.votingState)
     }
     
@@ -476,10 +475,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             firstVoteButton.backgroundColor = SharedAsset.grayDark.color
             secondVoteButton.backgroundColor = SharedAsset.grayDark.color
             if type == .home {
-                firstVoteButton.setTitle("???", for: .normal)
-                secondVoteButton.setTitle("???", for: .normal)
+                setVoteButtonTitles(firstTitle: "???", secondTitle: "???")
             }
         }
+    }
+    
+    private func setVoteButtonTitles(firstTitle: String, secondTitle: String) {
+        firstVoteButton.setTitle(firstTitle, for: .normal)
+        firstVoteButton.setTitle(secondTitle, for: .normal)
     }
     
     override func viewWillAppear(_ animated: Bool) {
