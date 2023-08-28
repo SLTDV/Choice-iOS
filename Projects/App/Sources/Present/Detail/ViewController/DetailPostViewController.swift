@@ -466,18 +466,20 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func setVoteButtonLayout(voting: Int) {
         switch voting {
         case 1:
-            firstVoteButton.backgroundColor = .black
-            secondVoteButton.backgroundColor = SharedAsset.grayDark.color
+            setVoteButtonBackgroundColor(firstSelected: true, secondSelected: false)
         case 2:
-            firstVoteButton.backgroundColor = SharedAsset.grayDark.color
-            secondVoteButton.backgroundColor = .black
+            setVoteButtonBackgroundColor(firstSelected: false, secondSelected: true)
         default:
-            firstVoteButton.backgroundColor = SharedAsset.grayDark.color
-            secondVoteButton.backgroundColor = SharedAsset.grayDark.color
+            setVoteButtonBackgroundColor(firstSelected: false, secondSelected: false)
             if type == .home {
                 setVoteButtonTitles(firstTitle: "???", secondTitle: "???")
             }
         }
+    }
+    
+    private func setVoteButtonBackgroundColor(firstSelected: Bool, secondSelected: Bool) {
+        firstVoteButton.backgroundColor = firstSelected ? .black : SharedAsset.grayDark.color
+        secondVoteButton.backgroundColor = secondSelected ? .black : SharedAsset.grayDark.color
     }
     
     private func setVoteButtonTitles(firstTitle: String, secondTitle: String) {
