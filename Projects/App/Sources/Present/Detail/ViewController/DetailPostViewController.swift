@@ -356,8 +356,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         writerImageStringData
             .observe(on: MainScheduler.instance)
             .compactMap { URL(string: $0 ?? "") }
-            .bind(with: self) { owner, arg in
-                Downsampling.optimization(imageAt: arg,
+            .bind(with: self) { owner, imageUrl in
+                Downsampling.optimization(imageAt: imageUrl,
                                           to: owner.userImageView.frame.size,
                                           scale: 2) { image in
                     owner.userImageView.image = image
@@ -368,7 +368,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             .filter { self.enterCommentTextView.text == CommentPlaceHolder.text }
             .bind(with: self, onNext: { owner, _ in
                 owner.enterCommentTextView.text = ""
-                owner.enterCommentTextView.textColor = UIColor.black
+                owner.enterCommentTextView.textColor = .black
             }).disposed(by: disposeBag)
         
         enterCommentTextView.rx.didEndEditing
@@ -377,7 +377,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             .bind(with: self, onNext: { owner, _ in
                 owner.setEnterTextViewAutoSize()
                 owner.enterCommentTextView.text = CommentPlaceHolder.text
-                owner.enterCommentTextView.textColor = UIColor.lightGray
+                owner.enterCommentTextView.textColor = .lightGray
                 owner.setDefaultSubmitButton()
             }).disposed(by: disposeBag)
         
@@ -407,22 +407,22 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func configure(model: PostList) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-        self.titleLabel.text = model.title
-        self.contentLabel.text = model.content
-        self.firstVoteOptionLabel.text = model.firstVotingOption
-        self.secondVoteOptionLabel.text = model.secondVotingOption
+        titleLabel.text = model.title
+        contentLabel.text = model.content
+        firstVoteOptionLabel.text = model.firstVotingOption
+        secondVoteOptionLabel.text = model.secondVotingOption
         Downsampling.optimization(imageAt: firstImageUrl,
-                                  to: self.firstPostImageView.frame.size,
-                                  scale: 2) { image in
-            self.firstPostImageView.image = image
+                                  to: firstPostImageView.frame.size,
+                                  scale: 2) { [weak self] image in
+            self?.firstPostImageView.image = image
         }
         
         Downsampling.optimization(imageAt: secondImageUrl,
-                                  to: self.secondPostImageView.frame.size,
-                                  scale: 2) { image in
-            self.secondPostImageView.image = image
+                                  to: secondPostImageView.frame.size,
+                                  scale: 2) { [weak self] image in
+            self?.secondPostImageView.image = image
         }
-        self.setVoteButtonLayout(with: model)
+        setVoteButtonLayout(with: model)
     }
     
     private func updateVotingStateWithLayout(_ votingState: Int) {
@@ -459,7 +459,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             firstVotingCount: Double(model.firstVotingCount),
             secondVotingCount: Double(model.secondVotingCount)
         )
-        setVoteButtonTitles(firstTitle: "\(data.0)%(\(data.2)명)", secondTitle: "\(data.1)%(\(data.3)명)")
+        setVoteButtonTitles(firstTitle: "\(data.0)%(\(data.2)명)",
+                            secondTitle: "\(data.1)%(\(data.3)명)")
         setVoteButtonLayout(voting: model.votingState)
     }
     
@@ -498,7 +499,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         removeUserDidTakeScreenshotNotification()
     }
     
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    override func observeValue(forKeyPath keyPath: String?,
+                               of object: Any?,
+                               change: [NSKeyValueChangeKey : Any]?,
+                               context: UnsafeMutableRawPointer?) {
         if keyPath == ContentSizeKey.key {
             if object is UITableView {
                 if let newValue = change?[.newKey] as? CGSize {
@@ -698,11 +702,14 @@ extension DetailPostViewController: UITableViewDelegate {
         var config: UISwipeActionsConfiguration? = nil
         let commentModel = commentData.value[indexPath.row]
         
-        lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
+        let deleteContextual = UIContextualAction(style: .destructive,
+                                                       title: nil,
+                                                       handler: { _, _, _ in
             self.viewModel.requestToDeleteComment(
                 postIdx: self.model.value.idx,
                 commentIdx: commentModel.idx
-            ).bind(with: self) { owner, result in
+            )
+            .bind(with: self) { owner, _ in
                 LoadingIndicator.showLoading(text: "")
                 var arr = owner.commentData.value
                 arr.remove(at: indexPath.row)
