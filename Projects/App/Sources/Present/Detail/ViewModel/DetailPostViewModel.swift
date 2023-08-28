@@ -49,7 +49,6 @@ final class DetailPostViewModel: BaseViewModel {
                     print("comment = \(error.localizedDescription)")
                 }
             }
-            
             return Disposables.create()
         }
     }

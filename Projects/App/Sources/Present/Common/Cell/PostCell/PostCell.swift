@@ -34,9 +34,9 @@ final class PostCell: UITableViewCell {
                                                         votingState: 0,
                                                         participants: 0,
                                                         commentCount: 0))
-    var removeCellDelegate: RemoveTableViewCellHandlerProtocol?
-    var postVoteButtonDelegate: PostVoteButtonHandlerProtocol?
-    var failedImageLoadingDelegate: ImageLoadingFailureHandlerProtocol?
+    weak var removeCellDelegate: RemoveTableViewCellHandlerProtocol?
+    weak var postVoteButtonDelegate: PostVoteButtonHandlerProtocol?
+    weak var failedImageLoadingDelegate: ImageLoadingFailureHandlerProtocol?
     var type: ViewControllerType = .home
     var disposeBag = DisposeBag()
     
