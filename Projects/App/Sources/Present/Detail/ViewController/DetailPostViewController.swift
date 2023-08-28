@@ -292,7 +292,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
-            .bind(with: self, onNext: { owner, contentOffset in
+            .bind(with: self) { owner, contentOffset in
                 if owner.isLastPage {
                     owner.updateEmptyLabelLayout()
                     return
@@ -306,8 +306,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 if shouldLoadMore {
                     owner.loadMoreComments()
                 }
-            })
-            .disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
     }
     
     private func setOptionLayout() {
@@ -366,23 +365,23 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         enterCommentTextView.rx.didBeginEditing
             .filter { self.enterCommentTextView.text == CommentPlaceHolder.text }
-            .bind(with: self, onNext: { owner, _ in
+            .bind(with: self) { owner, _ in
                 owner.enterCommentTextView.text = ""
                 owner.enterCommentTextView.textColor = .black
-            }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         enterCommentTextView.rx.didEndEditing
             .map { self.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { $0.isEmpty }
-            .bind(with: self, onNext: { owner, _ in
+            .bind(with: self) { owner, _ in
                 owner.setEnterTextViewAutoSize()
                 owner.enterCommentTextView.text = CommentPlaceHolder.text
                 owner.enterCommentTextView.textColor = .lightGray
                 owner.setDefaultSubmitButton()
-            }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         enterCommentTextView.rx.didChange
-            .bind(with: self, onNext: { owner, _ in
+            .bind(with: self) { owner, _ in
                 owner.setEnterTextViewAutoSize()
                 
                 if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 1 {
@@ -391,7 +390,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 } else {
                     owner.setDefaultSubmitButton()
                 }
-            }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         firstVoteButton.rx.tap
             .bind(with: self) { owner, _ in
@@ -689,11 +688,11 @@ extension DetailPostViewController {
     
     private func submitCommentButtonDidTap() {
         submitCommentButton.rx.tap
-            .bind(with: self, onNext: { owner, _ in
+            .bind(with: self) { owner, _ in
                 LoadingIndicator.showLoading(text: "게시 중")
                 owner.commentTableView.tableHeaderView = nil
                 owner.submitComment()
-            }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
     }
 }
 
