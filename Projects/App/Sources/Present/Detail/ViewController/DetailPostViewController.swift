@@ -14,10 +14,6 @@ enum ContentSizeKey {
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
     var commentModelData = BehaviorRelay<CommentModel>(value: CommentModel(page: 0, size: 0, writer: "", isMine: false, commentList: []))
-
-    var isMineData = PublishSubject<Bool>()
-    var writerNameData = PublishSubject<String>()
-    var writerImageStringData = PublishSubject<String?>()
     var commentListData = BehaviorRelay<[CommentList]>(value: [])
     private var postListModelRelay = BehaviorRelay<PostList>(value: PostList(
         idx: 0,
@@ -288,11 +284,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func bindTableView() {
-        commentListData.bind(to: commentTableView.rx.items(
-            cellIdentifier: CommentCell.identifier,
-            cellType: CommentCell.self)) { (row, data, cell) in
-                cell.configure(model: data)
-            }.disposed(by: disposeBag)
+        commentModelData
+            .map { $0.commentList}
+            .bind(to: commentTableView.rx.items(
+                cellIdentifier: CommentCell.identifier,
+                cellType: CommentCell.self)) { (row, data, cell) in
+                    cell.configure(model: data)
+                }.disposed(by: disposeBag)
         
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
@@ -341,25 +339,17 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func bindUI() {
-        writerNameData
-            .bind(to: userNameLabel.rx.text)
-            .disposed(by: disposeBag)
-        
-        writerImageStringData
-            .observe(on: MainScheduler.instance)
-            .compactMap { URL(string: $0 ?? "") }
-            .bind(with: self) { owner, imageUrl in
-                Downsampling.optimization(imageAt: imageUrl,
-                                          to: owner.userImageView.frame.size,
-                                          scale: 2) { image in
-                    owner.userImageView.image = image
-                }
-            }.disposed(by: disposeBag)
-        
         commentModelData
             .bind(with: self) { owner, commentModel in
                 guard let imageUrl = URL(string: commentModel.image ?? "") else {
                     return
+                }
+                
+                if !commentModel.isMine {
+                    owner.userOptionButton.snp.makeConstraints {
+                        $0.centerY.equalTo(owner.userImageView)
+                        $0.trailing.equalTo(owner.divideVotePostImageLineView.snp.trailing)
+                    }
                 }
                 owner.userNameLabel.text = commentModel.writer
                 Downsampling.optimization(imageAt: imageUrl,
@@ -406,15 +396,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         secondVoteButton.rx.tap
             .bind(with: self) { owner, _ in
                 owner.updateVotingStateWithLayout(2)
-            }.disposed(by: disposeBag)
-        
-        isMineData
-            .filter { $0 == false }
-            .bind(with: self) { owner, arg in
-                owner.userOptionButton.snp.makeConstraints {
-                    $0.centerY.equalTo(owner.userImageView)
-                    $0.trailing.equalTo(owner.divideVotePostImageLineView.snp.trailing)
-                }
             }.disposed(by: disposeBag)
     }
     
