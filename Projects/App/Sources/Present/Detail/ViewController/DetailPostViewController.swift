@@ -13,7 +13,13 @@ enum ContentSizeKey {
 }
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
-    var detailPostModelRelay = BehaviorRelay<CommentModel>(value: CommentModel(page: 0, size: 0, writer: "", isMine: false, commentList: []))
+    var detailPostModelRelay = BehaviorRelay<CommentModel>(value: CommentModel(
+        page: 0,
+        size: 0,
+        writer: "",
+        isMine: false,
+        commentList: [])
+    )
     private var postListModelRelay = BehaviorRelay<PostList>(value: PostList(
         idx: 0,
         firstImageUrl: "",
