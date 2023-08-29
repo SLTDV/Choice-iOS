@@ -13,7 +13,7 @@ enum ContentSizeKey {
 }
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
-    var detailPostModel = BehaviorRelay<CommentModel>(value: CommentModel(page: 0, size: 0, writer: "", isMine: false, commentList: []))
+    var detailPostModelRelay = BehaviorRelay<CommentModel>(value: CommentModel(page: 0, size: 0, writer: "", isMine: false, commentList: []))
     private var postListModelRelay = BehaviorRelay<PostList>(value: PostList(
         idx: 0,
         firstImageUrl: "",
@@ -283,7 +283,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func bindTableView() {
-        detailPostModel
+        detailPostModelRelay
             .map { $0.commentList}
             .bind(to: commentTableView.rx.items(
                 cellIdentifier: CommentCell.identifier,
@@ -311,7 +311,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func updateEmptyLabelLayout() {
-        if detailPostModel.value.commentList.isEmpty && isLastPage {
+        if detailPostModelRelay.value.commentList.isEmpty && isLastPage {
             emptyLabel.frame = CGRect(x: 0, y: 15, width: commentTableView.bounds.width, height: 100)
             commentTableView.tableHeaderView = emptyLabel
             commentTableView.separatorStyle = .none
@@ -338,7 +338,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func bindUI() {
-        detailPostModel
+        detailPostModelRelay
             .bind(with: self) { owner, commentModel in
                 guard let imageUrl = URL(string: commentModel.image ?? "") else {
                     return
@@ -668,9 +668,9 @@ extension DetailPostViewController {
         viewModel.commentCurrentPage = -1
         viewModel.requestToCreateComment(idx: postListModelRelay.value.idx, content: content)
             .bind(with: self) { owner, _ in
-                var relay = owner.detailPostModel.value
+                var relay = owner.detailPostModelRelay.value
                 relay.commentList.removeAll()
-                owner.detailPostModel.accept(relay)
+                owner.detailPostModelRelay.accept(relay)
                 owner.loadMoreComments()
                 owner.isLastPage = false
                 DispatchQueue.main.async {
@@ -697,7 +697,7 @@ extension DetailPostViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         var config: UISwipeActionsConfiguration? = nil
         
-        let commentModel = detailPostModel.value.commentList[indexPath.row]
+        let commentModel = detailPostModelRelay.value.commentList[indexPath.row]
         
         let deleteContextual = UIContextualAction(style: .destructive,
                                                        title: nil,
@@ -708,9 +708,9 @@ extension DetailPostViewController: UITableViewDelegate {
             )
             .bind(with: self) { owner, _ in
                 LoadingIndicator.showLoading(text: "")
-                var arr = owner.detailPostModel.value
+                var arr = owner.detailPostModelRelay.value
                 arr.commentList.remove(at: indexPath.row)
-                owner.detailPostModel.accept(arr)
+                owner.detailPostModelRelay.accept(arr)
                 DispatchQueue.main.async {
                     owner.commentTableView.reloadRows(
                         at: [indexPath],
