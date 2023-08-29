@@ -8,8 +8,9 @@ import Swinject
 protocol CommentDataProtocol: AnyObject {
     var writerNameData: PublishSubject<String> { get set  }
     var writerImageStringData: PublishSubject<String?> { get set }
-    var commentData: BehaviorRelay<[CommentList]> { get set }
-    var isMineData: Bool { get set }
+    var commentListData: BehaviorRelay<[CommentList]> { get set }
+    var isMineData: PublishSubject<Bool> { get set }
+    var commentModelData: BehaviorRelay<CommentModel> { get set }
 }
 
 final class DetailPostViewModel: BaseViewModel {
@@ -40,10 +41,10 @@ final class DetailPostViewModel: BaseViewModel {
                     observer.onNext(postData.size)
                     self?.delegate?.writerImageStringData.onNext(postData.image)
                     self?.delegate?.writerNameData.onNext(postData.writer)
-                    self?.delegate?.isMineData = postData.isMine
-                    var relay = self?.delegate?.commentData.value
+                    self?.delegate?.isMineData.onNext(postData.isMine)
+                    var relay = self?.delegate?.commentListData.value
                     relay?.append(contentsOf: postData.commentList)
-                    self?.delegate?.commentData.accept(relay!)
+                    self?.delegate?.commentListData.accept(relay!)
                 case .failure(let error):
                     observer.onError(error)
                     print("comment = \(error.localizedDescription)")

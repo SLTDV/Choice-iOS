@@ -13,11 +13,13 @@ enum ContentSizeKey {
 }
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
+    var commentModelData = BehaviorRelay<CommentModel>(value: CommentModel(page: 0, size: 0, writer: "", isMine: false, commentList: []))
+
+    var isMineData = PublishSubject<Bool>()
     var writerNameData = PublishSubject<String>()
     var writerImageStringData = PublishSubject<String?>()
-    var isMineData = false
-    var commentData = BehaviorRelay<[CommentList]>(value: [])
-    private var model = BehaviorRelay<PostList>(value: PostList(
+    var commentListData = BehaviorRelay<[CommentList]>(value: [])
+    private var postListModelRelay = BehaviorRelay<PostList>(value: PostList(
         idx: 0,
         firstImageUrl: "",
         secondImageUrl: "",
@@ -169,7 +171,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     init(viewModel: DetailPostViewModel, model: PostList, type: ViewControllerType) {
         super.init(viewModel: viewModel)
-        self.model.accept(model)
+        self.postListModelRelay.accept(model)
         self.type = type
         
         scrollView.addGestureRecognizer(tapGestureRecognizer)
@@ -239,7 +241,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         
-        viewModel.requestToReportPost(postIdx: self.model.value.idx)
+        viewModel.requestToReportPost(postIdx: self.postListModelRelay.value.idx)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: {
                 alert.title = "완료"
@@ -256,7 +258,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         
-        viewModel.requestToBlockUser(postIdx: self.model.value.idx)
+        viewModel.requestToBlockUser(postIdx: self.postListModelRelay.value.idx)
             .observe(on: MainScheduler.instance)
             .subscribe(onNext: {
                 alert.title = "완료"
@@ -286,7 +288,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func bindTableView() {
-        commentData.bind(to: commentTableView.rx.items(
+        commentListData.bind(to: commentTableView.rx.items(
             cellIdentifier: CommentCell.identifier,
             cellType: CommentCell.self)) { (row, data, cell) in
                 cell.configure(model: data)
@@ -311,19 +313,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }.disposed(by: disposeBag)
     }
     
-    private func setOptionLayout() {
-        if !isMineData {
-            userOptionButton.snp.makeConstraints {
-                $0.centerY.equalTo(userImageView)
-                $0.trailing.equalTo(divideVotePostImageLineView.snp.trailing)
-            }
-        }
-    }
-    
     private func updateEmptyLabelLayout() {
-        setOptionLayout()
-
-        if commentData.value.isEmpty && isLastPage {
+        if commentListData.value.isEmpty && isLastPage {
             emptyLabel.frame = CGRect(x: 0, y: 15, width: commentTableView.bounds.width, height: 100)
             commentTableView.tableHeaderView = emptyLabel
             commentTableView.separatorStyle = .none
@@ -337,7 +328,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         commentTableView.tableFooterView = createSpinnerFooter()
         
         self.commentTableView.performBatchUpdates(nil, completion: nil)
-        viewModel.requestCommentData(idx: self.model.value.idx)
+        viewModel.requestCommentData(idx: self.postListModelRelay.value.idx)
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, size in
                 owner.commentTableView.tableFooterView = nil
@@ -358,6 +349,19 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             .observe(on: MainScheduler.instance)
             .compactMap { URL(string: $0 ?? "") }
             .bind(with: self) { owner, imageUrl in
+                Downsampling.optimization(imageAt: imageUrl,
+                                          to: owner.userImageView.frame.size,
+                                          scale: 2) { image in
+                    owner.userImageView.image = image
+                }
+            }.disposed(by: disposeBag)
+        
+        commentModelData
+            .bind(with: self) { owner, commentModel in
+                guard let imageUrl = URL(string: commentModel.image ?? "") else {
+                    return
+                }
+                owner.userNameLabel.text = commentModel.writer
                 Downsampling.optimization(imageAt: imageUrl,
                                           to: owner.userImageView.frame.size,
                                           scale: 2) { image in
@@ -403,6 +407,15 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             .bind(with: self) { owner, _ in
                 owner.updateVotingStateWithLayout(2)
             }.disposed(by: disposeBag)
+        
+        isMineData
+            .filter { $0 == false }
+            .bind(with: self) { owner, arg in
+                owner.userOptionButton.snp.makeConstraints {
+                    $0.centerY.equalTo(owner.userImageView)
+                    $0.trailing.equalTo(owner.divideVotePostImageLineView.snp.trailing)
+                }
+            }.disposed(by: disposeBag)
     }
     
     private func configure(model: PostList) {
@@ -427,7 +440,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func updateVotingStateWithLayout(_ votingState: Int) {
-        let model = model.value
+        let model = postListModelRelay.value
         
         if model.votingState == votingState {
             return
@@ -523,7 +536,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         bindUI()
         setKeyboard()
         submitCommentButtonDidTap()
-        configure(model: model.value)
+        configure(model: postListModelRelay.value)
     }
     
     override func addView() {
@@ -673,9 +686,9 @@ extension DetailPostViewController {
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         viewModel.commentCurrentPage = -1
-        viewModel.requestToCreateComment(idx: model.value.idx, content: content)
+        viewModel.requestToCreateComment(idx: postListModelRelay.value.idx, content: content)
             .bind(with: self) { owner, _ in
-                owner.commentData.accept([])
+                owner.commentListData.accept([])
                 owner.loadMoreComments()
                 owner.isLastPage = false
                 DispatchQueue.main.async {
@@ -701,20 +714,20 @@ extension DetailPostViewController {
 extension DetailPostViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         var config: UISwipeActionsConfiguration? = nil
-        let commentModel = commentData.value[indexPath.row]
+        let commentModel = commentListData.value[indexPath.row]
         
         let deleteContextual = UIContextualAction(style: .destructive,
                                                        title: nil,
                                                        handler: { _, _, _ in
             self.viewModel.requestToDeleteComment(
-                postIdx: self.model.value.idx,
+                postIdx: self.postListModelRelay.value.idx,
                 commentIdx: commentModel.idx
             )
             .bind(with: self) { owner, _ in
                 LoadingIndicator.showLoading(text: "")
-                var arr = owner.commentData.value
+                var arr = owner.commentListData.value
                 arr.remove(at: indexPath.row)
-                owner.commentData.accept(arr)
+                owner.commentListData.accept(arr)
                 DispatchQueue.main.async {
                     owner.commentTableView.reloadRows(
                         at: [indexPath],
