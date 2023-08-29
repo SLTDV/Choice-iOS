@@ -14,7 +14,6 @@ enum ContentSizeKey {
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
     var commentModelData = BehaviorRelay<CommentModel>(value: CommentModel(page: 0, size: 0, writer: "", isMine: false, commentList: []))
-    var commentListData = BehaviorRelay<[CommentList]>(value: [])
     private var postListModelRelay = BehaviorRelay<PostList>(value: PostList(
         idx: 0,
         firstImageUrl: "",
@@ -312,7 +311,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func updateEmptyLabelLayout() {
-        if commentListData.value.isEmpty && isLastPage {
+        if commentModelData.value.commentList.isEmpty && isLastPage {
             emptyLabel.frame = CGRect(x: 0, y: 15, width: commentTableView.bounds.width, height: 100)
             commentTableView.tableHeaderView = emptyLabel
             commentTableView.separatorStyle = .none
@@ -669,7 +668,9 @@ extension DetailPostViewController {
         viewModel.commentCurrentPage = -1
         viewModel.requestToCreateComment(idx: postListModelRelay.value.idx, content: content)
             .bind(with: self) { owner, _ in
-                owner.commentListData.accept([])
+                var relay = owner.commentModelData.value
+                relay.commentList.removeAll()
+                owner.commentModelData.accept(relay)
                 owner.loadMoreComments()
                 owner.isLastPage = false
                 DispatchQueue.main.async {
@@ -695,7 +696,8 @@ extension DetailPostViewController {
 extension DetailPostViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         var config: UISwipeActionsConfiguration? = nil
-        let commentModel = commentListData.value[indexPath.row]
+        
+        let commentModel = commentModelData.value.commentList[indexPath.row]
         
         let deleteContextual = UIContextualAction(style: .destructive,
                                                        title: nil,
@@ -706,9 +708,9 @@ extension DetailPostViewController: UITableViewDelegate {
             )
             .bind(with: self) { owner, _ in
                 LoadingIndicator.showLoading(text: "")
-                var arr = owner.commentListData.value
-                arr.remove(at: indexPath.row)
-                owner.commentListData.accept(arr)
+                var arr = owner.commentModelData.value
+                arr.commentList.remove(at: indexPath.row)
+                owner.commentModelData.accept(arr)
                 DispatchQueue.main.async {
                     owner.commentTableView.reloadRows(
                         at: [indexPath],

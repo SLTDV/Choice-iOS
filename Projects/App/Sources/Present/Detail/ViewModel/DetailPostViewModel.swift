@@ -35,9 +35,9 @@ final class DetailPostViewModel: BaseViewModel {
                 switch response.result {
                 case .success(let postData):
                     observer.onNext(postData.size)
-                    var relay = self?.delegate?.commentModelData.value.commentList
-                    relay?.append(contentsOf: postData.commentList)
-//                    self?.delegate?.commentModelData.acc
+                    var relay = self?.delegate?.commentModelData.value
+                    relay?.commentList.append(contentsOf: postData.commentList)
+                    self?.delegate?.commentModelData.accept(relay!)
                 case .failure(let error):
                     observer.onError(error)
                     print("comment = \(error.localizedDescription)")
