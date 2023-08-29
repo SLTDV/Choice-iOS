@@ -6,7 +6,7 @@ import JwtStore
 import Swinject
 
 protocol CommentDataProtocol: AnyObject {
-    var commentModelData: BehaviorRelay<CommentModel> { get set }
+    var detailPostModel: BehaviorRelay<CommentModel> { get set }
 }
 
 final class DetailPostViewModel: BaseViewModel {
@@ -35,9 +35,9 @@ final class DetailPostViewModel: BaseViewModel {
                 switch response.result {
                 case .success(let postData):
                     observer.onNext(postData.size)
-                    var relay = self?.delegate?.commentModelData.value
+                    var relay = self?.delegate?.detailPostModel.value
                     relay?.commentList.append(contentsOf: postData.commentList)
-                    self?.delegate?.commentModelData.accept(relay!)
+                    self?.delegate?.detailPostModel.accept(relay!)
                 case .failure(let error):
                     observer.onError(error)
                     print("comment = \(error.localizedDescription)")
