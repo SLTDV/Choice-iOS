@@ -18,6 +18,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     ) -> Bool {
         GADMobileAds.sharedInstance().start(completionHandler: nil)
         
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in
+            DispatchQueue.main.async {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
+        
         assembler = Assembler([
             JwtStoreAssembly()
         ], container: AppDelegate.container)
@@ -25,6 +31,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let monitor = NetworksStatus.shared
         monitor.startMonitoring()
         return true
+    }
+    
+    func application(_ application: UIApplication,
+                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        let deviceToken: String = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
+        print("Device token is: \(deviceToken)")
     }
     
     // MARK: UISceneSession Lifecycle
