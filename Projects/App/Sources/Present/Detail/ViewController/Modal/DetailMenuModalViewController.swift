@@ -1,12 +1,9 @@
 import UIKit
 import SnapKit
 import Then
-import RxSwift
-import RxCocoa
-import Shared
 
 final class DetailMenuModalViewController: UIViewController {
-    private let reportIconImage = UIImageView().then {
+    private let reportIconImageView = UIImageView().then {
         $0.image = UIImage(systemName: "exclamationmark.circle")
         $0.tintColor = .systemRed
         $0.contentMode = .scaleAspectFill
@@ -17,7 +14,7 @@ final class DetailMenuModalViewController: UIViewController {
         $0.setTitleColor(UIColor.systemRed, for: .normal)
     }
     
-    private let blockUserIconImage = UIImageView().then {
+    private let blockUserIconImageView = UIImageView().then {
         $0.image = UIImage(systemName: "person.crop.circle.badge.xmark")
         $0.tintColor = .black
         $0.contentMode = .scaleAspectFill
@@ -28,7 +25,7 @@ final class DetailMenuModalViewController: UIViewController {
         $0.setTitleColor(UIColor.black, for: .normal)
     }
     
-    private let shareInstarIconImage = UIImageView().then {
+    private let shareInstarIconImageView = UIImageView().then {
         $0.image = ChoiceAsset.Images.instarIcon.image
         $0.tintColor = .black
         $0.contentMode = .scaleAspectFill
@@ -47,47 +44,47 @@ final class DetailMenuModalViewController: UIViewController {
     }
     
     private func addView() {
-        view.addSubviews(reportIconImage, reportTextButton,
-                         blockUserIconImage, blockUserTextButton,
-                         shareInstarIconImage, shareInstarTextButton)
+        view.addSubviews(reportIconImageView, reportTextButton,
+                         blockUserIconImageView, blockUserTextButton,
+                         shareInstarIconImageView, shareInstarTextButton)
     }
     
     private func setLayout() {
-        reportIconImage.snp.makeConstraints {
+        reportIconImageView.snp.makeConstraints {
             $0.top.left.equalToSuperview().offset(32)
             $0.width.equalToSuperview().dividedBy(15.6)
             $0.height.equalToSuperview().dividedBy(9)
         }
         
         reportTextButton.snp.makeConstraints {
-            $0.centerY.equalTo(reportIconImage)
-            $0.left.equalTo(reportIconImage.snp.right).offset(14)
+            $0.centerY.equalTo(reportIconImageView)
+            $0.left.equalTo(reportIconImageView.snp.right).offset(14)
             $0.width.equalToSuperview().dividedBy(4)
         }
         
-        blockUserIconImage.snp.makeConstraints {
-            $0.top.equalTo(reportIconImage.snp.bottom).offset(20)
-            $0.left.equalTo(reportIconImage)
+        blockUserIconImageView.snp.makeConstraints {
+            $0.top.equalTo(reportIconImageView.snp.bottom).offset(20)
+            $0.left.equalTo(reportIconImageView)
             $0.width.equalToSuperview().dividedBy(15.6)
             $0.height.equalToSuperview().dividedBy(9)
         }
         
         blockUserTextButton.snp.makeConstraints {
-            $0.centerY.equalTo(blockUserIconImage)
-            $0.left.equalTo(blockUserIconImage.snp.right).offset(14)
+            $0.centerY.equalTo(blockUserIconImageView)
+            $0.left.equalTo(blockUserIconImageView.snp.right).offset(14)
             $0.width.equalToSuperview().dividedBy(4)
         }
         
-        shareInstarIconImage.snp.makeConstraints {
-            $0.top.equalTo(blockUserIconImage.snp.bottom).offset(20)
-            $0.left.equalTo(reportIconImage)
+        shareInstarIconImageView.snp.makeConstraints {
+            $0.top.equalTo(blockUserIconImageView.snp.bottom).offset(20)
+            $0.left.equalTo(reportIconImageView)
             $0.width.equalToSuperview().dividedBy(16.6)
             $0.height.equalToSuperview().dividedBy(10)
         }
         
         shareInstarTextButton.snp.makeConstraints {
-            $0.centerY.equalTo(shareInstarIconImage)
-            $0.left.equalTo(shareInstarIconImage.snp.right).offset(14)
+            $0.centerY.equalTo(shareInstarIconImageView)
+            $0.left.equalTo(shareInstarIconImageView.snp.right).offset(14)
             $0.width.equalToSuperview().dividedBy(2.4)
         }
     }
