@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 import Then
 
-final class DetailMenuModalViewController: UIViewController {
+final class DetailOptionModalViewController: UIViewController {
     private let reportIconImageView = UIImageView().then {
         $0.image = UIImage(systemName: "exclamationmark.circle")
         $0.tintColor = .systemRed

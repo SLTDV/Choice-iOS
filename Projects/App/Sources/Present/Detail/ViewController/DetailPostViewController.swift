@@ -172,7 +172,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func presentModal() {
-        let vc = DetailMenuModalViewController()
+        let vc = DetailOptionModalViewController()
         
         vc.modalPresentationStyle = .pageSheet
         vc.sheetPresentationController?.preferredCornerRadius = 25
