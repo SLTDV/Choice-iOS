@@ -175,6 +175,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         let vc = DetailMenuModalViewController()
         
         vc.modalPresentationStyle = .pageSheet
+        vc.sheetPresentationController?.preferredCornerRadius = 25
         
         if #available(iOS 16.0, *) {
             vc.sheetPresentationController?.detents = [
