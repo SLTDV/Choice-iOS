@@ -179,7 +179,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         if #available(iOS 16.0, *) {
             vc.sheetPresentationController?.detents = [
                 .custom { _ in
-                    return 300
+                    return 250
                 }
             ]
         } else {

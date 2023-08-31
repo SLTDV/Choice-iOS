@@ -28,14 +28,15 @@ final class DetailMenuModalViewController: UIViewController {
         $0.setTitleColor(UIColor.black, for: .normal)
     }
     
-    private let shareInstaIconImage = UIImageView().then {
-        $0.image = UIImage(systemName: "exclamationmark.circle")
+    private let shareInstarIconImage = UIImageView().then {
+        $0.image = ChoiceAsset.Images.instarIcon.image
         $0.tintColor = .black
         $0.contentMode = .scaleAspectFill
     }
     
-    private let shareInstaTextButton = UIButton().then {
-        $0.titleLabel?.text = "Instargram 에 공유"
+    private let shareInstarTextButton = UIButton().then {
+        $0.setTitle("Instargram 에 공유", for: .normal)
+        $0.setTitleColor(UIColor.black, for: .normal)
     }
     
     override func viewDidLoad() {
@@ -48,7 +49,7 @@ final class DetailMenuModalViewController: UIViewController {
     private func addView() {
         view.addSubviews(reportIconImage, reportTextButton,
                          blockUserIconImage, blockUserTextButton,
-                         shareInstaIconImage, shareInstaTextButton)
+                         shareInstarIconImage, shareInstarTextButton)
     }
     
     private func setLayout() {
@@ -59,7 +60,7 @@ final class DetailMenuModalViewController: UIViewController {
         }
         
         reportTextButton.snp.makeConstraints {
-            $0.centerY.equalTo(reportIconImage.snp.centerY)
+            $0.centerY.equalTo(reportIconImage)
             $0.left.equalTo(reportIconImage.snp.right).offset(14)
             $0.width.equalToSuperview().dividedBy(4)
         }
@@ -73,8 +74,21 @@ final class DetailMenuModalViewController: UIViewController {
         
         blockUserTextButton.snp.makeConstraints {
             $0.centerY.equalTo(blockUserIconImage)
-            $0.left.equalTo(reportIconImage.snp.right).offset(14)
+            $0.left.equalTo(blockUserIconImage.snp.right).offset(14)
             $0.width.equalToSuperview().dividedBy(4)
+        }
+        
+        shareInstarIconImage.snp.makeConstraints {
+            $0.top.equalTo(blockUserIconImage.snp.bottom).offset(20)
+            $0.left.equalTo(reportIconImage)
+            $0.width.equalToSuperview().dividedBy(16.6)
+            $0.height.equalToSuperview().dividedBy(10)
+        }
+        
+        shareInstarTextButton.snp.makeConstraints {
+            $0.centerY.equalTo(shareInstarIconImage)
+            $0.left.equalTo(shareInstarIconImage.snp.right).offset(14)
+            $0.width.equalToSuperview().dividedBy(2.4)
         }
     }
 }
