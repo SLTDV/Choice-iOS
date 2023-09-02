@@ -53,25 +53,27 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     
     private func bind() {
         signInButton.rx.tap
-            .bind(onNext: { [weak self] _ in
-                guard let phoneNumber = self?.inputPhoneNumberTextField.text else { return }
-                guard let password = self?.inputPasswordTextField.text else { return }
+            .bind(with: self) { owner, _ in
+                let phoneNumber = owner.inputPhoneNumberTextField.text!
+                let password = owner.inputPasswordTextField.text!
                 
                 LoadingIndicator.showLoading(text: "")
-                DispatchQueue.main.async {
-                    self?.viewModel.requestSignIn(phoneNumber: phoneNumber, password: password){ [weak self] isComplete in
-                        guard isComplete else {
-                            self?.warningLabel.show(warning: "존재하지 않는 계정입니다.")
-                           
-                            DispatchQueue.main.async {
-                                self?.inputPhoneNumberTextField.shake()
-                                self?.inputPasswordTextField.shake()
-                            }
-                            return
+                owner.viewModel.requestSignIn(model: SigninRequestModel(
+                    phoneNumber: phoneNumber,
+                    password: password,
+                    fcmToken: ""
+                )){ [weak self] isComplete in
+                    guard isComplete else {
+                        self?.warningLabel.show(warning: "존재하지 않는 계정입니다.")
+                        
+                        DispatchQueue.main.async {
+                            self?.inputPhoneNumberTextField.shake()
+                            self?.inputPasswordTextField.shake()
                         }
+                        return
                     }
                 }
-            }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         pushSignUpButton.rx.tap
             .bind(with: self) { owner, _ in

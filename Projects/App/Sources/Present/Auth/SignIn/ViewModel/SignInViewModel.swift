@@ -8,11 +8,12 @@ import Swinject
 final class SignInViewModel: BaseViewModel {
     let container = AppDelegate.container.resolve(JwtStore.self)!
     
-    func requestSignIn(phoneNumber: String, password: String, completion: @escaping (Bool) -> Void) {
+    func requestSignIn(model: SigninRequestModel, completion: @escaping (Bool) -> Void) {
         let url = APIConstants.signInURL
         let params = [
-            "phoneNumber" : phoneNumber,
-            "password" : password
+            "phoneNumber" : model.phoneNumber,
+            "password" : model.password,
+            "fcmToken" : model.fcmToken,
         ] as Dictionary
         
         AF.request(url,
