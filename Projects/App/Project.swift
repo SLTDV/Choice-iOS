@@ -18,6 +18,6 @@ let project = Project.makeModule(
         .SPM.GoogleMobileAds
     ],
     resources: ["Resources/**"],
-    infoPlist: .file(path: "Support/Info.plist"),
-    baseSetting: ["OTHER_LDFLAGS": "-ObjC"]
+    infoPlist: .file(path: "Support/Info.plist")
+//    baseSetting: ["OTHER_LDFLAGS": "-ObjC"]
 )

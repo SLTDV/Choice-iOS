@@ -51,30 +51,31 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     
     private let warningLabel = WarningLabel()
     
+    private func showSigninError() {
+        warningLabel.show(warning: "존재하지 않는 계정입니다.")
+        inputPhoneNumberTextField.shake()
+        inputPasswordTextField.shake()
+    }
+    
     private func bind() {
         signInButton.rx.tap
+            .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, _ in
                 let phoneNumber = owner.inputPhoneNumberTextField.text!
                 let password = owner.inputPasswordTextField.text!
                 let deviceToken = UserDefaults.standard.string(forKey: "deviceToken")
                 
                 LoadingIndicator.showLoading(text: "")
+                
                 owner.viewModel.requestSignIn(model: SigninRequestModel(
                     phoneNumber: phoneNumber,
                     password: password,
-                    fcmToken: deviceToken
-                )){ [weak self] isComplete in
-                    guard isComplete else {
-                        self?.warningLabel.show(warning: "존재하지 않는 계정입니다.")
-                        
-                        DispatchQueue.main.async {
-                            self?.inputPhoneNumberTextField.shake()
-                            self?.inputPasswordTextField.shake()
-                        }
-                        return
-                    }
-                }
+                    deviceToken: deviceToken
+                )).subscribe(onError: { [weak self] _ in
+                    self?.showSigninError()
+                }).disposed(by: owner.disposeBag)
             }.disposed(by: disposeBag)
+        
         
         pushSignUpButton.rx.tap
             .bind(with: self) { owner, _ in

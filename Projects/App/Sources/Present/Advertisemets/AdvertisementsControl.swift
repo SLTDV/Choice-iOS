@@ -16,8 +16,7 @@ final class AdvertisementsControl: AdvertisementsHandlerProtocol {
     func loadRewardedAd(vc: UIViewController) {
         let request = GADRequest()
         
-        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers =
-            nil
+        GADMobileAds.sharedInstance().requestConfiguration.testDeviceIdentifiers = nil
         DispatchQueue.global().async {
             GADInterstitialAd.load(withAdUnitID: "ca-app-pub-5088279003431597/9843461422",
                                    request: request) { ad, error in
