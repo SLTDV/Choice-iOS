@@ -2,11 +2,24 @@ import UIKit
 import SnapKit
 import Then
 import RxSwift
+import RxCocoa
 
 final class DetailOptionModalViewController: UIViewController {
     private let disposeBag = DisposeBag()
     
-    let viewModel = DetailOptionModalViewModel()
+    let optionList = [
+        OptionData(image: UIImage(systemName: "exclamationmark.circle")!,
+                   text: "게시물 신고",
+                   color: UIColor.systemRed),
+        OptionData(image: UIImage(systemName: "person.crop.circle.badge.xmark")!,
+                   text: "사용자 차단",
+                   color: UIColor.black),
+        OptionData(image: ChoiceAsset.Images.instarIcon.image,
+                   text: "Instagram에 공유",
+                   color: UIColor.black)
+    ]
+    
+    let optionData = BehaviorRelay<[OptionData]>(value: [])
     
     private let optionListTableView = UITableView().then {
         $0.selectionFollowsFocus = false
@@ -19,13 +32,15 @@ final class DetailOptionModalViewController: UIViewController {
     override func viewDidLoad() {
         view.backgroundColor = .white
         
+        optionData.accept(optionList)
+        
         bindTableView()
         addView()
         setLayout()
     }
     
     private func bindTableView() {
-        viewModel.optionData
+        optionData
             .bind(to: optionListTableView.rx.items(
                 cellIdentifier: DetailOptionTableViewCell.identifier,
                 cellType: DetailOptionTableViewCell.self)) { (row, data, cell) in
