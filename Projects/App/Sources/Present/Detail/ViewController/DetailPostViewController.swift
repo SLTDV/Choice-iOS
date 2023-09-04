@@ -176,7 +176,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         vc.modalPresentationStyle = .pageSheet
         vc.sheetPresentationController?.preferredCornerRadius = 25
-        
+        vc.sheetPresentationController?.largestUndimmedDetentIdentifier = .medium
+        vc.sheetPresentationController?.prefersGrabberVisible = true
+
         if #available(iOS 16.0, *) {
             vc.sheetPresentationController?.detents = [
                 .custom { _ in
