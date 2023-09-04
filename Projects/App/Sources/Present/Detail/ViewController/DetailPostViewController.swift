@@ -171,7 +171,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.endEditing(true)
     }
     
-    private func presentModal() {
+    private func presentDetailOptionModal() {
         let vc = DetailOptionModalViewController()
         
         vc.modalPresentationStyle = .pageSheet
@@ -195,7 +195,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func userOptionButtonDidTap() {
         userOptionButton.rx.tap
             .bind(with: self) { owner, _ in
-                owner.presentModal()
+                owner.presentDetailOptionModal()
             }.disposed(by: disposeBag)
     }
     
