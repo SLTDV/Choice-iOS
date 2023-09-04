@@ -5,11 +5,11 @@ import Shared
 import RxSwift
 import NetworksMonitor
 import GoogleMobileAds
-//import FirebaseMessaging
+import FirebaseMessaging
 import Firebase
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate {
     static let container = Container()
     var assembler: Assembler!
     let disposeBag = DisposeBag()
@@ -20,13 +20,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     ) -> Bool {
         FirebaseApp.configure()
         
+        Messaging.messaging().delegate = self
+        
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in
             DispatchQueue.main.async {
                 UIApplication.shared.registerForRemoteNotifications()
             }
         }
         
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
+        GADMobileAds.sharedInstance().start()
         
         assembler = Assembler([
             JwtStoreAssembly()
@@ -40,7 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     func application(_ application: UIApplication,
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
-        print("DeviceToken is = \(deviceToken.map { String(format: "%02.2hhx", $0) }.joined())")
         Messaging.messaging().apnsToken = deviceToken
     }
     
@@ -76,9 +77,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     }
 }
 
-
 extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        print("fcmToken = \(fcmToken)")
         UserDefaults.standard.set(fcmToken, forKey: "deviceToken")
     }
 }

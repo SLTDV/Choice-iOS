@@ -46,7 +46,8 @@ final class HomeViewModel: BaseViewModel {
             case .success(let postData):
                 LoadingIndicator.hideLoading()
                 completion(.success(postData.size))
-                
+                print("postData = \(postData.postList[0].firstVotingCount)")
+                print("postData = \(postData.postList[0].secondVotingCount)")
                 var relay = self?.delegate?.postData.value
                 relay?.append(contentsOf: postData.postList)
                 self?.delegate?.postData.accept(relay!)
