@@ -29,7 +29,7 @@ final class DetailOptionModalViewController: UIViewController {
             .bind(to: optionListTableView.rx.items(
                 cellIdentifier: DetailOptionTableViewCell.identifier,
                 cellType: DetailOptionTableViewCell.self)) { (row, data, cell) in
-                    cell.configure(data: [data])
+                    cell.configure(data: data)
                     cell.selectionStyle = .none
                 }.disposed(by: disposeBag)
     }

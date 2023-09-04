@@ -24,12 +24,12 @@ final class DetailOptionTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func configure(data: [MyData]) {
-        optionIconImageView.image = data[0].image
-        optionIconImageView.tintColor = data[0].color
+    func configure(data: OptionData) {
+        optionIconImageView.image = data.image
+        optionIconImageView.tintColor = data.color
         
-        optionTitleLabel.text = data[0].text
-        optionTitleLabel.textColor = data[0].color
+        optionTitleLabel.text = data.text
+        optionTitleLabel.textColor = data.color
     }
     
     private func addView() {
