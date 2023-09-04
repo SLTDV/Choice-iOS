@@ -56,12 +56,13 @@ final class SignInViewController: BaseVC<SignInViewModel> {
             .bind(with: self) { owner, _ in
                 let phoneNumber = owner.inputPhoneNumberTextField.text!
                 let password = owner.inputPasswordTextField.text!
+                let deviceToken = UserDefaults.standard.string(forKey: "deviceToken")!
                 
                 LoadingIndicator.showLoading(text: "")
                 owner.viewModel.requestSignIn(model: SigninRequestModel(
                     phoneNumber: phoneNumber,
                     password: password,
-                    fcmToken: ""
+                    fcmToken: deviceToken
                 )){ [weak self] isComplete in
                     guard isComplete else {
                         self?.warningLabel.show(warning: "존재하지 않는 계정입니다.")

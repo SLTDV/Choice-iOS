@@ -16,13 +16,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
-        
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in
             DispatchQueue.main.async {
                 UIApplication.shared.registerForRemoteNotifications()
             }
         }
+        
+        GADMobileAds.sharedInstance().start(completionHandler: nil)
+        
         
         assembler = Assembler([
             JwtStoreAssembly()
@@ -37,7 +38,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
     ) {
         let deviceToken: String = deviceToken.map { String(format: "%02.2hhx", $0) }.joined()
-        print("Device token is: \(deviceToken)")
+        print("DeviceToken is = \(deviceToken)")
+        UserDefaults.standard.set(deviceToken, forKey: "deviceToken")
+    }
+    
+    func application(_ application: UIApplication,
+                     didFailToRegisterForRemoteNotificationsWithError error: Error
+    ) {
+        print("Failed Register Noti = \(error.localizedDescription)")
     }
     
     // MARK: UISceneSession Lifecycle
