@@ -56,7 +56,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
             .bind(with: self) { owner, _ in
                 let phoneNumber = owner.inputPhoneNumberTextField.text!
                 let password = owner.inputPasswordTextField.text!
-                let deviceToken = UserDefaults.standard.string(forKey: "deviceToken")!
+                let deviceToken = UserDefaults.standard.string(forKey: "deviceToken")
                 
                 LoadingIndicator.showLoading(text: "")
                 owner.viewModel.requestSignIn(model: SigninRequestModel(
