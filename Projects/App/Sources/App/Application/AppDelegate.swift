@@ -5,7 +5,7 @@ import Shared
 import RxSwift
 import NetworksMonitor
 import GoogleMobileAds
-import FirebaseMessaging
+//import FirebaseMessaging
 import Firebase
 
 @main
@@ -42,7 +42,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
     ) {
         print("DeviceToken is = \(deviceToken.map { String(format: "%02.2hhx", $0) }.joined())")
         Messaging.messaging().apnsToken = deviceToken
-        UserDefaults.standard.set(deviceToken, forKey: "deviceToken")
     }
     
     func application(_ application: UIApplication,
@@ -74,5 +73,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate, UNUserNotificationCenterD
         supportedInterfaceOrientationsFor window: UIWindow?
     ) -> UIInterfaceOrientationMask {
         return UIInterfaceOrientationMask.portrait
+    }
+}
+
+
+extension AppDelegate: MessagingDelegate {
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        UserDefaults.standard.set(fcmToken, forKey: "deviceToken")
     }
 }
