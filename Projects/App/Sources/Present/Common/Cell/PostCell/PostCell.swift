@@ -151,10 +151,6 @@ final class PostCell: UITableViewCell {
             return
         }
         
-        if model.value.votingState == 0 {
-            self.participantsCountLabel.text = "참여자 \(self.model.value.participants + 1)명"
-        }
-        
         model.value.votingState = sender.tag
         postVoteButtonDelegate?.postVoteButtonDidTap(idx: model.value.idx, choice: sender.tag)
         DispatchQueue.main.async {

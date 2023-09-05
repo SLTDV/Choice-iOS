@@ -126,6 +126,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
             ]
         } else {
             vc.sheetPresentationController?.detents = [.medium()]
+            vc.sheetPresentationController?.largestUndimmedDetentIdentifier = .large
         }
         
         self.present(vc, animated: true)
