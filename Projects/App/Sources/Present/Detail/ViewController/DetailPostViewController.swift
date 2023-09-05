@@ -310,7 +310,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             .map { $0.commentList}
             .bind(to: commentTableView.rx.items(
                 cellIdentifier: CommentCell.identifier,
-                cellType: CommentCell.self)) { (row, data, cell) in
+                cellType: CommentCell.self)) { (_, data, cell) in
                     cell.configure(model: data)
                 }.disposed(by: disposeBag)
         
