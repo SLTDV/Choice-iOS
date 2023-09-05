@@ -315,7 +315,7 @@ final class PostCell: UITableViewCell {
         }
     }
     
-    private func setVoteButtonBackgroundColor(firstSelected: Bool, secondSelected: Bool) {
+    private func setVoteButtonBackgroundColors(firstSelected: Bool, secondSelected: Bool) {
         firstVoteButton.backgroundColor = firstSelected ? .black : SharedAsset.grayDark.color
         secondVoteButton.backgroundColor = secondSelected ? .black : SharedAsset.grayDark.color
     }
