@@ -306,11 +306,11 @@ final class PostCell: UITableViewCell {
         
         switch voting {
         case 1:
-            setVoteButtonBackgroundColor(firstSelected: true, secondSelected: false)
+            setVoteButtonBackgroundColors(firstSelected: true, secondSelected: false)
         case 2:
-            setVoteButtonBackgroundColor(firstSelected: false, secondSelected: true)
+            setVoteButtonBackgroundColors(firstSelected: false, secondSelected: true)
         default:
-            setVoteButtonBackgroundColor(firstSelected: false, secondSelected: false)
+            setVoteButtonBackgroundColors(firstSelected: false, secondSelected: false)
             setVoteButtonTitles(firstTitle: "0%(0명)", secondTitle: "0%(0명)")
         }
     }
