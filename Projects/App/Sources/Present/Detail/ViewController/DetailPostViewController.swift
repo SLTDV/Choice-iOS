@@ -187,6 +187,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             ]
         } else {
             vc.sheetPresentationController?.detents = [.medium()]
+            vc.sheetPresentationController?.largestUndimmedDetentIdentifier = .large
         }
         
         self.present(vc, animated: true)
