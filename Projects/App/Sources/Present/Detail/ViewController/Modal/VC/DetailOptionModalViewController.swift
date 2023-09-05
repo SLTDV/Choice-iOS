@@ -7,8 +7,7 @@ import RxCocoa
 final class DetailOptionModalViewController: UIViewController {
     private let disposeBag = DisposeBag()
     
-    
-    let optionList = [
+    private let optionList = [
         OptionData(image: UIImage(systemName: "exclamationmark.circle")!,
                    text: "게시물 신고",
                    color: UIColor.systemRed),
@@ -20,7 +19,7 @@ final class DetailOptionModalViewController: UIViewController {
                    color: UIColor.black)
     ]
 
-    let optionData = BehaviorRelay<[OptionData]>(value: [])
+    private let optionData = BehaviorRelay<[OptionData]>(value: [])
     
     private let optionListTableView = UITableView().then {
         $0.selectionFollowsFocus = false
