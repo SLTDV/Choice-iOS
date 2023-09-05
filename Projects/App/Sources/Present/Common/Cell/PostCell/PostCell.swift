@@ -56,7 +56,8 @@ final class PostCell: UITableViewCell {
         $0.menu = UIMenu(title: "", children: [UIAction(
             title: "게시물 삭제",
             attributes: .destructive,
-            handler: { _ in self.removePostButtonDidTap(postIdx: self.model.value.idx)
+            handler: { [weak self] _ in
+                self?.removePostButtonDidTap(postIdx: self?.model.value.idx!)
             })])
         $0.isHidden = true
         $0.tintColor = .black
