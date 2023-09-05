@@ -336,9 +336,8 @@ final class PostCell: UITableViewCell {
         self.model
             .filter { _ in self.hasFailedImageLoading == false }
             .compactMap {
-                guard
-                let firstUrl = URL(string: $0.firstImageUrl),
-                let secondUrl = URL(string: $0.secondImageUrl)
+                guard let firstUrl = URL(string: $0.firstImageUrl),
+                      let secondUrl = URL(string: $0.secondImageUrl)
                 else {
                     return nil
                 }
