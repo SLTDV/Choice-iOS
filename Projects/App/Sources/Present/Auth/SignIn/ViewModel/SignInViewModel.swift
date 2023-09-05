@@ -16,8 +16,6 @@ final class SignInViewModel: BaseViewModel {
             "deviceToken" : model.deviceToken,
         ] as Dictionary
 
-        print("fcmToken = \(model.deviceToken)")
-
         return Observable.create { (observer) -> Disposable in
             AF.request(url,
                        method: .post,
@@ -40,36 +38,6 @@ final class SignInViewModel: BaseViewModel {
             return Disposables.create()
         }
     }
-    
-//    func requestSignIn(model: SigninRequestModel, completion: @escaping (Bool) -> Void) {
-//        let url = APIConstants.signInURL
-//        let params = [
-//            "phoneNumber" : model.phoneNumber,
-//            "password" : model.password,
-//            "deviceToken" : model.deviceToken,
-//        ] as Dictionary
-//
-//        print("fcmToken = \(params)")
-//
-//        AF.request(url,
-//                   method: .post,
-//                   parameters: params,
-//                   encoding: JSONEncoding.default)
-//        .validate()
-//        .responseDecodable(of: ManageTokenModel.self) { [weak self] response in
-//            switch response.result {
-//            case .success(let data):
-//                self?.container.setToken(data: data)
-//                self?.pushMainVC()
-//                LoadingIndicator.hideLoading()
-//                completion(true)
-//            case .failure(let error):
-//                print("signIn Error = \(error.localizedDescription)")
-//                LoadingIndicator.hideLoading()
-//                completion(false)
-//            }
-//        }
-//    }
     
     func pushMainVC() {
         coordinator.navigate(to: .mainVCIsRequried)
