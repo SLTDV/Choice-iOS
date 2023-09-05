@@ -242,8 +242,7 @@ final class PostCell: UITableViewCell {
     
     // MARK: - Main
     private func setHomeVotePostLayout(voting: Int) {
-        firstVoteButton.setTitleColor(.white, for: .normal)
-        secondVoteButton.setTitleColor(.white, for: .normal)
+        setVoteButtonTitleColors(color: .white)
         
         firstVoteButton.isEnabled = (voting == 1) ? false : true
         firstVoteButton.backgroundColor = (voting == 1) ? .black : SharedAsset.grayVoteButton.color
@@ -302,8 +301,7 @@ final class PostCell: UITableViewCell {
             $0.height.equalTo(68)
         }
         
-        firstVoteButton.setTitleColor(.white, for: .normal)
-        secondVoteButton.setTitleColor(.white, for: .normal)
+        setVoteButtonTitleColors(color: .white)
         
         switch voting {
         case 1:
@@ -324,6 +322,11 @@ final class PostCell: UITableViewCell {
     private func setVoteButtonTitles(firstTitle: String, secondTitle: String) {
         firstVoteButton.setTitle(firstTitle, for: .normal)
         secondVoteButton.setTitle(secondTitle, for: .normal)
+    }
+    
+    private func setVoteButtonTitleColors(color: UIColor) {
+        firstVoteButton.setTitleColor(color, for: .normal)
+        secondVoteButton.setTitleColor(color, for: .normal)
     }
     
     // MARK: - prepare
@@ -375,8 +378,8 @@ final class PostCell: UITableViewCell {
                 
                 switch owner.type {
                 case .home:
-                    owner.firstVoteButton.setTitle(model.firstVotingOption, for: .normal)
-                    owner.secondVoteButton.setTitle(model.secondVotingOption, for: .normal)
+                    setVoteButtonTitles(firstTitle: model.firstVotingOption,
+                                        secondTitle: model.secondVotingOption)
                     owner.setHomeVotePostLayout(voting: model.votingState)
                 case .profile:
                     owner.firstVoteOptionLabel.text = model.firstVotingOption
