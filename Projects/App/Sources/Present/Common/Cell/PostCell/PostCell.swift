@@ -262,8 +262,8 @@ final class PostCell: UITableViewCell {
             self?.secondVoteButton.isEnabled = false
             self?.removePostButton.isHidden = false
             
-            self?.firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
-            self?.secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
+            setVoteButtonTitles(firstTitle: "\(data.0)%(\(data.2)명)",
+                                secondTitle: "\(data.1)%(\(data.3)명)")
         }
         
         votePostButtonLayout(voting: model.votingState)
@@ -307,17 +307,23 @@ final class PostCell: UITableViewCell {
         
         switch voting {
         case 1:
-            firstVoteButton.backgroundColor = .black
-            secondVoteButton.backgroundColor = SharedAsset.grayDark.color
+            setVoteButtonBackgroundColor(firstSelected: true, secondSelected: false)
         case 2:
-            firstVoteButton.backgroundColor = SharedAsset.grayDark.color
-            secondVoteButton.backgroundColor = .black
+            setVoteButtonBackgroundColor(firstSelected: false, secondSelected: true)
         default:
-            firstVoteButton.backgroundColor = SharedAsset.grayDark.color
-            secondVoteButton.backgroundColor = SharedAsset.grayDark.color
-            firstVoteButton.setTitle("0%(0명)", for: .normal)
-            secondVoteButton.setTitle("0%(0명)", for: .normal)
+            setVoteButtonBackgroundColor(firstSelected: false, secondSelected: false)
+            setVoteButtonTitles(firstTitle: "0%(0명)", secondTitle: "0%(0명)")
         }
+    }
+    
+    private func setVoteButtonBackgroundColor(firstSelected: Bool, secondSelected: Bool) {
+        firstVoteButton.backgroundColor = firstSelected ? .black : SharedAsset.grayDark.color
+        secondVoteButton.backgroundColor = secondSelected ? .black : SharedAsset.grayDark.color
+    }
+    
+    private func setVoteButtonTitles(firstTitle: String, secondTitle: String) {
+        firstVoteButton.setTitle(firstTitle, for: .normal)
+        secondVoteButton.setTitle(secondTitle, for: .normal)
     }
     
     // MARK: - prepare
