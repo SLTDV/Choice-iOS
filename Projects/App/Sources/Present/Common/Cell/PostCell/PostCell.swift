@@ -57,7 +57,7 @@ final class PostCell: UITableViewCell {
             title: "게시물 삭제",
             attributes: .destructive,
             handler: { [weak self] _ in
-                self?.removePostButtonDidTap(postIdx: self?.model.value.idx!)
+                self?.removePostButtonDidTap(postIdx: (self?.model.value.idx)!)
             })])
         $0.isHidden = true
         $0.tintColor = .black
@@ -262,8 +262,8 @@ final class PostCell: UITableViewCell {
             self?.secondVoteButton.isEnabled = false
             self?.removePostButton.isHidden = false
             
-            setVoteButtonTitles(firstTitle: "\(data.0)%(\(data.2)명)",
-                                secondTitle: "\(data.1)%(\(data.3)명)")
+            self?.setVoteButtonTitles(firstTitle: "\(data.0)%(\(data.2)명)",
+                                      secondTitle: "\(data.1)%(\(data.3)명)")
         }
         
         votePostButtonLayout(voting: model.votingState)
@@ -378,7 +378,7 @@ final class PostCell: UITableViewCell {
                 
                 switch owner.type {
                 case .home:
-                    setVoteButtonTitles(firstTitle: model.firstVotingOption,
+                    owner.setVoteButtonTitles(firstTitle: model.firstVotingOption,
                                         secondTitle: model.secondVotingOption)
                     owner.setHomeVotePostLayout(voting: model.votingState)
                 case .profile:
