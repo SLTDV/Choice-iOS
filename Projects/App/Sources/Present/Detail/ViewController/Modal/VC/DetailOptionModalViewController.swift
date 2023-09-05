@@ -7,6 +7,7 @@ import RxCocoa
 final class DetailOptionModalViewController: UIViewController {
     private let disposeBag = DisposeBag()
     
+    
     let optionList = [
         OptionData(image: UIImage(systemName: "exclamationmark.circle")!,
                    text: "게시물 신고",
@@ -18,7 +19,7 @@ final class DetailOptionModalViewController: UIViewController {
                    text: "Instagram에 공유",
                    color: UIColor.black)
     ]
-    
+
     let optionData = BehaviorRelay<[OptionData]>(value: [])
     
     private let optionListTableView = UITableView().then {
@@ -27,16 +28,6 @@ final class DetailOptionModalViewController: UIViewController {
         $0.rowHeight = 65
         $0.register(DetailOptionTableViewCell.self,
                     forCellReuseIdentifier: DetailOptionTableViewCell.identifier)
-    }
-    
-    override func viewDidLoad() {
-        view.backgroundColor = .white
-        
-        optionData.accept(optionList)
-        
-        bindTableView()
-        addView()
-        setLayout()
     }
     
     private func bindTableView() {
@@ -49,6 +40,16 @@ final class DetailOptionModalViewController: UIViewController {
                 }.disposed(by: disposeBag)
     }
     
+    override func viewDidLoad() {
+        view.backgroundColor = .white
+        
+        optionData.accept(optionList)
+        
+        bindTableView()
+        addView()
+        setLayout()
+    }
+    
     private func addView() {
         view.addSubview(optionListTableView)
     }
@@ -56,7 +57,7 @@ final class DetailOptionModalViewController: UIViewController {
     private func setLayout() {
         optionListTableView.snp.makeConstraints {
             $0.top.equalTo(view.safeAreaLayoutGuide).offset(10)
-            $0.width.height.equalToSuperview()
+            $0.bottom.leading.trailing.equalToSuperview()
         }
     }
 }
