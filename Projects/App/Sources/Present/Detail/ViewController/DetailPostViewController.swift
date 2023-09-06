@@ -55,18 +55,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private lazy var userOptionButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.menu = UIMenu(
-            title: "신고 & 차단",
-            children: [UIAction(
-                title: "게시물 신고",
-                attributes: .destructive,
-                handler: { _ in self.presentReportPostAlert() }
-            ), UIAction(
-                title: "차단하기",
-                attributes: .destructive,
-                handler: { _ in self.presentBlockUserAlert()}
-            )]
-        )
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
     }
@@ -181,6 +169,35 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     @objc private func tapMethod(_ sender: UITapGestureRecognizer) {
         self.view.endEditing(true)
+    }
+    
+    private func presentDetailOptionModal() {
+        let vc = DetailOptionModalViewController()
+        
+        vc.modalPresentationStyle = .pageSheet
+        vc.sheetPresentationController?.preferredCornerRadius = 25
+        vc.sheetPresentationController?.largestUndimmedDetentIdentifier = .medium
+        vc.sheetPresentationController?.prefersGrabberVisible = true
+
+        if #available(iOS 16.0, *) {
+            vc.sheetPresentationController?.detents = [
+                .custom { _ in
+                    return 250
+                }
+            ]
+        } else {
+            vc.sheetPresentationController?.detents = [.medium()]
+            vc.sheetPresentationController?.largestUndimmedDetentIdentifier = .large
+        }
+        
+        self.present(vc, animated: true)
+    }
+    
+    private func userOptionButtonDidTap() {
+        userOptionButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.presentDetailOptionModal()
+            }.disposed(by: disposeBag)
     }
     
     private func presentReportPostAlert() {
@@ -407,10 +424,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func configure(model: PostList) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
+        
         self.titleLabel.text = model.title
         self.contentLabel.text = model.content
         self.firstVoteOptionLabel.text = model.firstVotingOption
         self.secondVoteOptionLabel.text = model.secondVotingOption
+        
         Downsampling.optimization(imageAt: firstImageUrl,
                                   to: self.firstPostImageView.frame.size,
                                   scale: 2) { image in
@@ -514,6 +533,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         setKeyboard()
         submitCommentButtonDidTap()
         configure(model: model.value)
+        userOptionButtonDidTap()
     }
     
     override func addView() {
