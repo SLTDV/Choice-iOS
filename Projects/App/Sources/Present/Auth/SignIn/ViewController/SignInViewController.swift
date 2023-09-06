@@ -63,16 +63,17 @@ final class SignInViewController: BaseVC<SignInViewModel> {
             .bind(with: self) { owner, _ in
                 let phoneNumber = owner.inputPhoneNumberTextField.text!
                 let password = owner.inputPasswordTextField.text!
-                let deviceToken = UserDefaults.standard.string(forKey: "deviceToken")
+                let fcmToken = UserDefaults.standard.string(forKey: "fcmToken")
                 
                 LoadingIndicator.showLoading(text: "")
                 
                 owner.viewModel.requestSignIn(model: SigninRequestModel(
                     phoneNumber: phoneNumber,
                     password: password,
-                    deviceToken: deviceToken
+                    fcmToken: fcmToken
                 )).subscribe(onError: { [weak self] _ in
                     self?.showSigninError()
+                    UserDefaults.standard.removeObject(forKey: "fcmToken")
                 }).disposed(by: owner.disposeBag)
             }.disposed(by: disposeBag)
         

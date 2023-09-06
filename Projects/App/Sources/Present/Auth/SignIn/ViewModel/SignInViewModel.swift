@@ -13,7 +13,7 @@ final class SignInViewModel: BaseViewModel {
         let params = [
             "phoneNumber" : model.phoneNumber,
             "password" : model.password,
-            "deviceToken" : model.deviceToken,
+            "fcmToken" : model.fcmToken,
         ] as Dictionary
 
         return Observable.create { (observer) -> Disposable in
