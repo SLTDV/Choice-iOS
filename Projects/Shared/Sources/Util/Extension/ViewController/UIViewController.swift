@@ -12,15 +12,16 @@ public extension UIViewController {
     }
     
     func removeUserDidTakeScreenshotNotification() {
-        NotificationCenter.default.removeObserver(self, name: UIApplication.userDidTakeScreenshotNotification, object: nil)
+        NotificationCenter.default.removeObserver(self,
+                                                  name: UIApplication.userDidTakeScreenshotNotification,
+                                                  object: nil)
     }
     
     func addUserDidTakeScreenshotNotification() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(didDetchScreenshot),
-            name: UIApplication.userDidTakeScreenshotNotification, object: nil
-        )
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(didDetchScreenshot),
+                                               name: UIApplication.userDidTakeScreenshotNotification,
+                                               object: nil)
     }
     
     @objc func didDetchScreenshot() {
