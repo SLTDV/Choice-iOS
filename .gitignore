@@ -3,6 +3,7 @@
 .DS_Store
 .AppleDouble
 .LSOverride
+GoogleService-Info.plist
 /fastlane/.env
 # Icon must end with two
 Icon
