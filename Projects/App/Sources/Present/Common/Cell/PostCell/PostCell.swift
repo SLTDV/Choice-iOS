@@ -34,9 +34,9 @@ final class PostCell: UITableViewCell {
                                                         votingState: 0,
                                                         participants: 0,
                                                         commentCount: 0))
-    var removeCellDelegate: RemoveTableViewCellHandlerProtocol?
-    var postVoteButtonDelegate: PostVoteButtonHandlerProtocol?
-    var failedImageLoadingDelegate: ImageLoadingFailureHandlerProtocol?
+    weak var removeCellDelegate: RemoveTableViewCellHandlerProtocol?
+    weak var postVoteButtonDelegate: PostVoteButtonHandlerProtocol?
+    weak var failedImageLoadingDelegate: ImageLoadingFailureHandlerProtocol?
     var type: ViewControllerType = .home
     var disposeBag = DisposeBag()
     
@@ -56,7 +56,8 @@ final class PostCell: UITableViewCell {
         $0.menu = UIMenu(title: "", children: [UIAction(
             title: "게시물 삭제",
             attributes: .destructive,
-            handler: { _ in self.removePostButtonDidTap(postIdx: self.model.value.idx)
+            handler: { [weak self] _ in
+                self?.removePostButtonDidTap(postIdx: (self?.model.value.idx)!)
             })])
         $0.isHidden = true
         $0.tintColor = .black
@@ -242,8 +243,7 @@ final class PostCell: UITableViewCell {
     
     // MARK: - Main
     private func setHomeVotePostLayout(voting: Int) {
-        firstVoteButton.setTitleColor(.white, for: .normal)
-        secondVoteButton.setTitleColor(.white, for: .normal)
+        setVoteButtonTitleColors(color: .white)
         
         firstVoteButton.isEnabled = (voting == 1) ? false : true
         firstVoteButton.backgroundColor = (voting == 1) ? .black : SharedAsset.grayVoteButton.color
@@ -262,8 +262,8 @@ final class PostCell: UITableViewCell {
             self?.secondVoteButton.isEnabled = false
             self?.removePostButton.isHidden = false
             
-            self?.firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
-            self?.secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
+            self?.setVoteButtonTitles(firstTitle: "\(data.0)%(\(data.2)명)",
+                                      secondTitle: "\(data.1)%(\(data.3)명)")
         }
         
         votePostButtonLayout(voting: model.votingState)
@@ -302,22 +302,32 @@ final class PostCell: UITableViewCell {
             $0.height.equalTo(68)
         }
         
-        firstVoteButton.setTitleColor(.white, for: .normal)
-        secondVoteButton.setTitleColor(.white, for: .normal)
+        setVoteButtonTitleColors(color: .white)
         
         switch voting {
         case 1:
-            firstVoteButton.backgroundColor = .black
-            secondVoteButton.backgroundColor = SharedAsset.grayDark.color
+            setVoteButtonBackgroundColors(firstSelected: true, secondSelected: false)
         case 2:
-            firstVoteButton.backgroundColor = SharedAsset.grayDark.color
-            secondVoteButton.backgroundColor = .black
+            setVoteButtonBackgroundColors(firstSelected: false, secondSelected: true)
         default:
-            firstVoteButton.backgroundColor = SharedAsset.grayDark.color
-            secondVoteButton.backgroundColor = SharedAsset.grayDark.color
-            firstVoteButton.setTitle("0%(0명)", for: .normal)
-            secondVoteButton.setTitle("0%(0명)", for: .normal)
+            setVoteButtonBackgroundColors(firstSelected: false, secondSelected: false)
+            setVoteButtonTitles(firstTitle: "0%(0명)", secondTitle: "0%(0명)")
         }
+    }
+    
+    private func setVoteButtonBackgroundColors(firstSelected: Bool, secondSelected: Bool) {
+        firstVoteButton.backgroundColor = firstSelected ? .black : SharedAsset.grayDark.color
+        secondVoteButton.backgroundColor = secondSelected ? .black : SharedAsset.grayDark.color
+    }
+    
+    private func setVoteButtonTitles(firstTitle: String, secondTitle: String) {
+        firstVoteButton.setTitle(firstTitle, for: .normal)
+        secondVoteButton.setTitle(secondTitle, for: .normal)
+    }
+    
+    private func setVoteButtonTitleColors(color: UIColor) {
+        firstVoteButton.setTitleColor(color, for: .normal)
+        secondVoteButton.setTitleColor(color, for: .normal)
     }
     
     // MARK: - prepare
@@ -325,42 +335,51 @@ final class PostCell: UITableViewCell {
         self.model.accept(model)
         
         self.model
-            .bind(with: self) { owner, _ in
+            .filter { _ in self.hasFailedImageLoading == false }
+            .compactMap {
+                guard let firstUrl = URL(string: $0.firstImageUrl),
+                      let secondUrl = URL(string: $0.secondImageUrl)
+                else {
+                    return nil
+                }
+                return (firstUrl, secondUrl)
+            }
+            .bind(with: self) { (owner, url: (URL, URL)) in
+                let (firstImageUrl, secondImageUrl) = url
                 let model = owner.model.value
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
-                
                 DispatchQueue.main.async {
                     owner.firstPostImageView.image = nil
                     owner.secondPostImageView.image = nil
                     
-                    Downsampling.optimization(imageAt: URL(string: model.firstImageUrl)!, to: owner.firstPostImageView.frame.size, scale: 2) { image in
+                    Downsampling.optimization(imageAt: firstImageUrl,
+                                              to: owner.firstPostImageView.frame.size,
+                                              scale: 2) { image in
                         if let image = image {
                             owner.firstPostImageView.image = image
                         } else {
-                            if !owner.hasFailedImageLoading {
-                                owner.hasFailedImageLoading = true
-                                owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
-                            }
+                            owner.hasFailedImageLoading = true
+                            owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
                         }
                     }
                     
-                    Downsampling.optimization(imageAt: URL(string: model.secondImageUrl)!, to: owner.secondPostImageView.frame.size, scale: 2) { image in
+                    Downsampling.optimization(imageAt: secondImageUrl,
+                                              to: owner.secondPostImageView.frame.size,
+                                              scale: 2) { image in
                         if let image = image {
                             owner.secondPostImageView.image = image
                         } else {
-                            if !owner.hasFailedImageLoading {
-                                owner.hasFailedImageLoading = true
-                                owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
-                            }
+                            owner.hasFailedImageLoading = true
+                            owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
                         }
                     }
                 }
                 
                 switch owner.type {
                 case .home:
-                    owner.firstVoteButton.setTitle(model.firstVotingOption, for: .normal)
-                    owner.secondVoteButton.setTitle(model.secondVotingOption, for: .normal)
+                    owner.setVoteButtonTitles(firstTitle: model.firstVotingOption,
+                                        secondTitle: model.secondVotingOption)
                     owner.setHomeVotePostLayout(voting: model.votingState)
                 case .profile:
                     owner.firstVoteOptionLabel.text = model.firstVotingOption
@@ -370,7 +389,6 @@ final class PostCell: UITableViewCell {
                 }
                 owner.participantsCountLabel.text = "참여자 \(model.participants)명"
                 owner.commentCountLabel.text = "댓글 \(model.commentCount)개"
-                
             }.disposed(by: disposeBag)
     }
     

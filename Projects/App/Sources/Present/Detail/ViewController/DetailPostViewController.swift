@@ -13,11 +13,14 @@ enum ContentSizeKey {
 }
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
-    var writerNameData = PublishSubject<String>()
-    var writerImageStringData = PublishSubject<String?>()
-    var isMineData = false
-    var commentData = BehaviorRelay<[CommentList]>(value: [])
-    private var model = BehaviorRelay<PostList>(value: PostList(
+    var detailPostModelRelay = BehaviorRelay<CommentModel>(value: CommentModel(
+        page: 0,
+        size: 0,
+        writer: "",
+        isMine: false,
+        commentList: [])
+    )
+    private var postListModelRelay = BehaviorRelay<PostList>(value: PostList(
         idx: 0,
         firstImageUrl: "",
         secondImageUrl: "",
@@ -157,7 +160,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     init(viewModel: DetailPostViewModel, model: PostList, type: ViewControllerType) {
         super.init(viewModel: viewModel)
-        self.model.accept(model)
+        self.postListModelRelay.accept(model)
         self.type = type
         
         scrollView.addGestureRecognizer(tapGestureRecognizer)
@@ -256,7 +259,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         
-        viewModel.requestToReportPost(postIdx: self.model.value.idx)
+        viewModel.requestToReportPost(postIdx: self.postListModelRelay.value.idx)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: {
                 alert.title = "완료"
                 alert.message = "신고가 접수되었습니다"
@@ -272,7 +276,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         
-        viewModel.requestToBlockUser(postIdx: self.model.value.idx)
+        viewModel.requestToBlockUser(postIdx: self.postListModelRelay.value.idx)
+            .observe(on: MainScheduler.instance)
             .subscribe(onNext: {
                 alert.title = "완료"
                 alert.message = "차단이 완료되었습니다."
@@ -301,45 +306,35 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func bindTableView() {
-        commentData.bind(to: commentTableView.rx.items(
-            cellIdentifier: CommentCell.identifier,
-            cellType: CommentCell.self)) { (row, data, cell) in
-                cell.configure(model: data)
-            }.disposed(by: disposeBag)
+        detailPostModelRelay
+            .map { $0.commentList}
+            .bind(to: commentTableView.rx.items(
+                cellIdentifier: CommentCell.identifier,
+                cellType: CommentCell.self)) { (_, data, cell) in
+                    cell.configure(model: data)
+                }.disposed(by: disposeBag)
         
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
-            .bind(with: self, onNext: { owner, _ in
+            .bind(with: self) { owner, contentOffset in
                 if owner.isLastPage {
                     owner.updateEmptyLabelLayout()
                     return
                 }
                 
                 let contentHeight = owner.scrollView.contentSize.height
-                let yOffset = owner.scrollView.contentOffset.y
+                let yOffset = contentOffset.y
                 let frameHeight = owner.scrollView.frame.size.height
                 let shouldLoadMore = yOffset > (contentHeight-frameHeight) - 100
                 
                 if shouldLoadMore {
                     owner.loadMoreComments()
                 }
-            })
-            .disposed(by: disposeBag)
-    }
-    
-    private func setOptionLayout() {
-        if !isMineData {
-            userOptionButton.snp.makeConstraints {
-                $0.centerY.equalTo(userImageView)
-                $0.trailing.equalTo(divideVotePostImageLineView.snp.trailing)
-            }
-        }
+            }.disposed(by: disposeBag)
     }
     
     private func updateEmptyLabelLayout() {
-        setOptionLayout()
-
-        if commentData.value.isEmpty && isLastPage {
+        if detailPostModelRelay.value.commentList.isEmpty && isLastPage {
             emptyLabel.frame = CGRect(x: 0, y: 15, width: commentTableView.bounds.width, height: 100)
             commentTableView.tableHeaderView = emptyLabel
             commentTableView.separatorStyle = .none
@@ -353,7 +348,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         commentTableView.tableFooterView = createSpinnerFooter()
         
         self.commentTableView.performBatchUpdates(nil, completion: nil)
-        viewModel.requestCommentData(idx: self.model.value.idx)
+        viewModel.requestCommentData(idx: self.postListModelRelay.value.idx)
             .observe(on: MainScheduler.instance)
             .bind(with: self) { owner, size in
                 owner.commentTableView.tableFooterView = nil
@@ -366,15 +361,20 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func bindUI() {
-        writerNameData
-            .bind(to: userNameLabel.rx.text)
-            .disposed(by: disposeBag)
-        
-        writerImageStringData
-            .observe(on: MainScheduler.instance)
-            .compactMap { URL(string: $0 ?? "") }
-            .bind(with: self) { owner, arg in
-                Downsampling.optimization(imageAt: arg,
+        detailPostModelRelay
+            .bind(with: self) { owner, commentModel in
+                guard let imageUrl = URL(string: commentModel.image ?? "") else {
+                    return
+                }
+                
+                if !commentModel.isMine {
+                    owner.userOptionButton.snp.makeConstraints {
+                        $0.centerY.equalTo(owner.userImageView)
+                        $0.trailing.equalTo(owner.divideVotePostImageLineView.snp.trailing)
+                    }
+                }
+                owner.userNameLabel.text = commentModel.writer
+                Downsampling.optimization(imageAt: imageUrl,
                                           to: owner.userImageView.frame.size,
                                           scale: 2) { image in
                     owner.userImageView.image = image
@@ -383,23 +383,23 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         enterCommentTextView.rx.didBeginEditing
             .filter { self.enterCommentTextView.text == CommentPlaceHolder.text }
-            .bind(with: self, onNext: { owner, _ in
+            .bind(with: self) { owner, _ in
                 owner.enterCommentTextView.text = ""
-                owner.enterCommentTextView.textColor = UIColor.black
-            }).disposed(by: disposeBag)
+                owner.enterCommentTextView.textColor = .black
+            }.disposed(by: disposeBag)
         
         enterCommentTextView.rx.didEndEditing
             .map { self.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { $0.isEmpty }
-            .bind(with: self, onNext: { owner, _ in
+            .bind(with: self) { owner, _ in
                 owner.setEnterTextViewAutoSize()
                 owner.enterCommentTextView.text = CommentPlaceHolder.text
-                owner.enterCommentTextView.textColor = UIColor.lightGray
+                owner.enterCommentTextView.textColor = .lightGray
                 owner.setDefaultSubmitButton()
-            }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         enterCommentTextView.rx.didChange
-            .bind(with: self, onNext: { owner, _ in
+            .bind(with: self) { owner, _ in
                 owner.setEnterTextViewAutoSize()
                 
                 if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 1 {
@@ -408,7 +408,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 } else {
                     owner.setDefaultSubmitButton()
                 }
-            }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         firstVoteButton.rx.tap
             .bind(with: self) { owner, _ in
@@ -431,21 +431,21 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.secondVoteOptionLabel.text = model.secondVotingOption
         
         Downsampling.optimization(imageAt: firstImageUrl,
-                                  to: self.firstPostImageView.frame.size,
-                                  scale: 2) { image in
-            self.firstPostImageView.image = image
+                                  to: firstPostImageView.frame.size,
+                                  scale: 2) { [weak self] image in
+            self?.firstPostImageView.image = image
         }
         
         Downsampling.optimization(imageAt: secondImageUrl,
-                                  to: self.secondPostImageView.frame.size,
-                                  scale: 2) { image in
-            self.secondPostImageView.image = image
+                                  to: secondPostImageView.frame.size,
+                                  scale: 2) { [weak self] image in
+            self?.secondPostImageView.image = image
         }
-        self.setVoteButtonLayout(with: model)
+        setVoteButtonLayout(with: model)
     }
     
     private func updateVotingStateWithLayout(_ votingState: Int) {
-        let model = model.value
+        let model = postListModelRelay.value
         
         if model.votingState == votingState {
             return
@@ -478,27 +478,33 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             firstVotingCount: Double(model.firstVotingCount),
             secondVotingCount: Double(model.secondVotingCount)
         )
-        firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
-        secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
+        setVoteButtonTitles(firstTitle: "\(data.0)%(\(data.2)명)",
+                            secondTitle: "\(data.1)%(\(data.3)명)")
         setVoteButtonLayout(voting: model.votingState)
     }
     
     private func setVoteButtonLayout(voting: Int) {
         switch voting {
         case 1:
-            firstVoteButton.backgroundColor = .black
-            secondVoteButton.backgroundColor = SharedAsset.grayDark.color
+            setVoteButtonBackgroundColors(firstSelected: true, secondSelected: false)
         case 2:
-            firstVoteButton.backgroundColor = SharedAsset.grayDark.color
-            secondVoteButton.backgroundColor = .black
+            setVoteButtonBackgroundColors(firstSelected: false, secondSelected: true)
         default:
-            firstVoteButton.backgroundColor = SharedAsset.grayDark.color
-            secondVoteButton.backgroundColor = SharedAsset.grayDark.color
+            setVoteButtonBackgroundColors(firstSelected: false, secondSelected: false)
             if type == .home {
-                firstVoteButton.setTitle("???", for: .normal)
-                secondVoteButton.setTitle("???", for: .normal)
+                setVoteButtonTitles(firstTitle: "???", secondTitle: "???")
             }
         }
+    }
+    
+    private func setVoteButtonBackgroundColors(firstSelected: Bool, secondSelected: Bool) {
+        firstVoteButton.backgroundColor = firstSelected ? .black : SharedAsset.grayDark.color
+        secondVoteButton.backgroundColor = secondSelected ? .black : SharedAsset.grayDark.color
+    }
+    
+    private func setVoteButtonTitles(firstTitle: String, secondTitle: String) {
+        firstVoteButton.setTitle(firstTitle, for: .normal)
+        secondVoteButton.setTitle(secondTitle, for: .normal)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -512,7 +518,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         removeUserDidTakeScreenshotNotification()
     }
     
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    override func observeValue(forKeyPath keyPath: String?,
+                               of object: Any?,
+                               change: [NSKeyValueChangeKey : Any]?,
+                               context: UnsafeMutableRawPointer?) {
         if keyPath == ContentSizeKey.key {
             if object is UITableView {
                 if let newValue = change?[.newKey] as? CGSize {
@@ -532,8 +541,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         bindUI()
         setKeyboard()
         submitCommentButtonDidTap()
-        configure(model: model.value)
-        userOptionButtonDidTap()
+        configure(model: postListModelRelay.value)
     }
     
     override func addView() {
@@ -683,9 +691,11 @@ extension DetailPostViewController {
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         viewModel.commentCurrentPage = -1
-        viewModel.requestToCreateComment(idx: model.value.idx, content: content)
+        viewModel.requestToCreateComment(idx: postListModelRelay.value.idx, content: content)
             .bind(with: self) { owner, _ in
-                owner.commentData.accept([])
+                var relay = owner.detailPostModelRelay.value
+                relay.commentList.removeAll()
+                owner.detailPostModelRelay.accept(relay)
                 owner.loadMoreComments()
                 owner.isLastPage = false
                 DispatchQueue.main.async {
@@ -700,28 +710,32 @@ extension DetailPostViewController {
     
     private func submitCommentButtonDidTap() {
         submitCommentButton.rx.tap
-            .bind(with: self, onNext: { owner, _ in
+            .bind(with: self) { owner, _ in
                 LoadingIndicator.showLoading(text: "게시 중")
                 owner.commentTableView.tableHeaderView = nil
                 owner.submitComment()
-            }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
     }
 }
 
 extension DetailPostViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         var config: UISwipeActionsConfiguration? = nil
-        let commentModel = commentData.value[indexPath.row]
         
-        lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
+        let commentModel = detailPostModelRelay.value.commentList[indexPath.row]
+        
+        let deleteContextual = UIContextualAction(style: .destructive,
+                                                       title: nil,
+                                                       handler: { _, _, _ in
             self.viewModel.requestToDeleteComment(
-                postIdx: self.model.value.idx,
+                postIdx: self.postListModelRelay.value.idx,
                 commentIdx: commentModel.idx
-            ).bind(with: self) { owner, result in
+            )
+            .bind(with: self) { owner, _ in
                 LoadingIndicator.showLoading(text: "")
-                var arr = owner.commentData.value
-                arr.remove(at: indexPath.row)
-                owner.commentData.accept(arr)
+                var arr = owner.detailPostModelRelay.value
+                arr.commentList.remove(at: indexPath.row)
+                owner.detailPostModelRelay.accept(arr)
                 DispatchQueue.main.async {
                     owner.commentTableView.reloadRows(
                         at: [indexPath],
