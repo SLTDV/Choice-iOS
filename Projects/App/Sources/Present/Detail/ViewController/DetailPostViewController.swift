@@ -176,6 +176,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func presentDetailOptionModal() {
         let vc = DetailOptionModalViewController()
+        vc.delegate = self
         
         vc.modalPresentationStyle = .pageSheet
         vc.sheetPresentationController?.preferredCornerRadius = 25
@@ -546,6 +547,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         setKeyboard()
         submitCommentButtonDidTap()
         configure(model: postListModelRelay.value)
+        userOptionButtonDidTap()
     }
     
     override func addView() {
@@ -760,6 +762,8 @@ extension DetailPostViewController: UITableViewDelegate {
 
 extension DetailPostViewController: DetailOptionModalDelegate {
     func detailOptionButtonDidTap(row: Int) {
+        dismiss(animated: true, completion: nil)
+        
         switch row {
         case 1:
             presentReportPostAlert()
