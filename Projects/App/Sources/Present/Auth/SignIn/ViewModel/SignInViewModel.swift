@@ -27,11 +27,9 @@ final class SignInViewModel: BaseViewModel {
                 case .success(let data):
                     self?.container.setToken(data: data)
                     self?.pushMainVC()
-                    LoadingIndicator.hideLoading()
                     observer.onNext(())
                 case .failure(let error):
                     print("signIn Error = \(error.localizedDescription)")
-                    LoadingIndicator.hideLoading()
                     observer.onError(error)
                 }
             }
