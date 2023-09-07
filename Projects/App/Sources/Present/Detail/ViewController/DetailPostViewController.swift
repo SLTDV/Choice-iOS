@@ -363,13 +363,15 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func bindUI() {
         detailPostModelRelay
             .bind(with: self) { owner, commentModel in
-                if !commentModel.isMine {
+                if commentModel.isMine {
+                    owner.userOptionButton.isHidden = true
+                } else {
                     owner.userOptionButton.snp.makeConstraints {
                         $0.centerY.equalTo(owner.userImageView)
                         $0.trailing.equalTo(owner.divideVotePostImageLineView.snp.trailing)
                     }
                 }
-                print("commentModel.writer= \(commentModel.writer)")
+                
                 owner.userNameLabel.text = commentModel.writer
                 
                 guard let imageUrl = URL(string: commentModel.image ?? "") else {
