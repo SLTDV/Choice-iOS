@@ -51,7 +51,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
     
     private let warningLabel = WarningLabel()
     
-    private func showSigninError() {
+    private func showSignInError() {
         warningLabel.show(warning: "존재하지 않는 계정입니다.")
         inputPhoneNumberTextField.shake()
         inputPasswordTextField.shake()
@@ -67,12 +67,12 @@ final class SignInViewController: BaseVC<SignInViewModel> {
                 
                 LoadingIndicator.showLoading(text: "")
                 
-                owner.viewModel.requestSignIn(model: SigninRequestModel(
+                owner.viewModel.requestSignIn(model: SignInRequestModel(
                     phoneNumber: phoneNumber,
                     password: password,
                     fcmToken: fcmToken
                 )).subscribe(onError: { [weak self] _ in
-                    self?.showSigninError()
+                    self?.showSignInError()
                     UserDefaults.standard.removeObject(forKey: "fcmToken")
                 }).disposed(by: owner.disposeBag)
             }.disposed(by: disposeBag)
