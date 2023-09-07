@@ -331,6 +331,12 @@ final class PostCell: UITableViewCell {
     }
     
     // MARK: - prepare
+    
+    override func prepareForReuse() {
+        firstPostImageView.image = nil
+        secondPostImageView.image = nil
+    }
+    
     func configure(with model: PostList) {
         self.model.accept(model)
         
@@ -350,9 +356,6 @@ final class PostCell: UITableViewCell {
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
                 DispatchQueue.main.async {
-                    owner.firstPostImageView.image = nil
-                    owner.secondPostImageView.image = nil
-                    
                     Downsampling.optimization(imageAt: firstImageUrl,
                                               to: owner.firstPostImageView.frame.size,
                                               scale: 2) { image in
