@@ -765,9 +765,9 @@ extension DetailPostViewController: DetailOptionModalDelegate {
         dismiss(animated: true, completion: nil)
         
         switch row {
-        case 1:
+        case 0:
             presentReportPostAlert()
-        case 2:
+        case 1:
             presentBlockUserAlert()
         default:
             return

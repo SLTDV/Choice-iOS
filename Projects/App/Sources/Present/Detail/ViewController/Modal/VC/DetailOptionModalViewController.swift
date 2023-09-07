@@ -46,18 +46,7 @@ final class DetailOptionModalViewController: UIViewController {
         
         optionListTableView.rx.itemSelected
             .bind(with: self) { owner, indexPath in
-                let selectedData = owner.optionData.value[indexPath.row]
-                
-                switch selectedData.text {
-                case "게시물 신고":
-                    owner.delegate?.detailOptionButtonDidTap(row: 1)
-                case "사용자 차단":
-                    owner.delegate?.detailOptionButtonDidTap(row: 2)
-                case "Instagram에 공유":
-                    owner.delegate?.detailOptionButtonDidTap(row: 3)
-                default:
-                    break
-                }
+                owner.delegate?.detailOptionButtonDidTap(row: indexPath.row)
             }.disposed(by: disposeBag)
     }
     
