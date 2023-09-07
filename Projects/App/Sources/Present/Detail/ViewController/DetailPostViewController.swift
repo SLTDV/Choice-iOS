@@ -753,3 +753,16 @@ extension DetailPostViewController: UITableViewDelegate {
         return config
     }
 }
+
+extension DetailPostViewController: DetailOptionModalDelegate {
+    func detailOptionButtonDidTap(row: Int) {
+        switch row {
+        case 1:
+            presentReportPostAlert()
+        case 2:
+            presentBlockUserAlert()
+        default:
+            return
+        }
+    }
+}

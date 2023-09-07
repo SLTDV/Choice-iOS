@@ -4,8 +4,14 @@ import Then
 import RxSwift
 import RxCocoa
 
+protocol DetailOptionModalDelegate: AnyObject {
+    func detailOptionButtonDidTap(row: Int)
+}
+
 final class DetailOptionModalViewController: UIViewController {
     private let disposeBag = DisposeBag()
+    
+    weak var delegate: DetailOptionModalDelegate?
     
     private let optionList = [
         OptionData(image: UIImage(systemName: "exclamationmark.circle")!,
@@ -37,6 +43,22 @@ final class DetailOptionModalViewController: UIViewController {
                     cell.configure(data: data)
                     cell.selectionStyle = .none
                 }.disposed(by: disposeBag)
+        
+        optionListTableView.rx.itemSelected
+            .bind(with: self) { owner, indexPath in
+                let selectedData = owner.optionData.value[indexPath.row]
+                
+                switch selectedData.text {
+                case "게시물 신고":
+                    owner.delegate?.detailOptionButtonDidTap(row: 1)
+                case "사용자 차단":
+                    owner.delegate?.detailOptionButtonDidTap(row: 2)
+                case "Instagram에 공유":
+                    owner.delegate?.detailOptionButtonDidTap(row: 3)
+                default:
+                    break
+                }
+            }.disposed(by: disposeBag)
     }
     
     override func viewDidLoad() {
