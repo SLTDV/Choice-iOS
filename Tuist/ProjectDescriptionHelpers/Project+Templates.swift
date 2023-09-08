@@ -1,5 +1,6 @@
 import ProjectDescription
 
+
 public extension Project {
     static func makeModule(
         name: String,
@@ -11,13 +12,14 @@ public extension Project {
         dependencies: [TargetDependency] = [],
         sources: SourceFilesList = ["Sources/**"],
         resources: ResourceFileElements? = nil,
-        infoPlist: InfoPlist = .default
+        infoPlist: InfoPlist = .default,
+        baseSetting: [String: SettingValue] = [:]
     ) -> Project {
         let settings: Settings = .settings(
-            base: [:],
+            base: baseSetting,
             configurations: [
                 .debug(name: .debug),
-                .release(name: .release)
+                .release(name: .release),
             ], defaultSettings: .recommended)
         
         let appTarget = Target(

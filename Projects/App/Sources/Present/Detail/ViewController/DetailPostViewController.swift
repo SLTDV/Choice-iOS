@@ -4,29 +4,35 @@ import RxCocoa
 import Kingfisher
 import Shared
 
+enum CommentPlaceHolder {
+    static var text = "댓글을 입력해주세요."
+}
+
 enum ContentSizeKey {
     static let key = "contentSize"
 }
 
 final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataProtocol {
-    var writerNameData = PublishSubject<String>()
-    var writerImageStringData = PublishSubject<String?>()
-    var isMineData = false
-    var commentData = BehaviorRelay<[CommentList]>(value: [])
-    private var model = BehaviorRelay<PostList>(
-        value: PostList(
-            idx: 0,
-            firstImageUrl: "",
-            secondImageUrl: "",
-            title: "",
-            content: "",
-            firstVotingOption: "",
-            secondVotingOption: "",
-            firstVotingCount: 0,
-            secondVotingCount: 0,
-            votingState: 0,
-            participants: 0,
-            commentCount: 0)
+    var detailPostModelRelay = BehaviorRelay<CommentModel>(value: CommentModel(
+        page: 0,
+        size: 0,
+        writer: "",
+        isMine: false,
+        commentList: [])
+    )
+    private var postListModelRelay = BehaviorRelay<PostList>(value: PostList(
+        idx: 0,
+        firstImageUrl: "",
+        secondImageUrl: "",
+        title: "",
+        content: "",
+        firstVotingOption: "",
+        secondVotingOption: "",
+        firstVotingCount: 0,
+        secondVotingCount: 0,
+        votingState: 0,
+        participants: 0,
+        commentCount: 0)
     )
     var isLastPage = false
     var type: ViewControllerType?
@@ -52,13 +58,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private lazy var userOptionButton = UIButton().then {
         $0.showsMenuAsPrimaryAction = true
-        $0.menu = UIMenu(title: "신고 & 차단", children: [UIAction(
-            title: "게시물 신고",
-            attributes: .destructive,
-            handler: { _ in self.reportPostButtonDidTap()
-            }), UIAction(title: "차단하기",
-                         attributes: .destructive,
-                         handler: { _ in self.blockUserButtonDidTap()})])
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
     }
@@ -121,7 +120,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private let enterCommentTextView = UITextView().then {
         $0.textContainerInset = UIEdgeInsets(top: 13, left: 14, bottom: 14, right: 50)
-        $0.text = "댓글을 입력해주세요."
+        $0.text = CommentPlaceHolder.text
         $0.isScrollEnabled = false
         $0.font = .systemFont(ofSize: 14)
         $0.textColor = .lightGray
@@ -154,11 +153,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.numberOfLines = 0
     }
     
-    private lazy var tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(tapMethod(_:)))
+    private lazy var tapGestureRecognizer = UITapGestureRecognizer(
+        target: self,
+        action: #selector(tapMethod(_:))
+    )
     
     init(viewModel: DetailPostViewModel, model: PostList, type: ViewControllerType) {
         super.init(viewModel: viewModel)
-        self.model.accept(model)
+        self.postListModelRelay.accept(model)
         self.type = type
         
         scrollView.addGestureRecognizer(tapGestureRecognizer)
@@ -172,58 +174,97 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.endEditing(true)
     }
     
-    private func reportPostButtonDidTap() {
-        let alert = UIAlertController(title: "게시물 신고",
-                                      message: """
-                                      해당 게시물이 불쾌감을 줬다면 신고해주세요.
-                                      신고가 누적되면 필터링을 통해 게시물이
-                                      삭제될 수 있습니다. (중복 불가능)
-                                      """,
-                                      preferredStyle: .alert)
-        let okayAction = UIAlertAction(title: "신고", style: .destructive) { _ in
-            self.reportPostAlert()
+    private func presentDetailOptionModal() {
+        let vc = DetailOptionModalViewController()
+        vc.delegate = self
+        
+        vc.modalPresentationStyle = .pageSheet
+        vc.sheetPresentationController?.preferredCornerRadius = 25
+        vc.sheetPresentationController?.largestUndimmedDetentIdentifier = .medium
+        vc.sheetPresentationController?.prefersGrabberVisible = true
+
+        if #available(iOS 16.0, *) {
+            vc.sheetPresentationController?.detents = [
+                .custom { _ in
+                    return 250
+                }
+            ]
+        } else {
+            vc.sheetPresentationController?.detents = [.medium()]
+            vc.sheetPresentationController?.largestUndimmedDetentIdentifier = .large
         }
-        let cancelAction = UIAlertAction(title: "취소", style: .default)
         
-        alert.addAction(cancelAction)
-        alert.addAction(okayAction)
-        
-        self.present(alert, animated: true)
+        self.present(vc, animated: true)
     }
     
-    private func blockUserButtonDidTap() {
-        let alert = UIAlertController(title: "차단하기",
-                                      message: """
-                                      해당 사용자를 차단할 수 있습니다.
-                                      차단하면 해당 사용자의 게시물은
-                                      보이지 않습니다.
-                                      """,
-                                      preferredStyle: .alert)
-        let okayAction = UIAlertAction(title: "차단", style: .destructive) { _ in
-            self.blockUserAlert()
-        }
-        let cancelAction = UIAlertAction(title: "취소", style: .default)
-        
-        alert.addAction(cancelAction)
-        alert.addAction(okayAction)
-        
-        self.present(alert, animated: true)
+    private func userOptionButtonDidTap() {
+        userOptionButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.presentDetailOptionModal()
+            }.disposed(by: disposeBag)
+    }
+    
+    private func presentReportPostAlert() {
+        AlertHelper.shared.showAlert(
+            title: "게시물 신고",
+            message: """
+                    해당 게시물이 불쾌감을 줬다면 신고해주세요.
+                    신고가 누적되면 필터링을 통해 게시물이
+                    삭제될 수 있습니다. (중복 불가능)
+                    """,
+            acceptTitle: "신고",
+            acceptAction: { [weak self] in
+                self?.reportPostAlert()
+            },
+            cancelTitle: "취소",
+            cancelAction: nil,
+            vc: self)
+    }
+    
+    private func presentBlockUserAlert() {
+        AlertHelper.shared.showAlert(
+            title: "차단하기",
+            message: """
+                     해당 사용자를 차단할 수 있습니다.
+                     차단하면 해당 사용자의 게시물은
+                     보이지 않습니다.
+                     """,
+            acceptTitle: "차단",
+            acceptAction: { [weak self] in
+                self?.blockUserAlert()
+            },
+            cancelTitle: "취소",
+            cancelAction: nil,
+            vc: self)
+    }
+    
+    private func presentFeaturePreparationAlert() {
+        AlertHelper.shared.showAlert(
+            title: "준비 중",
+            message: """
+                     인스타 공유 기능 추가를 준비 중입니다.
+                     """,
+            acceptTitle: nil,
+            acceptAction: nil,
+            cancelTitle: "확인",
+            cancelAction: nil,
+            vc: self)
     }
     
     func setKeyboard() {
-        let keyboardWillShow = NotificationCenter.default.rx.notification(UIResponder.keyboardWillShowNotification)
-        let keyboardWillHide =
-        NotificationCenter.default.rx.notification(UIResponder.keyboardWillHideNotification)
+        let notiCenter = NotificationCenter.default.rx
+        let keyboardWillShow = notiCenter.notification(UIResponder.keyboardWillShowNotification)
+        let keyboardWillHide = notiCenter.notification(UIResponder.keyboardWillHideNotification)
         
         keyboardWillShow
-            .asDriver(onErrorRecover: { _ in .never()})
-            .drive(with: self) { owner, noti in
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, noti in
                 owner.keyboardUp(noti)
             }.disposed(by: disposeBag)
         
         keyboardWillHide
-            .asDriver(onErrorRecover: { _ in .never()})
-            .drive(with: self) { owner, noti in
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, _ in
                 owner.keyboardDown()
             }.disposed(by: disposeBag)
     }
@@ -232,41 +273,42 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         
-        viewModel.requestToReportPost(postIdx: self.model.value.idx) { isVaild in
-            if isVaild {
+        viewModel.requestToReportPost(postIdx: self.postListModelRelay.value.idx)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: {
                 alert.title = "완료"
                 alert.message = "신고가 접수되었습니다"
-            } else {
+            },onError: {_ in
                 alert.title = "실패"
                 alert.message = "이미 신고한 게시물입니다"
-            }
-            
-            self.present(alert, animated: true)
-        }
+            }, onDisposed: {
+                self.present(alert, animated: true)
+            }).disposed(by: disposeBag)
     }
     
     private func blockUserAlert() {
         let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "확인", style: .cancel))
         
-        viewModel.requestToBlockUser(postIdx: self.model.value.idx) { [weak self] result in
-            switch result {
-            case true:
+        viewModel.requestToBlockUser(postIdx: self.postListModelRelay.value.idx)
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: {
                 alert.title = "완료"
                 alert.message = "차단이 완료되었습니다."
-                self?.viewModel.popToRootVC()
+                self.viewModel.popToRootVC()
                 NotificationCenter.default.post(name: NSNotification.Name("BlockButtonPressed"), object: nil)
-            case false:
+            }, onError: { _ in
                 alert.title = "실패"
                 alert.message = "차단이 완료되었습니다."
-            }
-            
-            self?.present(alert, animated: true)
-        }
+            }, onDisposed: {
+                self.present(alert, animated: true)
+            }).disposed(by: disposeBag)
     }
     
     private func keyboardUp(_ notification: Notification) {
-        if let keyboardFrame:CGRect = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect {
+        if let keyboardFrame: CGRect = notification.userInfo?[
+            UIResponder.keyboardFrameEndUserInfoKey
+        ] as? CGRect {
             UIView.animate(withDuration: 0.3, animations: {
                 self.view.frame.origin.y -= keyboardFrame.size.height
             })
@@ -278,46 +320,35 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func bindTableView() {
-        commentData.bind(to: commentTableView.rx.items(
-            cellIdentifier: CommentCell.identifier,
-            cellType: CommentCell.self)) { (row, data, cell) in
-                cell.configure(model: data)
-            }.disposed(by: disposeBag)
+        detailPostModelRelay
+            .map { $0.commentList}
+            .bind(to: commentTableView.rx.items(
+                cellIdentifier: CommentCell.identifier,
+                cellType: CommentCell.self)) { (_, data, cell) in
+                    cell.configure(model: data)
+                }.disposed(by: disposeBag)
         
         scrollView.rx.contentOffset
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
-            .bind(with: self, onNext: { owner, _ in
+            .bind(with: self) { owner, contentOffset in
                 if owner.isLastPage {
                     owner.updateEmptyLabelLayout()
                     return
                 }
                 
                 let contentHeight = owner.scrollView.contentSize.height
-                let yOffset = owner.scrollView.contentOffset.y
+                let yOffset = contentOffset.y
                 let frameHeight = owner.scrollView.frame.size.height
                 let shouldLoadMore = yOffset > (contentHeight-frameHeight) - 100
                 
                 if shouldLoadMore {
                     owner.loadMoreComments()
                 }
-            })
-            .disposed(by: disposeBag)
-    }
-    
-    private func setOptionLayout() {
-        if !isMineData {
-            userOptionButton.snp.makeConstraints {
-                $0.centerY.equalTo(userImageView)
-                $0.trailing.equalTo(divideVotePostImageLineView.snp.trailing)
-            }
-        }
+            }.disposed(by: disposeBag)
     }
     
     private func updateEmptyLabelLayout() {
-        setOptionLayout()
-        
-        let comments = commentData.value
-        if comments.isEmpty && isLastPage {
+        if detailPostModelRelay.value.commentList.isEmpty && isLastPage {
             emptyLabel.frame = CGRect(x: 0, y: 15, width: commentTableView.bounds.width, height: 100)
             commentTableView.tableHeaderView = emptyLabel
             commentTableView.separatorStyle = .none
@@ -329,66 +360,64 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func loadMoreComments() {
         commentTableView.tableFooterView = createSpinnerFooter()
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.3) { [weak self] in
-            guard let self = self else { return }
-            
-            self.commentTableView.performBatchUpdates(nil, completion: nil)
-            self.viewModel.requestCommentData(idx: self.model.value.idx) { [weak self] result in
-                guard let self = self else { return }
-                
-                self.commentTableView.tableFooterView = nil
-                
-                switch result {
-                case .success(let size):
-                    if size != 10 {
-                        self.isLastPage = true
-                    } else {
-                        self.commentTableView.reloadData()
-                    }
-                case .failure(let error):
-                    print("comment pagination error = \(error.localizedDescription)")
+        
+        self.commentTableView.performBatchUpdates(nil, completion: nil)
+        viewModel.requestCommentData(idx: self.postListModelRelay.value.idx)
+            .observe(on: MainScheduler.instance)
+            .bind(with: self) { owner, size in
+                owner.commentTableView.tableFooterView = nil
+                if size != 10 {
+                    self.isLastPage = true
+                } else {
+                    self.commentTableView.reloadData()
                 }
-            }
-        }
+            }.disposed(by: disposeBag)
     }
     
     private func bindUI() {
-        writerNameData.bind(with: self, onNext: { owner, arg in
-            owner.userNameLabel.text = arg
-            
-        }).disposed(by: disposeBag)
-        
-        writerImageStringData.bind(with: self, onNext: { owner, arg in
-            guard arg == nil else {
-                Downsampling.optimization(imageAt: URL(string: arg!)!,
+        detailPostModelRelay
+            .bind(with: self) { owner, commentModel in
+                if commentModel.isMine {
+                    owner.userOptionButton.isHidden = true
+                } else {
+                    owner.userOptionButton.snp.makeConstraints {
+                        $0.centerY.equalTo(owner.userImageView)
+                        $0.trailing.equalTo(owner.divideVotePostImageLineView.snp.trailing)
+                    }
+                }
+                
+                owner.userNameLabel.text = commentModel.writer
+                
+                guard let imageUrl = URL(string: commentModel.image ?? "") else {
+                    return
+                }
+                
+                Downsampling.optimization(imageAt: imageUrl,
                                           to: owner.userImageView.frame.size,
                                           scale: 2) { image in
                     owner.userImageView.image = image
                 }
-                return
-            }
-        }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         enterCommentTextView.rx.didBeginEditing
-            .bind(with: self, onNext: { owner, _ in
-                if owner.enterCommentTextView.text == "댓글을 입력해주세요." {
-                    owner.enterCommentTextView.text = ""
-                    owner.enterCommentTextView.textColor = UIColor.black
-                }
-            }).disposed(by: disposeBag)
+            .filter { self.enterCommentTextView.text == CommentPlaceHolder.text }
+            .bind(with: self) { owner, _ in
+                owner.enterCommentTextView.text = ""
+                owner.enterCommentTextView.textColor = .black
+            }.disposed(by: disposeBag)
         
         enterCommentTextView.rx.didEndEditing
-            .bind(with: self, onNext: { owner, _ in
-                if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) == "" {
-                    owner.setEnterTextViewAutoSize()
-                    owner.enterCommentTextView.text = "댓글을 입력해주세요."
-                    owner.enterCommentTextView.textColor = UIColor.lightGray
-                    owner.setDefaultSubmitButton()
-                }
-            }).disposed(by: disposeBag)
+            .map { self.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { $0.isEmpty }
+            .bind(with: self) { owner, _ in
+                owner.setEnterTextViewAutoSize()
+                owner.enterCommentTextView.text = CommentPlaceHolder.text
+                owner.enterCommentTextView.textColor = .lightGray
+                owner.setDefaultSubmitButton()
+            }.disposed(by: disposeBag)
         
         enterCommentTextView.rx.didChange
-            .bind(with: self, onNext: { owner, _ in
+            .bind(with: self) { owner, _ in
                 owner.setEnterTextViewAutoSize()
                 
                 if owner.enterCommentTextView.text.trimmingCharacters(in: .whitespacesAndNewlines).count >= 1 {
@@ -397,7 +426,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 } else {
                     owner.setDefaultSubmitButton()
                 }
-            }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
         
         firstVoteButton.rx.tap
             .bind(with: self) { owner, _ in
@@ -413,32 +442,28 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func configure(model: PostList) {
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-        DispatchQueue.main.async { [weak self] in
-            guard let self = self else { return }
-            self.titleLabel.text = model.title
-            self.contentLabel.text = model.content
-            self.firstVoteOptionLabel.text = model.firstVotingOption
-            self.secondVoteOptionLabel.text = model.secondVotingOption
-            
-            DispatchQueue.main.async {
-                Downsampling.optimization(imageAt: firstImageUrl,
-                                          to: self.firstPostImageView.frame.size,
-                                          scale: 2) { image in
-                    self.firstPostImageView.image = image
-                }
-                
-                Downsampling.optimization(imageAt: secondImageUrl,
-                                          to: self.secondPostImageView.frame.size,
-                                          scale: 2) { image in
-                    self.secondPostImageView.image = image
-                }
-            }
-            self.setVoteButtonLayout(with: model)
+        
+        self.titleLabel.text = model.title
+        self.contentLabel.text = model.content
+        self.firstVoteOptionLabel.text = model.firstVotingOption
+        self.secondVoteOptionLabel.text = model.secondVotingOption
+        
+        Downsampling.optimization(imageAt: firstImageUrl,
+                                  to: firstPostImageView.frame.size,
+                                  scale: 2) { [weak self] image in
+            self?.firstPostImageView.image = image
         }
+        
+        Downsampling.optimization(imageAt: secondImageUrl,
+                                  to: secondPostImageView.frame.size,
+                                  scale: 2) { [weak self] image in
+            self?.secondPostImageView.image = image
+        }
+        setVoteButtonLayout(with: model)
     }
     
     private func updateVotingStateWithLayout(_ votingState: Int) {
-        let model = model.value
+        let model = postListModelRelay.value
         
         if model.votingState == votingState {
             return
@@ -471,27 +496,33 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             firstVotingCount: Double(model.firstVotingCount),
             secondVotingCount: Double(model.secondVotingCount)
         )
-        firstVoteButton.setTitle("\(data.0)%(\(data.2)명)", for: .normal)
-        secondVoteButton.setTitle("\(data.1)%(\(data.3)명)", for: .normal)
+        setVoteButtonTitles(firstTitle: "\(data.0)%(\(data.2)명)",
+                            secondTitle: "\(data.1)%(\(data.3)명)")
         setVoteButtonLayout(voting: model.votingState)
     }
     
     private func setVoteButtonLayout(voting: Int) {
         switch voting {
         case 1:
-            firstVoteButton.backgroundColor = .black
-            secondVoteButton.backgroundColor = SharedAsset.grayDark.color
+            setVoteButtonBackgroundColors(firstSelected: true, secondSelected: false)
         case 2:
-            firstVoteButton.backgroundColor = SharedAsset.grayDark.color
-            secondVoteButton.backgroundColor = .black
+            setVoteButtonBackgroundColors(firstSelected: false, secondSelected: true)
         default:
-            firstVoteButton.backgroundColor = SharedAsset.grayDark.color
-            secondVoteButton.backgroundColor = SharedAsset.grayDark.color
+            setVoteButtonBackgroundColors(firstSelected: false, secondSelected: false)
             if type == .home {
-                firstVoteButton.setTitle("???", for: .normal)
-                secondVoteButton.setTitle("???", for: .normal)
+                setVoteButtonTitles(firstTitle: "???", secondTitle: "???")
             }
         }
+    }
+    
+    private func setVoteButtonBackgroundColors(firstSelected: Bool, secondSelected: Bool) {
+        firstVoteButton.backgroundColor = firstSelected ? .black : SharedAsset.grayDark.color
+        secondVoteButton.backgroundColor = secondSelected ? .black : SharedAsset.grayDark.color
+    }
+    
+    private func setVoteButtonTitles(firstTitle: String, secondTitle: String) {
+        firstVoteButton.setTitle(firstTitle, for: .normal)
+        secondVoteButton.setTitle(secondTitle, for: .normal)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -505,7 +536,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         removeUserDidTakeScreenshotNotification()
     }
     
-    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+    override func observeValue(forKeyPath keyPath: String?,
+                               of object: Any?,
+                               change: [NSKeyValueChangeKey : Any]?,
+                               context: UnsafeMutableRawPointer?) {
         if keyPath == ContentSizeKey.key {
             if object is UITableView {
                 if let newValue = change?[.newKey] as? CGSize {
@@ -525,7 +559,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         bindUI()
         setKeyboard()
         submitCommentButtonDidTap()
-        configure(model: model.value)
+        configure(model: postListModelRelay.value)
+        userOptionButtonDidTap()
     }
     
     override func addView() {
@@ -675,60 +710,59 @@ extension DetailPostViewController {
         guard let content = enterCommentTextView.text?.trimmingCharacters(in: .whitespacesAndNewlines) else { return }
         
         viewModel.commentCurrentPage = -1
-        viewModel.requestToCreateComment(idx: model.value.idx, content: content) { result in
-            switch result {
-            case .success(()):
-                DispatchQueue.main.async { [weak self] in
-                    self?.viewModel.requestCommentData(idx: (self?.model.value.idx)!)
-                    self?.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-                    self?.enterCommentTextView.text = nil
-                    self?.enterCommentTextView.resignFirstResponder()
-                    self?.commentData.accept([])
-                    self?.isLastPage = false
-                    self?.setDefaultSubmitButton()
+        viewModel.requestToCreateComment(idx: postListModelRelay.value.idx, content: content)
+            .bind(with: self) { owner, _ in
+                var relay = owner.detailPostModelRelay.value
+                relay.commentList.removeAll()
+                owner.detailPostModelRelay.accept(relay)
+                owner.loadMoreComments()
+                owner.isLastPage = false
+                DispatchQueue.main.async {
+                    owner.commentTableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
+                    owner.enterCommentTextView.text = nil
+                    owner.enterCommentTextView.resignFirstResponder()
+                    owner.setDefaultSubmitButton()
+                    LoadingIndicator.hideLoading()
                 }
-            case .failure(let error):
-                print("post error = \(String(describing: error.localizedDescription))")
-            }
-            LoadingIndicator.hideLoading()
-        }
+            }.disposed(by: disposeBag)
     }
     
     private func submitCommentButtonDidTap() {
         submitCommentButton.rx.tap
-            .bind(with: self, onNext: { owner, _ in
+            .bind(with: self) { owner, _ in
                 LoadingIndicator.showLoading(text: "게시 중")
                 owner.commentTableView.tableHeaderView = nil
                 owner.submitComment()
-            }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
     }
 }
 
 extension DetailPostViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         var config: UISwipeActionsConfiguration? = nil
-        let commentModel = commentData.value[indexPath.row]
         
-        lazy var deleteContextual = UIContextualAction(style: .destructive, title: nil, handler: { _, _, _ in
-            self.viewModel.requestToDeleteComment(postIdx: self.model.value.idx,
-                                                  commentIdx: commentModel.idx) { [weak self] result in
-                switch result {
-                case .success(()):
-                    LoadingIndicator.showLoading(text: "")
-                    var arr = self?.commentData.value
-                    arr?.remove(at: indexPath.row)
-                    self?.commentData.accept(arr!)
-                    DispatchQueue.main.async {
-                        self?.commentTableView.reloadRows(
-                            at: [indexPath],
-                            with: .automatic
-                        )
-                    }
-                    LoadingIndicator.hideLoading()
-                case .failure(let error):
-                    print("Delete Faield = \(error.localizedDescription)")
+        let commentModel = detailPostModelRelay.value.commentList[indexPath.row]
+        
+        let deleteContextual = UIContextualAction(style: .destructive,
+                                                       title: nil,
+                                                       handler: { _, _, _ in
+            self.viewModel.requestToDeleteComment(
+                postIdx: self.postListModelRelay.value.idx,
+                commentIdx: commentModel.idx
+            )
+            .bind(with: self) { owner, _ in
+                LoadingIndicator.showLoading(text: "")
+                var arr = owner.detailPostModelRelay.value
+                arr.commentList.remove(at: indexPath.row)
+                owner.detailPostModelRelay.accept(arr)
+                DispatchQueue.main.async {
+                    owner.commentTableView.reloadRows(
+                        at: [indexPath],
+                        with: .automatic
+                    )
                 }
-            }
+                LoadingIndicator.hideLoading()
+            }.disposed(by: self.disposeBag)
         })
         deleteContextual.image = UIImage(systemName: "trash")
         
@@ -736,5 +770,22 @@ extension DetailPostViewController: UITableViewDelegate {
             config = UISwipeActionsConfiguration(actions: [deleteContextual])
         }
         return config
+    }
+}
+
+extension DetailPostViewController: DetailOptionModalHandlerProtocol {
+    func detailOptionButtonDidTap(row: Int) {
+        dismiss(animated: true)
+        
+        switch row {
+        case 0:
+            presentReportPostAlert()
+        case 1:
+            presentBlockUserAlert()
+        case 2:
+            presentFeaturePreparationAlert()
+        default:
+            return
+        }
     }
 }

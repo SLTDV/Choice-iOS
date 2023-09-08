@@ -14,8 +14,10 @@ let project = Project.makeModule(
             path: .relativeToRoot("Projects/Core/JwtStore")),
         TargetDependency.project(
             target: "NetworksMonitor",
-            path: .relativeToRoot("Projects/Core/NetworksMonitor"))
+            path: .relativeToRoot("Projects/Core/NetworksMonitor")),
+        .SPM.GoogleMobileAds
     ],
     resources: ["Resources/**"],
-    infoPlist: .file(path: "Support/Info.plist")
+    infoPlist: .file(path: "Support/Info.plist"),
+    baseSetting: ["OTHER_LDFLAGS": "-ObjC"]
 )

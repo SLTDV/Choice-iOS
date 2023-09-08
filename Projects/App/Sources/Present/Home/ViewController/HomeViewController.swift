@@ -3,6 +3,9 @@ import RxSwift
 import RxCocoa
 import Shared
 import NetworksMonitor
+import GoogleMobileAds
+import AppTrackingTransparency
+import AdSupport
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                                 PostVoteButtonHandlerProtocol, ImageLoadingFailureHandlerProtocol,
@@ -56,10 +59,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     // MARK: - Function
     @objc func handleBlockButtonPressed() {
         sortTableViewData(type: sortType)
-        DispatchQueue.main.async {
-            self.postTableView.reloadData()
-            self.postData.accept([])
-        }
+        postData.accept([])
+        postTableView.reloadData()
         NotificationCenter.default.removeObserver(self, name: NSNotification.Name("BlockButtonPressed"), object: nil)
     }
     
@@ -92,20 +93,18 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
         
         postTableView.rx.modelSelected(PostList.self)
             .asDriver()
-            .drive(with: self, onNext: { owner, post in
+            .drive(with: self) { owner, post in
                 owner.viewModel.pushDetailPostVC(model: post, type: .home)
-            }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
             
         postTableView.rx.contentOffset
+            .filter { _ in self.isLastPage == false }
             .throttle(.seconds(2), scheduler: MainScheduler.instance)
-            .bind(with: self, onNext: { owner, arg in
+            .bind(with: self) { owner, _ in
                 let contentHeight = owner.postTableView.contentSize.height
                 let yOffset = owner.postTableView.contentOffset.y
                 let frameHeight = owner.postTableView.frame.size.height
-                
-                if owner.isLastPage {
-                    return
-                }
+
                 if yOffset > (contentHeight-frameHeight) {
                     owner.postTableView.tableFooterView = owner.createSpinnerFooter()
                     DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
@@ -126,7 +125,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                         }
                     }
                 }
-            }).disposed(by: disposeBag)
+            }.disposed(by: disposeBag)
     }
     
     private func sortTableViewData(type: MenuOptionType) {
@@ -136,6 +135,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
         case .findBestPostData:
             viewModel.bestPostCurrentPage = -1
         }
+        
         sortType = type
         viewModel.requestPostData(type: type)
         isLastPage = false
@@ -171,11 +171,9 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     
     @objc private func handleRefreshControl(_ sender: UIRefreshControl) {
         sortTableViewData(type: sortType)
-        DispatchQueue.main.async {
-            self.postTableView.reloadData()
-            self.postData.accept([])
-            self.postTableView.refreshControl?.endRefreshing()
-        }
+        postData.accept([])
+        postTableView.reloadData()
+        postTableView.refreshControl?.endRefreshing()
     }
     
     // MARK: - Override
@@ -200,7 +198,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        self.postTableView.reloadData()
+        postTableView.reloadData()
         NotificationCenter.default.addObserver(self, selector: #selector(handleBlockButtonPressed), name: NSNotification.Name("BlockButtonPressed"), object: nil)
         addUserDidTakeScreenshotNotification()
     }
@@ -242,39 +240,40 @@ extension HomeViewController {
     }
     
     func showAlertOnFailedImageLoading() {
-        let alert = UIAlertController(title: "이미지 로딩 실패!", message: "네트워크 상태를 확인해주세요.", preferredStyle: .alert)
-        let cancelAction = UIAlertAction(title: "확인", style: .cancel)
-        
-        alert.addAction(cancelAction)
-        present(alert, animated: true)
+        AlertHelper.shared.showAlert(
+            title: "이미지 로딩 실패!",
+            message: "네트워크 상태를 확인해주세요.",
+            acceptTitle: nil,
+            acceptAction: nil,
+            cancelTitle: "확인",
+            cancelAction: nil,
+            vc: self)
     }
     
     func showAlertOnNetworkDisConnect() {
-        let alert = UIAlertController(title: "네트워크 연결 실패!", message: "네트워크 연결에 실패했습니다. 앱을 다시 실행해주세요.", preferredStyle: .alert)
-        
-        let cancelAction = UIAlertAction(title: "확인", style: .cancel) { [weak self] _ in
-            self?.closedApp()
-        }
-        alert.addAction(cancelAction)
-        
-        DispatchQueue.main.async {
-            
-            self.present(alert, animated: true)
-        }
+        AlertHelper.shared.showAlert(
+            title: "네트워크 연결 실패!",
+            message: "네트워크 연결에 실패했습니다. 앱을 다시 실행해주세요.",
+            acceptTitle: nil,
+            acceptAction: nil,
+            cancelTitle: "확인",
+            cancelAction: { [weak self] in
+                self?.closedApp()
+            },
+            vc: self)
     }
     
     func showAlertOnNetworkChange() {
-        let alert = UIAlertController(title: "네트워크 변경 감지!", message: "네트워크 변경이 감지되었습니다. 앱을 다시 실행해주세요.", preferredStyle: .alert)
-        
-        let cancelAction = UIAlertAction(title: "확인", style: .cancel) { [weak self] _ in
-            self?.closedApp()
-        }
-        alert.addAction(cancelAction)
-        
-        DispatchQueue.main.async {
-            
-            self.present(alert, animated: true)
-        }
+        AlertHelper.shared.showAlert(
+            title: "네트워크 변경 감지!",
+            message: "네트워크 변경이 감지되었습니다. 앱을 다시 실행해주세요.",
+            acceptTitle: nil,
+            acceptAction: nil,
+            cancelTitle: "확인",
+            cancelAction: { [weak self] in
+                self?.closedApp()
+            },
+            vc: self)
     }
     
     private func closedApp() {
