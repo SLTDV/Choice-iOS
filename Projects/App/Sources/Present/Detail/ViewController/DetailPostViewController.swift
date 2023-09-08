@@ -238,6 +238,19 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             vc: self)
     }
     
+    private func presentFeaturePreparationAlert() {
+        AlertHelper.shared.showAlert(
+            title: "준비 중",
+            message: """
+                     인스타 공유 기능 추가를 준비 중입니다.
+                     """,
+            acceptTitle: nil,
+            acceptAction: nil,
+            cancelTitle: "확인",
+            cancelAction: nil,
+            vc: self)
+    }
+    
     func setKeyboard() {
         let notiCenter = NotificationCenter.default.rx
         let keyboardWillShow = notiCenter.notification(UIResponder.keyboardWillShowNotification)
@@ -769,6 +782,8 @@ extension DetailPostViewController: DetailOptionModalHandlerProtocol {
             presentReportPostAlert()
         case 1:
             presentBlockUserAlert()
+        case 2:
+            presentFeaturePreparationAlert()
         default:
             return
         }
