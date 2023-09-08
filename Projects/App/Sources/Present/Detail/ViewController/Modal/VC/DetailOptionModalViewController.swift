@@ -4,14 +4,14 @@ import Then
 import RxSwift
 import RxCocoa
 
-protocol DetailOptionModalDelegate: AnyObject {
+protocol DetailOptionModalHandlerProtocol: AnyObject {
     func detailOptionButtonDidTap(row: Int)
 }
 
 final class DetailOptionModalViewController: UIViewController {
     private let disposeBag = DisposeBag()
     
-    weak var delegate: DetailOptionModalDelegate?
+    weak var delegate: DetailOptionModalHandlerProtocol?
     
     private let optionList = [
         OptionData(image: UIImage(systemName: "exclamationmark.circle")!,
