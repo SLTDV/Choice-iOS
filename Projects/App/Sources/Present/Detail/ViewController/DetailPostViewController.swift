@@ -762,7 +762,7 @@ extension DetailPostViewController: UITableViewDelegate {
 
 extension DetailPostViewController: DetailOptionModalDelegate {
     func detailOptionButtonDidTap(row: Int) {
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: true)
         
         switch row {
         case 0:
