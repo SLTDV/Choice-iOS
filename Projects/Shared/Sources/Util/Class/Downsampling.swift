@@ -10,7 +10,7 @@ public enum Downsampling {
         completion: @escaping (UIImage?) -> Void
     ) {
         // 이미지 캐시 확인
-        DispatchQueue.global().async {
+        DispatchQueue.global(qos: .userInteractive).async {
             if let cachedImage = imageCache.object(
                 forKey: imageURL as NSURL
             ) {

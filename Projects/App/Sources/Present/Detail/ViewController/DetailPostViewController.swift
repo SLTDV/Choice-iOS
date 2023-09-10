@@ -176,6 +176,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     
     private func presentDetailOptionModal() {
         let vc = DetailOptionModalViewController()
+        vc.delegate = self
         
         vc.modalPresentationStyle = .pageSheet
         vc.sheetPresentationController?.preferredCornerRadius = 25
@@ -233,6 +234,19 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 self?.blockUserAlert()
             },
             cancelTitle: "취소",
+            cancelAction: nil,
+            vc: self)
+    }
+    
+    private func presentFeaturePreparationAlert() {
+        AlertHelper.shared.showAlert(
+            title: "준비 중",
+            message: """
+                     인스타 공유 기능 추가를 준비 중입니다.
+                     """,
+            acceptTitle: nil,
+            acceptAction: nil,
+            cancelTitle: "확인",
             cancelAction: nil,
             vc: self)
     }
@@ -363,17 +377,21 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private func bindUI() {
         detailPostModelRelay
             .bind(with: self) { owner, commentModel in
-                guard let imageUrl = URL(string: commentModel.image ?? "") else {
-                    return
-                }
-                
-                if !commentModel.isMine {
+                if commentModel.isMine {
+                    owner.userOptionButton.isHidden = true
+                } else {
                     owner.userOptionButton.snp.makeConstraints {
                         $0.centerY.equalTo(owner.userImageView)
                         $0.trailing.equalTo(owner.divideVotePostImageLineView.snp.trailing)
                     }
                 }
+                
                 owner.userNameLabel.text = commentModel.writer
+                
+                guard let imageUrl = URL(string: commentModel.image ?? "") else {
+                    return
+                }
+                
                 Downsampling.optimization(imageAt: imageUrl,
                                           to: owner.userImageView.frame.size,
                                           scale: 2) { image in
@@ -542,6 +560,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         setKeyboard()
         submitCommentButtonDidTap()
         configure(model: postListModelRelay.value)
+        userOptionButtonDidTap()
     }
     
     override func addView() {
@@ -751,5 +770,22 @@ extension DetailPostViewController: UITableViewDelegate {
             config = UISwipeActionsConfiguration(actions: [deleteContextual])
         }
         return config
+    }
+}
+
+extension DetailPostViewController: DetailOptionModalHandlerProtocol {
+    func detailOptionButtonDidTap(row: Int) {
+        dismiss(animated: true)
+        
+        switch row {
+        case 0:
+            presentReportPostAlert()
+        case 1:
+            presentBlockUserAlert()
+        case 2:
+            presentFeaturePreparationAlert()
+        default:
+            return
+        }
     }
 }
