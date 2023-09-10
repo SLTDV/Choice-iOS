@@ -1,5 +1,3 @@
-import Foundation
-
 struct CommentModel: Codable {
     var page: Int
     var size: Int
