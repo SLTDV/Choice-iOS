@@ -73,10 +73,10 @@ final class SignInViewController: BaseVC<SignInViewModel> {
                     fcmToken: fcmToken
                 )).subscribe(onNext: {
                     LoadingIndicator.hideLoading()
+                    UserDefaults.standard.removeObject(forKey: "fcmToken")
                 },onError: { [weak self] _ in
                     LoadingIndicator.hideLoading()
                     self?.showSignInError()
-                    UserDefaults.standard.removeObject(forKey: "fcmToken")
                 }).disposed(by: owner.disposeBag)
             }.disposed(by: disposeBag)
         
