@@ -46,7 +46,6 @@ final class HomeViewModel: BaseViewModel {
             case .success(let postData):
                 LoadingIndicator.hideLoading()
                 completion(.success(postData.size))
-                
                 var relay = self?.delegate?.postData.value
                 relay?.append(contentsOf: postData.postList)
                 self?.delegate?.postData.accept(relay!)

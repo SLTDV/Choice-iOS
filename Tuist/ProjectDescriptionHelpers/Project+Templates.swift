@@ -31,6 +31,7 @@ public extension Project {
             infoPlist: infoPlist,
             sources: sources,
             resources: resources,
+            entitlements: .relativeToRoot("Projects/App/Resources/Choice.entitlements"),
             dependencies: dependencies
         )
         
