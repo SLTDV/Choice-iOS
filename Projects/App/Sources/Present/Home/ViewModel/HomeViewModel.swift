@@ -46,9 +46,7 @@ final class HomeViewModel: BaseViewModel {
             case .success(let postData):
                 LoadingIndicator.hideLoading()
                 completion(.success(postData.size))
-                var relay = self?.delegate?.postData.value
-                relay?.append(contentsOf: postData.postList)
-                self?.delegate?.postData.accept(relay!)
+                self?.delegate?.postData.accept(postData.postList)
             case .failure(let error):
                 completion(.failure(error))
                 print("main error = \(error.localizedDescription)")
