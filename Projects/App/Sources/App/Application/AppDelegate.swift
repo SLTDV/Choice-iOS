@@ -78,7 +78,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 }
 
 extension AppDelegate: MessagingDelegate {
-    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+    func messaging(
+        _ messaging: Messaging,
+        didReceiveRegistrationToken fcmToken: String?
+    ) {
         print("fcmToken = \(fcmToken)")
         UserDefaults.standard.set(fcmToken, forKey: "fcmToken")
     }

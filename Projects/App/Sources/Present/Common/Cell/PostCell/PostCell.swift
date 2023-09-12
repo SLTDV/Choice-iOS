@@ -333,15 +333,17 @@ final class PostCell: UITableViewCell {
     // MARK: - prepare
     
     override func prepareForReuse() {
+        super.prepareForReuse()
         firstPostImageView.image = nil
         secondPostImageView.image = nil
+        disposeBag = DisposeBag()
     }
     
     func configure(with model: PostList) {
         self.model.accept(model)
         
         self.model
-            .filter { _ in self.hasFailedImageLoading == false }
+            .filter { [weak self] _ in self?.hasFailedImageLoading == false }
             .compactMap {
                 guard let firstUrl = URL(string: $0.firstImageUrl),
                       let secondUrl = URL(string: $0.secondImageUrl)
