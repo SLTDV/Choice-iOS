@@ -3,7 +3,7 @@
     <device id="retina6_12" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21679"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -18,18 +18,14 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="HomeLogo" translatesAutoresizingMaskIntoConstraints="NO" id="s6m-AS-XeD">
-                                <rect key="frame" x="130" y="415" width="133" height="33"/>
+                                <rect key="frame" x="130" y="409.66666666666669" width="133" height="33"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="133" id="rvv-OG-61K"/>
-                                    <constraint firstAttribute="height" constant="33" id="sdp-W7-3f7"/>
+                                    <constraint firstAttribute="height" constant="33" id="1Vc-64-0ix"/>
+                                    <constraint firstAttribute="width" constant="133" id="Pyi-TX-RbK"/>
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="선택의 고민을 한 번에" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="rUu-4K-5zV">
-                                <rect key="frame" x="177" y="448" width="86" height="12"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="86" id="cEC-mV-ExL"/>
-                                    <constraint firstAttribute="height" constant="12" id="wtl-wR-gsf"/>
-                                </constraints>
+                                <rect key="frame" x="177" y="446.66666666666669" width="86" height="12"/>
                                 <fontDescription key="fontDescription" name="AppleSDGothicNeo-Regular" family="Apple SD Gothic Neo" pointSize="10"/>
                                 <color key="textColor" red="0.42745098039215684" green="0.42745098039215684" blue="0.42745098039215684" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -39,11 +35,10 @@
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="s6m-AS-XeD" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="130" id="9Qp-EP-Lm1"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="rUu-4K-5zV" secondAttribute="bottom" constant="358" id="Crg-Gq-Dk7"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="rUu-4K-5zV" secondAttribute="trailing" constant="130" id="L1T-mK-oJF"/>
-                            <constraint firstItem="rUu-4K-5zV" firstAttribute="top" secondItem="s6m-AS-XeD" secondAttribute="bottom" id="Ss3-sY-ISE"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="s6m-AS-XeD" secondAttribute="trailing" constant="130" id="mHe-MZ-sXT"/>
+                            <constraint firstItem="s6m-AS-XeD" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="BD1-i9-fEc"/>
+                            <constraint firstItem="rUu-4K-5zV" firstAttribute="top" secondItem="s6m-AS-XeD" secondAttribute="bottom" constant="4" id="FQt-Bk-H4u"/>
+                            <constraint firstItem="s6m-AS-XeD" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="GpX-M4-EJh"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="rUu-4K-5zV" secondAttribute="trailing" constant="130" id="Qh5-p2-hLo"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -53,7 +48,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="HomeLogo" width="99" height="33"/>
+        <image name="HomeLogo" width="96" height="30"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

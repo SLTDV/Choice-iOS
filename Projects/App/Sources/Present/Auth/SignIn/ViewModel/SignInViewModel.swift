@@ -8,30 +8,32 @@ import Swinject
 final class SignInViewModel: BaseViewModel {
     let container = AppDelegate.container.resolve(JwtStore.self)!
     
-    func requestSignIn(phoneNumber: String, password: String, completion: @escaping (Bool) -> Void) {
+    func requestSignIn(model: SignInRequestModel) -> Observable<Void> {
         let url = APIConstants.signInURL
         let params = [
-            "phoneNumber" : phoneNumber,
-            "password" : password
+            "phoneNumber" : model.phoneNumber,
+            "password" : model.password,
+            "fcmToken" : model.fcmToken,
         ] as Dictionary
-        
-        AF.request(url,
-                   method: .post,
-                   parameters: params,
-                   encoding: JSONEncoding.default)
-        .validate()
-        .responseDecodable(of: ManageTokenModel.self) { [weak self] response in
-            switch response.result {
-            case .success(let data):
-                self?.container.setToken(data: data)
-                self?.pushMainVC()
-                LoadingIndicator.hideLoading()
-                completion(true)
-            case .failure(let error):
-                print("signIn Error = \(error.localizedDescription)")
-                LoadingIndicator.hideLoading()
-                completion(false)
+
+        return Observable.create { (observer) -> Disposable in
+            AF.request(url,
+                       method: .post,
+                       parameters: params,
+                       encoding: JSONEncoding.default)
+            .validate()
+            .responseDecodable(of: ManageTokenModel.self) { [weak self] response in
+                switch response.result {
+                case .success(let data):
+                    self?.container.setToken(data: data)
+                    self?.pushMainVC()
+                    observer.onNext(())
+                case .failure(let error):
+                    print("signIn Error = \(error.localizedDescription)")
+                    observer.onError(error)
+                }
             }
+            return Disposables.create()
         }
     }
     

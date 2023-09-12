@@ -160,8 +160,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                 LoadingIndicator.showLoading(text: "")
                 self?.sortTableViewData(type: action.type)
                 DispatchQueue.main.async {
-                    self?.postTableView.reloadData()
                     self?.postData.accept([])
+                    self?.postTableView.reloadData()
                     self?.dropdownButton.setTitle("\(action.title) ↓", for: .normal)
                 }
             }

@@ -5,6 +5,8 @@ import Shared
 import RxSwift
 import NetworksMonitor
 import GoogleMobileAds
+import FirebaseMessaging
+import Firebase
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -16,7 +18,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        GADMobileAds.sharedInstance().start(completionHandler: nil)
+        FirebaseApp.configure()
+        
+        Messaging.messaging().delegate = self
+        
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { _, _ in
+            DispatchQueue.main.async {
+                UIApplication.shared.registerForRemoteNotifications()
+            }
+        }
+        
+        GADMobileAds.sharedInstance().start()
         
         assembler = Assembler([
             JwtStoreAssembly()
@@ -25,6 +37,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let monitor = NetworksStatus.shared
         monitor.startMonitoring()
         return true
+    }
+    
+    func application(_ application: UIApplication,
+                     didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data
+    ) {
+        Messaging.messaging().apnsToken = deviceToken
+    }
+    
+    func application(_ application: UIApplication,
+                     didFailToRegisterForRemoteNotificationsWithError error: Error
+    ) {
+        print("Failed Register Noti = \(error.localizedDescription)")
     }
     
     // MARK: UISceneSession Lifecycle
@@ -50,5 +74,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         supportedInterfaceOrientationsFor window: UIWindow?
     ) -> UIInterfaceOrientationMask {
         return UIInterfaceOrientationMask.portrait
+    }
+}
+
+extension AppDelegate: MessagingDelegate {
+    func messaging(
+        _ messaging: Messaging,
+        didReceiveRegistrationToken fcmToken: String?
+    ) {
+        print("fcmToken = \(fcmToken)")
+        UserDefaults.standard.set(fcmToken, forKey: "fcmToken")
     }
 }

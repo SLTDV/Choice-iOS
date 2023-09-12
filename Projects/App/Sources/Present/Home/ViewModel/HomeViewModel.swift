@@ -12,7 +12,7 @@ protocol PostItemsProtocol: AnyObject {
 
 final class HomeViewModel: BaseViewModel {
     weak var delegate: PostItemsProtocol?
-    private var disposeBag = DisposeBag()
+    private let disposeBag = DisposeBag()
     var newestPostCurrentPage = -1
     var bestPostCurrentPage = -1
     private let container = AppDelegate.container.resolve(JwtStore.self)!
@@ -46,7 +46,6 @@ final class HomeViewModel: BaseViewModel {
             case .success(let postData):
                 LoadingIndicator.hideLoading()
                 completion(.success(postData.size))
-                
                 var relay = self?.delegate?.postData.value
                 relay?.append(contentsOf: postData.postList)
                 self?.delegate?.postData.accept(relay!)

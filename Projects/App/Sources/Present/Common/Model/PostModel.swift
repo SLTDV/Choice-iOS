@@ -1,5 +1,3 @@
-import Foundation
-
 struct PostModel: Codable {
     var page: Int
     var size: Int

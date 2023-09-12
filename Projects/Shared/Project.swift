@@ -13,7 +13,9 @@ let project = Project.makeModule(
         .SPM.RxCocoa,
         .SPM.Alamofire,
         .SPM.Swinject,
-        .SPM.Lottie
+        .SPM.Lottie,
+        .SPM.Firebase
     ],
-    resources: ["Resources/**"]
+    resources: ["Resources/**"],
+    baseSetting: ["OTHER_LDFLAGS": "-ObjC"]
 )
