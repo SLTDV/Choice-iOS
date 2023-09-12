@@ -62,52 +62,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
     }
     
-    private let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 21, weight: .semibold)
-    }
-    
-    private let divideVotePostImageLineView = UIView().then {
-        $0.backgroundColor = SharedAsset.grayMedium.color
-    }
-    
-    private let contentLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .regular)
-        $0.numberOfLines = 0
-    }
-    
-    private let firstPostImageView = UIImageView().then {
-        $0.clipsToBounds = true
-        $0.layer.cornerRadius = 25
-        $0.backgroundColor = .gray
-        $0.contentMode = .scaleAspectFill
-    }
-    
-    private let secondPostImageView = UIImageView().then {
-        $0.clipsToBounds = true
-        $0.layer.cornerRadius = 25
-        $0.backgroundColor = .gray
-        $0.contentMode = .scaleAspectFill
-    }
-    
-    private let firstVoteOptionLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .semibold)
-    }
-    
-    private let secondVoteOptionLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 16, weight: .semibold)
-    }
-    
-    private let firstVoteButton = UIButton().then {
-        $0.setTitleColor(.white, for: .normal)
-        $0.layer.cornerRadius = 10
-        $0.backgroundColor = SharedAsset.grayDark.color
-    }
-    
-    private let secondVoteButton = UIButton().then {
-        $0.setTitleColor(.white, for: .normal)
-        $0.layer.cornerRadius = 10
-        $0.backgroundColor = SharedAsset.grayDark.color
-    }
+    private let detailPostView = DetailPostView()
     
     private let divideCommentLineView = UIView().then {
         $0.backgroundColor = SharedAsset.grayMedium.color
@@ -378,11 +333,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         detailPostModelRelay
             .bind(with: self) { owner, commentModel in
                 if commentModel.isMine {
-                    owner.userOptionButton.isHidden = true
+                    self.userOptionButton.isHidden = true
                 } else {
                     owner.userOptionButton.snp.makeConstraints {
                         $0.centerY.equalTo(owner.userImageView)
-                        $0.trailing.equalTo(owner.divideVotePostImageLineView.snp.trailing)
+                        $0.trailing.equalTo(owner.divideCommentLineView.snp.trailing)
                     }
                 }
                 
@@ -428,12 +383,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 }
             }.disposed(by: disposeBag)
         
-        firstVoteButton.rx.tap
+        detailPostView.firstVoteButton.rx.tap
             .bind(with: self) { owner, _ in
                 owner.updateVotingStateWithLayout(1)
             }.disposed(by: disposeBag)
         
-        secondVoteButton.rx.tap
+        detailPostView.secondVoteButton.rx.tap
             .bind(with: self) { owner, _ in
                 owner.updateVotingStateWithLayout(2)
             }.disposed(by: disposeBag)
@@ -443,21 +398,21 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
         guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
         
-        self.titleLabel.text = model.title
-        self.contentLabel.text = model.content
-        self.firstVoteOptionLabel.text = model.firstVotingOption
-        self.secondVoteOptionLabel.text = model.secondVotingOption
+        self.detailPostView.titleLabel.text = model.title
+        self.detailPostView.contentLabel.text = model.content
+        self.detailPostView.firstVoteOptionLabel.text = model.firstVotingOption
+        self.detailPostView.secondVoteOptionLabel.text = model.secondVotingOption
         
         Downsampling.optimization(imageAt: firstImageUrl,
-                                  to: firstPostImageView.frame.size,
+                                  to: detailPostView.firstPostImageView.frame.size,
                                   scale: 2) { [weak self] image in
-            self?.firstPostImageView.image = image
+            self?.detailPostView.firstPostImageView.image = image
         }
         
         Downsampling.optimization(imageAt: secondImageUrl,
-                                  to: secondPostImageView.frame.size,
+                                  to: detailPostView.secondPostImageView.frame.size,
                                   scale: 2) { [weak self] image in
-            self?.secondPostImageView.image = image
+            self?.detailPostView.secondPostImageView.image = image
         }
         setVoteButtonLayout(with: model)
     }
@@ -480,8 +435,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             break
         }
         
-        firstVoteButton.isEnabled = (votingState == 1) ? false : true
-        secondVoteButton.isEnabled = (votingState == 2) ? false : true
+        detailPostView.updateVoteButtonsState(votingState: votingState)
         
         model.firstVotingCount = max(0, model.firstVotingCount)
         model.secondVotingCount = max(0, model.secondVotingCount)
@@ -496,33 +450,9 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             firstVotingCount: Double(model.firstVotingCount),
             secondVotingCount: Double(model.secondVotingCount)
         )
-        setVoteButtonTitles(firstTitle: "\(data.0)%(\(data.2)명)",
+        detailPostView.setVoteButtonTitles(firstTitle: "\(data.0)%(\(data.2)명)",
                             secondTitle: "\(data.1)%(\(data.3)명)")
-        setVoteButtonLayout(voting: model.votingState)
-    }
-    
-    private func setVoteButtonLayout(voting: Int) {
-        switch voting {
-        case 1:
-            setVoteButtonBackgroundColors(firstSelected: true, secondSelected: false)
-        case 2:
-            setVoteButtonBackgroundColors(firstSelected: false, secondSelected: true)
-        default:
-            setVoteButtonBackgroundColors(firstSelected: false, secondSelected: false)
-            if type == .home {
-                setVoteButtonTitles(firstTitle: "???", secondTitle: "???")
-            }
-        }
-    }
-    
-    private func setVoteButtonBackgroundColors(firstSelected: Bool, secondSelected: Bool) {
-        firstVoteButton.backgroundColor = firstSelected ? .black : SharedAsset.grayDark.color
-        secondVoteButton.backgroundColor = secondSelected ? .black : SharedAsset.grayDark.color
-    }
-    
-    private func setVoteButtonTitles(firstTitle: String, secondTitle: String) {
-        firstVoteButton.setTitle(firstTitle, for: .normal)
-        secondVoteButton.setTitle(secondTitle, for: .normal)
+        detailPostView.setVoteButtonLayout(voting: model.votingState)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -570,11 +500,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         scrollView.addSubview(contentView)
         contentView.addSubviews(
             userImageView, userNameLabel,
-            userOptionButton, titleLabel,
-            divideVotePostImageLineView, contentLabel,
-            firstVoteOptionLabel, secondVoteOptionLabel,
-            firstPostImageView, secondPostImageView,
-            firstVoteButton, secondVoteButton,
+            userOptionButton, detailPostView,
             divideCommentLineView, commentTableView
         )
         whiteBackgroundView.addSubviews(
@@ -603,62 +529,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.leading.equalTo(userImageView.snp.trailing).offset(9)
         }
         
-        titleLabel.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(43)
-            $0.top.equalTo(userImageView.snp.bottom).offset(30)
+        detailPostView.snp.makeConstraints {
+            $0.width.equalToSuperview()
+            $0.height.equalTo(450)
+            $0.top.equalTo(userImageView.snp.bottom).offset(20)
         }
-        
-        divideVotePostImageLineView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(9)
-            $0.leading.trailing.equalToSuperview().inset(38)
-            $0.height.equalTo(1)
-        }
-        
-        contentLabel.snp.makeConstraints {
-            $0.top.equalTo(divideVotePostImageLineView.snp.bottom).offset(22)
-            $0.leading.trailing.equalToSuperview().inset(43)
-        }
-        
-        firstVoteOptionLabel.snp.makeConstraints {
-            $0.top.equalTo(contentLabel.snp.bottom).offset(30)
-            $0.centerX.equalTo(firstPostImageView)
-        }
-        
-        secondVoteOptionLabel.snp.makeConstraints {
-            $0.top.equalTo(contentLabel.snp.bottom).offset(30)
-            $0.centerX.equalTo(secondPostImageView)
-        }
-        
-        firstPostImageView.snp.makeConstraints {
-            $0.top.equalTo(firstVoteOptionLabel.snp.bottom).offset(10)
-            $0.leading.equalToSuperview().inset(20)
-            $0.width.equalTo(160)
-            $0.height.equalTo(160)
-        }
-        
-        secondPostImageView.snp.makeConstraints {
-            $0.top.equalTo(secondVoteOptionLabel.snp.bottom).offset(10)
-            $0.trailing.equalToSuperview().inset(20)
-            $0.width.equalTo(160)
-            $0.height.equalTo(160)
-        }
-        
-        firstVoteButton.snp.makeConstraints {
-            $0.top.equalTo(firstPostImageView.snp.bottom).offset(26)
-            $0.centerX.equalTo(firstPostImageView)
-            $0.width.equalTo(144)
-            $0.height.equalTo(68)
-        }
-        
-        secondVoteButton.snp.makeConstraints {
-            $0.top.equalTo(secondPostImageView.snp.bottom).offset(26)
-            $0.centerX.equalTo(secondPostImageView)
-            $0.width.equalTo(144)
-            $0.height.equalTo(68)
-        }
-        
+
         divideCommentLineView.snp.makeConstraints {
-            $0.top.equalTo(firstVoteButton.snp.bottom).offset(48)
+            $0.top.equalTo(detailPostView.firstVoteButton.snp.bottom).offset(30)
             $0.leading.trailing.equalToSuperview().inset(38)
             $0.height.equalTo(1)
         }
