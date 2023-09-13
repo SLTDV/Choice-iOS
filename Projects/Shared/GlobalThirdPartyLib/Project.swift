@@ -2,7 +2,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
-    name: "Shared",
+    name: "GlobalThirdPartyLib",
     product: .framework,
     packages: [],
     dependencies: [
