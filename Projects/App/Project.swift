@@ -10,7 +10,6 @@ let project = Project.makeModule(
         .Core.JwtStore,
         .Core.NetworksMonitor,
         
-        .Shared.Utility,
         .Shared.GlobalThirdPartyLib
     ],
     resources: ["Resources/**"],
