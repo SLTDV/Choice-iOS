@@ -14,7 +14,8 @@ let project = Project.makeModule(
         .SPM.Alamofire,
         .SPM.Swinject,
         .SPM.Lottie,
-        .SPM.Firebase
+        .SPM.Firebase,
+        .SPM.GoogleMobileAds
     ],
     resources: ["Resources/**"],
     baseSetting: ["OTHER_LDFLAGS": "-ObjC"]
