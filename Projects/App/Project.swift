@@ -6,13 +6,12 @@ let project = Project.makeModule(
     platform: .iOS,
     product: .app,
     dependencies: [
-        .Core.CoordinatorControl,
         .Core.DesignSystem,
         .Core.JwtStore,
         .Core.NetworksMonitor,
         
-        .Shared.GlobalThirdPartyLib,
-        .Shared.Utility
+        .Shared.Utility,
+        .Shared.GlobalThirdPartyLib
     ],
     resources: ["Resources/**"],
     infoPlist: .file(path: "Support/Info.plist"),

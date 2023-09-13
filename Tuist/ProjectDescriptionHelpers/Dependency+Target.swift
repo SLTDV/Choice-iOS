@@ -8,7 +8,6 @@ public extension TargetDependency {
 }
 
 public extension TargetDependency.Core {
-    static let CoordinatorControl = TargetDependency.core(name: "CoordinatorControl")
     static let JwtStore = TargetDependency.core(name: "JwtStore")
     static let NetworksMonitor = TargetDependency.core(name: "NetworksMonitor")
     static let DesignSystem = TargetDependency.core(name: "DesignSystem")

@@ -17,6 +17,5 @@ let project = Project.makeModule(
         .SPM.Firebase,
         .SPM.GoogleMobileAds
     ],
-    resources: ["Resources/**"],
     baseSetting: ["OTHER_LDFLAGS": "-ObjC"]
 )
