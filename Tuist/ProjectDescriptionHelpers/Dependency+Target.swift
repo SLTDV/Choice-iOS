@@ -12,3 +12,8 @@ public extension TargetDependency.Core {
     static let JwtStore = TargetDependency.core(name: "JwtStore")
     static let NetworksMonitor = TargetDependency.core(name: "NetworksMonitor")
 }
+
+public extension TargetDependency.Shared {
+    static let GlobalThirdPartyLib = TargetDependency.shared(name: "GlobalThirdPartyLib")
+    static let Utility = TargetDependency.shared(name: "Utility")
+}
