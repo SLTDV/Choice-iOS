@@ -333,7 +333,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         detailPostModelRelay
             .bind(with: self) { owner, commentModel in
                 if commentModel.isMine {
-                    self.userOptionButton.isHidden = true
+                    owner.userOptionButton.isHidden = true
                 } else {
                     owner.userOptionButton.snp.makeConstraints {
                         $0.centerY.equalTo(owner.userImageView)
@@ -489,14 +489,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
 
         let appID = "dohyeon.Choice1"
-        let backgroundImage = ChoiceAsset.Images.instaBackground
+        let backgroundImage = ChoiceAsset.Images.instaBackground.image
         
         if let storiesUrl = URL(string: "instagram-stories://share?source_application=\(appID)") {
             if UIApplication.shared.canOpenURL(storiesUrl) {
                 guard let imageData = saveImage.pngData() else { return }
                 let pasteboardItems: [String: Any] = [
                     "com.instagram.sharedSticker.stickerImage": imageData,
-                    "com.instagram.sharedSticker.backgroundImage" : backgroundImage.image
+                    "com.instagram.sharedSticker.backgroundImage" : backgroundImage
                 ]
                 let pasteboardOptions = [
                     UIPasteboard.OptionsKey.expirationDate: Date().addingTimeInterval(300)

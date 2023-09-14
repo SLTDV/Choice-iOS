@@ -77,14 +77,14 @@ final class DetailPostView: UIView {
         secondVoteButton.isEnabled = (votingState != 2)
     }
     
-   private func setVoteButtonBackgroundColors(firstSelected: Bool, secondSelected: Bool) {
-        firstVoteButton.backgroundColor = firstSelected ? .black : SharedAsset.grayDark.color
-        secondVoteButton.backgroundColor = secondSelected ? .black : SharedAsset.grayDark.color
-    }
-    
     func setVoteButtonTitles(firstTitle: String, secondTitle: String) {
         firstVoteButton.setTitle(firstTitle, for: .normal)
         secondVoteButton.setTitle(secondTitle, for: .normal)
+    }
+    
+    private func setVoteButtonBackgroundColors(firstSelected: Bool, secondSelected: Bool) {
+        firstVoteButton.backgroundColor = firstSelected ? .black : SharedAsset.grayDark.color
+        secondVoteButton.backgroundColor = secondSelected ? .black : SharedAsset.grayDark.color
     }
     
     func setVoteButtonLayout(voting: Int) {
