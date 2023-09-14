@@ -481,6 +481,34 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         }
     }
     
+    private func shareToInstaStories() {
+        let renderer = UIGraphicsImageRenderer(bounds: detailPostView.bounds)
+
+        let saveImage = renderer.image { context in
+            detailPostView.layer.render(in: context.cgContext)
+        }
+
+        let appID = "dohyeon.Choice1"
+        let backgroundImage = ChoiceAsset.Images.instaBackground
+        
+        if let storiesUrl = URL(string: "instagram-stories://share?source_application=\(appID)") {
+            if UIApplication.shared.canOpenURL(storiesUrl) {
+                guard let imageData = saveImage.pngData() else { return }
+                let pasteboardItems: [String: Any] = [
+                    "com.instagram.sharedSticker.stickerImage": imageData,
+                    "com.instagram.sharedSticker.backgroundImage" : backgroundImage.image
+                ]
+                let pasteboardOptions = [
+                    UIPasteboard.OptionsKey.expirationDate: Date().addingTimeInterval(300)
+                ]
+                UIPasteboard.general.setItems([pasteboardItems], options: pasteboardOptions)
+                UIApplication.shared.open(storiesUrl, options: [:], completionHandler: nil)
+            } else {
+                print("User doesn't have instagram on their device.")
+            }
+        }
+    }
+    
     override func configureVC() {
         viewModel.delegate = self
         commentTableView.delegate = self
@@ -531,7 +559,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         detailPostView.snp.makeConstraints {
             $0.width.equalToSuperview()
-            $0.height.equalTo(450)
+            $0.height.equalTo(480)
             $0.top.equalTo(userImageView.snp.bottom).offset(20)
         }
 
@@ -661,7 +689,7 @@ extension DetailPostViewController: DetailOptionModalHandlerProtocol {
         case 1:
             presentBlockUserAlert()
         case 2:
-            presentFeaturePreparationAlert()
+            shareToInstaStories()
         default:
             return
         }
