@@ -1,7 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import Shared
+import DesignSystem
 
 final class SignInViewController: BaseVC<SignInViewModel> {    
     private let disposeBag = DisposeBag()

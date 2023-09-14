@@ -2,9 +2,9 @@ import UIKit
 import Alamofire
 import RxSwift
 import RxRelay
-import Shared
 import Swinject
 import JwtStore
+import DesignSystem
 
 protocol ProfileDataProtocol: AnyObject {
     var nicknameData: PublishSubject<String> { get set }
@@ -53,7 +53,6 @@ final class ProfileViewModel: BaseViewModel {
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
             switch response.result {
             case .success:
-                LoadingIndicator.hideLoading()
                 self?.delegate?.nicknameData.onNext(nickname)
             case .failure(let error):
                 print("error = \(error.localizedDescription)")
@@ -121,7 +120,6 @@ final class ProfileViewModel: BaseViewModel {
                     .responseData(emptyResponseCodes: [200, 201, 204]) { response in
                         switch response.result {
                         case .success:
-                            LoadingIndicator.hideLoading()
                             observer.onNext(decodeResponse ?? .init(profileImageUrl: ""))
                             observer.onCompleted()
                         case .failure(let error):

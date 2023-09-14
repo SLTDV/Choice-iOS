@@ -1,7 +1,7 @@
 import UIKit
 import Then
 import SnapKit
-import Shared
+import DesignSystem
 
 final class CommentCell: UITableViewCell {
     static let identifier = "CommentCellIdentifier"

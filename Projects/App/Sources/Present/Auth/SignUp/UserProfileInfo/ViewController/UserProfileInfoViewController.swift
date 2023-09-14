@@ -1,7 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import Shared
+import DesignSystem
 
 final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
     var phoneNumber: String?
@@ -42,7 +42,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         $0.setTitle("완료", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.isEnabled = false
-        $0.backgroundColor = SharedAsset.grayVoteButton.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayVoteButton.color
         $0.layer.cornerRadius = 8
     }
     
@@ -73,7 +73,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
                     owner.warningLabel.show(warning: "*2자 이상 10자 이하로 입력해 주세요.")
                     
                     owner.completeButton.isEnabled = false
-                    owner.completeButton.backgroundColor = SharedAsset.grayVoteButton.color
+                    owner.completeButton.backgroundColor = DesignSystemAsset.Colors.grayVoteButton.color
                 } else {
                     owner.warningLabel.hide()
                     
@@ -96,6 +96,7 @@ final class UserProfileInfoViewController: BaseVC<UserProfileInfoViewModel> {
         LoadingIndicator.showLoading(text: "")
         
         viewModel.callToSignUp(phoneNumber: phoneNumber!, password: password!, nickname: trimmedNickName, profileImage: profileImage) { isDuplicate in
+            LoadingIndicator.hideLoading()
             if isDuplicate {
                 self.viewModel.pushCompleteView()
                 self.warningLabel.hide()

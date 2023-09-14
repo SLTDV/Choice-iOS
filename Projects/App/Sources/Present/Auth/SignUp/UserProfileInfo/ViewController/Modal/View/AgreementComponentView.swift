@@ -3,7 +3,6 @@ import SnapKit
 import Then
 import RxSwift
 import RxCocoa
-import Shared
 import SafariServices
 
 protocol AgreementComponentViewDelegate: AnyObject {

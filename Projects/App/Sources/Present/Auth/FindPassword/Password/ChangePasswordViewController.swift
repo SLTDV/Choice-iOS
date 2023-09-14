@@ -1,5 +1,5 @@
 import UIKit
-import Shared
+import DesignSystem
 
 final class ChangePasswordViewController: BaseVC<ChangePasswordViewModel>, InputPasswordComponentProtocol {
     let component = InputPasswordComponent()

@@ -1,7 +1,6 @@
 import Foundation
 import Alamofire
 import RxSwift
-import Shared
 import JwtStore
 import Swinject
 

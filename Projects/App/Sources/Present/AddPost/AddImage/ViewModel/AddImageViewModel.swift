@@ -1,6 +1,5 @@
 import UIKit
 import Alamofire
-import Shared
 import JwtStore
 import Swinject
 

@@ -1,11 +1,11 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import Shared
 import NetworksMonitor
 import GoogleMobileAds
 import AppTrackingTransparency
 import AdSupport
+import DesignSystem
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                                 PostVoteButtonHandlerProtocol, ImageLoadingFailureHandlerProtocol,
@@ -89,6 +89,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                 cell.failedImageLoadingDelegate = self
                 cell.disposeBag = self.disposeBag
                 cell.separatorInset = UIEdgeInsets.zero
+                
+                LoadingIndicator.hideLoading()
             }.disposed(by: disposeBag)
         
         postTableView.rx.modelSelected(PostList.self)

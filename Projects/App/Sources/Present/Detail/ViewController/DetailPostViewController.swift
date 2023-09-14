@@ -2,7 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Kingfisher
-import Shared
+import DesignSystem
 
 enum CommentPlaceHolder {
     static var text = "댓글을 입력해주세요."
@@ -67,7 +67,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private let divideVotePostImageLineView = UIView().then {
-        $0.backgroundColor = SharedAsset.grayMedium.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayMedium.color
     }
     
     private let contentLabel = UILabel().then {
@@ -100,17 +100,17 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private let firstVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = SharedAsset.grayDark.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayDark.color
     }
     
     private let secondVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = SharedAsset.grayDark.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayDark.color
     }
     
     private let divideCommentLineView = UIView().then {
-        $0.backgroundColor = SharedAsset.grayMedium.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayMedium.color
     }
     
     private let whiteBackgroundView = UIView().then {
@@ -126,13 +126,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.textColor = .lightGray
         $0.layer.cornerRadius = 22
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = SharedAsset.grayDark.color.cgColor
+        $0.layer.borderColor = DesignSystemAsset.Colors.grayDark.color.cgColor
     }
     
     private let submitCommentButton = UIButton().then {
         $0.isEnabled = false
         $0.setTitle("게시", for: .normal)
-        $0.setTitleColor(SharedAsset.grayDark.color, for: .normal)
+        $0.setTitleColor(DesignSystemAsset.Colors.grayDark.color, for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
     }
     
@@ -149,7 +149,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         """
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.textAlignment = .center
-        $0.textColor = SharedAsset.grayDark.color
+        $0.textColor = DesignSystemAsset.Colors.grayDark.color
         $0.numberOfLines = 0
     }
     
@@ -516,8 +516,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func setVoteButtonBackgroundColors(firstSelected: Bool, secondSelected: Bool) {
-        firstVoteButton.backgroundColor = firstSelected ? .black : SharedAsset.grayDark.color
-        secondVoteButton.backgroundColor = secondSelected ? .black : SharedAsset.grayDark.color
+        firstVoteButton.backgroundColor = firstSelected ? .black : DesignSystemAsset.Colors.grayDark.color
+        secondVoteButton.backgroundColor = secondSelected ? .black : DesignSystemAsset.Colors.grayDark.color
     }
     
     private func setVoteButtonTitles(firstTitle: String, secondTitle: String) {
@@ -692,7 +692,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
 extension DetailPostViewController {
     private func setDefaultSubmitButton() {
         submitCommentButton.isEnabled = false
-        submitCommentButton.setTitleColor(SharedAsset.grayDark.color, for: .normal)
+        submitCommentButton.setTitleColor(DesignSystemAsset.Colors.grayDark.color, for: .normal)
     }
     
     private func setEnterTextViewAutoSize() {
