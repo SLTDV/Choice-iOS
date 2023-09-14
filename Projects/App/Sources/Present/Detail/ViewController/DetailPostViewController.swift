@@ -193,11 +193,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             vc: self)
     }
     
-    private func presentFeaturePreparationAlert() {
+    private func presentFailShareAlert() {
         AlertHelper.shared.showAlert(
-            title: "준비 중",
+            title: "실패",
             message: """
-                     인스타 공유 기능 추가를 준비 중입니다.
+                     Instagram이 설치되어 있지 않습니다.
                      """,
             acceptTitle: nil,
             acceptAction: nil,
@@ -504,7 +504,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 UIPasteboard.general.setItems([pasteboardItems], options: pasteboardOptions)
                 UIApplication.shared.open(storiesUrl, options: [:], completionHandler: nil)
             } else {
-                print("User doesn't have instagram on their device.")
+                presentFailShareAlert()
             }
         }
     }
