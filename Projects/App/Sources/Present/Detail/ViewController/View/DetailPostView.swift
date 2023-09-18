@@ -104,7 +104,7 @@ final class DetailPostView: UIView {
     private func setLayout() {
         titleLabel.snp.makeConstraints {
             $0.leading.equalToSuperview().inset(43)
-            $0.top.equalToSuperview().offset(30)
+            $0.top.equalToSuperview().offset(35)
         }
         
         divideVotePostImageLineView.snp.makeConstraints {

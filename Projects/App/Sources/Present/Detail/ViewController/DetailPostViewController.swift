@@ -57,9 +57,26 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private lazy var userOptionButton = UIButton().then {
+        $0.menu = UIMenu(
+            children: [UIAction(
+                title: "게시물 신고",
+                image: UIImage(systemName: "exclamationmark.circle"),
+                attributes: .destructive,
+                handler: { _ in self.presentReportPostAlert() }
+            ), UIAction(
+                title: "차단하기",
+                image: UIImage(systemName: "person.crop.circle.badge.xmark"),
+                handler: { _ in self.presentBlockUserAlert()}
+            )]
+        )
         $0.showsMenuAsPrimaryAction = true
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+    }
+    
+    private let sharePostButton = UIButton().then {
+        $0.tintColor = .black
+        $0.setImage(UIImage(systemName: "paperplane.fill"), for: .normal)
     }
     
     private let detailPostView = DetailPostView()
@@ -129,33 +146,10 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.endEditing(true)
     }
     
-    private func presentDetailOptionModal() {
-        let vc = DetailOptionModalViewController()
-        vc.delegate = self
-        
-        vc.modalPresentationStyle = .pageSheet
-        vc.sheetPresentationController?.preferredCornerRadius = 25
-        vc.sheetPresentationController?.largestUndimmedDetentIdentifier = .medium
-        vc.sheetPresentationController?.prefersGrabberVisible = true
-
-        if #available(iOS 16.0, *) {
-            vc.sheetPresentationController?.detents = [
-                .custom { _ in
-                    return 250
-                }
-            ]
-        } else {
-            vc.sheetPresentationController?.detents = [.medium()]
-            vc.sheetPresentationController?.largestUndimmedDetentIdentifier = .large
-        }
-        
-        self.present(vc, animated: true)
-    }
-    
-    private func userOptionButtonDidTap() {
-        userOptionButton.rx.tap
+    private func sharePostButtonDidTap() {
+        sharePostButton.rx.tap
             .bind(with: self) { owner, _ in
-                owner.presentDetailOptionModal()
+                owner.shareToInstaStories()
             }.disposed(by: disposeBag)
     }
     
@@ -337,7 +331,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 } else {
                     owner.userOptionButton.snp.makeConstraints {
                         $0.centerY.equalTo(owner.userImageView)
-                        $0.trailing.equalTo(owner.divideCommentLineView.snp.trailing)
+                        $0.trailing.equalTo(owner.sharePostButton.snp.trailing).inset(45)
                     }
                 }
                 
@@ -482,6 +476,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func shareToInstaStories() {
+        detailPostView.contentLabel.numberOfLines = 4
         let renderer = UIGraphicsImageRenderer(bounds: detailPostView.bounds)
 
         let saveImage = renderer.image { context in
@@ -507,6 +502,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 presentFailShareAlert()
             }
         }
+        
+        detailPostView.contentLabel.numberOfLines = 0
     }
     
     override func configureVC() {
@@ -518,7 +515,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         setKeyboard()
         submitCommentButtonDidTap()
         configure(model: postListModelRelay.value)
-        userOptionButtonDidTap()
+        sharePostButtonDidTap()
     }
     
     override func addView() {
@@ -528,7 +525,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         scrollView.addSubview(contentView)
         contentView.addSubviews(
             userImageView, userNameLabel,
-            userOptionButton, detailPostView,
+            userOptionButton, sharePostButton, detailPostView,
             divideCommentLineView, commentTableView
         )
         whiteBackgroundView.addSubviews(
@@ -559,8 +556,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         detailPostView.snp.makeConstraints {
             $0.width.equalToSuperview()
-            $0.height.equalTo(480)
+            $0.bottom.equalTo(divideCommentLineView.snp.top).offset(5)
             $0.top.equalTo(userImageView.snp.bottom).offset(20)
+        }
+        
+        sharePostButton.snp.makeConstraints {
+            $0.centerY.equalTo(userImageView)
+            $0.trailing.equalTo(divideCommentLineView.snp.trailing)
         }
 
         divideCommentLineView.snp.makeConstraints {
@@ -676,22 +678,5 @@ extension DetailPostViewController: UITableViewDelegate {
             config = UISwipeActionsConfiguration(actions: [deleteContextual])
         }
         return config
-    }
-}
-
-extension DetailPostViewController: DetailOptionModalHandlerProtocol {
-    func detailOptionButtonDidTap(row: Int) {
-        dismiss(animated: true)
-        
-        switch row {
-        case 0:
-            presentReportPostAlert()
-        case 1:
-            presentBlockUserAlert()
-        case 2:
-            shareToInstaStories()
-        default:
-            return
-        }
     }
 }
