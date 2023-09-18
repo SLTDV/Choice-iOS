@@ -77,7 +77,7 @@ final class DetailPostView: UIView {
         secondVoteButton.isEnabled = (votingState != 2)
     }
     
-    func setVoteButtonTitles(firstTitle: String, secondTitle: String) {
+    private func setVoteButtonTitles(firstTitle: String, secondTitle: String) {
         firstVoteButton.setTitle(firstTitle, for: .normal)
         secondVoteButton.setTitle(secondTitle, for: .normal)
     }
