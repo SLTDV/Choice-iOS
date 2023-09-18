@@ -450,7 +450,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             detailPostView.layer.render(in: context.cgContext)
         }
 
-        let appID = "dohyeon.Choice1"
+        let appID = "Choice"
         let backgroundImage = ChoiceAsset.Images.instaBackground.image
         
         if let storiesUrl = URL(string: "instagram-stories://share?source_application=\(appID)") {
