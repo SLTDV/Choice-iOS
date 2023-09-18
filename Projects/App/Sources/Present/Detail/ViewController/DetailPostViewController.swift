@@ -557,7 +557,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         detailPostView.snp.makeConstraints {
             $0.width.equalToSuperview()
             $0.bottom.equalTo(divideCommentLineView.snp.top).offset(5)
-            $0.top.equalTo(userImageView.snp.bottom).offset(20)
+            $0.top.equalTo(userImageView.snp.bottom).offset(5)
         }
         
         sharePostButton.snp.makeConstraints {
