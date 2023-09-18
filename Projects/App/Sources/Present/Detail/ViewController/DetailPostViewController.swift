@@ -469,7 +469,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 presentFailShareAlert()
             }
         }
-        
         detailPostView.contentLabel.numberOfLines = 0
     }
     
