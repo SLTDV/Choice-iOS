@@ -87,7 +87,7 @@ final class DetailPostView: UIView {
         secondVoteButton.backgroundColor = secondSelected ? .black : SharedAsset.grayDark.color
     }
     
-    func setVoteButtonLayout(voting: Int) {
+    private func setVoteButtonLayout(voting: Int) {
         switch voting {
         case 1:
             setVoteButtonBackgroundColors(firstSelected: true, secondSelected: false)
@@ -99,6 +99,39 @@ final class DetailPostView: UIView {
                 setVoteButtonTitles(firstTitle: "???", secondTitle: "???")
             }
         }
+    }
+    
+    func setVoteButton(with model: PostList) {
+        let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
+            firstVotingCount: Double(model.firstVotingCount),
+            secondVotingCount: Double(model.secondVotingCount)
+        )
+        setVoteButtonTitles(firstTitle: "\(data.0)%(\(data.2)명)",
+                            secondTitle: "\(data.1)%(\(data.3)명)")
+        setVoteButtonLayout(voting: model.votingState)
+    }
+    
+    func configure(model: PostList) {
+        guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
+        guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
+        
+        titleLabel.text = model.title
+        contentLabel.text = model.content
+        firstVoteOptionLabel.text = model.firstVotingOption
+        secondVoteOptionLabel.text = model.secondVotingOption
+        
+        Downsampling.optimization(imageAt: firstImageUrl,
+                                  to: firstPostImageView.frame.size,
+                                  scale: 2) { [weak self] image in
+            self?.firstPostImageView.image = image
+        }
+        
+        Downsampling.optimization(imageAt: secondImageUrl,
+                                  to: secondPostImageView.frame.size,
+                                  scale: 2) { [weak self] image in
+            self?.secondPostImageView.image = image
+        }
+        setVoteButton(with: model)
     }
     
     private func setLayout() {

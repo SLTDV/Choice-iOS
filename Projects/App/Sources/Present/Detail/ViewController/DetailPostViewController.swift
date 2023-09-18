@@ -388,29 +388,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             }.disposed(by: disposeBag)
     }
     
-    private func configure(model: PostList) {
-        guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
-        guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-        
-        self.detailPostView.titleLabel.text = model.title
-        self.detailPostView.contentLabel.text = model.content
-        self.detailPostView.firstVoteOptionLabel.text = model.firstVotingOption
-        self.detailPostView.secondVoteOptionLabel.text = model.secondVotingOption
-        
-        Downsampling.optimization(imageAt: firstImageUrl,
-                                  to: detailPostView.firstPostImageView.frame.size,
-                                  scale: 2) { [weak self] image in
-            self?.detailPostView.firstPostImageView.image = image
-        }
-        
-        Downsampling.optimization(imageAt: secondImageUrl,
-                                  to: detailPostView.secondPostImageView.frame.size,
-                                  scale: 2) { [weak self] image in
-            self?.detailPostView.secondPostImageView.image = image
-        }
-        setVoteButtonLayout(with: model)
-    }
-    
     private func updateVotingStateWithLayout(_ votingState: Int) {
         let model = postListModelRelay.value
         
@@ -436,17 +413,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         
         model.votingState = votingState
         viewModel.requestVote(idx: model.idx, choice: model.votingState)
-        setVoteButtonLayout(with: model)
-    }
-    
-    private func setVoteButtonLayout(with model: PostList) {
-        let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
-            firstVotingCount: Double(model.firstVotingCount),
-            secondVotingCount: Double(model.secondVotingCount)
-        )
-        detailPostView.setVoteButtonTitles(firstTitle: "\(data.0)%(\(data.2)명)",
-                            secondTitle: "\(data.1)%(\(data.3)명)")
-        detailPostView.setVoteButtonLayout(voting: model.votingState)
+        detailPostView.setVoteButton(with: model)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -514,7 +481,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         bindUI()
         setKeyboard()
         submitCommentButtonDidTap()
-        configure(model: postListModelRelay.value)
+        detailPostView.configure(model: postListModelRelay.value)
         sharePostButtonDidTap()
     }
     
