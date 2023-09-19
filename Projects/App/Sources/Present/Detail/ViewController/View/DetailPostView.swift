@@ -4,38 +4,38 @@ import Shared
 final class DetailPostView: UIView {
     var type: ViewControllerType?
     
-    let titleLabel = UILabel().then {
+    private let titleLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 21, weight: .semibold)
     }
     
-    let divideVotePostImageLineView = UIView().then {
+    private let divideVotePostImageLineView = UIView().then {
         $0.backgroundColor = SharedAsset.grayMedium.color
     }
     
-    let contentLabel = UILabel().then {
+    private let contentLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .regular)
         $0.numberOfLines = 0
     }
     
-    let firstPostImageView = UIImageView().then {
+    private let firstPostImageView = UIImageView().then {
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleAspectFill
     }
     
-    let secondPostImageView = UIImageView().then {
+    private let secondPostImageView = UIImageView().then {
         $0.clipsToBounds = true
         $0.layer.cornerRadius = 25
         $0.backgroundColor = .gray
         $0.contentMode = .scaleAspectFill
     }
     
-    let firstVoteOptionLabel = UILabel().then {
+    private let firstVoteOptionLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .semibold)
     }
     
-    let secondVoteOptionLabel = UILabel().then {
+    private let secondVoteOptionLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .semibold)
     }
     
@@ -70,6 +70,10 @@ final class DetailPostView: UIView {
                     firstPostImageView, secondPostImageView,
                     firstVoteOptionLabel, secondVoteOptionLabel,
                     firstVoteButton, secondVoteButton)
+    }
+    
+    func setContentLabelNumberOfLines(lines: Int) {
+        contentLabel.numberOfLines = lines
     }
     
     func updateVoteButtonsState(votingState: Int) {
