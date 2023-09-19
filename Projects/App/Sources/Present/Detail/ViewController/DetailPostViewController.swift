@@ -62,11 +62,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 title: "게시물 신고",
                 image: UIImage(systemName: "exclamationmark.circle"),
                 attributes: .destructive,
-                handler: { _ in self.presentReportPostAlert() }
+                handler: { [weak self] _ in self?.presentReportPostAlert() }
             ), UIAction(
                 title: "차단하기",
                 image: UIImage(systemName: "person.crop.circle.badge.xmark"),
-                handler: { _ in self.presentBlockUserAlert()}
+                handler: { [weak self] _ in self?.presentBlockUserAlert()}
             )]
         )
         $0.showsMenuAsPrimaryAction = true
@@ -469,7 +469,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 presentFailShareAlert()
             }
         }
-        detailPostView.contentLabel.numberOfLines = 0
     }
     
     override func configureVC() {
