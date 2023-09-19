@@ -1,6 +1,6 @@
 import UIKit
 
-public final class ShareToInstagram {
+public enum ShareToInstagram {
     public static func shareToInstaStories(detailPostView: UIView, backgroundImage: UIImage, completion: @escaping () -> Void) {
         let renderer = UIGraphicsImageRenderer(bounds: detailPostView.bounds)
 
