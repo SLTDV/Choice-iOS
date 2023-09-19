@@ -187,7 +187,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             vc: self)
     }
     
-    private func presentFailShareAlert() {
+    private func presentFailedShareAlert() {
         AlertHelper.shared.showAlert(
             title: "실패",
             message: """
@@ -466,7 +466,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 UIPasteboard.general.setItems([pasteboardItems], options: pasteboardOptions)
                 UIApplication.shared.open(storiesUrl, options: [:], completionHandler: nil)
             } else {
-                presentFailShareAlert()
+                presentFailedShareAlert()
             }
         }
     }
