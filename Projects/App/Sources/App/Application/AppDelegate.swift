@@ -1,7 +1,6 @@
 import UIKit
 import Swinject
 import JwtStore
-import Shared
 import RxSwift
 import NetworksMonitor
 import GoogleMobileAds

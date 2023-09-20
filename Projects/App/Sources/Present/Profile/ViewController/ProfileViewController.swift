@@ -1,8 +1,8 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import Shared
 import SafariServices
+import DesignSystem
 
 final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol {
     var nicknameData = PublishSubject<String>()
@@ -76,7 +76,7 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
         """
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.textAlignment = .center
-        $0.textColor = SharedAsset.grayDark.color
+        $0.textColor = DesignSystemAsset.Colors.grayDark.color
         $0.numberOfLines = 0
     }
     
@@ -110,7 +110,10 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
             }.disposed(by: disposeBag)
         
         nicknameData
-            .bind(to: userNameLabel.rx.text)
+            .bind(with: self) { owner, name in
+                owner.userNameLabel.text = name
+                LoadingIndicator.hideLoading()
+            }
             .disposed(by: disposeBag)
         
         imageData
@@ -272,6 +275,7 @@ extension ProfileViewController: UIImagePickerControllerDelegate, UINavigationCo
         viewModel.requestToUploadProfileImage(profileImage: newImage)
             .subscribe(with: self, onNext: { owner, response in
                 DispatchQueue.main.async {
+                    LoadingIndicator.hideLoading()
                     owner.profileImageView.kf.setImage(with: URL(string: response.profileImageUrl))
                     picker.dismiss(animated: true)
                 }

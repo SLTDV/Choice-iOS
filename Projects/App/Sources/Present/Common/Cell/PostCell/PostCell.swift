@@ -2,9 +2,9 @@ import UIKit
 import SnapKit
 import Then
 import Kingfisher
-import Shared
 import RxSwift
 import RxCocoa
+import DesignSystem
 
 // MARK: - Protocol
 protocol RemoveTableViewCellHandlerProtocol: AnyObject {
@@ -91,7 +91,7 @@ final class PostCell: UITableViewCell {
         $0.setTitleColor(.white, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = SharedAsset.grayBackground.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayBackground.color
         $0.addTarget(self, action: #selector(PostVoteButtonDidTap(_:)), for: .touchUpInside)
     }
     
@@ -100,16 +100,16 @@ final class PostCell: UITableViewCell {
         $0.setTitleColor(.white, for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = SharedAsset.grayBackground.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayBackground.color
         $0.addTarget(self, action: #selector(PostVoteButtonDidTap(_:)), for: .touchUpInside)
     }
     
     private let participantsCountImageView = UIImageView().then {
-        $0.image = ChoiceAsset.Images.voteCountEmoji.image
+        $0.image = DesignSystemAsset.Images.voteCountEmoji.image
     }
     
     private let commentCountImageView = UIImageView().then {
-        $0.image = ChoiceAsset.Images.commentCountEmoji.image
+        $0.image = DesignSystemAsset.Images.commentCountEmoji.image
     }
     
     private let participantsCountLabel = UILabel().then {
@@ -246,9 +246,9 @@ final class PostCell: UITableViewCell {
         setVoteButtonTitleColors(color: .white)
         
         firstVoteButton.isEnabled = (voting == 1) ? false : true
-        firstVoteButton.backgroundColor = (voting == 1) ? .black : SharedAsset.grayVoteButton.color
+        firstVoteButton.backgroundColor = (voting == 1) ? .black : DesignSystemAsset.Colors.grayVoteButton.color
         secondVoteButton.isEnabled = (voting == 2) ? false : true
-        secondVoteButton.backgroundColor = (voting == 2) ? .black : SharedAsset.grayVoteButton.color
+        secondVoteButton.backgroundColor = (voting == 2) ? .black : DesignSystemAsset.Colors.grayVoteButton.color
     }
     
     // MARK: - Profile
@@ -316,8 +316,8 @@ final class PostCell: UITableViewCell {
     }
     
     private func setVoteButtonBackgroundColors(firstSelected: Bool, secondSelected: Bool) {
-        firstVoteButton.backgroundColor = firstSelected ? .black : SharedAsset.grayDark.color
-        secondVoteButton.backgroundColor = secondSelected ? .black : SharedAsset.grayDark.color
+        firstVoteButton.backgroundColor = firstSelected ? .black : DesignSystemAsset.Colors.grayDark.color
+        secondVoteButton.backgroundColor = secondSelected ? .black : DesignSystemAsset.Colors.grayDark.color
     }
     
     private func setVoteButtonTitles(firstTitle: String, secondTitle: String) {

@@ -1,11 +1,11 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import Shared
 import NetworksMonitor
 import GoogleMobileAds
 import AppTrackingTransparency
 import AdSupport
+import DesignSystem
 
 final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                                 PostVoteButtonHandlerProtocol, ImageLoadingFailureHandlerProtocol,
@@ -19,7 +19,7 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
     private var sortType: MenuOptionType = .findBestPostData
     
     private let leftLogoImageView = UIImageView().then {
-        $0.image = ChoiceAsset.Images.homeLogo.image
+        $0.image = DesignSystemAsset.Images.homeLogo.image
     }
     
     private lazy var addPostButton = UIBarButtonItem(image: UIImage(systemName: "plus.app"),
@@ -89,6 +89,8 @@ final class HomeViewController: BaseVC<HomeViewModel>, PostItemsProtocol,
                 cell.failedImageLoadingDelegate = self
                 cell.disposeBag = self.disposeBag
                 cell.separatorInset = UIEdgeInsets.zero
+                
+                LoadingIndicator.hideLoading()
             }.disposed(by: disposeBag)
         
         postTableView.rx.modelSelected(PostList.self)

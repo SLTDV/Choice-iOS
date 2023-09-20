@@ -1,6 +1,6 @@
 import Foundation
 import Alamofire
-import Shared
+import DesignSystem
 
 public class JwtRequestInterceptor: RequestInterceptor {
     private let jwtStore: JwtStore

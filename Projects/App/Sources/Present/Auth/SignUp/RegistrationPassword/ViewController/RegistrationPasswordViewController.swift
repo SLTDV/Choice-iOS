@@ -1,7 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import Shared
+import DesignSystem
 
 final class RegistrationPasswordViewController: BaseVC<RegistrationPasswordViewModel>, InputPasswordComponentProtocol {
     

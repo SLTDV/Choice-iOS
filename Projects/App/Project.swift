@@ -6,16 +6,11 @@ let project = Project.makeModule(
     platform: .iOS,
     product: .app,
     dependencies: [
-        TargetDependency.project(
-            target: "Shared",
-            path: .relativeToRoot("Projects/Shared")),
-        TargetDependency.project(
-            target: "JwtStore",
-            path: .relativeToRoot("Projects/Core/JwtStore")),
-        TargetDependency.project(
-            target: "NetworksMonitor",
-            path: .relativeToRoot("Projects/Core/NetworksMonitor")),
-        .SPM.GoogleMobileAds
+        .Core.DesignSystem,
+        .Core.JwtStore,
+        .Core.NetworksMonitor,
+        
+        .Shared.GlobalThirdPartyLib
     ],
     resources: ["Resources/**"],
     infoPlist: .file(path: "Support/Info.plist"),

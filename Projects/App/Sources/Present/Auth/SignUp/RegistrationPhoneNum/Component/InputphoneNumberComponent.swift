@@ -1,7 +1,7 @@
 import UIKit
-import Shared
 import RxSwift
 import RxCocoa
+import DesignSystem
 
 protocol InputPhoneNumberComponentProtocol: AnyObject {
     func nextButtonDidTap()
@@ -33,7 +33,7 @@ final class InputphoneNumberComponent: UIView {
         $0.setTitle("인증 요청", for: .normal)
         $0.isEnabled = false
         $0.titleLabel?.font = .systemFont(ofSize: 14, weight: .semibold)
-        $0.backgroundColor = SharedAsset.grayVoteButton.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayVoteButton.color
         $0.layer.cornerRadius = 8
     }
     
@@ -66,7 +66,7 @@ final class InputphoneNumberComponent: UIView {
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.setTitle("다음", for: .normal)
         $0.isEnabled = false
-        $0.backgroundColor = SharedAsset.grayVoteButton.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayVoteButton.color
         $0.layer.cornerRadius = 8
     }
     
@@ -205,7 +205,7 @@ final class InputphoneNumberComponent: UIView {
             }
             .bind(with: self, onNext: { owner, result in
                 let (isValid, text) = result
-                owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
+                owner.nextButton.backgroundColor = isValid ? .black : DesignSystemAsset.Colors.grayVoteButton.color
                 owner.nextButton.isEnabled = isValid
                 owner.authNumberTextfield.text = text
             }).disposed(by: disposeBag)
@@ -213,7 +213,7 @@ final class InputphoneNumberComponent: UIView {
         inputPhoneNumberTextfield.rx.text.orEmpty
             .map { $0.count == 11 }
             .bind(with: self) { owner, isValid in
-                owner.requestAuthButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
+                owner.requestAuthButton.backgroundColor = isValid ? .black : DesignSystemAsset.Colors.grayVoteButton.color
                 owner.requestAuthButton.isEnabled = isValid
             }.disposed(by: disposeBag)
     }

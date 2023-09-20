@@ -1,13 +1,13 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import Shared
+import DesignSystem
 
 final class SignInViewController: BaseVC<SignInViewModel> {    
     private let disposeBag = DisposeBag()
     
     private let titleImageView = UIImageView().then {
-        $0.image = ChoiceAsset.Images.homeLogo.image
+        $0.image = DesignSystemAsset.Images.homeLogo.image
     }
     
     private let subTitleLabel = UILabel().then {

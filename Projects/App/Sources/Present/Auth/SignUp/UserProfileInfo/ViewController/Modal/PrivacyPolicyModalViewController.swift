@@ -4,7 +4,6 @@ import SnapKit
 import Then
 import RxSwift
 import RxCocoa
-import Shared
 
 protocol PrivacyPolicyViewControllerDelegate: AnyObject {
     func requestSignUp()

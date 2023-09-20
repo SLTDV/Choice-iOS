@@ -1,7 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import Shared
+import DesignSystem
 
 enum ContentsPlaceHolder {
     static let titleText = "제목입력 (2~16)"
@@ -27,7 +27,7 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.layer.cornerRadius = 8
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = SharedAsset.grayMedium.color.cgColor
+        $0.layer.borderColor = DesignSystemAsset.Colors.grayMedium.color.cgColor
     }
     
     private let textCountLabel = UILabel().then {
@@ -39,7 +39,7 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
     private lazy var nextButton = UIButton().then {
         $0.setTitle("다음", for: .normal)
         $0.setTitleColor( .white, for: .normal)
-        $0.backgroundColor = SharedAsset.grayMedium.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayMedium.color
         $0.layer.cornerRadius = 8
         $0.isEnabled = false
     }
@@ -50,7 +50,7 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
             .bind(with: self) { owner, count in
                 let isValid = (2...16).contains(count)
                 owner.nextButton.isEnabled = isValid
-                owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.grayMedium.color
+                owner.nextButton.backgroundColor = isValid ? .black : DesignSystemAsset.Colors.grayMedium.color
             }.disposed(by: disposeBag)
     }
     
@@ -94,7 +94,7 @@ final class AddContentsViewController: BaseVC<AddContentsViewModel> {
                     owner.inputContentTextView.text = ContentsPlaceHolder.contentText
                     owner.inputContentTextView.textColor = .placeholderText
                 }
-                owner.inputContentTextView.layer.borderColor = SharedAsset.grayMedium.color.cgColor
+                owner.inputContentTextView.layer.borderColor = DesignSystemAsset.Colors.grayMedium.color.cgColor
             }.disposed(by: disposeBag)
     }
     

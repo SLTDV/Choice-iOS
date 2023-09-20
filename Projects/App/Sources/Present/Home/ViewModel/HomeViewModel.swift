@@ -2,7 +2,6 @@ import Foundation
 import Alamofire
 import RxSwift
 import RxCocoa
-import Shared
 import JwtStore
 import Swinject
 
@@ -44,7 +43,6 @@ final class HomeViewModel: BaseViewModel {
         ).responseDecodable(of: PostModel.self) { [weak self] response in
             switch response.result {
             case .success(let postData):
-                LoadingIndicator.hideLoading()
                 completion(.success(postData.size))
                 var relay = self?.delegate?.postData.value
                 relay?.append(contentsOf: postData.postList)
