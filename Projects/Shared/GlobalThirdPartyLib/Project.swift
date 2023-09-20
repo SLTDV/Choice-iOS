@@ -15,7 +15,8 @@ let project = Project.makeModule(
         .SPM.Swinject,
         .SPM.Lottie,
         .SPM.Firebase,
-        .SPM.GoogleMobileAds
+        .SPM.GoogleMobileAds,
+        .sdk(name: "JavaScriptCore.framework", type: .framework)
     ],
     baseSetting: ["OTHER_LDFLAGS": "-ObjC"]
 )

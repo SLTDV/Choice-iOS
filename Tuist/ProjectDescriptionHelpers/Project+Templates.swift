@@ -1,4 +1,5 @@
 import ProjectDescription
+import Foundation
 
 
 public extension Project {
