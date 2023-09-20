@@ -1,6 +1,4 @@
 import ProjectDescription
-import Foundation
-
 
 public extension Project {
     static func makeModule(
