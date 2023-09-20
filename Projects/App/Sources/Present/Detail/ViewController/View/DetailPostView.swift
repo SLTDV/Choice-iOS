@@ -1,5 +1,5 @@
 import UIKit
-import Shared
+import DesignSystem
 
 final class DetailPostView: UIView {
     var type: ViewControllerType?
@@ -9,7 +9,7 @@ final class DetailPostView: UIView {
     }
     
     private let divideVotePostImageLineView = UIView().then {
-        $0.backgroundColor = SharedAsset.grayMedium.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayMedium.color
     }
     
     private let contentLabel = UILabel().then {
@@ -42,13 +42,13 @@ final class DetailPostView: UIView {
     let firstVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = SharedAsset.grayDark.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayDark.color
     }
     
     let secondVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = SharedAsset.grayDark.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayDark.color
     }
     
     override init(frame: CGRect) {
@@ -87,8 +87,8 @@ final class DetailPostView: UIView {
     }
     
     private func setVoteButtonBackgroundColors(firstSelected: Bool, secondSelected: Bool) {
-        firstVoteButton.backgroundColor = firstSelected ? .black : SharedAsset.grayDark.color
-        secondVoteButton.backgroundColor = secondSelected ? .black : SharedAsset.grayDark.color
+        firstVoteButton.backgroundColor = firstSelected ? .black : DesignSystemAsset.Colors.grayDark.color
+        secondVoteButton.backgroundColor = secondSelected ? .black : DesignSystemAsset.Colors.grayDark.color
     }
     
     private func setVoteButtonLayout(voting: Int) {

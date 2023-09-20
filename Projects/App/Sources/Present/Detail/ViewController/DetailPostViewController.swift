@@ -111,13 +111,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private let firstVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = SharedAsset.grayDark.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayDark.color
     }
     
     private let secondVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = SharedAsset.grayDark.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayDark.color
     }
     
     private let divideCommentLineView = UIView().then {
