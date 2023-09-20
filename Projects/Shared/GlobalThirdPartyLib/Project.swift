@@ -16,7 +16,7 @@ let project = Project.makeModule(
         .SPM.Lottie,
         .SPM.Firebase,
         .SPM.GoogleMobileAds,
-        .sdk(name: "JavaScriptCore.framework", type: .framework)
+        .sdk(name: "JavaScriptCore", type: .framework)
     ],
     baseSetting: ["OTHER_LDFLAGS": "-ObjC"]
 )
