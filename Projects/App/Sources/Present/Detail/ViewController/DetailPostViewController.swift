@@ -186,7 +186,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func sharePostButtonDidTap() {
-        let backgroundImage = ChoiceAsset.Images.instaBackground.image
+        let backgroundImage = DesignSystemAsset.Images.instaBackground.image
         
         sharePostButton.rx.tap
             .bind(with: self) { owner, _ in

@@ -105,11 +105,11 @@ final class PostCell: UITableViewCell {
     }
     
     private let participantsCountImageView = UIImageView().then {
-        $0.image = ChoiceAsset.Images.voteCountEmoji.image
+        $0.image = DesignSystemAsset.Images.voteCountEmoji.image
     }
     
     private let commentCountImageView = UIImageView().then {
-        $0.image = ChoiceAsset.Images.commentCountEmoji.image
+        $0.image = DesignSystemAsset.Images.commentCountEmoji.image
     }
     
     private let participantsCountLabel = UILabel().then {
