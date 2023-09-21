@@ -1,9 +1,8 @@
 import Network
-import UIKit
 
 public protocol NetworkConnectionHandlerProtocol: AnyObject {
-    func showAlertOnNetworkDisConnect()
-    func showAlertOnNetworkChange()
+    func showAlertOnNetworkDisConnected()
+    func showAlertOnNetworkChanged()
 }
 
 public class NetworksStatus {
@@ -14,6 +13,8 @@ public class NetworksStatus {
     public weak var delegate: NetworkConnectionHandlerProtocol?
     
     public static let shared = NetworksStatus()
+    
+    private init() {}
     
     public func startMonitoring() {
         monitor.start(queue: DispatchQueue.global())
@@ -36,7 +37,7 @@ public class NetworksStatus {
                 self.currentNWInterfaceType = .wiredEthernet
             }
         } else {
-            delegate?.showAlertOnNetworkDisConnect()
+            delegate?.showAlertOnNetworkDisConnected()
             return
         }
         
@@ -47,10 +48,10 @@ public class NetworksStatus {
         }
         
         if newStatus.status != .satisfied {
-            delegate?.showAlertOnNetworkDisConnect()
+            delegate?.showAlertOnNetworkDisConnected()
         } else {
             if previousNWInterfaceType != currentNWInterfaceType {
-                delegate?.showAlertOnNetworkChange()
+                delegate?.showAlertOnNetworkChanged()
             }
         }
         previousNWInterfaceType = currentNWInterfaceType

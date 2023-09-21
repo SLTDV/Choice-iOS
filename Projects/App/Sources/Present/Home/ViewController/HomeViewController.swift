@@ -252,7 +252,7 @@ extension HomeViewController {
             vc: self)
     }
     
-    func showAlertOnNetworkDisConnect() {
+    func showAlertOnNetworkDisConnected() {
         AlertHelper.shared.showAlert(
             title: "네트워크 연결 실패!",
             message: "네트워크 연결에 실패했습니다. 앱을 다시 실행해주세요.",
@@ -265,7 +265,7 @@ extension HomeViewController {
             vc: self)
     }
     
-    func showAlertOnNetworkChange() {
+    func showAlertOnNetworkChanged() {
         AlertHelper.shared.showAlert(
             title: "네트워크 변경 감지!",
             message: "네트워크 변경이 감지되었습니다. 앱을 다시 실행해주세요.",
