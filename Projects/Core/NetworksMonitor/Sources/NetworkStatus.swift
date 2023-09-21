@@ -14,6 +14,8 @@ public class NetworksStatus {
     
     public static let shared = NetworksStatus()
     
+    private init() {}
+    
     public func startMonitoring() {
         monitor.start(queue: DispatchQueue.global())
         monitor.pathUpdateHandler = { [weak self] path in
