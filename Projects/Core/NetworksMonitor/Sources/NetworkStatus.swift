@@ -1,6 +1,6 @@
 import Network
 
-public protocol  : AnyObject {
+public protocol NetworkConnectionHandlerProtocol: AnyObject {
     func showAlertOnNetworkDisConnected()
     func showAlertOnNetworkChanged()
 }
