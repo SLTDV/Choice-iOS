@@ -25,7 +25,7 @@ public final class BoxTextField: UITextField {
         self.delegate = self
         
         self.addLeftPadding()
-        self.layer.borderColor = SharedAsset.grayMedium.color.cgColor
+        self.layer.borderColor = DesignSystemAsset.Colors.grayMedium.color.cgColor
         self.layer.borderWidth = 1
         self.layer.cornerRadius = 8
     }
@@ -113,6 +113,6 @@ extension BoxTextField: UITextFieldDelegate {
     }
     
     public func textFieldDidEndEditing(_ textField: UITextField) {
-        textField.layer.borderColor = SharedAsset.grayMedium.color.cgColor
+        textField.layer.borderColor = DesignSystemAsset.Colors.grayMedium.color.cgColor
     }
 }

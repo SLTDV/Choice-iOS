@@ -1,8 +1,8 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import Shared
 import GoogleMobileAds
+import DesignSystem
 
 enum PickerKey {
     static let first = "first"
@@ -20,7 +20,7 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
     private lazy var addFirstImageButton = UIButton().then {
         $0.setTitle("+", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 30)
-        $0.setTitleColor(SharedAsset.grayDark.color, for: .normal)
+        $0.setTitleColor(DesignSystemAsset.Colors.grayDark.color, for: .normal)
         $0.layer.cornerRadius = 10
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
@@ -32,7 +32,7 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
     private lazy var addSecondImageButton = UIButton().then {
         $0.setTitle("+", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 30)
-        $0.setTitleColor(SharedAsset.grayDark.color, for: .normal)
+        $0.setTitleColor(DesignSystemAsset.Colors.grayDark.color, for: .normal)
         $0.layer.cornerRadius = 10
         $0.contentMode = .scaleAspectFill
         $0.backgroundColor = .init(red: 0.95, green: 0.95, blue: 0.95, alpha: 1)
@@ -64,7 +64,7 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
         $0.tag = 0
         $0.setTitleColor(.gray, for: .normal)
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = SharedAsset.grayDark.color.cgColor
+        $0.layer.borderColor = DesignSystemAsset.Colors.grayDark.color.cgColor
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(SetTopicButtonDidTap(_:)), for: .touchUpInside)
     }
@@ -74,7 +74,7 @@ final class AddImageViewController: BaseVC<AddImageViewModel> {
         $0.tag = 1
         $0.setTitleColor(.gray, for: .normal)
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = SharedAsset.grayDark.color.cgColor
+        $0.layer.borderColor = DesignSystemAsset.Colors.grayDark.color.cgColor
         $0.layer.cornerRadius = 8
         $0.addTarget(self, action: #selector(SetTopicButtonDidTap(_:)), for: .touchUpInside)
     }

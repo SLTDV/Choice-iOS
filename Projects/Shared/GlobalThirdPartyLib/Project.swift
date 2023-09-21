@@ -2,7 +2,7 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.makeModule(
-    name: "Shared",
+    name: "GlobalThirdPartyLib",
     product: .framework,
     packages: [],
     dependencies: [
@@ -14,8 +14,9 @@ let project = Project.makeModule(
         .SPM.Alamofire,
         .SPM.Swinject,
         .SPM.Lottie,
-        .SPM.Firebase
+        .SPM.Firebase,
+        .SPM.GoogleMobileAds,
+        .sdk(name: "JavaScriptCore", type: .framework)
     ],
-    resources: ["Resources/**"],
     baseSetting: ["OTHER_LDFLAGS": "-ObjC"]
 )

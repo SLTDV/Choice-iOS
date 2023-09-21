@@ -1,6 +1,5 @@
 import ProjectDescription
 
-
 public extension Project {
     static func makeModule(
         name: String,

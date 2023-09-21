@@ -2,7 +2,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 import Kingfisher
-import Shared
+import DesignSystem
 
 enum CommentPlaceHolder {
     static var text = "댓글을 입력해주세요."
@@ -57,18 +57,29 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private lazy var userOptionButton = UIButton().then {
+        $0.menu = UIMenu(
+            children: [UIAction(
+                title: "게시물 신고",
+                image: UIImage(systemName: "exclamationmark.circle"),
+                attributes: .destructive,
+                handler: { [weak self] _ in self?.presentReportPostAlert() }
+            ), UIAction(
+                title: "차단하기",
+                image: UIImage(systemName: "person.crop.circle.badge.xmark"),
+                handler: { [weak self] _ in self?.presentBlockUserAlert()}
+            )]
+        )
         $0.showsMenuAsPrimaryAction = true
         $0.tintColor = .black
         $0.setImage(UIImage(systemName: "ellipsis"), for: .normal)
     }
     
-    private let titleLabel = UILabel().then {
-        $0.font = .systemFont(ofSize: 21, weight: .semibold)
+    private let sharePostButton = UIButton().then {
+        $0.tintColor = .black
+        $0.setImage(UIImage(systemName: "paperplane.fill"), for: .normal)
     }
     
-    private let divideVotePostImageLineView = UIView().then {
-        $0.backgroundColor = SharedAsset.grayMedium.color
-    }
+    private let detailPostView = DetailPostView()
     
     private let contentLabel = UILabel().then {
         $0.font = .systemFont(ofSize: 16, weight: .regular)
@@ -100,17 +111,17 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     private let firstVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = SharedAsset.grayDark.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayDark.color
     }
     
     private let secondVoteButton = UIButton().then {
         $0.setTitleColor(.white, for: .normal)
         $0.layer.cornerRadius = 10
-        $0.backgroundColor = SharedAsset.grayDark.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayDark.color
     }
     
     private let divideCommentLineView = UIView().then {
-        $0.backgroundColor = SharedAsset.grayMedium.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayMedium.color
     }
     
     private let whiteBackgroundView = UIView().then {
@@ -126,13 +137,13 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         $0.textColor = .lightGray
         $0.layer.cornerRadius = 22
         $0.layer.borderWidth = 1
-        $0.layer.borderColor = SharedAsset.grayDark.color.cgColor
+        $0.layer.borderColor = DesignSystemAsset.Colors.grayDark.color.cgColor
     }
     
     private let submitCommentButton = UIButton().then {
         $0.isEnabled = false
         $0.setTitle("게시", for: .normal)
-        $0.setTitleColor(SharedAsset.grayDark.color, for: .normal)
+        $0.setTitleColor(DesignSystemAsset.Colors.grayDark.color, for: .normal)
         $0.titleLabel?.font = UIFont.systemFont(ofSize: 14, weight: .regular)
     }
     
@@ -149,7 +160,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         """
         $0.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.textAlignment = .center
-        $0.textColor = SharedAsset.grayDark.color
+        $0.textColor = DesignSystemAsset.Colors.grayDark.color
         $0.numberOfLines = 0
     }
     
@@ -174,33 +185,16 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         self.view.endEditing(true)
     }
     
-    private func presentDetailOptionModal() {
-        let vc = DetailOptionModalViewController()
-        vc.delegate = self
+    private func sharePostButtonDidTap() {
+        let backgroundImage = DesignSystemAsset.Images.instaBackground.image
         
-        vc.modalPresentationStyle = .pageSheet
-        vc.sheetPresentationController?.preferredCornerRadius = 25
-        vc.sheetPresentationController?.largestUndimmedDetentIdentifier = .medium
-        vc.sheetPresentationController?.prefersGrabberVisible = true
-
-        if #available(iOS 16.0, *) {
-            vc.sheetPresentationController?.detents = [
-                .custom { _ in
-                    return 250
-                }
-            ]
-        } else {
-            vc.sheetPresentationController?.detents = [.medium()]
-            vc.sheetPresentationController?.largestUndimmedDetentIdentifier = .large
-        }
-        
-        self.present(vc, animated: true)
-    }
-    
-    private func userOptionButtonDidTap() {
-        userOptionButton.rx.tap
+        sharePostButton.rx.tap
             .bind(with: self) { owner, _ in
-                owner.presentDetailOptionModal()
+                owner.detailPostView.setContentLabelNumberOfLines(lines: 4)
+                ShareToInstagram.shareToInstaStories(detailPostView: owner.detailPostView, backgroundImage: backgroundImage) {
+                    owner.presentFailedShareAlert()
+                }
+                owner.detailPostView.setContentLabelNumberOfLines(lines: 0)
             }.disposed(by: disposeBag)
     }
     
@@ -238,11 +232,11 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             vc: self)
     }
     
-    private func presentFeaturePreparationAlert() {
+    private func presentFailedShareAlert() {
         AlertHelper.shared.showAlert(
-            title: "준비 중",
+            title: "실패",
             message: """
-                     인스타 공유 기능 추가를 준비 중입니다.
+                     Instagram이 설치되어 있지 않습니다.
                      """,
             acceptTitle: nil,
             acceptAction: nil,
@@ -382,7 +376,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 } else {
                     owner.userOptionButton.snp.makeConstraints {
                         $0.centerY.equalTo(owner.userImageView)
-                        $0.trailing.equalTo(owner.divideVotePostImageLineView.snp.trailing)
+                        $0.trailing.equalTo(owner.sharePostButton.snp.trailing).inset(45)
                     }
                 }
                 
@@ -428,38 +422,15 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 }
             }.disposed(by: disposeBag)
         
-        firstVoteButton.rx.tap
+        detailPostView.firstVoteButton.rx.tap
             .bind(with: self) { owner, _ in
                 owner.updateVotingStateWithLayout(1)
             }.disposed(by: disposeBag)
         
-        secondVoteButton.rx.tap
+        detailPostView.secondVoteButton.rx.tap
             .bind(with: self) { owner, _ in
                 owner.updateVotingStateWithLayout(2)
             }.disposed(by: disposeBag)
-    }
-    
-    private func configure(model: PostList) {
-        guard let firstImageUrl = URL(string: model.firstImageUrl) else { return }
-        guard let secondImageUrl = URL(string: model.secondImageUrl) else { return }
-        
-        self.titleLabel.text = model.title
-        self.contentLabel.text = model.content
-        self.firstVoteOptionLabel.text = model.firstVotingOption
-        self.secondVoteOptionLabel.text = model.secondVotingOption
-        
-        Downsampling.optimization(imageAt: firstImageUrl,
-                                  to: firstPostImageView.frame.size,
-                                  scale: 2) { [weak self] image in
-            self?.firstPostImageView.image = image
-        }
-        
-        Downsampling.optimization(imageAt: secondImageUrl,
-                                  to: secondPostImageView.frame.size,
-                                  scale: 2) { [weak self] image in
-            self?.secondPostImageView.image = image
-        }
-        setVoteButtonLayout(with: model)
     }
     
     private func updateVotingStateWithLayout(_ votingState: Int) {
@@ -480,49 +451,14 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             break
         }
         
-        firstVoteButton.isEnabled = (votingState == 1) ? false : true
-        secondVoteButton.isEnabled = (votingState == 2) ? false : true
+        detailPostView.updateVoteButtonsState(votingState: votingState)
         
         model.firstVotingCount = max(0, model.firstVotingCount)
         model.secondVotingCount = max(0, model.secondVotingCount)
         
         model.votingState = votingState
         viewModel.requestVote(idx: model.idx, choice: model.votingState)
-        setVoteButtonLayout(with: model)
-    }
-    
-    private func setVoteButtonLayout(with model: PostList) {
-        let data = CalculateToVoteCountPercentage.calculateToVoteCountPercentage(
-            firstVotingCount: Double(model.firstVotingCount),
-            secondVotingCount: Double(model.secondVotingCount)
-        )
-        setVoteButtonTitles(firstTitle: "\(data.0)%(\(data.2)명)",
-                            secondTitle: "\(data.1)%(\(data.3)명)")
-        setVoteButtonLayout(voting: model.votingState)
-    }
-    
-    private func setVoteButtonLayout(voting: Int) {
-        switch voting {
-        case 1:
-            setVoteButtonBackgroundColors(firstSelected: true, secondSelected: false)
-        case 2:
-            setVoteButtonBackgroundColors(firstSelected: false, secondSelected: true)
-        default:
-            setVoteButtonBackgroundColors(firstSelected: false, secondSelected: false)
-            if type == .home {
-                setVoteButtonTitles(firstTitle: "???", secondTitle: "???")
-            }
-        }
-    }
-    
-    private func setVoteButtonBackgroundColors(firstSelected: Bool, secondSelected: Bool) {
-        firstVoteButton.backgroundColor = firstSelected ? .black : SharedAsset.grayDark.color
-        secondVoteButton.backgroundColor = secondSelected ? .black : SharedAsset.grayDark.color
-    }
-    
-    private func setVoteButtonTitles(firstTitle: String, secondTitle: String) {
-        firstVoteButton.setTitle(firstTitle, for: .normal)
-        secondVoteButton.setTitle(secondTitle, for: .normal)
+        detailPostView.setVoteButton(with: model)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -559,8 +495,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         bindUI()
         setKeyboard()
         submitCommentButtonDidTap()
-        configure(model: postListModelRelay.value)
-        userOptionButtonDidTap()
+        detailPostView.configure(model: postListModelRelay.value)
+        sharePostButtonDidTap()
     }
     
     override func addView() {
@@ -570,11 +506,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         scrollView.addSubview(contentView)
         contentView.addSubviews(
             userImageView, userNameLabel,
-            userOptionButton, titleLabel,
-            divideVotePostImageLineView, contentLabel,
-            firstVoteOptionLabel, secondVoteOptionLabel,
-            firstPostImageView, secondPostImageView,
-            firstVoteButton, secondVoteButton,
+            userOptionButton, sharePostButton, detailPostView,
             divideCommentLineView, commentTableView
         )
         whiteBackgroundView.addSubviews(
@@ -603,62 +535,19 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.leading.equalTo(userImageView.snp.trailing).offset(9)
         }
         
-        titleLabel.snp.makeConstraints {
-            $0.leading.equalToSuperview().inset(43)
-            $0.top.equalTo(userImageView.snp.bottom).offset(30)
+        detailPostView.snp.makeConstraints {
+            $0.width.equalToSuperview()
+            $0.bottom.equalTo(divideCommentLineView.snp.top).offset(5)
+            $0.top.equalTo(userImageView.snp.bottom).offset(5)
         }
         
-        divideVotePostImageLineView.snp.makeConstraints {
-            $0.top.equalTo(titleLabel.snp.bottom).offset(9)
-            $0.leading.trailing.equalToSuperview().inset(38)
-            $0.height.equalTo(1)
+        sharePostButton.snp.makeConstraints {
+            $0.centerY.equalTo(userImageView)
+            $0.trailing.equalTo(divideCommentLineView.snp.trailing)
         }
-        
-        contentLabel.snp.makeConstraints {
-            $0.top.equalTo(divideVotePostImageLineView.snp.bottom).offset(22)
-            $0.leading.trailing.equalToSuperview().inset(43)
-        }
-        
-        firstVoteOptionLabel.snp.makeConstraints {
-            $0.top.equalTo(contentLabel.snp.bottom).offset(30)
-            $0.centerX.equalTo(firstPostImageView)
-        }
-        
-        secondVoteOptionLabel.snp.makeConstraints {
-            $0.top.equalTo(contentLabel.snp.bottom).offset(30)
-            $0.centerX.equalTo(secondPostImageView)
-        }
-        
-        firstPostImageView.snp.makeConstraints {
-            $0.top.equalTo(firstVoteOptionLabel.snp.bottom).offset(10)
-            $0.leading.equalToSuperview().inset(20)
-            $0.width.equalTo(160)
-            $0.height.equalTo(160)
-        }
-        
-        secondPostImageView.snp.makeConstraints {
-            $0.top.equalTo(secondVoteOptionLabel.snp.bottom).offset(10)
-            $0.trailing.equalToSuperview().inset(20)
-            $0.width.equalTo(160)
-            $0.height.equalTo(160)
-        }
-        
-        firstVoteButton.snp.makeConstraints {
-            $0.top.equalTo(firstPostImageView.snp.bottom).offset(26)
-            $0.centerX.equalTo(firstPostImageView)
-            $0.width.equalTo(144)
-            $0.height.equalTo(68)
-        }
-        
-        secondVoteButton.snp.makeConstraints {
-            $0.top.equalTo(secondPostImageView.snp.bottom).offset(26)
-            $0.centerX.equalTo(secondPostImageView)
-            $0.width.equalTo(144)
-            $0.height.equalTo(68)
-        }
-        
+
         divideCommentLineView.snp.makeConstraints {
-            $0.top.equalTo(firstVoteButton.snp.bottom).offset(48)
+            $0.top.equalTo(detailPostView.firstVoteButton.snp.bottom).offset(30)
             $0.leading.trailing.equalToSuperview().inset(38)
             $0.height.equalTo(1)
         }
@@ -692,7 +581,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
 extension DetailPostViewController {
     private func setDefaultSubmitButton() {
         submitCommentButton.isEnabled = false
-        submitCommentButton.setTitleColor(SharedAsset.grayDark.color, for: .normal)
+        submitCommentButton.setTitleColor(DesignSystemAsset.Colors.grayDark.color, for: .normal)
     }
     
     private func setEnterTextViewAutoSize() {
@@ -770,22 +659,5 @@ extension DetailPostViewController: UITableViewDelegate {
             config = UISwipeActionsConfiguration(actions: [deleteContextual])
         }
         return config
-    }
-}
-
-extension DetailPostViewController: DetailOptionModalHandlerProtocol {
-    func detailOptionButtonDidTap(row: Int) {
-        dismiss(animated: true)
-        
-        switch row {
-        case 0:
-            presentReportPostAlert()
-        case 1:
-            presentBlockUserAlert()
-        case 2:
-            presentFeaturePreparationAlert()
-        default:
-            return
-        }
     }
 }

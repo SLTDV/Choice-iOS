@@ -1,7 +1,7 @@
 import UIKit
-import Shared
 import RxSwift
 import RxCocoa
+import DesignSystem
 
 protocol InputPasswordComponentProtocol: AnyObject {
     func nextButtonDidTap(password: String)
@@ -31,7 +31,7 @@ final class InputPasswordComponent: UIView {
         $0.setTitle("다음", for: .normal)
         $0.titleLabel?.font = .systemFont(ofSize: 18, weight: .semibold)
         $0.isEnabled = false
-        $0.backgroundColor = SharedAsset.grayVoteButton.color
+        $0.backgroundColor = DesignSystemAsset.Colors.grayVoteButton.color
         $0.layer.cornerRadius = 8
     }
     
@@ -96,7 +96,7 @@ final class InputPasswordComponent: UIView {
         )
         .bind(with: self) { owner, isValid in
             owner.nextButton.isEnabled = isValid
-            owner.nextButton.backgroundColor = isValid ? .black : SharedAsset.grayVoteButton.color
+            owner.nextButton.backgroundColor = isValid ? .black : DesignSystemAsset.Colors.grayVoteButton.color
         }.disposed(by: disposeBag)
     }
     

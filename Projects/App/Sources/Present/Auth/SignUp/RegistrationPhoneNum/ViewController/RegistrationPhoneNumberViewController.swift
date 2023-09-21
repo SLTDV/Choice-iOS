@@ -1,7 +1,7 @@
 import UIKit
 import RxSwift
 import RxCocoa
-import Shared
+import DesignSystem
 
 final class RegistrationPhoneNumberViewController: BaseVC<RegistrationPhoneNumberViewModel>, InputPhoneNumberComponentProtocol {
     private let disposeBag = DisposeBag()
@@ -71,7 +71,7 @@ extension RegistrationPhoneNumberViewController {
                 self?.component.resendLabel.isHidden = false
                 self?.component.resendButton.isHidden = false
                 
-                self?.component.requestAuthButton.backgroundColor = SharedAsset.grayVoteButton.color
+                self?.component.requestAuthButton.backgroundColor = DesignSystemAsset.Colors.grayVoteButton.color
                 self?.component.requestAuthButton.isEnabled = false
                 
                 self?.component.inputPhoneNumberTextfield.isUserInteractionEnabled = false

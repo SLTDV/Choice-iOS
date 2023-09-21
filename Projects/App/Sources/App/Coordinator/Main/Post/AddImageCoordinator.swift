@@ -1,5 +1,5 @@
 import Foundation
-import Shared
+import DesignSystem
 
 final class AddImageCoordiantor: BaseCoordinator {
     func startAddImageVC(title: String, content: String) {

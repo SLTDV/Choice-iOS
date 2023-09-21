@@ -1,7 +1,7 @@
 import UIKit
 import SnapKit
 import Then
-import Shared
+import DesignSystem
 
 class BaseVC<T: BaseViewModel>: UIViewController {
     let bound = UIScreen.main.bounds
@@ -23,7 +23,7 @@ class BaseVC<T: BaseViewModel>: UIViewController {
         view.backgroundColor = .white
         
         let backBarButtonItem = UIBarButtonItem(title: "뒤로가기", style: .plain, target: self, action: nil)
-        backBarButtonItem.tintColor = SharedAsset.grayDark.color
+        backBarButtonItem.tintColor = DesignSystemAsset.Colors.grayDark.color
         self.navigationItem.backBarButtonItem = backBarButtonItem
         
         setup()

@@ -1,7 +1,7 @@
 import UIKit
-import Shared
 import RxSwift
 import RxCocoa
+import DesignSystem
 
 final class PhoneNumberAuthViewController: BaseVC<PhoneNumberAuthViewModel>, InputPhoneNumberComponentProtocol {
     private let component = InputphoneNumberComponent()
@@ -59,7 +59,7 @@ extension PhoneNumberAuthViewController {
                 self?.component.resendLabel.isHidden = false
                 self?.component.resendButton.isHidden = false
                 
-                self?.component.requestAuthButton.backgroundColor = SharedAsset.grayVoteButton.color
+                self?.component.requestAuthButton.backgroundColor = DesignSystemAsset.Colors.grayVoteButton.color
                 self?.component.requestAuthButton.isEnabled = false
                 
                 self?.component.inputPhoneNumberTextfield.isUserInteractionEnabled = false

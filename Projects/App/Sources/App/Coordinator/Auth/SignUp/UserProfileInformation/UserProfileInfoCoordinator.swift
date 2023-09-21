@@ -1,5 +1,5 @@
 import Foundation
-import Shared
+import DesignSystem
 
 final class UserProfileInfoCoordinator: BaseCoordinator {
     func startUserProfileInfoVC(phoneNumber: String, password: String) {
