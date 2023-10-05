@@ -10,10 +10,7 @@ public enum Downsampling {
         if let cachedImage = imageCache.object(
             forKey: imageURL as NSURL
         ) {
-//            DispatchQueue.main.async {
-                //                    completion(cachedImage)
                 return cachedImage
-//            }
         }
         
         let maxDimensionInPixels = max(
@@ -49,46 +46,5 @@ public enum Downsampling {
         )
         
         return downsampledUIImage
-        
-        //            URLSession.shared.dataTask(with: imageURL) { data, response, error in
-        //                if let error = error {
-        //                    print("Error! - \(error)")
-        //                }
-        //
-        //                guard let data = data,
-        //                      let imageSource = CGImageSourceCreateWithData(
-        //                        data as CFData, nil
-        //                      ) else {
-        //                    DispatchQueue.main.async {
-        //                        return try nil
-        //                    }
-        //                    return
-        //                }
-        //
-        //                guard let downsampledImage = CGImageSourceCreateThumbnailAtIndex(
-        //                    imageSource,
-        //                    0,
-        //                    downsampleOptions as CFDictionary
-        //                ) else {
-        //                    DispatchQueue.main.async {
-        //                        return nil
-        //                    }
-        //                    return
-        //                }
-        //
-        //                let downsampledUIImage = UIImage(data: UIImage(
-        //                    cgImage: downsampledImage
-        //                ).jpegData(compressionQuality: 0.7)!)
-        //
-        //                imageCache.setObject(
-        //                    downsampledUIImage!,
-        //                    forKey: imageURL as NSURL
-        //                )
-        //
-        //                DispatchQueue.main.async {
-        //                    return downsampledImage
-        //                }
-        //            }.resume()
-        //        }
     }
 }
