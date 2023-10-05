@@ -357,31 +357,31 @@ final class PostCell: UITableViewCell {
                 let model = owner.model.value
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
-                    Task {
-                        guard let image = try? await Downsampling.optimization(
-                            imageAt: firstImageUrl,
-                            to: owner.firstPostImageView.frame.size,
-                            scale: 2
-                        ) else {
-                            owner.hasFailedImageLoading = true
-                            owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
-                            return
-                        }
-                        owner.firstPostImageView.image = image
+                Task {
+                    guard let image = try? await Downsampling.optimization(
+                        imageAt: firstImageUrl,
+                        to: owner.firstPostImageView.frame.size,
+                        scale: 2
+                    ) else {
+                        owner.hasFailedImageLoading = true
+                        owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
+                        return
                     }
-                    
-                    Task {
-                        guard let image = try? await Downsampling.optimization(
-                            imageAt: secondImageUrl,
-                            to: owner.secondPostImageView.frame.size,
-                            scale: 2
-                        ) else {
-                            owner.hasFailedImageLoading = true
-                            owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
-                            return
-                        }
-                        owner.secondPostImageView.image = image
+                    owner.firstPostImageView.image = image
+                }
+                
+                Task {
+                    guard let image = try? await Downsampling.optimization(
+                        imageAt: secondImageUrl,
+                        to: owner.secondPostImageView.frame.size,
+                        scale: 2
+                    ) else {
+                        owner.hasFailedImageLoading = true
+                        owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
+                        return
                     }
+                    owner.secondPostImageView.image = image
+                }
                 
                 switch owner.type {
                 case .home:
