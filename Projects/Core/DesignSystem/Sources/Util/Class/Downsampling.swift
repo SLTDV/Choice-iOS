@@ -10,7 +10,7 @@ public enum Downsampling {
         if let cachedImage = imageCache.object(
             forKey: imageURL as NSURL
         ) {
-                return cachedImage
+            return cachedImage
         }
         
         let maxDimensionInPixels = max(

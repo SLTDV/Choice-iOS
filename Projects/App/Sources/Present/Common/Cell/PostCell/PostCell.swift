@@ -389,7 +389,7 @@ final class PostCell: UITableViewCell {
                 switch owner.type {
                 case .home:
                     owner.setVoteButtonTitles(firstTitle: model.firstVotingOption,
-                                        secondTitle: model.secondVotingOption)
+                                              secondTitle: model.secondVotingOption)
                     owner.setHomeVotePostLayout(voting: model.votingState)
                 case .profile:
                     owner.firstVoteOptionLabel.text = model.firstVotingOption
