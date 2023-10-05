@@ -358,26 +358,31 @@ final class PostCell: UITableViewCell {
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
                 DispatchQueue.main.async {
-                    Downsampling.optimization(imageAt: firstImageUrl,
-                                              to: owner.firstPostImageView.frame.size,
-                                              scale: 2) { image in
-                        if let image = image {
-                            owner.firstPostImageView.image = image
-                        } else {
+                    
+                    Task {
+                        guard let image = try? await Downsampling.optimization(
+                            imageAt: firstImageUrl,
+                            to: owner.firstPostImageView.frame.size,
+                            scale: 2
+                        ) else {
                             owner.hasFailedImageLoading = true
                             owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
+                            return
                         }
+                        owner.firstPostImageView.image = image
                     }
                     
-                    Downsampling.optimization(imageAt: secondImageUrl,
-                                              to: owner.secondPostImageView.frame.size,
-                                              scale: 2) { image in
-                        if let image = image {
-                            owner.secondPostImageView.image = image
-                        } else {
+                    Task {
+                        guard let image = try? await Downsampling.optimization(
+                            imageAt: secondImageUrl,
+                            to: owner.secondPostImageView.frame.size,
+                            scale: 2
+                        ) else {
                             owner.hasFailedImageLoading = true
                             owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
+                            return
                         }
+                        owner.secondPostImageView.image = image
                     }
                 }
                 
