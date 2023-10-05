@@ -127,7 +127,6 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
                         scale: 2
                     ) else { return }
                     owner.profileImageView.image = image
-                    print(Thread.isMainThread)
                 }
             }.disposed(by: disposeBag)
     }
