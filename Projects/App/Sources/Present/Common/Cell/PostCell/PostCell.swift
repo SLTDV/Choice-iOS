@@ -357,8 +357,6 @@ final class PostCell: UITableViewCell {
                 let model = owner.model.value
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
-                DispatchQueue.main.async {
-                    
                     Task {
                         guard let image = try? await Downsampling.optimization(
                             imageAt: firstImageUrl,
@@ -384,7 +382,6 @@ final class PostCell: UITableViewCell {
                         }
                         owner.secondPostImageView.image = image
                     }
-                }
                 
                 switch owner.type {
                 case .home:
