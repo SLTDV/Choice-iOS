@@ -13,6 +13,5 @@ let project = Project.makeModule(
         .Shared.GlobalThirdPartyLib
     ],
     resources: ["Resources/**"],
-    infoPlist: .file(path: "Support/Info.plist"),
-    baseSetting: ["OTHER_LDFLAGS": "-ObjC"]
+    infoPlist: .file(path: "Support/Info.plist")
 )
