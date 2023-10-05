@@ -30,7 +30,7 @@ public extension Project {
             infoPlist: infoPlist,
             sources: sources,
             resources: resources,
-            entitlements: .relativeToRoot("Projects/App/Choice.entitlements"),
+            entitlements: .file(path: .relativeToRoot("Projects/App/Choice.entitlements")),
             dependencies: dependencies
         )
         
