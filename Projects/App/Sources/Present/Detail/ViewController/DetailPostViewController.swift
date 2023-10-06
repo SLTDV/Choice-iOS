@@ -386,9 +386,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                     return
                 }
                 
-                Downsampling.optimization(imageAt: imageUrl,
-                                          to: owner.userImageView.frame.size,
-                                          scale: 2) { image in
+                Task {
+                    guard let image = try? await Downsampling.optimization(
+                        imageAt: imageUrl,
+                        to: owner.userImageView.frame.size,
+                        scale: 2
+                    ) else { return }
                     owner.userImageView.image = image
                 }
             }.disposed(by: disposeBag)

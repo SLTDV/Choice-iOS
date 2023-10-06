@@ -357,34 +357,34 @@ final class PostCell: UITableViewCell {
                 let model = owner.model.value
                 owner.titleLabel.text = model.title
                 owner.contentLabel.text = model.content
-                DispatchQueue.main.async {
-                    Downsampling.optimization(imageAt: firstImageUrl,
-                                              to: owner.firstPostImageView.frame.size,
-                                              scale: 2) { image in
-                        if let image = image {
-                            owner.firstPostImageView.image = image
-                        } else {
-                            owner.hasFailedImageLoading = true
-                            owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
-                        }
+                Task {
+                    guard let image = try? await Downsampling.optimization(
+                        imageAt: firstImageUrl,
+                        to: owner.firstPostImageView.frame.size,
+                        scale: 2
+                    ) else {
+                        owner.failedImageLoading()
+                        return
                     }
-                    
-                    Downsampling.optimization(imageAt: secondImageUrl,
-                                              to: owner.secondPostImageView.frame.size,
-                                              scale: 2) { image in
-                        if let image = image {
-                            owner.secondPostImageView.image = image
-                        } else {
-                            owner.hasFailedImageLoading = true
-                            owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
-                        }
+                    owner.firstPostImageView.image = image
+                }
+                
+                Task {
+                    guard let image = try? await Downsampling.optimization(
+                        imageAt: secondImageUrl,
+                        to: owner.secondPostImageView.frame.size,
+                        scale: 2
+                    ) else {
+                        owner.failedImageLoading()
+                        return
                     }
+                    owner.secondPostImageView.image = image
                 }
                 
                 switch owner.type {
                 case .home:
                     owner.setVoteButtonTitles(firstTitle: model.firstVotingOption,
-                                        secondTitle: model.secondVotingOption)
+                                              secondTitle: model.secondVotingOption)
                     owner.setHomeVotePostLayout(voting: model.votingState)
                 case .profile:
                     owner.firstVoteOptionLabel.text = model.firstVotingOption
@@ -399,5 +399,10 @@ final class PostCell: UITableViewCell {
     
     func setType(type: ViewControllerType) {
         self.type = type
+    }
+    
+    private func failedImageLoading() {
+        hasFailedImageLoading = true
+        failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
     }
 }

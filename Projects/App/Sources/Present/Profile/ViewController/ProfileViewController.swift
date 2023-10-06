@@ -120,11 +120,12 @@ final class ProfileViewController: BaseVC<ProfileViewModel>, ProfileDataProtocol
             .observe(on: MainScheduler.instance)
             .compactMap { URL(string: $0!) }
             .bind(with: self) { owner, url in
-                Downsampling.optimization(
-                    imageAt: url,
-                    to: owner.profileImageView.frame.size,
-                    scale: 2
-                ) { image in
+                Task {
+                    guard let image = try? await Downsampling.optimization(
+                        imageAt: url,
+                        to: owner.profileImageView.frame.size,
+                        scale: 2
+                    ) else { return }
                     owner.profileImageView.image = image
                 }
             }.disposed(by: disposeBag)
