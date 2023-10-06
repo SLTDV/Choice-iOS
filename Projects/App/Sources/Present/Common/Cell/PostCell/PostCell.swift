@@ -363,8 +363,7 @@ final class PostCell: UITableViewCell {
                         to: owner.firstPostImageView.frame.size,
                         scale: 2
                     ) else {
-                        owner.hasFailedImageLoading = true
-                        owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
+                        owner.failedImageLoading()
                         return
                     }
                     owner.firstPostImageView.image = image
@@ -376,8 +375,7 @@ final class PostCell: UITableViewCell {
                         to: owner.secondPostImageView.frame.size,
                         scale: 2
                     ) else {
-                        owner.hasFailedImageLoading = true
-                        owner.failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
+                        owner.failedImageLoading()
                         return
                     }
                     owner.secondPostImageView.image = image
@@ -401,5 +399,10 @@ final class PostCell: UITableViewCell {
     
     func setType(type: ViewControllerType) {
         self.type = type
+    }
+    
+    private func failedImageLoading() {
+        hasFailedImageLoading = true
+        failedImageLoadingDelegate?.showAlertOnFailedImageLoading()
     }
 }
