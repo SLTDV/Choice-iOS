@@ -548,7 +548,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             $0.centerY.equalTo(userImageView)
             $0.trailing.equalTo(divideCommentLineView.snp.trailing)
         }
-
+        
         divideCommentLineView.snp.makeConstraints {
             $0.top.equalTo(detailPostView.firstVoteButton.snp.bottom).offset(30)
             $0.leading.trailing.equalToSuperview().inset(38)
@@ -636,8 +636,8 @@ extension DetailPostViewController: UITableViewDelegate {
         let commentModel = detailPostModelRelay.value.commentList[indexPath.row]
         
         let deleteContextual = UIContextualAction(style: .destructive,
-                                                       title: nil,
-                                                       handler: { _, _, _ in
+                                                  title: nil,
+                                                  handler: { _, _, _ in
             self.viewModel.requestToDeleteComment(
                 postIdx: self.postListModelRelay.value.idx,
                 commentIdx: commentModel.idx
