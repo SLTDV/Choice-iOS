@@ -1,13 +1,17 @@
 import UIKit
 
 public enum ShareToInstagram {
-    public static func shareToInstaStories(detailPostView: UIView, backgroundImage: UIImage, completion: @escaping () -> Void) {
+    public static func shareToInstaStories(
+        detailPostView: UIView,
+        backgroundImage: UIImage,
+        completion: @escaping () -> Void
+    ) {
         let renderer = UIGraphicsImageRenderer(bounds: detailPostView.bounds)
-
+        
         let saveImage = renderer.image { context in
             detailPostView.layer.render(in: context.cgContext)
         }
-
+        
         let appID = "Choice"
         
         if let storiesUrl = URL(string: "instagram-stories://share?source_application=\(appID)") {
