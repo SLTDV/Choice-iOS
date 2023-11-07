@@ -195,8 +195,8 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                     ShareToInstagram.shareToInstaStories(detailPostView: owner.detailPostView, backgroundImage: backgroundImage) {
                         owner.presentFailedShareAlert()
                     }
+                    owner.detailPostView.setContentLabelNumberOfLines(lines: 0)
                 }
-                owner.detailPostView.setContentLabelNumberOfLines(lines: 0)
             }.disposed(by: disposeBag)
     }
     
