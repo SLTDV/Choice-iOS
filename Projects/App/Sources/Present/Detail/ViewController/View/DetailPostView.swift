@@ -124,16 +124,24 @@ final class DetailPostView: UIView {
         firstVoteOptionLabel.text = model.firstVotingOption
         secondVoteOptionLabel.text = model.secondVotingOption
         
-        Downsampling.optimization(imageAt: firstImageUrl,
-                                  to: firstPostImageView.frame.size,
-                                  scale: 2) { [weak self] image in
-            self?.firstPostImageView.image = image
+        Task {
+            guard let image =  try? await Downsampling.optimization(
+                imageAt: firstImageUrl,
+                to: firstPostImageView.frame.size,
+                scale: 2
+            ) else { return }
+            
+            firstPostImageView.image = image
         }
         
-        Downsampling.optimization(imageAt: secondImageUrl,
-                                  to: secondPostImageView.frame.size,
-                                  scale: 2) { [weak self] image in
-            self?.secondPostImageView.image = image
+        Task {
+            guard let image =  try? await Downsampling.optimization(
+                imageAt: secondImageUrl,
+                to: secondPostImageView.frame.size,
+                scale: 2
+            ) else { return }
+            
+            secondPostImageView.image = image
         }
         setVoteButton(with: model)
     }

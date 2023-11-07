@@ -191,10 +191,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
         sharePostButton.rx.tap
             .bind(with: self) { owner, _ in
                 owner.detailPostView.setContentLabelNumberOfLines(lines: 4)
-                ShareToInstagram.shareToInstaStories(detailPostView: owner.detailPostView, backgroundImage: backgroundImage) {
-                    owner.presentFailedShareAlert()
+                DispatchQueue.main.async {
+                    ShareToInstagram.shareToInstaStories(detailPostView: owner.detailPostView, backgroundImage: backgroundImage) {
+                        owner.presentFailedShareAlert()
+                    }
+                    owner.detailPostView.setContentLabelNumberOfLines(lines: 0)
                 }
-                owner.detailPostView.setContentLabelNumberOfLines(lines: 0)
             }.disposed(by: disposeBag)
     }
     
@@ -386,9 +388,12 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                     return
                 }
                 
-                Downsampling.optimization(imageAt: imageUrl,
-                                          to: owner.userImageView.frame.size,
-                                          scale: 2) { image in
+                Task {
+                    guard let image = try? await Downsampling.optimization(
+                        imageAt: imageUrl,
+                        to: owner.userImageView.frame.size,
+                        scale: 2
+                    ) else { return }
                     owner.userImageView.image = image
                 }
             }.disposed(by: disposeBag)
