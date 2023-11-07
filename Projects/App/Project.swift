@@ -6,6 +6,8 @@ let project = Project.makeModule(
     platform: .iOS,
     product: .app,
     dependencies: [
+        .Domain.NetworkService,
+        
         .Core.DesignSystem,
         .Core.JwtStore,
         .Core.NetworksMonitor,
