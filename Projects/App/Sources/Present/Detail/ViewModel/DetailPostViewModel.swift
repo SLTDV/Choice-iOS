@@ -12,7 +12,7 @@ protocol CommentDataProtocol: AnyObject {
 final class DetailPostViewModel: BaseViewModel {
     weak var delegate: CommentDataProtocol?
     var commentCurrentPage = -1
-    private let container = AppDelegate.container.resolve(JwtStore.self)!
+    private let container = DIContainer.shared.resolve(JwtStore.self)!
     
     func requestCommentData(idx: Int) -> Observable<Int?> {
         let url = APIConstants.detailPostURL + "\(idx)"

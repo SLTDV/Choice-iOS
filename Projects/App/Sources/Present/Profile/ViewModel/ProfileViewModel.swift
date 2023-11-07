@@ -16,7 +16,7 @@ final class ProfileViewModel: BaseViewModel {
     private let disposeBag = DisposeBag()
     
     weak var delegate: ProfileDataProtocol?
-    private let container = AppDelegate.container.resolve(JwtStore.self)!
+    private let container = DIContainer.shared.resolve(JwtStore.self)!
     
     func requestProfileData() {
         let url = APIConstants.profileURL

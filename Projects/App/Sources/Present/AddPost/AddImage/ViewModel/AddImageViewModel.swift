@@ -34,7 +34,7 @@ final class AddImageViewModel: BaseViewModel {
            method: .post,
            headers: headers,
            interceptor: JwtRequestInterceptor(
-           jwtStore: AppDelegate.container.resolve(JwtStore.self)!)
+           jwtStore: DIContainer.shared.resolve(JwtStore.self)!)
         )
         .validate()
         .responseData(emptyResponseCodes: [200, 201, 204]) { [weak self] response in
@@ -60,7 +60,7 @@ final class AddImageViewModel: BaseViewModel {
                            parameters: params,
                            encoding: JSONEncoding.default,
                            headers: headers,
-                           interceptor: JwtRequestInterceptor(jwtStore: AppDelegate.container.resolve(JwtStore.self)!))
+                           interceptor: JwtRequestInterceptor(jwtStore: DIContainer.shared.resolve(JwtStore.self)!))
                 .validate()
                 .responseData(emptyResponseCodes: [200, 201, 204]) { response in
                     switch response.result {

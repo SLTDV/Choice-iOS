@@ -8,7 +8,7 @@ final class AppCoordinator: Coordinator {
     var childCoordinator: [Coordinator] = []
     var parentCoordinator: Coordinator?
     let window: UIWindow?
-    private let container = AppDelegate.container.resolve(JwtStore.self)!
+    private let container = DIContainer.shared.resolve(JwtStore.self)!
     
     init(navigationCotroller: UINavigationController, window: UIWindow?) {
         self.window = window
