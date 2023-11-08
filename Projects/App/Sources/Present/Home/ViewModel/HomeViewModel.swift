@@ -16,7 +16,10 @@ final class HomeViewModel: BaseViewModel {
     var bestPostCurrentPage = -1
     private let container = DIContainer.shared.resolve(JwtStore.self)!
     
-    func requestPostData(type: MenuOptionType, completion: @escaping (Result<Int, Error>) -> Void = { _ in }) {
+    func requestPostData(
+        type: MenuOptionType,
+        completion: @escaping (Result<Int, Error>) -> Void = { _ in }
+    ) {
         var req: RequestPostModel?
         switch type {
         case .findNewestPostData:
