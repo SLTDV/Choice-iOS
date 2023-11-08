@@ -34,4 +34,11 @@ class PostList: Codable {
     }
 }
 
+struct RequestPostModel {
+    var type: MenuOptionType = .findBestPostData
+    var page: Int
+    var size: Int = 5
+}
+
+
 

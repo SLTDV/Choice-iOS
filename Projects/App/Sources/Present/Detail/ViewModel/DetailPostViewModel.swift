@@ -18,7 +18,7 @@ final class DetailPostViewModel: BaseViewModel {
         let url = APIConstants.detailPostURL + "\(idx)"
         
         commentCurrentPage += 1
-        let requestComment = PostRequest(page: commentCurrentPage)
+        let requestComment = RequestPostModel(page: commentCurrentPage)
         
         let page = URLQueryItem(name: "page", value: String(requestComment.page))
         let size = URLQueryItem(name: "size", value: String(requestComment.size))

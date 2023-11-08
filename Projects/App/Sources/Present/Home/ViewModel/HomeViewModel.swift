@@ -17,29 +17,24 @@ final class HomeViewModel: BaseViewModel {
     private let container = DIContainer.shared.resolve(JwtStore.self)!
     
     func requestPostData(type: MenuOptionType, completion: @escaping (Result<Int, Error>) -> Void = { _ in }) {
-        var url = ""
-        var postRequest: PostRequest?
+        var req: RequestPostModel?
         switch type {
         case .findNewestPostData:
-            url = APIConstants.findNewestPostURL
             newestPostCurrentPage += 1
-            postRequest = PostRequest(page: newestPostCurrentPage)
+            req = RequestPostModel(page: newestPostCurrentPage)
         case .findBestPostData:
-            url = APIConstants.findAllBestPostURL
             bestPostCurrentPage += 1
-            postRequest = PostRequest(page: bestPostCurrentPage)
+            req = RequestPostModel(page: bestPostCurrentPage)
         }
         
-        let page = URLQueryItem(name: "page", value: String(postRequest!.page))
-        let size = URLQueryItem(name: "size", value: String(postRequest!.size))
-        
-        var components = URLComponents(string: url)
-        components?.queryItems = [page, size]
-        
-        AF.request(components!,
-                   method: .get,
-                   encoding: URLEncoding.queryString,
-                   interceptor: JwtRequestInterceptor(jwtStore: container)
+        AF.request(
+            HomeTarget.requestPostData(
+                RequestPostModel(
+                    type: type,
+                    page: req!.page,
+                    size: req!.size
+                )
+            )
         ).responseDecodable(of: PostModel.self) { [weak self] response in
             switch response.result {
             case .success(let postData):
@@ -55,18 +50,14 @@ final class HomeViewModel: BaseViewModel {
     }
     
     func requestVote(idx: Int, choice: Int) {
-        let url = APIConstants.addVoteNumberURL + "\(idx)"
-        let params = [
-            "choice" : choice
-        ] as Dictionary
-        
-        AF.request(url,
-                   method: .post,
-                   parameters: params,
-                   encoding: JSONEncoding.default,
-                   interceptor: JwtRequestInterceptor(jwtStore: container))
-        .validate()
-        .responseData(emptyResponseCodes: [200, 201, 204]) { response in
+        AF.request(
+            HomeTarget.requestToVote(
+                RequestVoteModel(
+                    idx: idx,
+                    choice: choice
+                )
+            )
+        ).responseData(emptyResponseCodes: [200, 201, 204]) { response in
             switch response.result {
             case .success:
                 print("success")

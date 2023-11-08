@@ -3,7 +3,8 @@ struct AddPostModel: Codable {
     var secondUploadImageUrl: String
 }
 
-struct VoteRequest {
+struct RequestVoteModel {
     let idx: Int
     let choice: Int
 }
+
