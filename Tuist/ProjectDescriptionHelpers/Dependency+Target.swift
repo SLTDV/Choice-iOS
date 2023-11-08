@@ -7,6 +7,10 @@ public extension TargetDependency {
     struct Shared {}
 }
 
+public extension TargetDependency.Domain {
+    static let NetworkService = TargetDependency.domain(name: "NetworkService")
+}
+
 public extension TargetDependency.Core {
     static let JwtStore = TargetDependency.core(name: "JwtStore")
     static let NetworksMonitor = TargetDependency.core(name: "NetworksMonitor")

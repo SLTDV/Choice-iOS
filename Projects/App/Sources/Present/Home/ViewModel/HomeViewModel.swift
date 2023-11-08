@@ -14,7 +14,7 @@ final class HomeViewModel: BaseViewModel {
     private let disposeBag = DisposeBag()
     var newestPostCurrentPage = -1
     var bestPostCurrentPage = -1
-    private let container = AppDelegate.container.resolve(JwtStore.self)!
+    private let container = DIContainer.shared.resolve(JwtStore.self)!
     
     func requestPostData(type: MenuOptionType, completion: @escaping (Result<Int, Error>) -> Void = { _ in }) {
         var url = ""

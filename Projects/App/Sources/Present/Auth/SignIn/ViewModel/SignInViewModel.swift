@@ -5,7 +5,7 @@ import JwtStore
 import Swinject
 
 final class SignInViewModel: BaseViewModel {
-    let container = AppDelegate.container.resolve(JwtStore.self)!
+    let container = DIContainer.shared.resolve(JwtStore.self)!
     
     func requestSignIn(model: SignInRequestModel) -> Observable<Void> {
         let url = APIConstants.signInURL

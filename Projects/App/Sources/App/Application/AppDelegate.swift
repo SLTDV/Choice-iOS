@@ -9,7 +9,6 @@ import Firebase
 
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
-    static let container = Container()
     var assembler: Assembler!
     let disposeBag = DisposeBag()
     
@@ -31,7 +30,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         assembler = Assembler([
             JwtStoreAssembly()
-        ], container: AppDelegate.container)
+        ], container: DIContainer.shared)
         
         let monitor = NetworksStatus.shared
         monitor.startMonitoring()
