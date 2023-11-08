@@ -1,4 +1,3 @@
-import Foundation
 import Alamofire
 import RxSwift
 import RxCocoa
@@ -14,7 +13,6 @@ final class HomeViewModel: BaseViewModel {
     private let disposeBag = DisposeBag()
     var newestPostCurrentPage = -1
     var bestPostCurrentPage = -1
-    private let container = DIContainer.shared.resolve(JwtStore.self)!
     
     func requestPostData(
         type: MenuOptionType,

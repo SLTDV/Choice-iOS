@@ -1,4 +1,3 @@
-import Foundation
 import NetworkService
 import Alamofire
 
@@ -6,7 +5,6 @@ enum HomeTarget {
     case requestPostData(RequestPostModel)
     case requestToVote(RequestVoteModel)
 }
-
 
 extension HomeTarget: BaseRouter {
     var baseURL: String {
