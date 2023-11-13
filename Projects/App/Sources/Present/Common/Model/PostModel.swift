@@ -19,7 +19,18 @@ class PostList: Codable {
     var commentCount: Int
     
     init(idx: Int,
-         firstImageUrl: String, secondImageUrl: String, title: String, content: String, firstVotingOption: String, secondVotingOption: String, firstVotingCount: Int, secondVotingCount: Int, votingState: Int, participants: Int, commentCount: Int) {
+         firstImageUrl: String,
+         secondImageUrl: String,
+         title: String,
+         content: String,
+         firstVotingOption: String,
+         secondVotingOption: String,
+         firstVotingCount: Int,
+         secondVotingCount: Int,
+         votingState: Int,
+         participants: Int,
+         commentCount: Int
+    ) {
         self.idx = idx
         self.firstImageUrl = firstImageUrl
         self.secondImageUrl = secondImageUrl
