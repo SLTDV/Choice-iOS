@@ -22,18 +22,7 @@ protocol ImageLoadingFailureHandlerProtocol: AnyObject {
 final class PostCell: UITableViewCell {
     // MARK: - Properties
     var hasFailedImageLoading = false
-    var model = BehaviorRelay<PostList>(value: PostList(idx: 0,
-                                                        firstImageUrl: "",
-                                                        secondImageUrl: "",
-                                                        title: "",
-                                                        content: "",
-                                                        firstVotingOption: "",
-                                                        secondVotingOption: "",
-                                                        firstVotingCount: 0,
-                                                        secondVotingCount: 0,
-                                                        votingState: 0,
-                                                        participants: 0,
-                                                        commentCount: 0))
+    var model = BehaviorRelay<PostList>(value: PostList())
     weak var removeCellDelegate: RemoveTableViewCellHandlerProtocol?
     weak var postVoteButtonDelegate: PostVoteButtonHandlerProtocol?
     weak var failedImageLoadingDelegate: ImageLoadingFailureHandlerProtocol?
