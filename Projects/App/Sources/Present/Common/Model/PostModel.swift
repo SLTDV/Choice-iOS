@@ -18,8 +18,19 @@ class PostList: Codable {
     var participants: Int
     var commentCount: Int
     
-    init(idx: Int,
-         firstImageUrl: String, secondImageUrl: String, title: String, content: String, firstVotingOption: String, secondVotingOption: String, firstVotingCount: Int, secondVotingCount: Int, votingState: Int, participants: Int, commentCount: Int) {
+    init(idx: Int = 0,
+         firstImageUrl: String = "",
+         secondImageUrl: String = "",
+         title: String = "",
+         content: String = "",
+         firstVotingOption: String = "",
+         secondVotingOption: String = "",
+         firstVotingCount: Int = 0,
+         secondVotingCount: Int = 0,
+         votingState: Int = 0,
+         participants: Int = 0,
+         commentCount: Int = 0
+    ) {
         self.idx = idx
         self.firstImageUrl = firstImageUrl
         self.secondImageUrl = secondImageUrl
