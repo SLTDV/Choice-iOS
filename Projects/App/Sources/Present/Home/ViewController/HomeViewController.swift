@@ -259,8 +259,8 @@ extension HomeViewController {
             acceptTitle: nil,
             acceptAction: nil,
             cancelTitle: "확인",
-            cancelAction: { [weak self] in
-                self?.closedApp()
+            cancelAction: {
+                AppCloseHandler.closedApp()
             },
             vc: self)
     }
@@ -272,16 +272,9 @@ extension HomeViewController {
             acceptTitle: nil,
             acceptAction: nil,
             cancelTitle: "확인",
-            cancelAction: { [weak self] in
-                self?.closedApp()
+            cancelAction: {
+                AppCloseHandler.closedApp()
             },
             vc: self)
-    }
-    
-    private func closedApp() {
-        UIApplication.shared.perform(#selector(NSXPCConnection.suspend))
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            exit(0)
-        }
     }
 }
