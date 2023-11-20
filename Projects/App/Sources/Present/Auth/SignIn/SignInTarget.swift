@@ -17,19 +17,19 @@ extension SignInTarget: BaseRouter {
     var path: String {
         return "auth/signin"
     }
-        
+
     var parameters: NetworkService.RequestParams {
-            switch self {
-            case .requestSignIn(let body):
-                let body: [String: String] = [
-                    "phoneNumber" : body.phoneNumber,
-                    "password" : body.password,
-                    "fcmToken" : body.fcmToken!,
-                ]
-                return .requestBody(body)
+        switch self {
+        case .requestSignIn(let body):
+            let body: [String: String] = [
+                "phoneNumber" : body.phoneNumber,
+                "password" : body.password,
+                "fcmToken" : body.fcmToken!,
+            ]
+            return .requestBody(body)
         }
     }
-        
+
     var multipart: Alamofire.MultipartFormData {
         return MultipartFormData()
     }
