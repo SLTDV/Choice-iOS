@@ -12,6 +12,10 @@ public protocol BaseRouter: URLRequestConvertible {
 }
 
 public extension BaseRouter {
+    var baseURL: String {
+        return "https://server.choice-time.com/"
+    }
+
     // URLRequestConvertible 구현
     func asURLRequest() throws -> URLRequest {
         let url = try baseURL.asURL()
