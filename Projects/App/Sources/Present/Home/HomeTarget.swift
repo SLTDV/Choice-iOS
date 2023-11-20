@@ -6,11 +6,7 @@ enum HomeTarget {
     case requestToVote(RequestVoteModel)
 }
 
-extension HomeTarget: BaseRouter {
-    var baseURL: String {
-        return "https://server.choice-time.com/"
-    }
-    
+extension HomeTarget: BaseRouter { 
     var method: Alamofire.HTTPMethod {
         switch self {
         case .requestPostData: return .get
