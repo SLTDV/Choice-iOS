@@ -11,16 +11,11 @@ extension SignInTarget: BaseRouter {
     }
     
     var method: Alamofire.HTTPMethod {
-        switch self {
-        case .requestSignIn: return .post
-        }
+        return .post
     }
     
     var path: String {
-        switch self {
-        case .requestSignIn:
-            return "auth/signin"
-        }
+        return "auth/signin"
     }
         
     var parameters: NetworkService.RequestParams {
