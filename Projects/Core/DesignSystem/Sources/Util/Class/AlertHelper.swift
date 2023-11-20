@@ -3,7 +3,6 @@ import UIKit
 public protocol CustomAlertProtocol {
     typealias Action = () -> ()
     
-    static var shared: CustomAlertProtocol { get }
     func showAlert(
         title: String,
         message: String,
@@ -16,7 +15,7 @@ public protocol CustomAlertProtocol {
 }
 
 public class AlertHelper: CustomAlertProtocol {
-    public static let shared: CustomAlertProtocol = AlertHelper()
+    public static let shared: AlertHelper = AlertHelper()
     
     private init() {}
     

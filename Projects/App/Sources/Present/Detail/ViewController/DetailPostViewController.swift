@@ -195,7 +195,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 self?.reportPostAlert()
             },
             cancelTitle: "취소",
-            cancelAction: nil,
             vc: self)
     }
     
@@ -212,7 +211,6 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                 self?.blockUserAlert()
             },
             cancelTitle: "취소",
-            cancelAction: nil,
             vc: self)
     }
     
@@ -222,10 +220,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
             message: """
                      Instagram이 설치되어 있지 않습니다.
                      """,
-            acceptTitle: nil,
-            acceptAction: nil,
             cancelTitle: "확인",
-            cancelAction: nil,
             vc: self)
     }
     
