@@ -8,18 +8,16 @@ final class SignInViewModel: BaseViewModel {
     let container = DIContainer.shared.resolve(JwtStore.self)!
     
     func requestSignIn(model: SignInRequestModel) -> Observable<Void> {
-        let url = APIConstants.signInURL
-        let params = [
-            "phoneNumber" : model.phoneNumber,
-            "password" : model.password,
-            "fcmToken" : model.fcmToken,
-        ] as Dictionary
-
         return Observable.create { (observer) -> Disposable in
-            AF.request(url,
-                       method: .post,
-                       parameters: params,
-                       encoding: JSONEncoding.default)
+            AF.request(
+                SignInTarget.requestSignIn(
+                    SignInRequestModel(
+                        phoneNumber: model.phoneNumber,
+                        password: model.password,
+                        fcmToken: model.fcmToken
+                    )
+                )
+            )
             .validate()
             .responseDecodable(of: ManageTokenModel.self) { [weak self] response in
                 switch response.result {
