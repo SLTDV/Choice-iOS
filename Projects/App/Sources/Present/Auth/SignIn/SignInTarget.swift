@@ -6,10 +6,6 @@ enum SignInTarget {
 }
 
 extension SignInTarget: BaseRouter {
-    var baseURL: String {
-        return "https://server.choice-time.com/"
-    }
-    
     var method: Alamofire.HTTPMethod {
         return .post
     }
