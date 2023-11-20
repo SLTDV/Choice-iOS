@@ -3,7 +3,7 @@ import UIKit
 public protocol CustomAlertProtocol {
     typealias Action = () -> ()
     
-    func showAlert(
+    func presentAlert(
         title: String,
         message: String,
         acceptTitle: String?,
@@ -31,7 +31,7 @@ public class AlertHelper: CustomAlertProtocol {
         alertControl.addAction(action)
     }
     
-    public func showAlert(
+    public func presentAlert(
         title: String,
         message: String,
         acceptTitle: String? = "",
