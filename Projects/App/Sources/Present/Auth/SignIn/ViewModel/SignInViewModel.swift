@@ -7,11 +7,11 @@ import Swinject
 final class SignInViewModel: BaseViewModel {
     let container = DIContainer.shared.resolve(JwtStore.self)!
     
-    func requestSignIn(model: SignInRequestModel) -> Observable<Void> {
+    func requestSignIn(model: RequestSignInModel) -> Observable<Void> {
         return Observable.create { (observer) -> Disposable in
             AF.request(
                 SignInTarget.requestSignIn(
-                    SignInRequestModel(
+                    RequestSignInModel(
                         phoneNumber: model.phoneNumber,
                         password: model.password,
                         fcmToken: model.fcmToken

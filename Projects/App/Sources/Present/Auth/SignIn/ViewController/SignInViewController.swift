@@ -67,7 +67,7 @@ final class SignInViewController: BaseVC<SignInViewModel> {
                 
                 LoadingIndicator.showLoading(text: "")
                 
-                owner.viewModel.requestSignIn(model: SignInRequestModel(
+                owner.viewModel.requestSignIn(model: RequestSignInModel(
                     phoneNumber: phoneNumber,
                     password: password,
                     fcmToken: fcmToken

@@ -2,7 +2,7 @@ import NetworkService
 import Alamofire
 
 enum SignInTarget {
-    case requestSignIn(SignInRequestModel)
+    case requestSignIn(RequestSignInModel)
 }
 
 extension SignInTarget: BaseRouter {
