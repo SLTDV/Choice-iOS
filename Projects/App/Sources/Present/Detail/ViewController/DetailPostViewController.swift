@@ -183,7 +183,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
     }
     
     private func presentReportPostAlert() {
-        AlertHelper.shared.showAlert(
+        AlertHelper.shared.presentAlert(
             title: "게시물 신고",
             message: """
                     해당 게시물이 불쾌감을 줬다면 신고해주세요.
@@ -191,16 +191,15 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                     삭제될 수 있습니다. (중복 불가능)
                     """,
             acceptTitle: "신고",
-            acceptAction: { [weak self] in
-                self?.reportPostAlert()
+            acceptAction: {
+                self.reportPostAlert()
             },
             cancelTitle: "취소",
-            cancelAction: nil,
             vc: self)
     }
     
     private func presentBlockUserAlert() {
-        AlertHelper.shared.showAlert(
+        AlertHelper.shared.presentAlert(
             title: "차단하기",
             message: """
                      해당 사용자를 차단할 수 있습니다.
@@ -208,24 +207,20 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                      보이지 않습니다.
                      """,
             acceptTitle: "차단",
-            acceptAction: { [weak self] in
-                self?.blockUserAlert()
+            acceptAction: {
+                self.blockUserAlert()
             },
             cancelTitle: "취소",
-            cancelAction: nil,
             vc: self)
     }
     
     private func presentFailedShareAlert() {
-        AlertHelper.shared.showAlert(
+        AlertHelper.shared.presentAlert(
             title: "실패",
             message: """
                      Instagram이 설치되어 있지 않습니다.
                      """,
-            acceptTitle: nil,
-            acceptAction: nil,
             cancelTitle: "확인",
-            cancelAction: nil,
             vc: self)
     }
     
