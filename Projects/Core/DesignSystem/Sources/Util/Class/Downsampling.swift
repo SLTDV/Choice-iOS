@@ -37,7 +37,7 @@ public enum Downsampling {
         }
         
         let downsampledUIImage = UIImage(
-            data: UIImage(cgImage: downsampledIamge).jpegData(compressionQuality: 0.7)!
+            data: UIImage(cgImage: downsampledIamge).jpegData(compressionQuality: 1)!
         )
         
         imageCache.setObject(
