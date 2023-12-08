@@ -369,7 +369,7 @@ final class DetailPostViewController: BaseVC<DetailPostViewModel>, CommentDataPr
                     guard let image = try? await Downsampling.optimization(
                         imageAt: imageUrl,
                         to: owner.userImageView.frame.size,
-                        scale: 2
+                        scale: UIScreen.main.scale
                     ) else { return }
                     owner.userImageView.image = image
                 }

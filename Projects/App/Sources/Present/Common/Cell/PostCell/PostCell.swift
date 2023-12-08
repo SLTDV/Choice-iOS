@@ -350,7 +350,7 @@ final class PostCell: UITableViewCell {
                     guard let image = try? await Downsampling.optimization(
                         imageAt: firstImageUrl,
                         to: owner.firstPostImageView.frame.size,
-                        scale: 2
+                        scale: UIScreen.main.scale
                     ) else {
                         owner.failedImageLoading()
                         return
@@ -362,7 +362,7 @@ final class PostCell: UITableViewCell {
                     guard let image = try? await Downsampling.optimization(
                         imageAt: secondImageUrl,
                         to: owner.secondPostImageView.frame.size,
-                        scale: 2
+                        scale: UIScreen.main.scale
                     ) else {
                         owner.failedImageLoading()
                         return

@@ -128,7 +128,7 @@ final class DetailPostView: UIView {
             guard let image =  try? await Downsampling.optimization(
                 imageAt: firstImageUrl,
                 to: firstPostImageView.frame.size,
-                scale: 2
+                scale: UIScreen.main.scale
             ) else { return }
             
             firstPostImageView.image = image
@@ -138,7 +138,7 @@ final class DetailPostView: UIView {
             guard let image =  try? await Downsampling.optimization(
                 imageAt: secondImageUrl,
                 to: secondPostImageView.frame.size,
-                scale: 2
+                scale: UIScreen.main.scale
             ) else { return }
             
             secondPostImageView.image = image
