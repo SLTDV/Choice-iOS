@@ -3,9 +3,11 @@ import UIKit
 public enum Downsampling {
     private static let imageCache = NSCache<NSURL, UIImage>()
     
-    public static func optimization(imageAt imageURL: URL,
-                                    to pointSize: CGSize,
-                                    scale: CGFloat) async throws -> UIImage? {
+    public static func optimization(
+        imageAt imageURL: URL,
+        to pointSize: CGSize,
+        scale: CGFloat
+    ) async throws -> UIImage? {
         // 이미지 캐시 확인
         if let cachedImage = imageCache.object(
             forKey: imageURL as NSURL
